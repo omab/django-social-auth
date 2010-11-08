@@ -1,0 +1,7 @@
+TWITTER_CONSUMER_KEY              = ''
+TWITTER_CONSUMER_SECRET           = ''
+FACEBOOK_APP_ID                   = ''
+FACEBOOK_API_SECRET               = ''
+SOCIAL_AUTH_CREATE_USERS          = True
+SOCIAL_AUTH_FORCE_RANDOM_USERNAME = False
+SOCIAL_AUTH_DEFAULT_USERNAME      = 'socialauth_user'
