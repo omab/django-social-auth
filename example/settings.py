@@ -87,14 +87,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     'social_auth',
 )
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.TwitterOAuthBackend',
-    'social_auth.backends.FacebookOAuthBackend',
+    'social_auth.backends.TwitterBackend',
+    'social_auth.backends.FacebookBackend',
     'social_auth.backends.OpenIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 )

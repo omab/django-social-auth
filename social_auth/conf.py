@@ -1,16 +1,16 @@
 # Twitter configuration
-TWITTER_SERVER          = 'api.twitter.com'
-REQUEST_TOKEN_URL       = 'https://%s/oauth/request_token' % TWITTER_SERVER
-ACCESS_TOKEN_URL        = 'https://%s/oauth/access_token' % TWITTER_SERVER
-AUTHORIZATION_URL       = 'http://%s/oauth/authorize' % TWITTER_SERVER
-TWITTER_CHECK_AUTH      = 'https://twitter.com/account/verify_credentials.json'
-UNAUTHORIZED_TOKEN_NAME = 'twitter_unauthorized_token'
+TWITTER_SERVER                  = 'api.twitter.com'
+TWITTER_REQUEST_TOKEN_URL       = 'https://%s/oauth/request_token' % TWITTER_SERVER
+TWITTER_ACCESS_TOKEN_URL        = 'https://%s/oauth/access_token' % TWITTER_SERVER
+TWITTER_AUTHORIZATION_URL       = 'http://%s/oauth/authorize' % TWITTER_SERVER
+TWITTER_CHECK_AUTH              = 'https://twitter.com/account/verify_credentials.json'
+TWITTER_UNAUTHORIZED_TOKEN_NAME = 'twitter_unauthorized_token'
 
 # Facebook configuration
-FACEBOOK_SERVER         = 'graph.facebook.com'
-AUTHORIZATION_URL       = 'https://%s/oauth/authorize' % FACEBOOK_SERVER
-ACCESS_TOKEN_URL        = 'https://%s/oauth/access_token' % FACEBOOK_SERVER
-FACEBOOK_CHECK_AUTH     = 'https://%s/me' % FACEBOOK_SERVER
+FACEBOOK_SERVER            = 'graph.facebook.com'
+FACEBOOK_AUTHORIZATION_URL = 'https://%s/oauth/authorize' % FACEBOOK_SERVER
+FACEBOOK_ACCESS_TOKEN_URL  = 'https://%s/oauth/access_token' % FACEBOOK_SERVER
+FACEBOOK_CHECK_AUTH        = 'https://%s/me' % FACEBOOK_SERVER
 
 # OpenID configuration
 OLD_AX_ATTRS = [

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 
 class UserSocialAuth(models.Model):
+    """Social Auth association model"""
     user = models.ForeignKey(User)
     provider = models.CharField(max_length=32)
     uid = models.CharField(max_length=2048)

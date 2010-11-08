@@ -1,25 +1,23 @@
 from openid.extensions import ax, sreg
 
 from .base import SocialAuthBackend
-from .openid_auth import OLD_AX_ATTRS, AX_SCHEMA_ATTRS
+from .conf import OLD_AX_ATTRS, AX_SCHEMA_ATTRS
 
 
 class OAuthBackend(SocialAuthBackend):
     """OAuth authentication backend base class"""
-    name = 'oauth'
-
     def get_user_id(self, details, response):
         "OAuth providers return an unique user id in response"""
         return response['id']
 
 
-class TwitterOAuthBackend(OAuthBackend):
+class TwitterBackend(OAuthBackend):
     """Twitter OAuth authentication backend"""
     name = 'twitter'
 
     def authenticate(self, **kwargs):
         if kwargs.pop('twitter', False):
-            return super(TwitterOAuthBackend, self).authenticate(**kwargs)
+            return super(TwitterBackend, self).authenticate(**kwargs)
 
     def get_user_details(self, response):
         return {'email': '', # not supplied
@@ -29,13 +27,13 @@ class TwitterOAuthBackend(OAuthBackend):
                 'lastname': ''}
 
 
-class FacebookOAuthBackend(OAuthBackend):
+class FacebookBackend(OAuthBackend):
     """Facebook OAuth authentication backend"""
     name = 'facebook'
 
     def authenticate(self, **kwargs):
         if kwargs.pop('facebook', False):
-            return super(FacebookOAuthBackend, self).authenticate(**kwargs)
+            return super(FacebookBackend, self).authenticate(**kwargs)
 
     def get_user_details(self, response):
         return {'email': response.get('email', ''),
@@ -58,17 +56,16 @@ class OpenIDBackend(SocialAuthBackend):
         return response.identity_url
 
     def get_user_details(self, response):
-        values = {'email': None,
-                  'username': None,
-                  'fullname': None,
-                  'firstname': None,
-                  'lastname': None}
+        values = {'email': '',
+                  'username': '',
+                  'fullname': '',
+                  'firstname': '',
+                  'lastname': ''}
 
         resp = sreg.SRegResponse.fromSuccessResponse(response)
         if resp:
-            values.update({'email': resp.get('email'),
-                           'fullname': resp.get('fullname'),
-                           'username': resp.get('nickname')})
+            values.update((name, resp.get(name) or values.get(name) or '')
+                                for name in ('email', 'fullname', 'nickname'))
 
         # Use Attribute Exchange attributes if provided
         resp = ax.FetchResponse.fromSuccessResponse(response)
@@ -76,9 +73,9 @@ class OpenIDBackend(SocialAuthBackend):
             values.update((alias.replace('old_', ''), resp.getSingle(src))
                             for src, alias in OLD_AX_ATTRS + AX_SCHEMA_ATTRS)
 
-        fullname = values.get('fullname', '')
-        firstname = values.get('firstname', '')
-        lastname = values.get('lastname', '')
+        fullname = values.get('fullname') or ''
+        firstname = values.get('firstname') or ''
+        lastname = values.get('lastname') or ''
 
         if not fullname and firstname and lastname:
             fullname = firstname + ' ' + lastname
