@@ -22,9 +22,7 @@ Dependencies
 Installation
 ------------
 
-- Add social_auth app to your PYTHONPATH 
-
-- Add social_auth application to your installed apps::
+- Add social_auth app to PYTHONPATH and installed apps::
 
     INSTALLED_APPS = (
         ...
