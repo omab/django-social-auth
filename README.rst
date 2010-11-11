@@ -38,7 +38,7 @@ Installation
         'django.contrib.auth.backends.ModelBackend',
     )
 
-- Setup Twitter and Facebook keys (see `OAuth` section for details)::
+- Setup Twitter and Facebook keys (see `OAuth`_ section for details)::
 
     TWITTER_CONSUMER_KEY    = ''
     TWITTER_CONSUMER_SECRET = ''
