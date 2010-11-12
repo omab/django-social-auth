@@ -1,3 +1,4 @@
+"""Some base classes"""
 import os
 import md5
 
@@ -64,7 +65,11 @@ class SocialAuthBackend(ModelBackend):
         return user
     
     def get_username(self, details):
+        """Return an unique username, if SOCIAL_AUTH_FORCE_RANDOM_USERNAME
+        setting is True, then username will be a random 30 chars md5 hash
+        """
         def get_random_username():
+            """Return hash from random string cut at 30 chars"""
             return md5.md5(str(os.urandom(10))).hexdigest()[:30]
 
         if getattr(settings, 'SOCIAL_AUTH_FORCE_RANDOM_USERNAME', False):
@@ -86,10 +91,11 @@ class SocialAuthBackend(ModelBackend):
         return username
 
     def create_user(self, response, details):
+        """Create user with unique username"""
         username = self.get_username(details)
         user = User.objects.create_user(username, details.get('email', ''))
-        self.update_user_details(user, details)
-        self.associate_auth(user, response, details)
+        self.update_user_details(user, details) # load details
+        self.associate_auth(user, response, details) # save account association
         return user
 
     def associate_auth(self, user, response, details):
@@ -109,6 +115,7 @@ class SocialAuthBackend(ModelBackend):
         return user_oauth
 
     def update_user_details(self, user, details):
+        """Update user details with new (maybe) data"""
         first_name = details.get('firstname') or user.first_name
         last_name = details.get('lastname') or user.last_name
         email = details.get('email') or user.email

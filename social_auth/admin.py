@@ -1,3 +1,4 @@
+"""Admin settings"""
 from django.contrib import admin
 
 from .models import UserSocialAuth, Nonce, Association

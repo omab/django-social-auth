@@ -1,3 +1,4 @@
+"""Conf settings"""
 # Twitter configuration
 TWITTER_SERVER                  = 'api.twitter.com'
 TWITTER_REQUEST_TOKEN_URL       = 'https://%s/oauth/request_token' % TWITTER_SERVER

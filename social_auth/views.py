@@ -1,3 +1,4 @@
+"""Views"""
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse, \
                         HttpResponseServerError
@@ -7,6 +8,7 @@ from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from .auth import TwitterAuth, FacebookAuth, OpenIdAuth, GoogleAuth, YahooAuth
 
 
+# Authenticatin backeds
 BACKENDS = {
     'twitter': TwitterAuth,
     'facebook': FacebookAuth,
@@ -15,8 +17,8 @@ BACKENDS = {
     'openid': OpenIdAuth,
 }
 
-
 def auth(request, backend):
+    """Authentication starting process"""
     if backend not in BACKENDS:
         return HttpResponseServerError('Incorrect authentication service')
     request.session[REDIRECT_FIELD_NAME] = request.GET.get(REDIRECT_FIELD_NAME,
@@ -31,6 +33,7 @@ def auth(request, backend):
 
 
 def complete(request, backend):
+    """Authentication complete process"""
     if backend not in BACKENDS:
         return HttpResponseServerError('Incorrect authentication service')
     backend = BACKENDS[backend](request, request.path)

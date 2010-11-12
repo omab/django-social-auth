@@ -1,3 +1,6 @@
+"""
+Authentication backeds for django.contrib.auth AUTHENTICATION_BACKENDS setting
+"""
 from openid.extensions import ax, sreg
 
 from .base import SocialAuthBackend
@@ -16,10 +19,12 @@ class TwitterBackend(OAuthBackend):
     name = 'twitter'
 
     def authenticate(self, **kwargs):
+        """Authenticate user only if this was a Twitter request"""
         if kwargs.pop('twitter', False):
             return super(TwitterBackend, self).authenticate(**kwargs)
 
     def get_user_details(self, response):
+        """Return user details from Twitter account"""
         return {'email': '', # not supplied
                 'username': response['screen_name'],
                 'fullname': response['name'],
@@ -32,10 +37,12 @@ class FacebookBackend(OAuthBackend):
     name = 'facebook'
 
     def authenticate(self, **kwargs):
+        """Authenticate user only if this was a Facebook request"""
         if kwargs.pop('facebook', False):
             return super(FacebookBackend, self).authenticate(**kwargs)
 
     def get_user_details(self, response):
+        """Return user details from Facebook account"""
         return {'email': response.get('email', ''),
                 'username': response['name'],
                 'fullname': response['name'],
@@ -53,9 +60,11 @@ class OpenIDBackend(SocialAuthBackend):
             return super(OpenIDBackend, self).authenticate(**kwargs)
 
     def get_user_id(self, details, response):
+        """Return user unique id provided by service"""
         return response.identity_url
 
     def get_user_details(self, response):
+        """Return user details from an OpenID request"""
         values = {'email': '',
                   'username': '',
                   'fullname': '',

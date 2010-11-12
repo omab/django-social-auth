@@ -273,7 +273,7 @@ class OAuthServer(object):
         self.signature_methods = signature_methods or {}
 
     def set_data_store(self, oauth_data_store):
-        self.data_store = data_store
+        self.data_store = oauth_data_store
 
     def get_data_store(self):
         return self.data_store
@@ -290,7 +290,6 @@ class OAuthServer(object):
             token = self._get_token(oauth_request, 'request')
         except OAuthError:
             # no token required for the initial token request
-            version = self._get_version(oauth_request)
             consumer = self._get_consumer(oauth_request)
             self._check_signature(oauth_request, consumer, None)
             # fetch a new token
@@ -300,7 +299,6 @@ class OAuthServer(object):
     # process an access_token request
     # returns the access token on success
     def fetch_access_token(self, oauth_request):
-        version = self._get_version(oauth_request)
         consumer = self._get_consumer(oauth_request)
         # get the request token
         token = self._get_token(oauth_request, 'request')
@@ -311,7 +309,6 @@ class OAuthServer(object):
     # verify an api call, checks all the parameters
     def verify_request(self, oauth_request):
         # -> consumer and token
-        version = self._get_version(oauth_request)
         consumer = self._get_consumer(oauth_request)
         # get the access token
         token = self._get_token(oauth_request, 'access')
@@ -387,7 +384,7 @@ class OAuthServer(object):
         if not valid_sig:
             key, base = signature_method.build_signature_base_string(oauth_request, consumer, token)
             raise OAuthError('Invalid signature. Expected signature base string: %s' % base)
-        built = signature_method.build_signature(oauth_request, consumer, token)
+        signature_method.build_signature(oauth_request, consumer, token)
 
     def _check_timestamp(self, timestamp):
         # verify that timestamp is recentish

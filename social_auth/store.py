@@ -1,3 +1,4 @@
+"""OpenId storage that saves to django models"""
 import time
 import base64
 
@@ -9,10 +10,14 @@ from .models import Association, Nonce
 
 
 class DjangoOpenIDStore(OpenIDStore):
+    """Storage class"""
     def __init__(self):
+        """Init method"""
+        super(DjangoOpenIDStore, self).__init__()
         self.max_nonce_age = 6 * 60 * 60 # Six hours
 
     def storeAssociation(self, server_url, association):
+        """Store new assocition if doesn't exist"""
         args = {'server_url': server_url, 'handle': association.handle}
         try:
             assoc = Association.objects.get(**args)
@@ -25,6 +30,7 @@ class DjangoOpenIDStore(OpenIDStore):
         assoc.save()
 
     def getAssociation(self, server_url, handle=None):
+        """Return stored assocition"""
         args = {'server_url': server_url}
         if handle is not None:
             args['handle'] = handle
@@ -49,9 +55,9 @@ class DjangoOpenIDStore(OpenIDStore):
             return associations[0]
 
     def useNonce(self, server_url, timestamp, salt):
+        """Generate one use number and return if it was created"""
         if abs(timestamp - time.time()) > SKEW:
             return False
-        nonce, created = Nonce.objects.get_or_create(server_url=server_url,
-                                                     timestamp=timestamp,
-                                                     salt=salt)
-        return created
+        return Nonce.objects.get_or_create(server_url=server_url,
+                                           timestamp=timestamp,
+                                           salt=salt)[1]

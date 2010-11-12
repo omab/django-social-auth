@@ -1,3 +1,4 @@
+"""Authentication handling class"""
 import cgi
 import urllib
 import httplib
@@ -8,7 +9,6 @@ from openid.extensions import sreg, ax
 from django.conf import settings
 from django.utils import simplejson
 from django.contrib.auth import authenticate
-from django.core.urlresolvers import reverse
 
 from .base import BaseAuth
 from .store import DjangoOpenIDStore
@@ -23,6 +23,7 @@ from .conf import AX_ATTRS, SREG_ATTR, OPENID_ID_FIELD, SESSION_NAME, \
 
 
 class OpenIdAuth(BaseAuth):
+    """OpenId process handling"""
     def auth_url(self):
         openid_request = self.setup_request()
         # Construct completion URL, including page we should redirect to
@@ -55,6 +56,7 @@ class OpenIdAuth(BaseAuth):
             raise ValueError, 'Unknown OpenID response type: %r' % response.status
 
     def setup_request(self):
+        """Setup request"""
         openid_request = self.openid_request()
         # Request some user details.  If the provider advertises support
         # for attribute exchange, use that.
@@ -76,11 +78,15 @@ class OpenIdAuth(BaseAuth):
 
     @property
     def uses_redirect(self):
+        """Return true if openid request will be handled with redirect or
+        HTML content will be returned.
+        """
         if not hasattr(self, '_uses_redirect'):
             setattr(self, '_uses_redirect', self.openid_request().shouldSendRedirect())
         return getattr(self, '_uses_redirect', True)
 
     def openid_request(self):
+        """Return openid request"""
         if not hasattr(self, '_openid_request'):
             openid_url = self.openid_url()
             try:
@@ -92,6 +98,9 @@ class OpenIdAuth(BaseAuth):
         return getattr(self, '_openid_request', None)
 
     def openid_url(self):
+        """Return service provider URL.
+        This base class is generic accepting a POST parameter that specifies
+        provider URL."""
         if self.request.method != 'POST' or OPENID_ID_FIELD not in self.request.POST:
             raise ValueError, 'Missing openid identifier'
         return self.request.POST[OPENID_ID_FIELD]
@@ -100,17 +109,21 @@ class OpenIdAuth(BaseAuth):
 class GoogleAuth(OpenIdAuth):
     """Google OpenID authentication"""
     def openid_url(self):
+        """Return Google OpenID service url"""
         return OPENID_GOOGLE_URL
 
 
 class YahooAuth(OpenIdAuth):
     """Yahoo OpenID authentication"""
     def openid_url(self):
+        """Return Yahoo OpenID service url"""
         return OPENID_YAHOO_URL
 
 
 class BaseOAuth(BaseAuth):
+    """OAuth base class"""
     def __init__(self, request, redirect):
+        """Init method"""
         super(BaseOAuth, self).__init__(request, redirect)
         self.redirect_uri = self.request.build_absolute_uri(self.redirect)
 
@@ -139,15 +152,18 @@ class TwitterAuth(BaseOAuth):
         return authenticate(response=data, twitter=True)
 
     def unauthorized_token(self):
+        """Return request for unauthorized token (first stage)"""
         request = self.oauth_request(token=None, url=TWITTER_REQUEST_TOKEN_URL)
         response = self.fetch_response(request)
         return OAuthToken.from_string(response)
 
     def access_token(self, token):
+        """Return request for access token value"""
         request = self.oauth_request(token, TWITTER_ACCESS_TOKEN_URL)
         return OAuthToken.from_string(self.fetch_response(request))
 
     def user_data(self, access_token):
+        """Return user data provided"""
         request = self.oauth_request(access_token, TWITTER_CHECK_AUTH)
         json = self.fetch_response(request)
         try:
@@ -156,6 +172,7 @@ class TwitterAuth(BaseOAuth):
             return None
 
     def oauth_request(self, token, url):
+        """Generate OAuth request, setups callback url"""
         params = {'oauth_callback': self.redirect_uri}
         if 'oauth_verifier' in self.request.GET:
             params['oauth_verifier'] = self.request.GET['oauth_verifier']
@@ -168,12 +185,14 @@ class TwitterAuth(BaseOAuth):
         return request
 
     def fetch_response(self, request):
+        """Executes request and fetchs service response"""
         self.connection.request(request.http_method, request.to_url())
         response = self.connection.getresponse()
         return response.read()
 
     @property
     def connection(self):
+        """Setups connection"""
         conn = getattr(self, '_connection', None)
         if conn is None:
             conn = httplib.HTTPSConnection(TWITTER_SERVER)
@@ -182,6 +201,7 @@ class TwitterAuth(BaseOAuth):
 
     @property
     def consumer(self):
+        """Setups consumer"""
         cons = getattr(self, '_consumer', None)
         if cons is None:
             cons = OAuthConsumer(settings.TWITTER_CONSUMER_KEY,
@@ -225,6 +245,7 @@ class FacebookAuth(BaseOAuth):
             raise ValueError, 'Authentication error'
 
     def user_data(self, access_token):
+        """Loads user data from service"""
         params = {'access_token': access_token}
         url = FACEBOOK_CHECK_AUTH + '?' + urllib.urlencode(params)
         try:
