@@ -109,12 +109,14 @@ class YahooAuth(OpenIdAuth):
         return OPENID_YAHOO_URL
 
 
-class TwitterAuth(BaseAuth):
-    """Twitter OAuth authentication mechanism"""
+class BaseOAuth(BaseAuth):
     def __init__(self, request, redirect):
-        super(TwitterAuth, self).__init__(request, redirect)
-        self.redirect_uri = self.request.build_absolute_uri(reverse('social:complete', args=['twitter']))
+        super(BaseOAuth, self).__init__(request, redirect)
+        self.redirect_uri = self.request.build_absolute_uri(self.redirect)
 
+
+class TwitterAuth(BaseOAuth):
+    """Twitter OAuth authentication mechanism"""
     def auth_url(self):
         """Returns redirect url"""
         token = self.unauthorized_token()
@@ -155,8 +157,14 @@ class TwitterAuth(BaseAuth):
 
     def oauth_request(self, token, url):
         params = {'oauth_callback': self.redirect_uri}
-        request = OAuthRequest.from_consumer_and_token(self.consumer, token=token, http_url=url, parameters=params)
-        request.sign_request(OAuthSignatureMethod_HMAC_SHA1(), self.consumer, token)
+        if 'oauth_verifier' in self.request.GET:
+            params['oauth_verifier'] = self.request.GET['oauth_verifier']
+        request = OAuthRequest.from_consumer_and_token(self.consumer,
+                                                       token=token,
+                                                       http_url=url,
+                                                       parameters=params)
+        request.sign_request(OAuthSignatureMethod_HMAC_SHA1(), self.consumer,
+                             token)
         return request
 
     def fetch_response(self, request):
@@ -182,11 +190,12 @@ class TwitterAuth(BaseAuth):
         return cons
 
 
-class FacebookAuth(BaseAuth):
+class FacebookAuth(BaseOAuth):
+    """Facebook OAuth mechanism"""
     def __init__(self, request, redirect):
         super(FacebookAuth, self).__init__(request, redirect)
-        self.redirect_uri = self.request.build_absolute_uri(self.redirect)
-        if settings.DEBUG:
+        if settings.DEBUG and self.redirect_uri:
+            # Facebook doesn't accept custom ports
             self.redirect_uri = self.redirect_uri.replace(':8000', '')
 
     def auth_url(self):
