@@ -89,15 +89,7 @@ Further documentation at `Twitter development resources`_:
       TWITTER_CONSUMER_KEY
       TWITTER_CONSUMER_SECRET
 
-Twitter demands a redirect url configuration and will force the user
-to that address when redirecting, and http://127.0.0.1:8000 won't 
-work. As a development hack, I suggest to setup something like
-http://myvirtualapp.com and adding an entry in /etc/hosts for that
-address pointing to localhost, port will be missed, but will do the
-trick for testing.
-
-If you cannot resit the missing port issue, play a bit with dnsmasq_.
-
+  - You don't need to specify the url callback
 
 --------
 Facebook

@@ -8,6 +8,7 @@ from openid.extensions import sreg, ax
 from django.conf import settings
 from django.utils import simplejson
 from django.contrib.auth import authenticate
+from django.core.urlresolvers import reverse
 
 from .base import BaseAuth
 from .store import DjangoOpenIDStore
@@ -110,6 +111,10 @@ class YahooAuth(OpenIdAuth):
 
 class TwitterAuth(BaseAuth):
     """Twitter OAuth authentication mechanism"""
+    def __init__(self, request, redirect):
+        super(TwitterAuth, self).__init__(request, redirect)
+        self.redirect_uri = self.request.build_absolute_uri(reverse('social:complete', args=['twitter']))
+
     def auth_url(self):
         """Returns redirect url"""
         token = self.unauthorized_token()
@@ -149,7 +154,8 @@ class TwitterAuth(BaseAuth):
             return None
 
     def oauth_request(self, token, url):
-        request = OAuthRequest.from_consumer_and_token(self.consumer, token=token, http_url=url)
+        params = {'oauth_callback': self.redirect_uri}
+        request = OAuthRequest.from_consumer_and_token(self.consumer, token=token, http_url=url, parameters=params)
         request.sign_request(OAuthSignatureMethod_HMAC_SHA1(), self.consumer, token)
         return request
 
