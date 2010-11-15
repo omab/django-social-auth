@@ -13,6 +13,9 @@ third parties.
 ------------
 Dependencies
 ------------
+
+Dependencies that must be meet to use the app::
+
    - OpenId support depends on python-openid_
    - OAuth support depends on python-oauth_
    - Twitter and Facebook support demands an application registration
@@ -92,7 +95,7 @@ Twitter
 -------
 Twitter offers per application keys named "Consumer Key" and
 "Consumer Secret". To enable Twitter these two keys are needed.
-Further documentation at `Twitter development resources`_:
+Further documentation at `Twitter development resources`_::
 
   - Register a new app at `Twitter App Creation`_,
   - mark the "Yes, use Twitter for login" checkbox, and
@@ -108,7 +111,7 @@ Facebook
 --------
 Facebook works similar to Twitter but it's simpler to setup and
 redirect url is passed as a parameter when issuing an authorization.
-Further documentation at `Facebook development resources`_:
+Further documentation at `Facebook development resources`_::
 
   - Register a new app at `Facebook App Creation`_, and
   - fill "App Id" and "App Secret" values in settings::
