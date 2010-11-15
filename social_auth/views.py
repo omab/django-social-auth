@@ -8,7 +8,7 @@ from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from .auth import TwitterAuth, FacebookAuth, OpenIdAuth, GoogleAuth, YahooAuth
 
 
-# Authenticatin backeds
+# Authenticatin backends
 BACKENDS = {
     'twitter': TwitterAuth,
     'facebook': FacebookAuth,
