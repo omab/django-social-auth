@@ -23,9 +23,9 @@ class Nonce(models.Model):
 
 class Association(models.Model):
     """OpenId account association"""
-    server_url = models.TextField(max_length=2047)
+    server_url = models.TextField()
     handle = models.CharField(max_length=255)
-    secret = models.TextField(max_length=255) # Stored base64 encoded
+    secret = models.CharField(max_length=255) # Stored base64 encoded
     issued = models.IntegerField()
     lifetime = models.IntegerField()
-    assoc_type = models.TextField(max_length=64)
+    assoc_type = models.CharField(max_length=64)
