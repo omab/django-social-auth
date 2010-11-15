@@ -13,9 +13,9 @@ third parties.
 ------------
 Dependencies
 ------------
-   * OpenId support depends on python-openid_
-   * OAuth support depends on python-oauth_
-   * Twitter and Facebook support demands an application registration
+   - OpenId support depends on python-openid_
+   - OAuth support depends on python-oauth_
+   - Twitter and Facebook support demands an application registration
      on their corresponding sites.
 
 
@@ -30,7 +30,7 @@ Installation
         'social_auth'
     )
 
-- Add desired authentication backends to AUTHENTICATION_BACKENDS setting::
+- Add desired authentication backends to AUTHENTICATION_BACKENDS_ setting::
 
     AUTHENTICATION_BACKENDS = (
         'social_auth.backends.TwitterOAuthBackend',
@@ -39,7 +39,7 @@ Installation
         'django.contrib.auth.backends.ModelBackend',
     )
 
-- Setup Twitter and Facebook keys (see `OAuth`_ section for details)::
+- Setup Twitter and Facebook keys (see OAuth_ section for details)::
 
     TWITTER_CONSUMER_KEY    = ''
     TWITTER_CONSUMER_SECRET = ''
@@ -56,6 +56,14 @@ Installation
 - Configure complete url name to avoid possible clashes::
 
     SOCIAL_AUTH_COMPLETE_URL_NAME = 'namespace:complete'
+
+- Add urls entries::
+
+    urlpatterns = patterns('',
+        ...
+        url(r'', include('social_auth.urls', namespace='social')),
+        ...
+    )
 
 - Sync database to create needed models::
 
@@ -142,3 +150,4 @@ django-openid-auth::
 .. _dnsmasq: http://www.thekelleys.org.uk/dnsmasq/doc.html
 .. _Facebook development resources: http://developers.facebook.com/docs/authentication/
 .. _Facebook App Creation: http://developers.facebook.com/setup/
+.. _AUTHENTICATION_BACKENDS: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#authentication-backends
