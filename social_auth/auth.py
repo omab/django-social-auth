@@ -2,9 +2,12 @@
 import cgi
 import urllib
 import httplib
+
 from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
 from openid.extensions import sreg, ax
+from oauth.oauth import OAuthConsumer, OAuthToken, OAuthRequest, \
+                        OAuthSignatureMethod_HMAC_SHA1
 
 from django.conf import settings
 from django.utils import simplejson
@@ -12,8 +15,6 @@ from django.contrib.auth import authenticate
 
 from .base import BaseAuth
 from .store import DjangoOpenIDStore
-from .oauth import OAuthConsumer, OAuthToken, OAuthRequest, \
-                   OAuthSignatureMethod_HMAC_SHA1
 from .conf import AX_ATTRS, SREG_ATTR, OPENID_ID_FIELD, SESSION_NAME, \
                   OPENID_GOOGLE_URL, OPENID_YAHOO_URL, TWITTER_SERVER, \
                   TWITTER_REQUEST_TOKEN_URL, TWITTER_ACCESS_TOKEN_URL, \

@@ -14,6 +14,7 @@ third parties.
 Dependencies
 ------------
    * OpenId support depends on python-openid_
+   * OAuth support depends on python-oauth_
    * Twitter and Facebook support demands an application registration
      on their corresponding sites.
 
@@ -130,6 +131,7 @@ django-openid-auth::
 .. _django-twitter-oauth: https://github.com/henriklied/django-twitter-oauth
 .. _django-openid-auth: https://launchpad.net/django-openid-auth
 .. _python-openid: http://pypi.python.org/pypi/python-openid/
+.. _python-oauth: https://github.com/leah/python-oauth
 .. _Login url: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-url
 .. _Login redirect url: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-redirect-url
 .. _Twitter development resources: http://dev.twitter.com/pages/auth
