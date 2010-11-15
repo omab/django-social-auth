@@ -22,8 +22,11 @@ def auth(request, backend):
     if backend not in BACKENDS:
         return HttpResponseServerError('Incorrect authentication service')
     request.session[REDIRECT_FIELD_NAME] = request.GET.get(REDIRECT_FIELD_NAME,
-                                                           settings.LOGIN_REDIRECT_URL)
-    redirect = reverse('social:complete', args=(backend,))
+                                                   settings.LOGIN_REDIRECT_URL)
+
+    redirect = reverse(getattr(settings, 'SOCIAL_AUTH_COMPLETE_URL_NAME',
+                               'complete'),
+                       args=(backend,))
     backend = BACKENDS[backend](request, redirect)
     if backend.uses_redirect:
         return HttpResponseRedirect(backend.auth_url())

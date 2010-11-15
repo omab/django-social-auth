@@ -53,6 +53,9 @@ Installation
 
   Check Django documentation at `Login url`_ and `Login redirect url`_
 
+- Configure complete url name to avoid possible clashes::
+
+    SOCIAL_AUTH_COMPLETE_URL_NAME = 'namespace:complete'
 
 - Sync database to create needed models::
 
