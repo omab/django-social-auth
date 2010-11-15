@@ -66,6 +66,23 @@ def done(request):
     """).render(Context({'user':user})),
     content_type='text/html;charset=UTF-8')
 
+
+def error(request):
+    return HttpResponse(Template(
+    """
+    <html>
+      <head>
+        <title>Error</title>
+      </head>
+      <body>
+        <h1>Error!</h1>
+        <p>Sorry but some error made you impossible to login</p>
+        <a href="/">Homepage</a>
+      </body>
+    </html>
+    """).render(Context()),
+    content_type='text/html;charset=UTF-8')
+
 def logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/')

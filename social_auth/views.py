@@ -43,5 +43,8 @@ def complete(request, backend):
     user = backend.auth_complete()
     if user and user.is_active:
         login(request, user)
-    return HttpResponseRedirect(request.session.pop(REDIRECT_FIELD_NAME,
-                                                    settings.LOGIN_REDIRECT_URL))
+        url = request.session.pop(REDIRECT_FIELD_NAME,
+                                  settings.LOGIN_REDIRECT_URL)
+    else:
+        url = getattr(settings, 'LOGIN_ERROR_URL', settings.LOGIN_URL)
+    return HttpResponseRedirect(url)
