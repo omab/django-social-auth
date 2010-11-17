@@ -74,10 +74,14 @@ class SocialAuthBackend(ModelBackend):
 
         if getattr(settings, 'SOCIAL_AUTH_FORCE_RANDOM_USERNAME', False):
             username = get_random_username()
+        elif 'username' in details:
+            username = details['username']
+        elif hasattr(settings, 'SOCIAL_AUTH_DEFAULT_USERNAME'):
+            username = settings.SOCIAL_AUTH_DEFAULT_USERNAME
+            if callable(username):
+                username = username()
         else:
-            username = details.get('username') or \
-                       getattr(settings, 'SOCIAL_AUTH_DEFAULT_USERNAME', '') or \
-                       get_random_username()
+            username = get_random_username()
 
         name, idx = username, 2
         while True:

@@ -75,6 +75,18 @@ Installation
 
     ./manage syncdb
 
+- Not mandatory, but recommended::
+
+  SOCIAL_AUTH_DEFAULT_USERNAME = 'new_social_auth_user'
+
+  or
+
+  import random
+  SOCIAL_AUTH_DEFAULT_USERNAME = lambda: random.choice(['Darth Vader', 'Obi-Wan Kenobi',
+                                                        'R2-D2', 'C-3PO', 'Yoda'])
+
+  final user name will have an integer suffix in case it's already taken.
+
 
 ------
 OpenId
