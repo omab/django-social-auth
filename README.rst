@@ -82,8 +82,7 @@ Installation
 or::
 
     import random
-    SOCIAL_AUTH_DEFAULT_USERNAME = lambda: random.choice(['Darth Vader', 'Obi-Wan Kenobi',
-                                                          'R2-D2', 'C-3PO', 'Yoda'])
+    SOCIAL_AUTH_DEFAULT_USERNAME = lambda: random.choice(['Darth Vader', 'Obi-Wan Kenobi', 'R2-D2', 'C-3PO', 'Yoda'])
 
 final user name will have an integer suffix in case it's already taken.
 
