@@ -13,6 +13,10 @@ class OAuthBackend(SocialAuthBackend):
         "OAuth providers return an unique user id in response"""
         return response['id']
 
+    def extra_data(self, user, uid, response, details):
+        """Return access_token to store in extra_data field"""
+        return response.get('access_token', '')
+
 
 class TwitterBackend(OAuthBackend):
     """Twitter OAuth authentication backend"""

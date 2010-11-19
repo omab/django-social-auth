@@ -86,6 +86,10 @@ or::
 
 final user name will have an integer suffix in case it's already taken.
 
+- OAuth authentication will store access_token by default, set this value to False to avoid such behavior::
+
+    SOCIAL_AUTH_EXTRA_DATA = False
+
 
 ------
 OpenId

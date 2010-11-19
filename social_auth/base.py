@@ -111,12 +111,21 @@ class SocialAuthBackend(ModelBackend):
                                                .get(provider=self.name,
                                                     uid=uid)
         except UserSocialAuth.DoesNotExist:
+            if getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA', True):
+                extra_data = self.extra_data(user, uid, response, details)
+            else:
+                extra_data = ''
             user_oauth = UserSocialAuth.objects.create(user=user, uid=uid,
-                                                       provider=self.name)
+                                                       provider=self.name,
+                                                       extra_data=extra_data)
         else:
             if user_oauth.user != user:
-                raise ValueError, 'The identity has already been claimed'
+                raise ValueError, 'Identity already claimed'
         return user_oauth
+
+    def extra_data(self, user, uid, response, details):
+        """Return default blank user extra data"""
+        return ''
 
     def update_user_details(self, user, details):
         """Update user details with new (maybe) data"""

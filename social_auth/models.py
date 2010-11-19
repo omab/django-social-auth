@@ -8,6 +8,7 @@ class UserSocialAuth(models.Model):
     user = models.ForeignKey(User, related_name='social_auth')
     provider = models.CharField(max_length=32)
     uid = models.TextField()
+    extra_data = models.TextField(default='', blank=True)
 
     class Meta:
         """Meta data"""
