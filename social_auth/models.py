@@ -1,7 +1,13 @@
 """Social auth models"""
 from django.db import models 
-from django.contrib.auth.models import User
+from django.conf import settings
 
+def get_user_model():
+    """Allow setting a custom (extended) user model"""
+    _from, _model = getattr(settings, 'SOCIAL_AUTH_MODEL_USER', 'django.contrib.auth.models.User').rsplit('.', 1)
+   return getattr(__import__(_from, globals(), locals(), [_model], -1), _model)
+
+User = get_user_model()
 
 class UserSocialAuth(models.Model):
     """Social Auth association model"""

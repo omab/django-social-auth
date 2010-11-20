@@ -3,11 +3,11 @@ import os
 import md5
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.contrib.auth.backends import ModelBackend
 
-from .models import UserSocialAuth
+from .models import UserSocialAuth, get_user_model
 
+User = get_user_model()
 
 class BaseAuth(object):
     """Base authentication class, new authenticators should subclass
