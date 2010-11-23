@@ -23,7 +23,7 @@ try: # try to import User model override and validate needed fields
     if not all(callable(getattr(User, name, None))
                     for name in MANDATORY_METHODS):
         raise AttributeError, 'Some mandatory methods missing'
-except: # fail silently and fallback to auth.User on any error
+except AttributeError: # fail silently on missing setting
     from django.contrib.auth.models import User
 
 
