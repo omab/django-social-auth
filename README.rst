@@ -147,7 +147,7 @@ Further documentation at `Twitter development resources`_:
 
 - mark the "Yes, use Twitter for login" checkbox, and
 
-- fill "Consumer Key" and "Consumer Secret" settings::
+- fill "Consumer Key" and "Consumer Secret" values::
 
       TWITTER_CONSUMER_KEY
       TWITTER_CONSUMER_SECRET
@@ -164,7 +164,7 @@ Further documentation at `Facebook development resources`_:
 
 - Register a new app at `Facebook App Creation`_, and
 
-- fill "App Id" and "App Secret" values in settings::
+- fill "App Id" and "App Secret" values in values::
 
       FACEBOOK_APP_ID
       FACEBOOK_API_SECRET
@@ -179,7 +179,7 @@ Orkut offers per application keys named "Consumer Key" and
 Check `Google support`_ and `Orkut API`_ for details on getting
 your consumer_key and consumer_secret keys.
 
-- fill "Consumer Key" and "Consumer Secret" settings::
+- fill "Consumer Key" and "Consumer Secret" values::
 
       ORKUT_CONSUMER_KEY
       ORKUT_CONSUMER_SECRET
