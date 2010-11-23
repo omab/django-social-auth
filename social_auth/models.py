@@ -3,15 +3,26 @@ from django.db import models
 from django.conf import settings
 
 # If User class is overrided, it must provide the following fields:
+#
 #   username = CharField()
 #   email = EmailField()
 #   password = CharField()
+#   is_active  = BooleanField()
+#
+# and methods:
+#
+#   def is_authenticated():
+#       ...
 MANDATORY_FIELDS = ('username', 'email', 'password', 'last_login')
+MANDATORY_METHODS = ('is_authenticated',)
 
 try: # try to import User model override and validate needed fields
     User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.split('.'))
     if not all(User._meta.get_field(name) for name in MANDATORY_FIELDS):
         raise AttributeError, 'Some mandatory field missing'
+    if not all(callable(getattr(User, name, None))
+                    for name in MANDATORY_METHODS):
+        raise AttributeError, 'Some mandatory methods missing'
 except: # fail silently and fallback to auth.User on any error
     from django.contrib.auth.models import User
 

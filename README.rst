@@ -108,7 +108,7 @@ and the methods::
     is_authenticated()
 
 AttributeError will be raised in case of any of these is
-missing, also the following are recommended but notenforced::
+missing, also the following are recommended but not enforced::
 
     first_name = CharField(...)
     last_name  = CharField(...)
