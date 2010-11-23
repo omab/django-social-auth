@@ -20,7 +20,10 @@ from .conf import AX_ATTRS, SREG_ATTR, OPENID_ID_FIELD, SESSION_NAME, \
                   TWITTER_REQUEST_TOKEN_URL, TWITTER_ACCESS_TOKEN_URL, \
                   TWITTER_AUTHORIZATION_URL, TWITTER_CHECK_AUTH, \
                   TWITTER_UNAUTHORIZED_TOKEN_NAME, FACEBOOK_CHECK_AUTH, \
-                  FACEBOOK_AUTHORIZATION_URL, FACEBOOK_ACCESS_TOKEN_URL
+                  FACEBOOK_AUTHORIZATION_URL, FACEBOOK_ACCESS_TOKEN_URL, \
+                  ORKUT_SERVER, ORKUT_SCOPE, ORKUT_UNAUTHORIZED_TOKEN_NAME, \
+                  ORKUT_REQUEST_TOKEN_URL, ORKUT_ACCESS_TOKEN_URL, \
+                  ORKUT_AUTHORIZATION_URL, ORKUT_REST_ENDPOINT, ORKUT_EXTRA_DATA
 
 
 class OpenIdAuth(BaseAuth):
@@ -127,6 +130,95 @@ class BaseOAuth(BaseAuth):
         """Init method"""
         super(BaseOAuth, self).__init__(request, redirect)
         self.redirect_uri = self.request.build_absolute_uri(self.redirect)
+
+
+class OrkutAuth(BaseOAuth):
+    """Orkut OAuth authentication mechanism"""
+    def auth_url(self):
+        """Returns redirect url"""
+        token = self.unauthorized_token()
+        self.request.session[ORKUT_UNAUTHORIZED_TOKEN_NAME] = token.to_string()
+        return self.oauth_request(token, ORKUT_AUTHORIZATION_URL).to_url()
+
+    def auth_complete(self):
+        """Returns user, might be logged in"""
+        unauthed_token = self.request.session.get(ORKUT_UNAUTHORIZED_TOKEN_NAME)
+        if not unauthed_token:
+            raise ValueError, 'Missing unauthorized token'
+
+        token = OAuthToken.from_string(unauthed_token)
+        if token.key != self.request.GET.get('oauth_token', 'no-token'):
+            raise ValueError, 'Incorrect tokens'
+        access_token = self.access_token(token)
+        data = self.user_data(access_token)
+        if data is not None:
+            data['access_token'] = access_token.to_string()
+        return authenticate(response=data, orkut=True)
+
+    def unauthorized_token(self):
+        """Return request for unauthorized token (first stage)"""
+        request = self.oauth_request(token=None, url=ORKUT_REQUEST_TOKEN_URL)
+        response = self.fetch_response(request)
+        return OAuthToken.from_string(response)
+
+    def oauth_request(self, token, url, params={}):
+        """Generate OAuth request, setups callback url"""
+        params.update({'oauth_callback': self.redirect_uri, \
+                                'scope': ORKUT_SCOPE})
+        if 'oauth_verifier' in self.request.GET:
+            params['oauth_verifier'] = self.request.GET['oauth_verifier']
+        request = OAuthRequest.from_consumer_and_token(self.consumer,
+                                                       token=token,
+                                                       http_url=url,
+                                                       parameters=params)
+        request.sign_request(OAuthSignatureMethod_HMAC_SHA1(), self.consumer,
+                             token)
+        return request
+
+    def fetch_response(self, request):
+        """Executes request and fetchs service response"""
+        self.connection.request(request.http_method, request.to_url())
+        response = self.connection.getresponse()
+        return response.read()
+
+    def access_token(self, token):
+        """Return request for access token value"""
+        request = self.oauth_request(token, ORKUT_ACCESS_TOKEN_URL)
+        return OAuthToken.from_string(self.fetch_response(request))
+
+    def user_data(self, access_token):
+        """Loads user data from service"""
+        params = {'method': 'people.get', \
+                      'id': 'myself', \
+                  'userId': '@me', \
+                 'groupId': '@self', \
+                  'fields': 'name,displayName,emails,%s' % ORKUT_EXTRA_DATA}
+        request = self.oauth_request(access_token, ORKUT_REST_ENDPOINT, params)
+        response = urllib.urlopen(request.to_url()).read()
+        try:
+            json = simplejson.loads(response)
+            return json['data']
+        except simplejson.JSONDecodeError:
+            return None
+
+    @property
+    def connection(self):
+        """Setups connection"""
+        conn = getattr(self, '_connection', None)
+        if conn is None:
+            conn = httplib.HTTPSConnection(ORKUT_SERVER)
+            setattr(self, '_connection', conn)
+        return conn
+
+    @property
+    def consumer(self):
+        """Setups consumer"""
+        cons = getattr(self, '_consumer', None)
+        if cons is None:
+            cons = OAuthConsumer(settings.ORKUT_CONSUMER_KEY,
+                                 settings.ORKUT_CONSUMER_SECRET)
+            setattr(self, '_consumer', cons)
+        return cons
 
 
 class TwitterAuth(BaseOAuth):

@@ -13,6 +13,16 @@ FACEBOOK_AUTHORIZATION_URL = 'https://%s/oauth/authorize' % FACEBOOK_SERVER
 FACEBOOK_ACCESS_TOKEN_URL  = 'https://%s/oauth/access_token' % FACEBOOK_SERVER
 FACEBOOK_CHECK_AUTH        = 'https://%s/me' % FACEBOOK_SERVER
 
+# Orkut configuration
+ORKUT_SERVER                  = 'www.google.com'
+ORKUT_REQUEST_TOKEN_URL       = 'https://%s/accounts/OAuthGetRequestToken' % ORKUT_SERVER
+ORKUT_ACCESS_TOKEN_URL        = 'https://%s/accounts/OAuthGetAccessToken' % ORKUT_SERVER
+ORKUT_AUTHORIZATION_URL       = 'https://%s/accounts/OAuthAuthorizeToken' % ORKUT_SERVER
+ORKUT_SCOPE                   = 'http://orkut.gmodules.com/social/'
+ORKUT_REST_ENDPOINT           = 'http://www.orkut.com/social/rpc'
+ORKUT_UNAUTHORIZED_TOKEN_NAME = 'orkut_unauthorized_token'
+ORKUT_EXTRA_DATA              = 'age,gender,currentLocation'
+
 # OpenID configuration
 OLD_AX_ATTRS = [
     ('http://schema.openid.net/contact/email', 'old_email'),

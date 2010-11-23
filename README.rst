@@ -40,6 +40,7 @@ Installation
     AUTHENTICATION_BACKENDS = (
         'social_auth.backends.TwitterOAuthBackend',
         'social_auth.backends.FacebookOAuthBackend',
+        'social_auth.backends.OrkutOAuthBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -50,6 +51,8 @@ Installation
     TWITTER_CONSUMER_SECRET = ''
     FACEBOOK_APP_ID         = ''
     FACEBOOK_API_SECRET     = ''
+    ORKUT_CONSUMER_KEY    = ''
+    ORKUT_CONSUMER_SECRET = ''
 
 - Setup login urls::
 
@@ -130,9 +133,8 @@ providing endpoint Url.
 OAuth
 -----
 OAuth communication demands a set of keys exchange to validate the client
-authenticity prior to user approbation, Twitter and Facebook facilitates these
-keys by application registration, see `Twitter`_ and `Facebook`_ sections for
-details.
+authenticity prior to user approbation, Twitter, Facebook and Orkut facilitates
+these keys by application registration, see next sections for details.
 
 
 -------
@@ -167,6 +169,21 @@ Further documentation at `Facebook development resources`_:
       FACEBOOK_APP_ID
       FACEBOOK_API_SECRET
 
+-------
+Orkut
+-------
+Orkut offers per application keys named "Consumer Key" and
+"Consumer Secret". To enable Orkut these two keys are needed.
+
+For getting your consumer_key and consumer_secret, you may look
+the following link for more information:
+
+http://www.google.com/support/a/bin/answer.py?hl=en&answer=162105
+
+- fill "Consumer Key" and "Consumer Secret" settings::
+
+      ORKUT_CONSUMER_KEY
+      ORKUT_CONSUMER_SECRET
 
 ----
 Bugs

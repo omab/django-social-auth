@@ -36,6 +36,24 @@ class TwitterBackend(OAuthBackend):
                 'last_name': ''}
 
 
+class OrkutBackend(OAuthBackend):
+    """Orkut OAuth authentication backend"""
+    name = 'orkut'
+
+    def authenticate(self, **kwargs):
+        """Authenticate user only if this was a Orkut request"""
+        if kwargs.pop('orkut', False):
+            return super(OrkutBackend, self).authenticate(**kwargs)
+
+    def get_user_details(self, response):
+        """Return user details from Orkut account"""
+        return {'email': response['emails'][0]['value'],
+                'username': response['displayName'],
+                'fullname': response['displayName'],
+                'firstname': response['name']['givenName'],
+                'lastname': response['name']['familyName']}
+
+
 class FacebookBackend(OAuthBackend):
     """Facebook OAuth authentication backend"""
     name = 'facebook'

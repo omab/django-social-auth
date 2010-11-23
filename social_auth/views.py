@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse, \
 from django.core.urlresolvers import reverse
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 
-from .auth import TwitterAuth, FacebookAuth, OpenIdAuth, GoogleAuth, YahooAuth
+from .auth import TwitterAuth, FacebookAuth, OpenIdAuth, GoogleAuth, YahooAuth, OrkutAuth
 
 
 # Authenticatin backends
@@ -15,6 +15,7 @@ BACKENDS = {
     'google': GoogleAuth,
     'yahoo': YahooAuth,
     'openid': OpenIdAuth,
+    'orkut': OrkutAuth,
 }
 
 def auth(request, backend):
