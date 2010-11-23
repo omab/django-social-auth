@@ -31,7 +31,7 @@ class UserSocialAuth(models.Model):
     """Social Auth association model"""
     user = models.ForeignKey(User, related_name='social_auth')
     provider = models.CharField(max_length=32)
-    uid = models.TextField()
+    uid = models.CharField(max_length=255)
     extra_data = models.TextField(default='', blank=True)
 
     class Meta:
