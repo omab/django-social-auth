@@ -3,9 +3,8 @@ from django.db import models
 from django.conf import settings
 
 def get_user_model():
-   """Allow setting a custom (extended) user model"""
-   _from, _model = getattr(settings, 'SOCIAL_AUTH_MODEL_USER', 'django.contrib.auth.models.User').rsplit('.', 1)
-   return getattr(__import__(_from, globals(), locals(), [_model], -1), _model)
+    """Allow setting a custom (extended) user model"""
+    return models.get_model(*getattr(settings, 'SOCIAL_AUTH_USER_MODEL', 'auth.User').split('.'))
 
 User = get_user_model()
 
