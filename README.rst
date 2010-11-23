@@ -79,12 +79,12 @@ Installation
 
     SOCIAL_AUTH_DEFAULT_USERNAME = 'new_social_auth_user'
 
-or::
+  or::
 
     import random
     SOCIAL_AUTH_DEFAULT_USERNAME = lambda: random.choice(['Darth Vader', 'Obi-Wan Kenobi', 'R2-D2', 'C-3PO', 'Yoda'])
 
-final user name will have an integer suffix in case it's already taken.
+  final user name will have an integer suffix in case it's already taken.
 
 - OAuth authentication will store access_token by default, set this value
   to False to avoid such behavior::
@@ -95,7 +95,7 @@ final user name will have an integer suffix in case it's already taken.
 
     SOCIAL_AUTH_USER_MODEL = 'myapp.CustomUser'
 
-this class must define the following fields::
+  this class must define the following fields::
 
     username   = CharField(...)
     email      = EmailField(...)
@@ -103,19 +103,19 @@ this class must define the following fields::
     last_login = DateTimeField(blank=True)
     is_active  = BooleanField(...)
 
-and the methods::
+  and the methods::
 
     is_authenticated()
 
-AttributeError will be raised in case of any of these is
-missing, also the following are recommended but not enforced::
+  AttributeError will be raised in case of any of these is
+  missing, also the following are recommended but not enforced::
 
     first_name = CharField(...)
     last_name  = CharField(...)
 
-by default `auth.User`_ is used. Check example application for
-implementation details, but first, please take a look to `User Profiles`_,
-it might solve your case.
+  by default `auth.User`_ is used. Check example application for
+  implementation details, but first, please take a look to `User Profiles`_,
+  it might solve your case.
 
 
 ------
