@@ -2,11 +2,19 @@
 from django.db import models 
 from django.conf import settings
 
-def get_user_model():
-    """Allow setting a custom (extended) user model"""
-    return models.get_model(*getattr(settings, 'SOCIAL_AUTH_USER_MODEL', 'auth.User').split('.'))
+# If User class is overrided, it must provide the following fields:
+#   username = CharField()
+#   email = EmailField()
+#   password = CharField()
+MANDATORY_FIELDS = ('username', 'email', 'password', 'last_login')
 
-User = get_user_model()
+try: # try to import User model override and validate needed fields
+    User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.split('.'))
+    if not all(User._meta.get_field(name) for name in MANDATORY_FIELDS):
+        raise AttributeError, 'Some mandatory field missing'
+except: # fail silently and fallback to auth.User on any error
+    from django.contrib.auth.models import User
+
 
 class UserSocialAuth(models.Model):
     """Social Auth association model"""

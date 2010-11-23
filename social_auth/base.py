@@ -4,10 +4,13 @@ import md5
 
 from django.conf import settings
 from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.models import UNUSABLE_PASSWORD
 
-from .models import UserSocialAuth, get_user_model
+from .models import UserSocialAuth
 
-User = get_user_model()
+# get User class, could not be auth.User
+User = UserSocialAuth._meta.get_field('user').rel.to
+
 
 class BaseAuth(object):
     """Base authentication class, new authenticators should subclass
@@ -97,7 +100,14 @@ class SocialAuthBackend(ModelBackend):
     def create_user(self, response, details):
         """Create user with unique username"""
         username = self.get_username(details)
-        user = User.objects.create_user(username, details.get('email', ''))
+        email = details.get('email', '')
+
+        if hasattr(User.objects, 'create_user'): # auth.User
+            user = User.objects.create_user(username, email)
+        else: # create user setting password to an unusable value
+            user = User.objects.create(username=username, email=email,
+                                       password=UNUSABLE_PASSWORD)
+
         self.update_user_details(user, details) # load details
         self.associate_auth(user, response, details) # save account association
         return user
@@ -129,13 +139,16 @@ class SocialAuthBackend(ModelBackend):
 
     def update_user_details(self, user, details):
         """Update user details with new (maybe) data"""
-        first_name = details.get('firstname') or user.first_name
-        last_name = details.get('lastname') or user.last_name
-        email = details.get('email') or user.email
-        if (user.first_name, user.last_name, user.email) != (first_name, last_name, email):
-            user.first_name = first_name
-            user.last_name = last_name
-            user.email = email
+        fields = user._meta.get_all_field_names()
+        changed = False
+
+        for name in ('first_name', 'last_name', 'email'):
+            value = details.get(name)
+            if name in fields and value != getattr(user, name, value):
+                setattr(user, name, value)
+                changed = True
+
+        if changed:
             user.save()
 
     def get_user_id(self, details, response):
@@ -147,7 +160,14 @@ class SocialAuthBackend(ModelBackend):
             {'email': <user email if any>,
              'username': <username if any>,
              'fullname': <user full name if any>,
-             'firstname': <user first name if any>,
-             'lastname': <user last name if any>}
+             'first_name': <user first name if any>,
+             'last_name': <user last name if any>}
         """
         raise NotImplementedError, 'Implement in subclass'
+
+    def get_user(self, user_id):
+        """Return user instance for @user_id"""
+        try:
+            return User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return None

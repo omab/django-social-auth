@@ -86,9 +86,36 @@ or::
 
 final user name will have an integer suffix in case it's already taken.
 
-- OAuth authentication will store access_token by default, set this value to False to avoid such behavior::
+- OAuth authentication will store access_token by default, set this value
+  to False to avoid such behavior::
 
     SOCIAL_AUTH_EXTRA_DATA = False
+
+- It's possible to override the used User class if needed::
+
+    SOCIAL_AUTH_USER_MODEL = 'myapp.CustomUser'
+
+this class must define the following fields::
+
+    username   = CharField(...)
+    email      = EmailField(...)
+    password   = CharField(...)
+    last_login = DateTimeField(blank=True)
+    is_active  = BooleanField(...)
+
+and the methods::
+
+    is_authenticated()
+
+AttributeError will be raised in case of any of these is
+missing, also the following are recommended but notenforced::
+
+    first_name = CharField(...)
+    last_name  = CharField(...)
+
+by default `auth.User`_ is used. Check example application for
+implementation details, but first, please take a look to `User Profiles`_,
+it might solve your case.
 
 
 ------
@@ -147,6 +174,15 @@ Bugs
 Several, maybe, please report :-)
 
 
+------------
+Contributors
+------------
+
+Attributions to whom deserves:
+
+- caioariede_ (Caio Ariede) 
+
+
 ----------
 Copyrights
 ----------
@@ -175,3 +211,6 @@ django-openid-auth::
 .. _Facebook development resources: http://developers.facebook.com/docs/authentication/
 .. _Facebook App Creation: http://developers.facebook.com/setup/
 .. _AUTHENTICATION_BACKENDS: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#authentication-backends
+.. _auth.User: http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/models.py#L186
+.. _User Profiles: http://www.djangobook.com/en/1.0/chapter12/#cn222
+.. _caioariede: https://github.com/caioariede

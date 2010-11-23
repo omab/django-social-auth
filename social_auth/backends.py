@@ -32,8 +32,8 @@ class TwitterBackend(OAuthBackend):
         return {'email': '', # not supplied
                 'username': response['screen_name'],
                 'fullname': response['name'],
-                'firstname': response['name'],
-                'lastname': ''}
+                'first_name': response['name'],
+                'last_name': ''}
 
 
 class FacebookBackend(OAuthBackend):
@@ -50,8 +50,8 @@ class FacebookBackend(OAuthBackend):
         return {'email': response.get('email', ''),
                 'username': response['name'],
                 'fullname': response['name'],
-                'firstname': response.get('first_name', ''),
-                'lastname': response.get('last_name', '')}
+                'first_name': response.get('first_name', ''),
+                'last_name': response.get('last_name', '')}
 
        
 class OpenIDBackend(SocialAuthBackend):
@@ -72,8 +72,8 @@ class OpenIDBackend(SocialAuthBackend):
         values = {'email': '',
                   'username': '',
                   'fullname': '',
-                  'firstname': '',
-                  'lastname': ''}
+                  'first_name': '',
+                  'last_name': ''}
 
         resp = sreg.SRegResponse.fromSuccessResponse(response)
         if resp:
@@ -87,20 +87,20 @@ class OpenIDBackend(SocialAuthBackend):
                             for src, alias in OLD_AX_ATTRS + AX_SCHEMA_ATTRS)
 
         fullname = values.get('fullname') or ''
-        firstname = values.get('firstname') or ''
-        lastname = values.get('lastname') or ''
+        first_name = values.get('first_name') or ''
+        last_name = values.get('last_name') or ''
 
-        if not fullname and firstname and lastname:
-            fullname = firstname + ' ' + lastname
+        if not fullname and first_name and last_name:
+            fullname = first_name + ' ' + last_name
         elif fullname:
             try: # Try to split name for django user storage
-                firstname, lastname = fullname.rsplit(' ', 1)
+                first_name, last_name = fullname.rsplit(' ', 1)
             except ValueError:
-                lastname = fullname
+                last_name = fullname
 
         values.update({'fullname': fullname,
-                       'firstname': firstname,
-                       'lastname': lastname,
+                       'first_name': first_name,
+                       'last_name': last_name,
                        'username': values.get('username') or \
-                                   (firstname.title() + lastname.title())})
+                                   (first_name.title() + last_name.title())})
         return values

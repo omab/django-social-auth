@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'social_auth',
+    'app',
 )
 
 AUTHENTICATION_BACKENDS = (

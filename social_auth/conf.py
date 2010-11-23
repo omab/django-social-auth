@@ -24,8 +24,8 @@ AX_SCHEMA_ATTRS = [
     # providers offer one but not the other.
     ('http://axschema.org/contact/email', 'email'),
     ('http://axschema.org/namePerson', 'fullname'),
-    ('http://axschema.org/namePerson/first', 'firstname'),
-    ('http://axschema.org/namePerson/last', 'lastname'),
+    ('http://axschema.org/namePerson/first', 'first_name'),
+    ('http://axschema.org/namePerson/last', 'last_name'),
     ('http://axschema.org/namePerson/friendly', 'nickname'),
 ]
 AX_ATTRS          = AX_SCHEMA_ATTRS + OLD_AX_ATTRS
