@@ -13,7 +13,6 @@ third parties.
 ------------
 Dependencies
 ------------
-
 Dependencies that must be meet to use the app:
 
 - OpenId support depends on python-openid_
@@ -27,7 +26,6 @@ Dependencies that must be meet to use the app:
 ------------
 Installation
 ------------
-
 - Add social_auth app to PYTHONPATH and installed apps::
 
     INSTALLED_APPS = (
@@ -51,8 +49,8 @@ Installation
     TWITTER_CONSUMER_SECRET = ''
     FACEBOOK_APP_ID         = ''
     FACEBOOK_API_SECRET     = ''
-    ORKUT_CONSUMER_KEY    = ''
-    ORKUT_CONSUMER_SECRET = ''
+    ORKUT_CONSUMER_KEY      = ''
+    ORKUT_CONSUMER_SECRET   = ''
 
 - Setup login urls::
 
@@ -133,8 +131,9 @@ providing endpoint Url.
 OAuth
 -----
 OAuth communication demands a set of keys exchange to validate the client
-authenticity prior to user approbation, Twitter, Facebook and Orkut facilitates
-these keys by application registration, see next sections for details.
+authenticity prior to user approbation. Twitter, Facebook and Orkut
+facilitates these keys by application registration, see next sections for
+details.
 
 
 -------
@@ -155,6 +154,7 @@ Further documentation at `Twitter development resources`_:
 
 - You don't need to specify the url callback
 
+
 --------
 Facebook
 --------
@@ -169,21 +169,21 @@ Further documentation at `Facebook development resources`_:
       FACEBOOK_APP_ID
       FACEBOOK_API_SECRET
 
--------
+
+-----
 Orkut
--------
+-----
 Orkut offers per application keys named "Consumer Key" and
 "Consumer Secret". To enable Orkut these two keys are needed.
 
-For getting your consumer_key and consumer_secret, you may look
-the following link for more information:
-
-http://www.google.com/support/a/bin/answer.py?hl=en&answer=162105
+Check `Google support`_ and `Orkut API`_ for details on getting
+your consumer_key and consumer_secret keys.
 
 - fill "Consumer Key" and "Consumer Secret" settings::
 
       ORKUT_CONSUMER_KEY
       ORKUT_CONSUMER_SECRET
+
 
 ----
 Bugs
@@ -194,7 +194,6 @@ Several, maybe, please report :-)
 ------------
 Contributors
 ------------
-
 Attributions to whom deserves:
 
 - caioariede_ (Caio Ariede) 
@@ -205,12 +204,12 @@ Copyrights
 ----------
 Base work is copyrighted by:
 
-django-twitter-oauth::
+- django-twitter-oauth::
 
     Original Copyright goes to Henrik Lied (henriklied)
     Code borrowed from https://github.com/henriklied/django-twitter-oauth
 
-django-openid-auth::
+- django-openid-auth::
 
     django-openid-auth -  OpenID integration for django.contrib.auth
     Copyright (C) 2007 Simon Willison
@@ -231,3 +230,5 @@ django-openid-auth::
 .. _auth.User: http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/models.py#L186
 .. _User Profiles: http://www.djangobook.com/en/1.0/chapter12/#cn222
 .. _caioariede: https://github.com/caioariede
+.. _Google support: http://www.google.com/support/a/bin/answer.py?hl=en&answer=162105
+.. _Orkut API:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating

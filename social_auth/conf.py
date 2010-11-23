@@ -5,7 +5,6 @@ TWITTER_REQUEST_TOKEN_URL       = 'https://%s/oauth/request_token' % TWITTER_SER
 TWITTER_ACCESS_TOKEN_URL        = 'https://%s/oauth/access_token' % TWITTER_SERVER
 TWITTER_AUTHORIZATION_URL       = 'http://%s/oauth/authorize' % TWITTER_SERVER
 TWITTER_CHECK_AUTH              = 'https://twitter.com/account/verify_credentials.json'
-TWITTER_UNAUTHORIZED_TOKEN_NAME = 'twitter_unauthorized_token'
 
 # Facebook configuration
 FACEBOOK_SERVER            = 'graph.facebook.com'
@@ -20,8 +19,7 @@ ORKUT_ACCESS_TOKEN_URL        = 'https://%s/accounts/OAuthGetAccessToken' % ORKU
 ORKUT_AUTHORIZATION_URL       = 'https://%s/accounts/OAuthAuthorizeToken' % ORKUT_SERVER
 ORKUT_SCOPE                   = 'http://orkut.gmodules.com/social/'
 ORKUT_REST_ENDPOINT           = 'http://www.orkut.com/social/rpc'
-ORKUT_UNAUTHORIZED_TOKEN_NAME = 'orkut_unauthorized_token'
-ORKUT_EXTRA_DATA              = 'age,gender,currentLocation'
+ORKUT_EXTRA_DATA              = ''
 
 # OpenID configuration
 OLD_AX_ATTRS = [

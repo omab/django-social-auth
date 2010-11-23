@@ -22,11 +22,6 @@ class TwitterBackend(OAuthBackend):
     """Twitter OAuth authentication backend"""
     name = 'twitter'
 
-    def authenticate(self, **kwargs):
-        """Authenticate user only if this was a Twitter request"""
-        if kwargs.pop('twitter', False):
-            return super(TwitterBackend, self).authenticate(**kwargs)
-
     def get_user_details(self, response):
         """Return user details from Twitter account"""
         return {'email': '', # not supplied
@@ -39,11 +34,6 @@ class TwitterBackend(OAuthBackend):
 class OrkutBackend(OAuthBackend):
     """Orkut OAuth authentication backend"""
     name = 'orkut'
-
-    def authenticate(self, **kwargs):
-        """Authenticate user only if this was a Orkut request"""
-        if kwargs.pop('orkut', False):
-            return super(OrkutBackend, self).authenticate(**kwargs)
 
     def get_user_details(self, response):
         """Return user details from Orkut account"""
@@ -58,11 +48,6 @@ class FacebookBackend(OAuthBackend):
     """Facebook OAuth authentication backend"""
     name = 'facebook'
 
-    def authenticate(self, **kwargs):
-        """Authenticate user only if this was a Facebook request"""
-        if kwargs.pop('facebook', False):
-            return super(FacebookBackend, self).authenticate(**kwargs)
-
     def get_user_details(self, response):
         """Return user details from Facebook account"""
         return {'email': response.get('email', ''),
@@ -75,11 +60,6 @@ class FacebookBackend(OAuthBackend):
 class OpenIDBackend(SocialAuthBackend):
     """Generic OpenID authentication backend"""
     name = 'openid'
-
-    def authenticate(self, **kwargs):
-        """Authenticate the user based on an OpenID response."""
-        if kwargs.pop('openid', False):
-            return super(OpenIDBackend, self).authenticate(**kwargs)
 
     def get_user_id(self, details, response):
         """Return user unique id provided by service"""

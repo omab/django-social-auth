@@ -19,6 +19,7 @@ def home(request):
             <ul>
               <li><a href="/login/twitter/">Twitter</a></li>
               <li><a href="/login/facebook/">Facebook</a></li>
+              <li><a href="/login/orkut/">Orkut</a></li>
             </ul>
           </div>
           <div>

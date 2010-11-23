@@ -44,14 +44,20 @@ class SocialAuthBackend(ModelBackend):
     name = '' # provider name, it's stored in database
 
     def authenticate(self, **kwargs):
-        """Authenticate the user based on an OAuth response."""
-        # Require that the OAuth response be passed in as a keyword
-        # argument, to make sure we don't match the username/password
-        # calling conventions of authenticate.
-        response = kwargs.get('response')
-        if response is None:
+        """Authenticate user using social credentials
+
+        Authentication is made if this is the correct backend, backend
+        verification is made by kwargs inspection for current backend
+        name presence.
+        """
+
+        # Validate backend and arguments. Require that the OAuth response
+        # be passed in as a keyword argument, to make sure we don't match
+        # the username/password calling conventions of authenticate.
+        if not (self.name and kwargs.get(self.name) and 'response' in kwargs):
             return None
 
+        response = kwargs.get('response')
         details = self.get_user_details(response)
         uid = self.get_user_id(details, response)
         try:
