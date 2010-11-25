@@ -44,7 +44,6 @@ def home(request):
 
 @login_required
 def done(request):
-    user = request.user
     return HttpResponse(Template(
     """
     <html>
@@ -62,9 +61,27 @@ def done(request):
           <tr><th>Last name:</th> <td>{{ user.last_name|default:"Not provided" }}</td></tr>
         </table>
         <p><a href="/logout/">Logout</a></p>
+
+        <h2>Associate new credentials:</h2>
+        <div>
+          <ul>
+            <li><a href="/associate/twitter/">Twitter</a></li>
+            <li><a href="/associate/facebook/">Facebook</a></li>
+            <li><a href="/associate/orkut/">Orkut</a></li>
+            <li><a href="/associate/google/">Google</a></li>
+            <li><a href="/associate/yahoo/">Yahoo</a></li>
+            <li>
+              <form action="/associate/openid/" method="post">{% csrf_token %}
+                <label for="openid_identifier">Other provider:</label>
+                <input id="openid_identifier" type="text" value="" name="openid_identifier" />
+                <input type="submit" />
+              </form>
+            </li>
+          </ul>
+        </div>
       </body>
     </html>
-    """).render(Context({'user':user})),
+    """).render(RequestContext(request)),
     content_type='text/html;charset=UTF-8')
 
 

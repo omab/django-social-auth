@@ -1,5 +1,5 @@
 """Social auth models"""
-from django.db import models 
+from django.db import models
 from django.conf import settings
 
 # If User class is overrided, it must provide the following fields:

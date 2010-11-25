@@ -10,6 +10,29 @@ implements a common interface to define new authentication providers from
 third parties.
 
 
+--------
+Features
+--------
+This app provides user registration and login using social sites credetials,
+some features are:
+
+- Registration and Login using social sites using the following providers
+  at the moment:
+
+    * `Google OpenID`_
+    * `Yahoo OpenID`_
+    * OpenID like myOpenID_
+    * `Twitter OAuth`_
+    * `Facebook OAuth`_
+    * `Orkut OAuth`_
+
+- Basic user data population
+
+- Multiple social accounts association to single users
+
+- Custom User model override if needed (`auth.User`_ by default)
+
+
 ------------
 Dependencies
 ------------
@@ -60,9 +83,11 @@ Installation
 
   Check Django documentation at `Login url`_ and `Login redirect url`_
 
-- Configure complete url name to avoid possible clashes::
+- Configure authentication and association complete URL names to avoid
+  possible clashes::
 
-    SOCIAL_AUTH_COMPLETE_URL_NAME = 'namespace:complete'
+    SOCIAL_AUTH_COMPLETE_URL_NAME  = 'namespace:complete'
+    SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'namespace:association_complete'
 
 - Add urls entries::
 
@@ -122,7 +147,7 @@ Installation
 ------
 OpenId
 ------
-OpenId support is simpler to implement than OAuth, by Google and Yahoo 
+OpenId support is simpler to implement than OAuth, by Google and Yahoo
 providers are supported by default, others are supported by POST method
 providing endpoint Url.
 
@@ -196,7 +221,7 @@ Contributors
 ------------
 Attributions to whom deserves:
 
-- caioariede_ (Caio Ariede) 
+- caioariede_ (Caio Ariede)
 
 
 ----------
@@ -232,3 +257,9 @@ Base work is copyrighted by:
 .. _caioariede: https://github.com/caioariede
 .. _Google support: http://www.google.com/support/a/bin/answer.py?hl=en&answer=162105
 .. _Orkut API:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
+.. _Google OpenID: http://code.google.com/apis/accounts/docs/OpenID.html
+.. _Yahoo OpenID: http://openid.yahoo.com/
+.. _Twitter OAuth: http://dev.twitter.com/pages/oauth_faq
+.. _Facebook OAuth: http://developers.facebook.com/docs/authentication/
+.. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
+.. _myOpenID: https://www.myopenid.com/

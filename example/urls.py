@@ -11,6 +11,6 @@ urlpatterns = patterns('',
     url(r'^done/$', done, name='done'), 
     url(r'^error/$', error, name='error'),
     url(r'^logout/$', logout, name='logout'), 
-    url(r'', include('social_auth.urls', namespace='social')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'', include('social_auth.urls', namespace='social')),
 )

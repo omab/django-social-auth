@@ -47,14 +47,14 @@ class OpenIdAuth(BaseAuth):
         return openid_request.htmlMarkup(trust_root, return_to,
                                          form_tag_attrs=form_tag)
 
-    def auth_complete(self):
+    def auth_complete(self, *args, **kwargs):
         response = self.consumer().complete(dict(self.request.REQUEST.items()),
                                             self.request.build_absolute_uri())
         if not response:
             raise ValueError, 'This is an OpenID relying party endpoint'
         elif response.status == SUCCESS:
-            return authenticate(**{'response': response,
-                                   OpenIDBackend.name: True})
+            kwargs.update({'response': response, OpenIDBackend.name: True})
+            return authenticate(*args, **kwargs)
         elif response.status == FAILURE:
             raise ValueError, 'OpenID authentication failed: %s' % response.message
         elif response.status == CANCEL:
@@ -159,7 +159,7 @@ class ConsumerBasedOAuth(BaseOAuth):
         self.request.session[name] = token.to_string()
         return self.oauth_request(token, self.AUTHORIZATION_URL).to_url()
 
-    def auth_complete(self):
+    def auth_complete(self, *args, **kwargs):
         """Returns user, might be logged in"""
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
         unauthed_token = self.request.session.get(name)
@@ -175,7 +175,8 @@ class ConsumerBasedOAuth(BaseOAuth):
         if data is not None:
             data['access_token'] = access_token.to_string()
 
-        return authenticate(**{'response': data, self.AUTH_BACKEND.name: True})
+        kwargs.update({'response': data, self.AUTH_BACKEND.name: True})
+        return authenticate(*args, **kwargs)
 
     def unauthorized_token(self):
         """Return request for unauthorized token (first stage)"""
@@ -307,24 +308,25 @@ class FacebookAuth(BaseOAuth):
                 'redirect_uri': self.redirect_uri}
         return FACEBOOK_AUTHORIZATION_URL + '?' + urllib.urlencode(args)
 
-    def auth_complete(self):
+    def auth_complete(self, *args, **kwargs):
         """Returns user, might be logged in"""
         if 'code' in self.request.GET:
-            args = {'client_id': settings.FACEBOOK_APP_ID,
-                    'redirect_uri': self.redirect_uri,
-                    'client_secret': settings.FACEBOOK_API_SECRET,
-                    'code': self.request.GET['code']}
-            url = FACEBOOK_ACCESS_TOKEN_URL + '?' + urllib.urlencode(args)
+            url = FACEBOOK_ACCESS_TOKEN_URL + '?' + \
+                  urllib.urlencode({'client_id': settings.FACEBOOK_APP_ID,
+                                'redirect_uri': self.redirect_uri,
+                                'client_secret': settings.FACEBOOK_API_SECRET,
+                                'code': self.request.GET['code']})
             response = cgi.parse_qs(urllib.urlopen(url).read())
-        
+
             access_token = response['access_token'][0]
             data = self.user_data(access_token)
             if data is not None:
                 if 'error' in data:
                     raise ValueError, 'Authentication error'
                 data['access_token'] = access_token
-            return authenticate(**{'response': data,
-                                   FacebookBackend.name: True})
+
+            kwargs.update({'response': data, FacebookBackend.name: True})
+            return authenticate(*args, **kwargs)
         else:
             raise ValueError, 'Authentication error'
 
