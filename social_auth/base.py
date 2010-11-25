@@ -61,15 +61,15 @@ class SocialAuthBackend(ModelBackend):
         details = self.get_user_details(response)
         uid = self.get_user_id(details, response)
         try:
-            oauth_user = UserSocialAuth.objects.select_related('user')\
-                                               .get(provider=self.name,
-                                                    uid=uid)
+            auth_user = UserSocialAuth.objects.select_related('user')\
+                                              .get(provider=self.name,
+                                                   uid=uid)
         except UserSocialAuth.DoesNotExist:
             if not getattr(settings, 'SOCIAL_AUTH_CREATE_USERS', False):
                 return None
             user = self.create_user(response, details)
         else:
-            user = oauth_user.user
+            user = auth_user.user
             self.update_user_details(user, details)
         return user
     
