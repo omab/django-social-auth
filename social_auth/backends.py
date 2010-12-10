@@ -96,11 +96,8 @@ class SocialAuthBackend(ModelBackend):
                                            password=UNUSABLE_PASSWORD)
 
         # update details and associate account with social credentials
-        try:
-            self.update_user_details(user, response, details)
-            self.associate_auth(user, response, details)
-        except Exception, e:
-            print str(e)
+        self.update_user_details(user, response, details)
+        self.associate_auth(user, response, details)
         return user
 
     def associate_auth(self, user, response, details):
@@ -211,8 +208,6 @@ class FacebookBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Facebook account"""
-        import pprint
-        pprint.pprint(response)
         return {'email': response.get('email', ''),
                 'username': response['name'],
                 'fullname': response['name'],
