@@ -26,7 +26,8 @@ some features are:
     * `Facebook OAuth`_
     * `Orkut OAuth`_
 
-- Basic user data population
+- Basic user data population and signaling, to allows custom fields values
+  from providers response
 
 - Multiple social accounts association to single users
 
@@ -142,6 +143,25 @@ Installation
   by default `auth.User`_ is used. Check example application for
   implementation details, but first, please take a look to `User Profiles`_,
   it might solve your case.
+
+
+-------
+Signals
+-------
+A pre_update signal is sent when user data is about to be updated with new
+values from auth service provider, this apply to new users and already
+existent ones. This is useful to update custom user fields or `User Profiles`_,
+for example, to store user gender, location, etc. Example::
+
+    from django.dispatch import receiver
+
+    from social_auth.signals import pre_save
+    from social_auth.backends import FacebookBackend
+
+    @receiver(pre_save, sender=FacebookBackend)
+    def facebook_extra_values(sender, user, response, details):
+        user.gender = response.get('gender')
+        return True
 
 
 ------

@@ -34,6 +34,7 @@ def complete(request, backend):
         return HttpResponseServerError('Incorrect authentication service')
     backend = BACKENDS[backend](request, request.path)
     user = backend.auth_complete()
+    print "USER:", user
     if user and user.is_active:
         login(request, user)
         url = request.session.pop(REDIRECT_FIELD_NAME, '') or \

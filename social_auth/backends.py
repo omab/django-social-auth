@@ -11,6 +11,7 @@ from django.contrib.auth.models import UNUSABLE_PASSWORD
 
 from .models import UserSocialAuth
 from .conf import OLD_AX_ATTRS, AX_SCHEMA_ATTRS
+from .signals import pre_update
 
 # get User class, could not be auth.User
 User = UserSocialAuth._meta.get_field('user').rel.to
@@ -47,7 +48,7 @@ class SocialAuthBackend(ModelBackend):
             user = self.create_user(details=details, *args, **kwargs)
         else:
             user = auth_user.user
-            self.update_user_details(user, details)
+            self.update_user_details(user, response, details)
         return user
 
     def get_username(self, details):
@@ -95,8 +96,11 @@ class SocialAuthBackend(ModelBackend):
                                            password=UNUSABLE_PASSWORD)
 
         # update details and associate account with social credentials
-        self.update_user_details(user, details)
-        self.associate_auth(user, response, details)
+        try:
+            self.update_user_details(user, response, details)
+            self.associate_auth(user, response, details)
+        except Exception, e:
+            print str(e)
         return user
 
     def associate_auth(self, user, response, details):
@@ -124,19 +128,22 @@ class SocialAuthBackend(ModelBackend):
         """Return default blank user extra data"""
         return ''
 
-    def update_user_details(self, user, details):
+    def update_user_details(self, user, response, details):
         """Update user details with new (maybe) data"""
-        fields = (name for name in ('first_name', 'last_name', 'email')
-                        if user._meta.get_field(name))
         changed = False
-
-        for name in fields:
-            value = details.get(name)
+        for name, value in details.iteritems():
             if value and value != getattr(user, name, value):
                 setattr(user, name, value)
                 changed = True
 
-        if changed:
+        # Fire a pre-update signal sending current backend instance,
+        # user instance (created or retrieved from database), service
+        # response and processed details, signal handlers must return
+        # True or False to signal that something has changed
+        updated = filter(bool, pre_update.send(sender=self, user=user,
+                                               response=response,
+                                               details=details))
+        if changed or len(updated) > 0:
             user.save()
 
     def get_user_id(self, details, response):
@@ -204,6 +211,8 @@ class FacebookBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Facebook account"""
+        import pprint
+        pprint.pprint(response)
         return {'email': response.get('email', ''),
                 'username': response['name'],
                 'fullname': response['name'],

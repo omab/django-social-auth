@@ -2,7 +2,8 @@
 from django.db import models
 from django.conf import settings
 
-# If User class is overrided, it must provide the following fields:
+# If User class is overrided, it must provide the following fields,
+# or it won't be playing nicely with auth module:
 #
 #   username = CharField()
 #   email = EmailField()
