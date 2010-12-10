@@ -13,7 +13,6 @@ from django.conf import settings
 from django.utils import simplejson
 from django.contrib.auth import authenticate
 
-from .base import BaseAuth
 from .store import DjangoOpenIDStore
 from .backends import TwitterBackend, OrkutBackend, FacebookBackend, \
                       OpenIDBackend
@@ -26,6 +25,32 @@ from .conf import AX_ATTRS, SREG_ATTR, OPENID_ID_FIELD, SESSION_NAME, \
                   ORKUT_REQUEST_TOKEN_URL, ORKUT_ACCESS_TOKEN_URL, \
                   ORKUT_AUTHORIZATION_URL, ORKUT_REST_ENDPOINT, \
                   ORKUT_EXTRA_DATA
+
+
+class BaseAuth(object):
+    """Base authentication class, new authenticators should subclass
+    and implement needed methods"""
+    def __init__(self, request, redirect):
+        self.request = request
+        self.redirect = redirect
+
+    def auth_url(self):
+        """Must return redirect URL to auth provider"""
+        raise NotImplementedError, 'Implement in subclass'
+
+    def auth_html(self):
+        """Must return login HTML content returned by provider"""
+        raise NotImplementedError, 'Implement in subclass'
+
+    def auth_complete(self, *args, **kwargs):
+        """Completes loging process, must return user instance"""
+        raise NotImplementedError, 'Implement in subclass'
+
+    @property
+    def uses_redirect(self):
+        """Return True if this provider uses redirect url method,
+        otherwise return false."""
+        return True
 
 
 class OpenIdAuth(BaseAuth):
