@@ -13,7 +13,7 @@ third parties.
 --------
 Features
 --------
-This app provides user registration and login using social sites credetials,
+This app provides user registration and login using social sites credentials,
 some features are:
 
 - Registration and Login using social sites using the following providers
@@ -21,7 +21,7 @@ some features are:
 
     * `Google OpenID`_
     * `Yahoo OpenID`_
-    * OpenID like myOpenID_
+    * OpenId_ like myOpenID_
     * `Twitter OAuth`_
     * `Facebook OAuth`_
     * `Orkut OAuth`_
@@ -39,9 +39,9 @@ Dependencies
 ------------
 Dependencies that must be meet to use the app:
 
-- OpenId support depends on python-openid_
+- OpenId_ support depends on python-openid_
 
-- OAuth support depends on python-oauth_
+- OAuth_ support depends on python-oauth_
 
 - Twitter and Facebook support demands an application registration
   on their corresponding sites.
@@ -113,7 +113,7 @@ Installation
 
   final user name will have an integer suffix in case it's already taken.
 
-- OAuth authentication will store access_token by default, set this value
+- OAuth_ authentication will store access_token by default, set this value
   to False to avoid such behavior::
 
     SOCIAL_AUTH_EXTRA_DATA = False
@@ -134,13 +134,15 @@ Installation
 
     is_authenticated()
 
-  AttributeError will be raised in case of any of these is
-  missing, also the following are recommended but not enforced::
+  These are needed to ensure django-auth integration. AttributeError is raised
+  if any of these are missing.
+
+  Also the following are recommended but not enforced::
 
     first_name = CharField(...)
     last_name  = CharField(...)
 
-  by default `auth.User`_ is used. Check example application for
+  By default `auth.User`_ is used. Check example application for
   implementation details, but first, please take a look to `User Profiles`_,
   it might solve your case.
 
@@ -167,15 +169,15 @@ for example, to store user gender, location, etc. Example::
 ------
 OpenId
 ------
-OpenId support is simpler to implement than OAuth, by Google and Yahoo
+OpenId_ support is simpler to implement than OAuth_. Google and Yahoo
 providers are supported by default, others are supported by POST method
-providing endpoint Url.
+providing endpoint URL.
 
 
 -----
 OAuth
 -----
-OAuth communication demands a set of keys exchange to validate the client
+OAuth_ communication demands a set of keys exchange to validate the client
 authenticity prior to user approbation. Twitter, Facebook and Orkut
 facilitates these keys by application registration, see next sections for
 details.
@@ -204,7 +206,7 @@ Further documentation at `Twitter development resources`_:
 Facebook
 --------
 Facebook works similar to Twitter but it's simpler to setup and
-redirect url is passed as a parameter when issuing an authorization.
+redirect URL is passed as a parameter when issuing an authorization.
 Further documentation at `Facebook development resources`_:
 
 - Register a new app at `Facebook App Creation`_, and
@@ -260,6 +262,8 @@ Base work is copyrighted by:
     Copyright (C) 2007 Simon Willison
     Copyright (C) 2008-2010 Canonical Ltd.
 
+.. _OpenId: http://openid.net/
+.. _OAuth: http://oauth.net/
 .. _django-twitter-oauth: https://github.com/henriklied/django-twitter-oauth
 .. _django-openid-auth: https://launchpad.net/django-openid-auth
 .. _python-openid: http://pypi.python.org/pypi/python-openid/
