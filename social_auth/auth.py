@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate
 
 from .store import DjangoOpenIDStore
 from .backends import TwitterBackend, OrkutBackend, FacebookBackend, \
-                      OpenIDBackend
+                      OpenIDBackend, GoogleBackend, YahooBackend
 from .conf import AX_ATTRS, SREG_ATTR, OPENID_ID_FIELD, SESSION_NAME, \
                   OPENID_GOOGLE_URL, OPENID_YAHOO_URL, TWITTER_SERVER, \
                   TWITTER_REQUEST_TOKEN_URL, TWITTER_ACCESS_TOKEN_URL, \
@@ -54,7 +54,12 @@ class BaseAuth(object):
 
 
 class OpenIdAuth(BaseAuth):
-    """OpenId process handling"""
+    """
+    OpenId process handling
+        @AUTH_BACKEND   Authorization backend related with this service
+    """
+    AUTH_BACKEND = OpenIDBackend
+
     def auth_url(self):
         openid_request = self.setup_request()
         # Construct completion URL, including page we should redirect to
@@ -78,7 +83,7 @@ class OpenIdAuth(BaseAuth):
         if not response:
             raise ValueError, 'This is an OpenID relying party endpoint'
         elif response.status == SUCCESS:
-            kwargs.update({'response': response, OpenIDBackend.name: True})
+            kwargs.update({'response': response, self.AUTH_BACKEND.name: True})
             return authenticate(*args, **kwargs)
         elif response.status == FAILURE:
             raise ValueError, 'OpenID authentication failed: %s' % response.message
@@ -140,6 +145,8 @@ class OpenIdAuth(BaseAuth):
 
 class GoogleAuth(OpenIdAuth):
     """Google OpenID authentication"""
+    AUTH_BACKEND = GoogleBackend
+
     def openid_url(self):
         """Return Google OpenID service url"""
         return OPENID_GOOGLE_URL
@@ -147,6 +154,8 @@ class GoogleAuth(OpenIdAuth):
 
 class YahooAuth(OpenIdAuth):
     """Yahoo OpenID authentication"""
+    AUTH_BACKEND = YahooBackend
+
     def openid_url(self):
         """Return Yahoo OpenID service url"""
         return OPENID_YAHOO_URL

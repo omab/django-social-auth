@@ -5,6 +5,8 @@ from django.template import Template, Context, RequestContext
 
 
 def home(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('done')
     return HttpResponse(Template(
     """
     <html>
@@ -44,6 +46,7 @@ def home(request):
 
 @login_required
 def done(request):
+    names = request.user.social_auth.values_list('provider', flat=True)
     return HttpResponse(Template(
     """
     <html>
@@ -65,11 +68,11 @@ def done(request):
         <h2>Associate new credentials:</h2>
         <div>
           <ul>
-            <li><a href="/associate/twitter/">Twitter</a></li>
-            <li><a href="/associate/facebook/">Facebook</a></li>
-            <li><a href="/associate/orkut/">Orkut</a></li>
-            <li><a href="/associate/google/">Google</a></li>
-            <li><a href="/associate/yahoo/">Yahoo</a></li>
+            <li><a href="/associate/twitter/">Twitter</a> {% if twitter %}(associated){% endif %}</li>
+            <li><a href="/associate/facebook/">Facebook</a> {% if facebook %}(associated){% endif %}</li>
+            <li><a href="/associate/orkut/">Orkut</a> {% if orkut %}(associated){% endif %}</li>
+            <li><a href="/associate/google/">Google</a> {% if google %}(associated){% endif %}</li>
+            <li><a href="/associate/yahoo/">Yahoo</a> {% if yahoo %}(associated){% endif %}</li>
             <li>
               <form action="/associate/openid/" method="post">{% csrf_token %}
                 <label for="openid_identifier">Other provider:</label>
@@ -81,7 +84,8 @@ def done(request):
         </div>
       </body>
     </html>
-    """).render(RequestContext(request)),
+    """).render(RequestContext(request, dict((name.lower(), True)
+                                                for name in names))),
     content_type='text/html;charset=UTF-8')
 
 

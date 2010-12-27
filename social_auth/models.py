@@ -1,30 +1,33 @@
 """Social auth models"""
+import warnings
+
 from django.db import models
 from django.conf import settings
 
 # If User class is overrided, it must provide the following fields,
 # or it won't be playing nicely with auth module:
 #
-#   username = CharField()
-#   email = EmailField()
-#   password = CharField()
+#   username   = CharField()
+#   last_login = DateTimeField()
 #   is_active  = BooleanField()
 #
 # and methods:
 #
 #   def is_authenticated():
 #       ...
-MANDATORY_FIELDS = ('username', 'email', 'password', 'last_login')
-MANDATORY_METHODS = ('is_authenticated',)
+RECOMMENDED_FIELDS = ('username', 'last_login', 'is_active')
+RECOMMENDED_METHODS = ('is_authenticated',)
 
-try: # try to import User model override and validate needed fields
+if getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None):
     User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.split('.'))
-    if not all(User._meta.get_field(name) for name in MANDATORY_FIELDS):
-        raise AttributeError, 'Some mandatory field missing'
-    if not all(callable(getattr(User, name, None))
-                    for name in MANDATORY_METHODS):
-        raise AttributeError, 'Some mandatory methods missing'
-except AttributeError: # fail silently on missing setting
+    missing = list(set(RECOMMENDED_FIELDS) - 
+                   set(User._meta.get_all_field_names())) + \
+              [name for name in RECOMMENDED_METHODS
+                      if not callable(getattr(User, name, None))]
+    if missing:
+        warnings.warn('Missing recommended attributes or methods '\
+                      'in custom User model: "%s"' % ', '.join(missing))
+else:
     from django.contrib.auth.models import User
 
 
@@ -34,6 +37,10 @@ class UserSocialAuth(models.Model):
     provider = models.CharField(max_length=32)
     uid = models.CharField(max_length=255)
     extra_data = models.TextField(default='', blank=True)
+
+    def __unicode__(self):
+        """Return associated user unicode representation"""
+        return unicode(self.user)
 
     class Meta:
         """Meta data"""
