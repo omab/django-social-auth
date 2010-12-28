@@ -20,7 +20,7 @@ RECOMMENDED_METHODS = ('is_authenticated',)
 
 if getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None):
     User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.split('.'))
-    missing = list(set(RECOMMENDED_FIELDS) - 
+    missing = list(set(RECOMMENDED_FIELDS) -
                    set(User._meta.get_all_field_names())) + \
               [name for name in RECOMMENDED_METHODS
                       if not callable(getattr(User, name, None))]
@@ -38,13 +38,13 @@ class UserSocialAuth(models.Model):
     uid = models.CharField(max_length=255)
     extra_data = models.TextField(default='', blank=True)
 
-    def __unicode__(self):
-        """Return associated user unicode representation"""
-        return unicode(self.user)
-
     class Meta:
         """Meta data"""
         unique_together = ('provider', 'uid')
+
+    def __unicode__(self):
+        """Return associated user unicode representation"""
+        return unicode(self.user)
 
 
 class Nonce(models.Model):
@@ -58,7 +58,7 @@ class Association(models.Model):
     """OpenId account association"""
     server_url = models.TextField()
     handle = models.CharField(max_length=255)
-    secret = models.CharField(max_length=255) # Stored base64 encoded
+    secret = models.CharField(max_length=255)  # Stored base64 encoded
     issued = models.IntegerField()
     lifetime = models.IntegerField()
     assoc_type = models.CharField(max_length=64)

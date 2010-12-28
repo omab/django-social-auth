@@ -21,7 +21,7 @@ User = UserSocialAuth._meta.get_field('user').rel.to
 class SocialAuthBackend(ModelBackend):
     """A django.contrib.auth backend that authenticates the user based on
     a authentication provider response"""
-    name = '' # provider name, it's stored in database
+    name = ''  # provider name, it's stored in database
 
     def authenticate(self, *args, **kwargs):
         """Authenticate user using social credentials
@@ -46,7 +46,7 @@ class SocialAuthBackend(ModelBackend):
                                                      uid=uid)
         except UserSocialAuth.DoesNotExist:
             user = kwargs.get('user')
-            if user is None: # new user
+            if user is None:  # new user
                 if not getattr(settings, 'SOCIAL_AUTH_CREATE_USERS', True):
                     return None
                 username = self.username(details)
@@ -127,7 +127,7 @@ class SocialAuthBackend(ModelBackend):
 
     def get_user_id(self, details, response):
         """Must return a unique ID from values returned on details"""
-        raise NotImplementedError, 'Implement in subclass'
+        raise NotImplementedError('Implement in subclass')
 
     def get_user_details(self, response):
         """Must return user details in a know internal struct:
@@ -137,7 +137,7 @@ class SocialAuthBackend(ModelBackend):
              'first_name': <user first name if any>,
              'last_name': <user last name if any>}
         """
-        raise NotImplementedError, 'Implement in subclass'
+        raise NotImplementedError('Implement in subclass')
 
     def get_user(self, user_id):
         """Return user instance for @user_id"""
@@ -165,7 +165,7 @@ class TwitterBackend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Twitter account"""
         return {USERNAME: response['screen_name'],
-                'email': '', # not supplied
+                'email': '',  # not supplied
                 'fullname': response['name'],
                 'first_name': response['name'],
                 'last_name': ''}
@@ -228,7 +228,7 @@ class OpenIDBackend(SocialAuthBackend):
         if not fullname and first_name and last_name:
             fullname = first_name + ' ' + last_name
         elif fullname:
-            try: # Try to split name for django user storage
+            try:  # Try to split name for django user storage
                 first_name, last_name = fullname.rsplit(' ', 1)
             except ValueError:
                 last_name = fullname
@@ -243,6 +243,7 @@ class OpenIDBackend(SocialAuthBackend):
 class GoogleBackend(OpenIDBackend):
     """Google OpenID authentication backend"""
     name = 'google'
+
 
 class YahooBackend(OpenIDBackend):
     """Yahoo OpenID authentication backend"""

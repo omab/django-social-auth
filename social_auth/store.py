@@ -14,7 +14,7 @@ class DjangoOpenIDStore(OpenIDStore):
     def __init__(self):
         """Init method"""
         super(DjangoOpenIDStore, self).__init__()
-        self.max_nonce_age = 6 * 60 * 60 # Six hours
+        self.max_nonce_age = 6 * 60 * 60  # Six hours
 
     def storeAssociation(self, server_url, association):
         """Store new assocition if doesn't exist"""
@@ -47,7 +47,7 @@ class DjangoOpenIDStore(OpenIDStore):
             else:
                 associations.append(association)
 
-        if expired: # clear expired associations
+        if expired:  # clear expired associations
             Association.objects.filter(pk__in=expired).delete()
 
         if associations:

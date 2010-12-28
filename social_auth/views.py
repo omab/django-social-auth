@@ -23,9 +23,10 @@ BACKENDS = {
 
 def auth(request, backend):
     """Start authentication process"""
-    complete = getattr(settings, 'SOCIAL_AUTH_COMPLETE_URL_NAME', 'complete')
+    complete_url = getattr(settings, 'SOCIAL_AUTH_COMPLETE_URL_NAME',
+                           'complete')
     redirect = getattr(settings, 'LOGIN_REDIRECT_URL', '')
-    return auth_process(request, backend, complete, redirect)
+    return auth_process(request, backend, complete_url, redirect)
 
 
 def complete(request, backend):
@@ -46,10 +47,10 @@ def complete(request, backend):
 @login_required
 def associate(request, backend):
     """Authentication starting process"""
-    complete = getattr(settings, 'SOCIAL_AUTH_ASSOCIATE_URL_NAME',
-                       'associate_complete')
+    complete_url = getattr(settings, 'SOCIAL_AUTH_ASSOCIATE_URL_NAME',
+                           'associate_complete')
     redirect = getattr(settings, 'LOGIN_REDIRECT_URL', '')
-    return auth_process(request, backend, complete, redirect)
+    return auth_process(request, backend, complete_url, redirect)
 
 
 @login_required
