@@ -128,11 +128,13 @@ class SocialAuthBackend(ModelBackend):
     def update_user_details(self, user, response, details):
         """Update user details with new (maybe) data"""
         changed = False
-        for name, value in details.iteritems():
-            if value and value != getattr(user, name, value):
-                setattr(user, name, value)
-                changed = True
-
+        
+        if not getattr(settings, 'SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False):
+            for name, value in details.iteritems():
+                if value and value != getattr(user, name, value):
+                    setattr(user, name, value)
+                    changed = True
+                
         # Fire a pre-update signal sending current backend instance,
         # user instance (created or retrieved from database), service
         # response and processed details, signal handlers must return
@@ -140,7 +142,14 @@ class SocialAuthBackend(ModelBackend):
         updated = filter(bool, pre_update.send(sender=self, user=user,
                                                response=response,
                                                details=details))
-        if changed or len(updated) > 0:
+        # Looking for at least one update
+        has_update = False
+        for result in updated:
+            if result[1]:
+                has_update = True
+                break
+        
+        if changed or has_update:
             user.save()
 
     def get_user_id(self, details, response):
