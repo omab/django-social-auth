@@ -273,7 +273,7 @@ Attributions to whom deserves:
 
 - jezdez_ (Jannis Leidel):
 
-  - Documentation improvements
+  - Improvements and documentation update
 
 
 ----------
