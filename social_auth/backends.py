@@ -7,7 +7,7 @@ from openid.extensions import ax, sreg
 
 from django.conf import settings
 from django.contrib.auth.backends import ModelBackend
-from django.utils.hashlib import md5_constructor
+from django.utils.hashcompat import md5_constructor
 
 from .models import UserSocialAuth
 from .conf import OLD_AX_ATTRS, AX_SCHEMA_ATTRS
