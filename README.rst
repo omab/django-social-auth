@@ -81,11 +81,11 @@ Configuration
 - Add desired authentication backends to AUTHENTICATION_BACKENDS_ setting::
 
     AUTHENTICATION_BACKENDS = (
-        'social_auth.backends.TwitterOAuthBackend',
-        'social_auth.backends.FacebookOAuthBackend',
-        'social_auth.backends.OrkutOAuthBackend',
-        'social_auth.backends.GoogleOpenIDBackend',
-        'social_auth.backends.YahooOpenIDBackend',
+        'social_auth.backends.TwitterBackend',
+        'social_auth.backends.FacebookBackend',
+        'social_auth.backends.OrkutBackend',
+        'social_auth.backends.GoogleBackend',
+        'social_auth.backends.YahooBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
