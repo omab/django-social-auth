@@ -267,9 +267,13 @@ Attributions to whom deserves:
 
   - Improvements and Orkut support
 
-- krvss_ (Caio Ariede):
+- krvss_ (Stas Kravets):
 
   - Initial setup.py configuration
+
+- jezdez_ (Jannis Leidel):
+
+  - Documentation improvements
 
 
 ----------
@@ -307,8 +311,6 @@ Base work is copyrighted by:
 .. _dnsmasq: http://www.thekelleys.org.uk/dnsmasq/doc.html
 .. _Facebook development resources: http://developers.facebook.com/docs/authentication/
 .. _Facebook App Creation: http://developers.facebook.com/setup/
-.. _caioariede: https://github.com/caioariede
-.. _krvss: https://github.com/krvss
 .. _Google support: http://www.google.com/support/a/bin/answer.py?hl=en&answer=162105
 .. _Orkut API:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _Google OpenID: http://code.google.com/apis/accounts/docs/OpenID.html
@@ -319,3 +321,6 @@ Base work is copyrighted by:
 .. _myOpenID: https://www.myopenid.com/
 .. _pypi: http://pypi.python.org/pypi/django-social-auth/
 .. _github: https://github.com/omab/django-social-auth
+.. _caioariede: https://github.com/caioariede
+.. _krvss: https://github.com/krvss
+.. _jezdez: https://github.com/jezdez
