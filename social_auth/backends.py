@@ -1,8 +1,9 @@
 """
 Authentication backeds for django.contrib.auth AUTHENTICATION_BACKENDS setting
 """
-import os
-import md5
+from os import urandom
+from hashlib import md5
+
 from openid.extensions import ax, sreg
 
 from django.conf import settings
@@ -66,7 +67,7 @@ class SocialAuthBackend(ModelBackend):
         """
         def get_random_username():
             """Return hash from random string cut at 30 chars"""
-            return md5.md5(str(os.urandom(10))).hexdigest()[:30]
+            return md5(str(urandom(10))).hexdigest()[:30]
 
         if getattr(settings, 'SOCIAL_AUTH_FORCE_RANDOM_USERNAME', False):
             username = get_random_username()
