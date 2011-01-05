@@ -263,7 +263,13 @@ Contributors
 ------------
 Attributions to whom deserves:
 
-- caioariede_ (Caio Ariede)
+- caioariede_ (Caio Ariede)::
+
+  Improvements and Orkut support
+
+- krvss_ (Caio Ariede)::
+
+  Initial setup.py configuration
 
 
 ----------
@@ -302,6 +308,7 @@ Base work is copyrighted by:
 .. _Facebook development resources: http://developers.facebook.com/docs/authentication/
 .. _Facebook App Creation: http://developers.facebook.com/setup/
 .. _caioariede: https://github.com/caioariede
+.. _krvss: https://github.com/krvss
 .. _Google support: http://www.google.com/support/a/bin/answer.py?hl=en&answer=162105
 .. _Orkut API:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _Google OpenID: http://code.google.com/apis/accounts/docs/OpenID.html
