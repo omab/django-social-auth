@@ -263,13 +263,13 @@ Contributors
 ------------
 Attributions to whom deserves:
 
-- caioariede_ (Caio Ariede)::
+- caioariede_ (Caio Ariede):
 
-  Improvements and Orkut support
+  - Improvements and Orkut support
 
-- krvss_ (Caio Ariede)::
+- krvss_ (Caio Ariede):
 
-  Initial setup.py configuration
+  - Initial setup.py configuration
 
 
 ----------
