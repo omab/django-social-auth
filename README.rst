@@ -255,7 +255,7 @@ your consumer_key and consumer_secret keys.
 ----
 Bugs
 ----
-Several, maybe, please report :-)
+Maybe several, please create `issues in github`_
 
 
 ------------
@@ -321,6 +321,7 @@ Base work is copyrighted by:
 .. _myOpenID: https://www.myopenid.com/
 .. _pypi: http://pypi.python.org/pypi/django-social-auth/
 .. _github: https://github.com/omab/django-social-auth
+.. _issues in github: https://github.com/omab/django-social-auth/issues
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
