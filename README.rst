@@ -46,10 +46,31 @@ Dependencies that must be meet to use the app:
 - Twitter and Facebook support demands an application registration
   on their corresponding sites.
 
-
 ------------
 Installation
 ------------
+
+From pypi_::
+
+    $ pip install django-social-auth
+
+or clone from github_::
+
+    $ git clone git://github.com/omab/django-social-auth.git
+
+and add social_auth to PYTHONPATH::
+
+    $ export PYTHONPATH=$PYTHONPATH:$(pwd)/django-social-auth/
+
+or::
+
+    $ cd django-social-auth
+    $ sudo python setup.py install
+
+
+-------------
+Configuration
+-------------
 - Add social_auth to PYTHONPATH and installed applications::
 
     INSTALLED_APPS = (
@@ -289,3 +310,5 @@ Base work is copyrighted by:
 .. _Facebook OAuth: http://developers.facebook.com/docs/authentication/
 .. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _myOpenID: https://www.myopenid.com/
+.. _pypi: http://pypi.python.org/pypi/django-social-auth/
+.. _github: https://github.com/omab/django-social-auth
