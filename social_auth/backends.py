@@ -67,7 +67,7 @@ class SocialAuthBackend(ModelBackend):
         """
         def get_random_username():
             """Return hash from random string cut at 30 chars"""
-            return md5_constructor(str(urandom(10))).hexdigest()[:30]
+            return md5_constructor(urandom(10)).hexdigest()[:30]
 
         if getattr(settings, 'SOCIAL_AUTH_FORCE_RANDOM_USERNAME', False):
             username = get_random_username()
