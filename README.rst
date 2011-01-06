@@ -56,6 +56,10 @@ From pypi_::
 
     $ pip install django-social-auth
 
+or::
+
+    $ easy_install django-social-auth
+
 or clone from github_::
 
     $ git clone git://github.com/omab/django-social-auth.git
