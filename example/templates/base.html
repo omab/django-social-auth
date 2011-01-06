@@ -2,68 +2,21 @@
   <head>
     <title>Social authentication | {% block title %}{% endblock %}</title>
     <style>
-      body {
-        background-color: #eee;
-        padding: 10px 20px;
-        font-family: sans-serif;
-        color: #333;
-      }
-      h1 {
-        font-size: 1.5em;
-        border-bottom: 1px solid #ddd;
-        width: 95%;
-      }
-      h2 {
-        font-size: 1.2em;
-      }
-      a, a:visited {
-        color: #459FDA;
-        text-decoration: none;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
-      input[type="text"] {
-        border: 1px solid #ccc;
-        padding: 3px;
-        width: 300px;
-      }
-      input[type="submit"] {
-        padding: 2px 20px;
-        margin-left: -5px;
-      }
-      label {
-        display: block;
-      }
-      th {
-        text-align: left;
-        padding-right: 25px;
-        font-weight: normal;
-      }
-      th, td {
-          padding: 5px 15px;
-      }
-      tr.even {
-        background-color: #ddd;
-      }
-      #content {
-        padding: 5px 20px;
-      }
-      .helptext {
-        font-size: 0.9em;
-        color: #aaa;
-        margin: 0;
-        padding: 0;
-      }
-      a.logout, .associated, .error {
-        color: #c00;
-      }
-      #forkme {
-        position: absolute;
-        top: 0;
-        right: 0;
-        border: 0;
-      }
+      body {background-color: #eee; padding: 10px 20px; font-family: sans-serif; color: #333;}
+      h1 {font-size: 1.5em; border-bottom: 1px solid #ddd; width: 95%;}
+      h2 {font-size: 1.2em;}
+      a, a:visited {color: #459FDA; text-decoration: none;}
+      a:hover {text-decoration: underline;}
+      input[type="text"] {border: 1px solid #ccc; padding: 3px; width: 300px;}
+      input[type="submit"] {padding: 2px 20px; margin-left: -5px;}
+      label {display: block;}
+      th {text-align: left; padding-right: 25px; font-weight: normal;}
+      th, td {padding: 5px 15px;}
+      tr.even {background-color: #ddd;}
+      #content {padding: 5px 20px;}
+      .helptext {font-size: 0.9em; color: #aaa; margin: 0; padding: 0;}
+      a.logout, .associated, .error {color: #c00;}
+      #forkme {position: absolute; top: 0; right: 0; border: 0;}
     </style>
   </head>
   <body>
@@ -71,6 +24,6 @@
     <div id="content">
       {% block content %}{% endblock %}
     </div>
-    <a id="forkme" href="http://github.com/omab/django-social-auth"><img src="https://assets2.github.com/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf?repo=&url=http%3A%2F%2Fs3.amazonaws.com%2Fgithub%2Fribbons%2Fforkme_right_red_aa0000.png&path=" alt="Fork me on GitHub"></a>
+    <a id="forkme" href="http://github.com/omab/django-social-auth"><img src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
   </body>
 </html>
