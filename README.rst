@@ -9,6 +9,8 @@ Crafted using base code from django-twitter-oauth_ and django-openid-auth_,
 implements a common interface to define new authentication providers from
 third parties.
 
+Check a demo at http://social.matiasaguirre.com/
+
 
 --------
 Features
@@ -32,12 +34,6 @@ credentials, some features are:
 - Multiple social accounts association to single users
 
 - Custom User model override if needed (`auth.User`_ by default)
-
-
-----
-Demo
-____
-Check a demo at http://social.matiasaguirre.com/
 
 
 ------------
