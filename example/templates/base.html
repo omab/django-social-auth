@@ -1,6 +1,9 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://opengraphprotocol.org/schema/" xmlns:fb="http://www.facebook.com/2008/fbml">
   <head>
     <title>Social authentication | {% block title %}{% endblock %}</title>
+    <meta name="description" content="Django Social Auth is an easy to setup social authentication/registration mechanism for Django projects." />
+    <meta name="keywords" content="social auth, openid, oauth, twitter, facebook, google, yahoo, myopenid, django, python" />
     <style>
       body {background-color: #eee; padding: 10px 20px; font-family: sans-serif; color: #333;}
       h1 {font-size: 1.5em; border-bottom: 1px solid #ddd; width: 95%;}
@@ -15,12 +18,14 @@
       tr.even {background-color: #ddd;}
       #content {padding: 5px 20px;}
       .helptext {font-size: 0.9em; color: #aaa; margin: 0; padding: 0;}
+      .description {font-size: 1.0em; color: #333;}
       a.logout, .associated, .error {color: #c00;}
       #forkme {position: absolute; top: 0; right: 0; border: 0;}
     </style>
   </head>
   <body>
     <h1>{% block heading %}{% endblock %}</h1>
+    <p class="description">Django Social Auth is an easy to setup social authentication/registration mechanism for Django projects.</p>
     <div id="content">
       {% block content %}{% endblock %}
     </div>

@@ -34,6 +34,12 @@ credentials, some features are:
 - Custom User model override if needed (`auth.User`_ by default)
 
 
+----
+Demo
+____
+Check a demo at http://social.matiasaguirre.com/
+
+
 ------------
 Dependencies
 ------------
