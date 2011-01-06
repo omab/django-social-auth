@@ -9,7 +9,7 @@ Crafted using base code from django-twitter-oauth_ and django-openid-auth_,
 implements a common interface to define new authentication providers from
 third parties.
 
-Check a demo at http://social.matiasaguirre.com/
+Check a demo at http://social.matiasaguirre.net/
 
 
 --------
