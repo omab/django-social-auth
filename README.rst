@@ -9,7 +9,12 @@ Crafted using base code from django-twitter-oauth_ and django-openid-auth_,
 implements a common interface to define new authentication providers from
 third parties.
 
-Check a demo at http://social.matiasaguirre.net/
+
+----
+Demo
+----
+There's a demo at http://social.matiasaguirre.net/, it lacks Orkut support
+at the moment.
 
 
 --------
