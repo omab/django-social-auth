@@ -4,7 +4,7 @@
 
 {% block content %}
 <div>
-  <h3>Login using <a target="_blank" href="http://oauth.net/" title="OAuth">OAuth</a> from:</h3>
+  <h3>Login using <a href="http://oauth.net/" title="OAuth">OAuth</a> from:</h3>
   <ul>
     <li><a rel="nofollow" href="/login/twitter/">Twitter</a></li>
     <li><a rel="nofollow" href="/login/facebook/">Facebook</a></li>
@@ -13,16 +13,18 @@
 </div>
 
 <div>
-  <h3>Login using <a target="_blank" href="http://openid.net/" title="OpenId">OpenId</a> from:</h3>
+  <h3>Login using <a href="http://openid.net/" title="OpenId">OpenId</a> from:</h3>
   <ul>
     <li><a rel="nofollow" href="/login/google/">Google</a></li>
     <li><a rel="nofollow" href="/login/yahoo/">Yahoo</a></li>
     <li>
       <form action="/login/openid/" method="post">{% csrf_token %}
-        <label for="openid_identifier">Other provider</label>
-        <input id="openid_identifier" type="text" value="" name="openid_identifier" />
-        <input type="submit" />
-        <p class="helptext">Like your personal <a target="_blank" href="https://www.myopenid.com/" title="My OpenId">myopenid</a></p>
+        <div>
+          <label for="openid_identifier">Other provider</label>
+          <input id="openid_identifier" type="text" value="" name="openid_identifier" />
+          <input type="submit" value="Login" />
+        </div>
+        <p class="helptext">Like your personal <a href="https://www.myopenid.com/" title="My OpenId">myopenid</a></p>
       </form>
     </li>
   </ul>
