@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /login/
+Disallow: /logout/
+Disallow: /associate/
+Disallow: /done/
+Disallow: /error/
+Disallow: /admin/
+Disallow: /complete/
