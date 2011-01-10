@@ -50,12 +50,12 @@ class DjangoOpenIDStore(OpenIDStore):
         if expired:  # clear expired associations
             Association.objects.filter(pk__in=expired).delete()
 
-        if associations:
+        if associations: # return most recet association
             associations.sort(key=lambda x: x.issued, reverse=True)
             return associations[0]
 
     def useNonce(self, server_url, timestamp, salt):
-        """Generate one use number and return if it was created"""
+        """Generate one use number and return *if* it was created"""
         if abs(timestamp - time.time()) > SKEW:
             return False
         return Nonce.objects.get_or_create(server_url=server_url,

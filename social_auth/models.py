@@ -53,6 +53,10 @@ class Nonce(models.Model):
     timestamp = models.IntegerField()
     salt = models.CharField(max_length=40)
 
+    def __unicode__(self):
+        """Unicode representation"""
+        return self.server_url
+
 
 class Association(models.Model):
     """OpenId account association"""
@@ -62,3 +66,7 @@ class Association(models.Model):
     issued = models.IntegerField()
     lifetime = models.IntegerField()
     assoc_type = models.CharField(max_length=64)
+
+    def __unicode__(self):
+        """Unicode representation"""
+        return '%s %s' % (self.handle, self.issued)

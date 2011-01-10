@@ -377,3 +377,18 @@ class FacebookAuth(BaseOAuth):
             return simplejson.load(urllib.urlopen(url))
         except simplejson.JSONDecodeError:
             return None
+
+
+# Authentication backends
+BACKENDS = {
+    'twitter': TwitterAuth,
+    'facebook': FacebookAuth,
+    'google': GoogleAuth,
+    'yahoo': YahooAuth,
+    'orkut': OrkutAuth,
+    'openid': OpenIdAuth,
+}
+
+def get_backend(name, *args, **kwargs):
+    """Return auth backend instance *if* it's registered, None in other case"""
+    return BACKENDS.get(name, lambda *args, **kwargs: None)(*args, **kwargs)
