@@ -122,7 +122,7 @@ Configuration
   possible clashes::
 
     SOCIAL_AUTH_COMPLETE_URL_NAME  = 'namespace:complete'
-    SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'namespace:association_complete'
+    SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'namespace:associate_complete'
 
 - Add URLs entries::
 
