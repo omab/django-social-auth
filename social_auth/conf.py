@@ -36,9 +36,11 @@ AX_SCHEMA_ATTRS = [
     ('http://axschema.org/namePerson/last', 'last_name'),
     ('http://axschema.org/namePerson/friendly', 'nickname'),
 ]
-AX_ATTRS          = AX_SCHEMA_ATTRS + OLD_AX_ATTRS
-SREG_ATTR         = ['email', 'fullname', 'nickname']
-OPENID_ID_FIELD   = 'openid_identifier'
-SESSION_NAME      = 'openid'
-OPENID_GOOGLE_URL = 'https://www.google.com/accounts/o8/id'
-OPENID_YAHOO_URL  = 'http://yahoo.com'
+AX_ATTRS               = AX_SCHEMA_ATTRS + OLD_AX_ATTRS
+SREG_ATTR              = ['email', 'fullname', 'nickname']
+OPENID_ID_FIELD        = 'openid_identifier'
+SESSION_NAME           = 'openid'
+OPENID_GOOGLE_URL      = 'https://www.google.com/accounts/o8/id'
+OPENID_YAHOO_URL       = 'http://yahoo.com'
+OPENID_LJ_URL          = 'http://%s.livejournal.com'
+OPENID_LJ_USER_FIELD   = 'openid_lj_user'

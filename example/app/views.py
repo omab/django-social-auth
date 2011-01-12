@@ -28,6 +28,13 @@ def home(request):
               <li><a href="/login/google/">Google</a></li>
               <li><a href="/login/yahoo/">Yahoo</a></li>
               <li>
+                <form action="/login/lj/" method="post">{% csrf_token %}
+                  <label for="openid_lj_user">LiveJournal user:</label>
+                  <input id="openid_lj_user" type="text" value="" name="openid_lj_user" />
+                  <input type="submit" />
+                </form>
+              </li>
+              <li>
                 <form action="/login/openid/" method="post">{% csrf_token %}
                   <label for="openid_identifier">Other provider:</label>
                   <input id="openid_identifier" type="text" value="" name="openid_identifier" />

@@ -7,7 +7,7 @@ from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 
 from .auth import TwitterAuth, FacebookAuth, OpenIdAuth, GoogleAuth, \
-                  YahooAuth, OrkutAuth
+                  YahooAuth, LiveJournalAuth, OrkutAuth
 
 
 # Authentication backends
@@ -16,6 +16,7 @@ BACKENDS = {
     'facebook': FacebookAuth,
     'google': GoogleAuth,
     'yahoo': YahooAuth,
+    'lj': LiveJournalAuth,
     'openid': OpenIdAuth,
     'orkut': OrkutAuth,
 }
