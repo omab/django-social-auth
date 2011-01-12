@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate
 
 from .store import DjangoOpenIDStore
 from .backends import TwitterBackend, OrkutBackend, FacebookBackend, \
-                      OpenIDBackend
+                      OpenIDBackend, GoogleBackend, YahooBackend
 from .conf import AX_ATTRS, SREG_ATTR, OPENID_ID_FIELD, SESSION_NAME, \
                   OPENID_GOOGLE_URL, OPENID_YAHOO_URL, TWITTER_SERVER, \
                   OPENID_LJ_URL, OPENID_LJ_USER_FIELD, \
@@ -37,15 +37,15 @@ class BaseAuth(object):
 
     def auth_url(self):
         """Must return redirect URL to auth provider"""
-        raise NotImplementedError, 'Implement in subclass'
+        raise NotImplementedError('Implement in subclass')
 
     def auth_html(self):
         """Must return login HTML content returned by provider"""
-        raise NotImplementedError, 'Implement in subclass'
+        raise NotImplementedError('Implement in subclass')
 
     def auth_complete(self, *args, **kwargs):
         """Completes loging process, must return user instance"""
-        raise NotImplementedError, 'Implement in subclass'
+        raise NotImplementedError('Implement in subclass')
 
     @property
     def uses_redirect(self):
@@ -55,7 +55,12 @@ class BaseAuth(object):
 
 
 class OpenIdAuth(BaseAuth):
-    """OpenId process handling"""
+    """
+    OpenId process handling
+        @AUTH_BACKEND   Authorization backend related with this service
+    """
+    AUTH_BACKEND = OpenIDBackend
+
     def auth_url(self):
         openid_request = self.setup_request()
         # Construct completion URL, including page we should redirect to
@@ -77,16 +82,18 @@ class OpenIdAuth(BaseAuth):
         response = self.consumer().complete(dict(self.request.REQUEST.items()),
                                             self.request.build_absolute_uri())
         if not response:
-            raise ValueError, 'This is an OpenID relying party endpoint'
+            raise ValueError('This is an OpenID relying party endpoint')
         elif response.status == SUCCESS:
-            kwargs.update({'response': response, OpenIDBackend.name: True})
+            kwargs.update({'response': response, self.AUTH_BACKEND.name: True})
             return authenticate(*args, **kwargs)
         elif response.status == FAILURE:
-            raise ValueError, 'OpenID authentication failed: %s' % response.message
+            raise ValueError('OpenID authentication failed: %s' % \
+                             response.message)
         elif response.status == CANCEL:
-            raise ValueError, 'Authentication cancelled'
+            raise ValueError('Authentication cancelled')
         else:
-            raise ValueError, 'Unknown OpenID response type: %r' % response.status
+            raise ValueError('Unknown OpenID response type: %r' % \
+                             response.status)
 
     def setup_request(self):
         """Setup request"""
@@ -95,9 +102,10 @@ class OpenIdAuth(BaseAuth):
         # for attribute exchange, use that.
         if openid_request.endpoint.supportsType(ax.AXMessage.ns_uri):
             fetch_request = ax.FetchRequest()
-            # Mark all attributes as required, since Google ignores optional ones
+            # Mark all attributes as required, Google ignores optional ones
             for attr, alias in AX_ATTRS:
-                fetch_request.add(ax.AttrInfo(attr, alias=alias, required=True))
+                fetch_request.add(ax.AttrInfo(attr, alias=alias,
+                                              required=True))
         else:
             fetch_request = sreg.SRegRequest(optional=SREG_ATTR)
         openid_request.addExtension(fetch_request)
@@ -115,7 +123,8 @@ class OpenIdAuth(BaseAuth):
         HTML content will be returned.
         """
         if not hasattr(self, '_uses_redirect'):
-            setattr(self, '_uses_redirect', self.openid_request().shouldSendRedirect())
+            setattr(self, '_uses_redirect',
+                    self.openid_request().shouldSendRedirect())
         return getattr(self, '_uses_redirect', True)
 
     def openid_request(self):
@@ -124,8 +133,8 @@ class OpenIdAuth(BaseAuth):
             openid_url = self.openid_url()
             try:
                 openid_request = self.consumer().begin(openid_url)
-            except DiscoveryFailure, e:
-                raise ValueError, 'OpenID discovery error: %s' % e
+            except DiscoveryFailure, err:
+                raise ValueError('OpenID discovery error: %s' % err)
             else:
                 setattr(self, '_openid_request', openid_request)
         return getattr(self, '_openid_request', None)
@@ -134,13 +143,16 @@ class OpenIdAuth(BaseAuth):
         """Return service provider URL.
         This base class is generic accepting a POST parameter that specifies
         provider URL."""
-        if self.request.method != 'POST' or OPENID_ID_FIELD not in self.request.POST:
-            raise ValueError, 'Missing openid identifier'
+        if self.request.method != 'POST' or \
+           OPENID_ID_FIELD not in self.request.POST:
+            raise ValueError('Missing openid identifier')
         return self.request.POST[OPENID_ID_FIELD]
 
 
 class GoogleAuth(OpenIdAuth):
     """Google OpenID authentication"""
+    AUTH_BACKEND = GoogleBackend
+
     def openid_url(self):
         """Return Google OpenID service url"""
         return OPENID_GOOGLE_URL
@@ -148,6 +160,8 @@ class GoogleAuth(OpenIdAuth):
 
 class YahooAuth(OpenIdAuth):
     """Yahoo OpenID authentication"""
+    AUTH_BACKEND = YahooBackend
+
     def openid_url(self):
         """Return Yahoo OpenID service url"""
         return OPENID_YAHOO_URL
@@ -183,11 +197,11 @@ class ConsumerBasedOAuth(BaseOAuth):
         @AUTH_BACKEND            Authorization backend related with
                                  this service
     """
-    AUTHORIZATION_URL       = ''
-    REQUEST_TOKEN_URL       = ''
-    ACCESS_TOKEN_URL        = ''
-    SERVER_URL              = ''
-    AUTH_BACKEND            = None
+    AUTHORIZATION_URL = ''
+    REQUEST_TOKEN_URL = ''
+    ACCESS_TOKEN_URL = ''
+    SERVER_URL = ''
+    AUTH_BACKEND = None
 
     def auth_url(self):
         """Returns redirect url"""
@@ -201,11 +215,11 @@ class ConsumerBasedOAuth(BaseOAuth):
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
         unauthed_token = self.request.session.get(name)
         if not unauthed_token:
-            raise ValueError, 'Missing unauthorized token'
+            raise ValueError('Missing unauthorized token')
 
         token = OAuthToken.from_string(unauthed_token)
         if token.key != self.request.GET.get('oauth_token', 'no-token'):
-            raise ValueError, 'Incorrect tokens'
+            raise ValueError('Incorrect tokens')
 
         access_token = self.access_token(token)
         data = self.user_data(access_token)
@@ -250,7 +264,7 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def user_data(self, access_token):
         """Loads user data from service"""
-        raise NotImplementedError, 'Implement in subclass'
+        raise NotImplementedError('Implement in subclass')
 
     @property
     def connection(self):
@@ -274,16 +288,16 @@ class ConsumerBasedOAuth(BaseOAuth):
         """Return tuple with Consumer Key and Consumer Secret for current
         service provider. Must return (key, secret), order must be respected.
         """
-        raise NotImplementedError, 'Implement in subclass'
+        raise NotImplementedError('Implement in subclass')
 
 
 class OrkutAuth(ConsumerBasedOAuth):
     """Orkut OAuth authentication mechanism"""
-    AUTHORIZATION_URL       = ORKUT_AUTHORIZATION_URL
-    REQUEST_TOKEN_URL       = ORKUT_REQUEST_TOKEN_URL
-    ACCESS_TOKEN_URL        = ORKUT_ACCESS_TOKEN_URL
-    SERVER_URL              = ORKUT_SERVER
-    AUTH_BACKEND            = OrkutBackend
+    AUTHORIZATION_URL = ORKUT_AUTHORIZATION_URL
+    REQUEST_TOKEN_URL = ORKUT_REQUEST_TOKEN_URL
+    ACCESS_TOKEN_URL = ORKUT_ACCESS_TOKEN_URL
+    SERVER_URL = ORKUT_SERVER
+    AUTH_BACKEND = OrkutBackend
 
     def user_data(self, access_token):
         """Loads user data from Orkut service"""
@@ -311,11 +325,11 @@ class OrkutAuth(ConsumerBasedOAuth):
 
 class TwitterAuth(ConsumerBasedOAuth):
     """Twitter OAuth authentication mechanism"""
-    AUTHORIZATION_URL       = TWITTER_AUTHORIZATION_URL
-    REQUEST_TOKEN_URL       = TWITTER_REQUEST_TOKEN_URL
-    ACCESS_TOKEN_URL        = TWITTER_ACCESS_TOKEN_URL
-    SERVER_URL              = TWITTER_SERVER
-    AUTH_BACKEND            = TwitterBackend
+    AUTHORIZATION_URL = TWITTER_AUTHORIZATION_URL
+    REQUEST_TOKEN_URL = TWITTER_REQUEST_TOKEN_URL
+    ACCESS_TOKEN_URL = TWITTER_ACCESS_TOKEN_URL
+    SERVER_URL = TWITTER_SERVER
+    AUTH_BACKEND = TwitterBackend
 
     def user_data(self, access_token):
         """Return user data provided"""
@@ -359,13 +373,13 @@ class FacebookAuth(BaseOAuth):
             data = self.user_data(access_token)
             if data is not None:
                 if 'error' in data:
-                    raise ValueError, 'Authentication error'
+                    raise ValueError('Authentication error')
                 data['access_token'] = access_token
 
             kwargs.update({'response': data, FacebookBackend.name: True})
             return authenticate(*args, **kwargs)
         else:
-            raise ValueError, 'Authentication error'
+            raise ValueError('Authentication error')
 
     def user_data(self, access_token):
         """Loads user data from service"""
@@ -375,3 +389,18 @@ class FacebookAuth(BaseOAuth):
             return simplejson.load(urllib.urlopen(url))
         except simplejson.JSONDecodeError:
             return None
+
+
+# Authentication backends
+BACKENDS = {
+    'twitter': TwitterAuth,
+    'facebook': FacebookAuth,
+    'google': GoogleAuth,
+    'yahoo': YahooAuth,
+    'orkut': OrkutAuth,
+    'openid': OpenIdAuth,
+}
+
+def get_backend(name, *args, **kwargs):
+    """Return auth backend instance *if* it's registered, None in other case"""
+    return BACKENDS.get(name, lambda *args, **kwargs: None)(*args, **kwargs)
