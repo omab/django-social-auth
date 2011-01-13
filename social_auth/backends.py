@@ -111,9 +111,9 @@ class SocialAuthBackend(ModelBackend):
         
         if not getattr(settings, 'SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False):
             for name, value in details.iteritems():
-            # not update username if user already exists
-            if not new_user and name == USERNAME:
-                continue
+                # not update username if user already exists
+                if not new_user and name == USERNAME:
+                    continue
                 if value and value != getattr(user, name, value):
                     setattr(user, name, value)
                     changed = True
@@ -258,3 +258,7 @@ class GoogleBackend(OpenIDBackend):
 class YahooBackend(OpenIDBackend):
     """Yahoo OpenID authentication backend"""
     name = 'yahoo'
+
+class LiveJournalBackend(OpenIDBackend):
+    """LJ OpenID authentication backend"""
+    name = 'livejournal'

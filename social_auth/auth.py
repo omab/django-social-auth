@@ -15,10 +15,10 @@ from django.contrib.auth import authenticate
 
 from .store import DjangoOpenIDStore
 from .backends import TwitterBackend, OrkutBackend, FacebookBackend, \
-                      OpenIDBackend, GoogleBackend, YahooBackend
+                      OpenIDBackend, GoogleBackend, YahooBackend, LiveJournalBackend
 from .conf import AX_ATTRS, SREG_ATTR, OPENID_ID_FIELD, SESSION_NAME, \
                   OPENID_GOOGLE_URL, OPENID_YAHOO_URL, TWITTER_SERVER, \
-                  OPENID_LJ_URL, OPENID_LJ_USER_FIELD, \
+                  OPENID_LIVEJOURNAL_URL, OPENID_LIVEJOURNAL_USER_FIELD, \
                   TWITTER_REQUEST_TOKEN_URL, TWITTER_ACCESS_TOKEN_URL, \
                   TWITTER_AUTHORIZATION_URL, TWITTER_CHECK_AUTH, \
                   FACEBOOK_CHECK_AUTH, FACEBOOK_AUTHORIZATION_URL, \
@@ -168,15 +168,16 @@ class YahooAuth(OpenIdAuth):
 
 class LiveJournalAuth(OpenIdAuth):
     """LiveJournal OpenID authentication"""
+    AUTH_BACKEND = LiveJournalBackend
     def uses_redirect(self):
         """LiveJournal uses redirect"""
         return True
     
     def openid_url(self):
         """Returns LJ authentication URL"""
-        if self.request.method != 'POST' or OPENID_LJ_USER_FIELD not in self.request.POST or len(self.request.POST[OPENID_LJ_USER_FIELD]) == 0:
+        if self.request.method != 'POST' or not self.request.POST.get(OPENID_LIVEJOURNAL_USER_FIELD):
             raise ValueError, 'Missing LiveJournal user identifier'
-        return OPENID_LJ_URL % self.request.POST[OPENID_LJ_USER_FIELD]
+        return OPENID_LIVEJOURNAL_URL % self.request.POST[OPENID_LIVEJOURNAL_USER_FIELD]
 
 class BaseOAuth(BaseAuth):
     """OAuth base class"""
@@ -397,6 +398,7 @@ BACKENDS = {
     'facebook': FacebookAuth,
     'google': GoogleAuth,
     'yahoo': YahooAuth,
+    'livejournal': LiveJournalAuth,
     'orkut': OrkutAuth,
     'openid': OpenIdAuth,
 }

@@ -11,13 +11,6 @@ def home(request):
         return HttpResponseRedirect('done')
     else:
         return render_to_response('home.html', None, RequestContext(request))
-                <form action="/login/lj/" method="post">{% csrf_token %}
-                  <label for="openid_lj_user">LiveJournal user:</label>
-                  <input id="openid_lj_user" type="text" value="" name="openid_lj_user" />
-                  <input type="submit" />
-                </form>
-              </li>
-              <li>
 
 @login_required
 def done(request):
