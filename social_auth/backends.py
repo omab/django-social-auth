@@ -120,7 +120,8 @@ class SocialAuthBackend(ModelBackend):
         # user instance (created or retrieved from database), service
         # response and processed details, signal handlers must return
         # True or False to signal that something has changed
-        updated = filter(None, pre_update.send(sender=self, user=user,
+        updated = filter(None, pre_update.send(sender=self.__class__,
+                                               user=user,
                                                response=response,
                                                details=details))
         if changed or len(updated) > 0:
