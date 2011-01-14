@@ -17,7 +17,8 @@ def done(request):
     """Login complete view, displays user data"""
     names = request.user.social_auth.values_list('provider', flat=True)
     return render_to_response('done.html',
-                              dict((name.lower(), True) for name in names),
+                              dict((name.lower().replace('-', '_'), True)
+                                        for name in names),
                               RequestContext(request))
 
 def error(request):
