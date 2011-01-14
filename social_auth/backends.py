@@ -109,7 +109,7 @@ class SocialAuthBackend(ModelBackend):
         """Update user details with (maybe) new data. Username is not
         changed if associating a new credential."""
         changed = False
-        
+
         # check if values update should be left to signals handlers only
         if not getattr(settings, 'SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False):
             for name, value in details.iteritems():
@@ -119,7 +119,7 @@ class SocialAuthBackend(ModelBackend):
                 if value and value != getattr(user, name, value):
                     setattr(user, name, value)
                     changed = True
-                
+
         # Fire a pre-update signal sending current backend instance,
         # user instance (created or retrieved from database), service
         # response and processed details, signal handlers must return
@@ -128,14 +128,7 @@ class SocialAuthBackend(ModelBackend):
                                                user=user,
                                                response=response,
                                                details=details))
-        # Looking for at least one update
-        has_update = False
-        for result in updated:
-            if result[1]:
-                has_update = True
-                break
-        
-        if changed or has_update:
+        if changed or updated:
             user.save()
 
     def get_user_id(self, details, response):
