@@ -12,17 +12,22 @@ FACEBOOK_AUTHORIZATION_URL = 'https://%s/oauth/authorize' % FACEBOOK_SERVER
 FACEBOOK_ACCESS_TOKEN_URL = 'https://%s/oauth/access_token' % FACEBOOK_SERVER
 FACEBOOK_CHECK_AUTH = 'https://%s/me' % FACEBOOK_SERVER
 
+# Google OAuth base configuration
+GOOGLE_SERVER = 'www.google.com'
+GOOGLE_REQUEST_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetRequestToken'
+GOOGLE_ACCESS_TOKEN_URL  = 'https://www.google.com/accounts/OAuthGetAccessToken'
+GOOGLE_AUTHORIZATION_URL = 'https://www.google.com/accounts/OAuthAuthorizeToken'
+# scope for user email, specify extra scopes in settings, for example:
+# GOOGLE_OAUTH_EXTRA_SCOPE = ['https://www.google.com/m8/feeds/']
+GOOGLE_OAUTH_SCOPE       = ['https://www.googleapis.com/auth/userinfo#email']
+GOOGLEAPIS_EMAIL         = 'https://www.googleapis.com/userinfo/email'
+
 # Orkut configuration
-ORKUT_SERVER = 'www.google.com'
-ORKUT_REQUEST_TOKEN_URL = 'https://%s/accounts/OAuthGetRequestToken' % \
-                            ORKUT_SERVER
-ORKUT_ACCESS_TOKEN_URL = 'https://%s/accounts/OAuthGetAccessToken' % \
-                            ORKUT_SERVER
-ORKUT_AUTHORIZATION_URL = 'https://%s/accounts/OAuthAuthorizeToken' % \
-                            ORKUT_SERVER
-ORKUT_SCOPE = 'http://orkut.gmodules.com/social/'
+# default scope, specify extra scope in settings as in:
+# ORKUT_EXTRA_SCOPE = ['...']
+ORKUT_SCOPE = ['http://orkut.gmodules.com/social/']
 ORKUT_REST_ENDPOINT = 'http://www.orkut.com/social/rpc'
-ORKUT_EXTRA_DATA = ''
+ORKUT_DEFAULT_DATA = 'name,displayName,emails'
 
 # OpenID configuration
 OLD_AX_ATTRS = [

@@ -1,6 +1,7 @@
 """Authentication handling class"""
 import cgi
 import urllib
+import urllib2
 import httplib
 
 from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
@@ -15,16 +16,17 @@ from django.contrib.auth import authenticate
 
 from .store import DjangoOpenIDStore
 from .backends import TwitterBackend, OrkutBackend, FacebookBackend, \
-                      OpenIDBackend, GoogleBackend, YahooBackend
+                      OpenIDBackend, GoogleBackend, YahooBackend, \
+                      GoogleOAuthBackend
 from .conf import AX_ATTRS, SREG_ATTR, OPENID_ID_FIELD, SESSION_NAME, \
                   OPENID_GOOGLE_URL, OPENID_YAHOO_URL, TWITTER_SERVER, \
                   TWITTER_REQUEST_TOKEN_URL, TWITTER_ACCESS_TOKEN_URL, \
                   TWITTER_AUTHORIZATION_URL, TWITTER_CHECK_AUTH, \
                   FACEBOOK_CHECK_AUTH, FACEBOOK_AUTHORIZATION_URL, \
-                  FACEBOOK_ACCESS_TOKEN_URL, ORKUT_SERVER, ORKUT_SCOPE, \
-                  ORKUT_REQUEST_TOKEN_URL, ORKUT_ACCESS_TOKEN_URL, \
-                  ORKUT_AUTHORIZATION_URL, ORKUT_REST_ENDPOINT, \
-                  ORKUT_EXTRA_DATA
+                  FACEBOOK_ACCESS_TOKEN_URL, GOOGLE_REQUEST_TOKEN_URL, \
+                  GOOGLE_ACCESS_TOKEN_URL, GOOGLE_AUTHORIZATION_URL, \
+                  GOOGLE_SERVER, GOOGLE_OAUTH_SCOPE, GOOGLEAPIS_EMAIL, \
+                  ORKUT_REST_ENDPOINT, ORKUT_DEFAULT_DATA, ORKUT_SCOPE
 
 
 class BaseAuth(object):
@@ -97,8 +99,8 @@ class OpenIdAuth(BaseAuth):
     def setup_request(self):
         """Setup request"""
         openid_request = self.openid_request()
-        # Request some user details.  If the provider advertises support
-        # for attribute exchange, use that.
+        # Request some user details. Use attribute exchange if provider
+        # advertises support.
         if openid_request.endpoint.supportsType(ax.AXMessage.ns_uri):
             fetch_request = ax.FetchRequest()
             # Mark all attributes as required, Google ignores optional ones
@@ -279,36 +281,94 @@ class ConsumerBasedOAuth(BaseOAuth):
         raise NotImplementedError('Implement in subclass')
 
 
-class OrkutAuth(ConsumerBasedOAuth):
+class BaseGoogleOAuth(ConsumerBasedOAuth):
+    """Base class for Google OAuth mechanism"""
+    AUTHORIZATION_URL = GOOGLE_AUTHORIZATION_URL
+    REQUEST_TOKEN_URL = GOOGLE_REQUEST_TOKEN_URL
+    ACCESS_TOKEN_URL = GOOGLE_ACCESS_TOKEN_URL
+    SERVER_URL = GOOGLE_SERVER
+    AUTH_BACKEND = None
+
+    def user_data(self, access_token):
+        """Loads user data from G service"""
+        raise NotImplementedError('Implement in subclass')
+
+    def get_key_and_secret(self):
+        """Return Consumer Key and Consumer Secret pair"""
+        raise NotImplementedError('Implement in subclass')
+
+
+class OrkutAuth(BaseGoogleOAuth):
     """Orkut OAuth authentication mechanism"""
-    AUTHORIZATION_URL = ORKUT_AUTHORIZATION_URL
-    REQUEST_TOKEN_URL = ORKUT_REQUEST_TOKEN_URL
-    ACCESS_TOKEN_URL = ORKUT_ACCESS_TOKEN_URL
-    SERVER_URL = ORKUT_SERVER
     AUTH_BACKEND = OrkutBackend
 
     def user_data(self, access_token):
         """Loads user data from Orkut service"""
-        fields = 'name,displayName,emails'
-        if ORKUT_EXTRA_DATA:
-            fields += ',' + ORKUT_EXTRA_DATA
+        fields = ORKUT_DEFAULT_DATA
+        if hasattr(settings, 'ORKUT_EXTRA_DATA'):
+            fields += ',' + settings.ORKUT_EXTRA_DATA
+        scope = ORKUT_SCOPE + \
+                getattr(settings, 'ORKUT_EXTRA_SCOPE', [])
         params = {'method': 'people.get',
                   'id': 'myself',
                   'userId': '@me',
                   'groupId': '@self',
                   'fields': fields,
-                  'scope': ORKUT_SCOPE}
+                  'scope': ' '.join(scope)}
         request = self.oauth_request(access_token, ORKUT_REST_ENDPOINT, params)
         response = urllib.urlopen(request.to_url()).read()
         try:
-            json = simplejson.loads(response)
-            return json['data']
-        except simplejson.JSONDecodeError:
+            return simplejson.loads(response)['data']
+        except (simplejson.JSONDecodeError, KeyError):
             return None
 
     def get_key_and_secret(self):
         """Return Orkut Consumer Key and Consumer Secret pair"""
         return settings.ORKUT_CONSUMER_KEY, settings.ORKUT_CONSUMER_SECRET
+
+
+class GoogleOAuth(BaseGoogleOAuth):
+    """Google OAuth authorization mechanism"""
+    AUTH_BACKEND = GoogleOAuthBackend
+
+    def user_data(self, access_token):
+        """Loads user data data from googleapis service, only email so far
+        as it's described in:
+            http://sites.google.com/site/oauthgoog/Home/emaildisplayscope
+        OAuth parameters needs to be passed in the queryset and
+        Authorization header, this behavior is listed in:
+            http://groups.google.com/group/oauth/browse_thread/thread/d15add9beb418ebc
+        """
+        url = self.oauth_request(access_token, GOOGLEAPIS_EMAIL,
+                                 {'alt': 'json'}).to_url()
+        params = url.split('?', 1)[1]
+        request = urllib2.Request(url)
+        request.headers['Authorization'] = params # setup header
+        response = urllib2.urlopen(request).read()
+        try:
+            return simplejson.loads(response)['data']
+        except (simplejson.JSONDecodeError, KeyError):
+            return None
+
+    def oauth_request(self, token, url, extra_params=None):
+        extra_params = extra_params or {}
+        scope = GOOGLE_OAUTH_SCOPE + \
+                getattr(settings, 'GOOGLE_OAUTH_EXTRA_SCOPE', [])
+        extra_params.update({
+            'scope': ' '.join(scope),
+            'xoauth_displayname': getattr(settings, 'GOOGLE_DISPLAY_NAME',
+                                          'Social Auth')
+        })
+        return super(GoogleOAuth, self).oauth_request(token, url, extra_params)
+
+    def get_key_and_secret(self):
+        """Return Google OAuth Consumer Key and Consumer Secret pair, uses
+        anonymous by default, beware that this marks the application as not
+        registered and a security badge is displayed on authorization page.
+        http://code.google.com/apis/accounts/docs/OAuth_ref.html#SigningOAuth
+        """
+        return getattr(settings, 'GOOGLE_CONSUMER_KEY', 'anonymous'), \
+               getattr(settings, 'GOOGLE_CONSUMER_SECRET', 'anonymous')
 
 
 class TwitterAuth(ConsumerBasedOAuth):
@@ -384,6 +444,7 @@ BACKENDS = {
     'twitter': TwitterAuth,
     'facebook': FacebookAuth,
     'google': GoogleAuth,
+    'google-oauth': GoogleOAuth,
     'yahoo': YahooAuth,
     'orkut': OrkutAuth,
     'openid': OpenIdAuth,

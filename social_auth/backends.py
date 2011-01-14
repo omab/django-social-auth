@@ -186,6 +186,24 @@ class OrkutBackend(OAuthBackend):
                 'lastname': response['name']['familyName']}
 
 
+class GoogleOAuthBackend(OAuthBackend):
+    """Google OAuth authentication backend"""
+    name = 'google-oauth'
+
+    def get_user_id(self, details, response):
+        "Use google email as unique id"""
+        return details['email']
+
+    def get_user_details(self, response):
+        """Return user details from Orkut account"""
+        email = response['email']
+        return {USERNAME: email.split('@', 1)[0],
+                'email': email,
+                'fullname': '',
+                'first_name': '',
+                'last_name': ''}
+
+
 class FacebookBackend(OAuthBackend):
     """Facebook OAuth authentication backend"""
     name = 'facebook'
