@@ -29,6 +29,7 @@ credentials, some features are:
     * `Google OpenID`_
     * `Google OAuth`_
     * `Yahoo OpenID`_
+    * `LiveJournal OpenID`_
     * OpenId_ like myOpenID_
     * `Twitter OAuth`_
     * `Facebook OAuth`_
@@ -100,6 +101,7 @@ Configuration
         'social_auth.backends.GoogleOAuthBackend',
         'social_auth.backends.GoogleBackend',
         'social_auth.backends.YahooBackend',
+        'social_auth.backends.LiveJournalBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -201,6 +203,13 @@ for example, to store user gender, location, etc. Example::
     def facebook_extra_values(sender, user, response, details):
         user.gender = response.get('gender')
         return True
+
+New data updating is made automatically but could be disabled and left only to
+signal handler if this setting value::
+
+    SOCIAL_AUTH_CHANGE_SIGNAL_ONLY = False
+
+is set to True.
 
 
 ------
@@ -389,3 +398,4 @@ Base work is copyrighted by:
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
+.. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283

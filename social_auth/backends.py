@@ -1,6 +1,7 @@
 """
 Authentication backeds for django.contrib.auth AUTHENTICATION_BACKENDS setting
 """
+import urlparse
 from os import urandom
 
 from openid.extensions import ax, sreg
@@ -108,14 +109,17 @@ class SocialAuthBackend(ModelBackend):
         """Update user details with (maybe) new data. Username is not
         changed if associating a new credential."""
         changed = False
-        for name, value in details.iteritems():
-            # not update username if user already exists
-            if not new_user and name == USERNAME:
-                continue
-            if value and value != getattr(user, name, value):
-                setattr(user, name, value)
-                changed = True
-
+        
+        # check if values update should be left to signals handlers only
+        if not getattr(settings, 'SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False):
+            for name, value in details.iteritems():
+                # not update username if user already exists
+                if not new_user and name == USERNAME:
+                    continue
+                if value and value != getattr(user, name, value):
+                    setattr(user, name, value)
+                    changed = True
+                
         # Fire a pre-update signal sending current backend instance,
         # user instance (created or retrieved from database), service
         # response and processed details, signal handlers must return
@@ -124,7 +128,14 @@ class SocialAuthBackend(ModelBackend):
                                                user=user,
                                                response=response,
                                                details=details))
-        if changed or len(updated) > 0:
+        # Looking for at least one update
+        has_update = False
+        for result in updated:
+            if result[1]:
+                has_update = True
+                break
+        
+        if changed or has_update:
             user.save()
 
     def get_user_id(self, details, response):
@@ -268,3 +279,16 @@ class GoogleBackend(OpenIDBackend):
 class YahooBackend(OpenIDBackend):
     """Yahoo OpenID authentication backend"""
     name = 'yahoo'
+
+
+class LiveJournalBackend(OpenIDBackend):
+    """LiveJournal OpenID authentication backend"""
+    name = 'livejournal'
+
+    def get_user_details(self, response):
+        """Generate username from identity url"""
+        values = super(LiveJournalBackend, self).get_user_details(response)
+        if not values.get(USERNAME):
+            values[USERNAME] = urlparse.urlsplit(response.identity_url)\
+                                       .netloc.split('.', 1)[0]
+        return values

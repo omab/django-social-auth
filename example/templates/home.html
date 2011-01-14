@@ -18,6 +18,15 @@
   <ul>
     <li><a rel="nofollow" href="/login/google/">Google</a></li>
     <li><a rel="nofollow" href="/login/yahoo/">Yahoo</a></li>
+	<li>
+	  <form action="/login/livejournal/" method="post">{% csrf_token %}
+	    <div>
+          <label for="openid_lj_user">LiveJournal user:</label>
+          <input id="openid_lj_user" type="text" value="" name="openid_lj_user" />
+          <input type="submit" value="Login"/>
+		</div>
+      </form>
+    </li>
     <li>
       <form action="/login/openid/" method="post">{% csrf_token %}
         <div>
