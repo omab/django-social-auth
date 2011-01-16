@@ -3,7 +3,9 @@
 TWITTER_SERVER = 'api.twitter.com'
 TWITTER_REQUEST_TOKEN_URL = 'https://%s/oauth/request_token' % TWITTER_SERVER
 TWITTER_ACCESS_TOKEN_URL = 'https://%s/oauth/access_token' % TWITTER_SERVER
-TWITTER_AUTHORIZATION_URL = 'http://%s/oauth/authorize' % TWITTER_SERVER
+# Note: oauth/authorize forces the user to authorize every time.
+#       oauth/authenticate uses their previous selection, barring revocation.
+TWITTER_AUTHORIZATION_URL = 'http://%s/oauth/authenticate' % TWITTER_SERVER
 TWITTER_CHECK_AUTH = 'https://twitter.com/account/verify_credentials.json'
 
 # Facebook configuration

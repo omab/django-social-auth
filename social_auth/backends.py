@@ -95,7 +95,7 @@ class SocialAuthBackend(ModelBackend):
     def associate_auth(self, user, uid, response, details):
         """Associate a Social Auth with an user account."""
         extra_data = '' if not getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA',
-                                       False) \
+                                       True) \
                         else self.extra_data(user, uid, response, details)
         return UserSocialAuth.objects.create(user=user, uid=uid,
                                              provider=self.name,
