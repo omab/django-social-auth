@@ -194,15 +194,14 @@ values from authorization service provider, this apply to new users and already
 existent ones. This is useful to update custom user fields or `User Profiles`_,
 for example, to store user gender, location, etc. Example::
 
-    from django.dispatch import receiver
-
     from social_auth.signals import pre_update
     from social_auth.backends import FacebookBackend
 
-    @receiver(pre_update, sender=FacebookBackend)
     def facebook_extra_values(sender, user, response, details):
         user.gender = response.get('gender')
         return True
+
+    pre_update.connect(facebook_extra_values, sender=FacebookBackend)
 
 New data updating is made automatically but could be disabled and left only to
 signal handler if this setting value::
