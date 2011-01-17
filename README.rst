@@ -353,6 +353,11 @@ Attributions to whom deserves:
 
   - Facebook and Doc improvements
 
+- mattucf_ (Matt Brown)
+
+  - Twitter and OAuth improvements
+
+
 
 ----------
 Copyrights
@@ -407,4 +412,5 @@ Base work is copyrighted by:
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
 .. _alfredo: https://github.com/alfredo
+.. _mattucf: https://github.com/mattucf
 .. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
