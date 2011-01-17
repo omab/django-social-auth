@@ -196,10 +196,10 @@ for example, to store user gender, location, etc. Example::
 
     from django.dispatch import receiver
 
-    from social_auth.signals import pre_save
+    from social_auth.signals import pre_update
     from social_auth.backends import FacebookBackend
 
-    @receiver(pre_save, sender=FacebookBackend)
+    @receiver(pre_update, sender=FacebookBackend)
     def facebook_extra_values(sender, user, response, details):
         user.gender = response.get('gender')
         return True
@@ -264,6 +264,9 @@ Further documentation at `Facebook development resources`_:
       FACEBOOK_APP_ID
       FACEBOOK_API_SECRET
 
+- Optional setting::
+
+     FACEBOOK_EXTENDED_PERMISSIONS (list with the required permisions)
 
 -----
 Orkut
