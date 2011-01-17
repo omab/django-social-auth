@@ -128,7 +128,15 @@ class SocialAuthBackend(ModelBackend):
                                                user=user,
                                                response=response,
                                                details=details))
-        if changed or updated:
+        
+        # Looking for at least one update    
+        has_update = False
+        for result in updated:
+            if result[1]:    
+                has_update = True
+                break
+
+        if changed or has_update:
             user.save()
 
     def get_user_id(self, details, response):
