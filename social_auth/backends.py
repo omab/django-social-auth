@@ -59,7 +59,17 @@ class SocialAuthBackend(ModelBackend):
         else:
             user = social_user.user
 
+        # Update the user account data.
         self.update_user_details(user, response, details, new_user=new_user)
+        
+        # Update the extra_data storage, unless disabled by setting.
+        extra_data = '' if not getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA',
+                                       True) \
+                        else self.extra_data(user, uid, response, details)
+        if extra_data:
+            social_user.extra_data = extra_data
+            social_user.save()
+        
         return user
 
     def username(self, details):
@@ -94,12 +104,8 @@ class SocialAuthBackend(ModelBackend):
 
     def associate_auth(self, user, uid, response, details):
         """Associate a Social Auth with an user account."""
-        extra_data = '' if not getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA',
-                                       False) \
-                        else self.extra_data(user, uid, response, details)
         return UserSocialAuth.objects.create(user=user, uid=uid,
-                                             provider=self.name,
-                                             extra_data=extra_data)
+                                             provider=self.name)
 
     def extra_data(self, user, uid, response, details):
         """Return default blank user extra data"""
