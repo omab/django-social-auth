@@ -15,7 +15,7 @@
 </div>
 
 <div>
-  <h3>Associate new credentials:</h3>
+  <h3>Associate new OAuth credentials:</h3>
   <ul>
     <li>
       <a rel="nofollow" href="/associate/twitter/">Twitter</a>
@@ -29,6 +29,14 @@
       <a rel="nofollow" href="/associate/orkut/">Orkut</a>
       {% if orkut %}<span class="associated">(associated)</span>{% endif %}
     </li>
+    <li>
+      <a rel="nofollow" href="/associate/google-oauth/">Google</a>
+      {% if google_oauth %}<span class="associated">(associated)</span>{% endif %}
+    </li>
+  </ul>
+
+  <h3>Associate new OpenID credentials:</h3>
+  <ul>
     <li>
       <a rel="nofollow" href="/associate/google/">Google</a>
       {% if google %}<span class="associated">(associated)</span>{% endif %}
