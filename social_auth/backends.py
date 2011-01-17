@@ -61,15 +61,14 @@ class SocialAuthBackend(ModelBackend):
 
         # Update the user account data.
         self.update_user_details(user, response, details, new_user=new_user)
-        
-        # Update the extra_data storage, unless disabled by setting.
-        extra_data = '' if not getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA',
-                                       True) \
-                        else self.extra_data(user, uid, response, details)
-        if extra_data:
-            social_user.extra_data = extra_data
-            social_user.save()
-        
+
+        # Update extra_data storage, unless disabled by setting
+        if getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA', True):
+            extra_data = self.extra_data(user, uid, response, details)
+            if extra_data:
+                social_user.extra_data = extra_data
+                social_user.save()
+
         return user
 
     def username(self, details):
