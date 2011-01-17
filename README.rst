@@ -264,9 +264,10 @@ Further documentation at `Facebook development resources`_:
       FACEBOOK_APP_ID
       FACEBOOK_API_SECRET
 
-- Optional setting::
+- also it's possible to define extra permissions with::
 
-     FACEBOOK_EXTENDED_PERMISSIONS (list with the required permisions)
+     FACEBOOK_EXTENDED_PERMISSIONS = [...]
+
 
 -----
 Orkut
@@ -348,6 +349,10 @@ Attributions to whom deserves:
 
   - Improvements and documentation update
 
+- alfredo_ (Alfredo Ramirez)
+
+  - Facebook and Doc improvements
+
 
 ----------
 Copyrights
@@ -401,4 +406,5 @@ Base work is copyrighted by:
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
+.. _alfredo: https://github.com/alfredo
 .. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
