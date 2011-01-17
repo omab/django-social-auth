@@ -123,11 +123,11 @@ class SocialAuthBackend(ModelBackend):
         # Fire a pre-update signal sending current backend instance,
         # user instance (created or retrieved from database), service
         # response and processed details, signal handlers must return
-        # True or False to signal that something has changed
-        updated = filter(None, pre_update.send(sender=self.__class__,
-                                               user=user,
-                                               response=response,
-                                               details=details))
+        # True or False to signal that something has changed. Send method
+        # returns a list of tuples with receiver and it's response
+        updated = filter(lambda (receiver, response): response,
+                         pre_update.send(sender=self.__class__, user=user,
+                                         response=response, details=details))
         if changed or updated:
             user.save()
 
