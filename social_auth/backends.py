@@ -226,7 +226,6 @@ class FacebookBackend(OAuthBackend):
                 'first_name': response.get('first_name', ''),
                 'last_name': response.get('last_name', '')}
 
-
 class OpenIDBackend(SocialAuthBackend):
     """Generic OpenID authentication backend"""
     name = 'openid'

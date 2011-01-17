@@ -413,16 +413,13 @@ class TwitterAuth(ConsumerBasedOAuth):
 
 class FacebookAuth(BaseOAuth):
     """Facebook OAuth mechanism"""
-    def __init__(self, request, redirect):
-        super(FacebookAuth, self).__init__(request, redirect)
-        if settings.DEBUG and self.redirect_uri:
-            # Facebook doesn't accept custom ports
-            self.redirect_uri = self.redirect_uri.replace(':8000', '')
 
     def auth_url(self):
         """Returns redirect url"""
         args = {'client_id': settings.FACEBOOK_APP_ID,
                 'redirect_uri': self.redirect_uri}
+        if hasattr(settings, 'FACEBOOK_EXTENDED_PERMISSIONS'):
+            args['scope'] = ','.join(settings.FACEBOOK_EXTENDED_PERMISSIONS)
         return FACEBOOK_AUTHORIZATION_URL + '?' + urllib.urlencode(args)
 
     def auth_complete(self, *args, **kwargs):
