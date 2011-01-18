@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 
-from .auth import get_backend
+from social_auth.backends import get_backend
 
 
 def auth(request, backend):

@@ -62,13 +62,13 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.TwitterBackend',
-    'social_auth.backends.FacebookBackend',
-    'social_auth.backends.GoogleOAuthBackend',
-    'social_auth.backends.GoogleBackend',
-    'social_auth.backends.YahooBackend',
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.google.GoogleOAuthBackend',
+    'social_auth.backends.google.GoogleBackend',
+    'social_auth.backends.yahoo.YahooBackend',
     'social_auth.backends.OpenIDBackend',
-    'social_auth.backends.LiveJournalBackend',
+    'social_auth.backends.contrib.livejournal.LiveJournalBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

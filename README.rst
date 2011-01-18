@@ -29,10 +29,13 @@ credentials, some features are:
     * `Google OpenID`_
     * `Google OAuth`_
     * `Yahoo OpenID`_
-    * `LiveJournal OpenID`_
     * OpenId_ like myOpenID_
     * `Twitter OAuth`_
     * `Facebook OAuth`_
+
+  Some contributions added support for:
+
+    * `LiveJournal OpenID`_
     * `Orkut OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
@@ -95,26 +98,43 @@ Configuration
 - Add desired authentication backends to AUTHENTICATION_BACKENDS_ setting::
 
     AUTHENTICATION_BACKENDS = (
-        'social_auth.backends.TwitterBackend',
-        'social_auth.backends.FacebookBackend',
-        'social_auth.backends.OrkutBackend',
-        'social_auth.backends.GoogleOAuthBackend',
-        'social_auth.backends.GoogleBackend',
-        'social_auth.backends.YahooBackend',
-        'social_auth.backends.LiveJournalBackend',
+        'social_auth.backends.twitter.TwitterBackend',
+        'social_auth.backends.facebook.FacebookBackend',
+        'social_auth.backends.google.GoogleOAuthBackend',
+        'social_auth.backends.google.GoogleBackend',
+        'social_auth.backends.yahoo.YahooBackend',
+        'social_auth.backends.contrib.LiveJournalBackend',
+        'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
 
+  Note: this was introduced in a recent change and it's not backward
+  compatible, take into account that saved sessions won't be able to login
+  because the backend string stored in session (like backends.TwitterBackend)
+  won't match the new paths.
+
+- The app will try to import custom backends from the sources defined in::
+
+    SOCIAL_AUTH_IMPORT_BACKENDS = (
+        'myproy.social_auth_extra_services',
+    )
+
+  This way it's easier to add new providers, check the already defined ones
+  in social_auth.backends for examples.
+
+  Take into account that backends must be defined in AUTHENTICATION_BACKENDS_
+  or Django won't pick them when trying to authenticate the user.
+
 - Setup Twitter, Facebook, Orkut and Google OAuth keys (see OAuth_ section
   for details)::
 
-    TWITTER_CONSUMER_KEY    = ''
-    TWITTER_CONSUMER_SECRET = ''
-    FACEBOOK_APP_ID         = ''
-    FACEBOOK_API_SECRET     = ''
-    ORKUT_CONSUMER_KEY      = ''
-    ORKUT_CONSUMER_SECRET   = ''
+    TWITTER_CONSUMER_KEY     = ''
+    TWITTER_CONSUMER_SECRET  = ''
+    FACEBOOK_APP_ID          = ''
+    FACEBOOK_API_SECRET      = ''
+    ORKUT_CONSUMER_KEY       = ''
+    ORKUT_CONSUMER_SECRET    = ''
     GOOGLE_CONSUMER_KEY      = ''
     GOOGLE_CONSUMER_SECRET   = ''
 

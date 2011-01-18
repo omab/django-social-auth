@@ -1,7 +1,7 @@
 """URLs module"""
 from django.conf.urls.defaults import patterns, url
 
-from .views import auth, complete, associate, associate_complete
+from social_auth.views import auth, complete, associate, associate_complete
 
 
 urlpatterns = patterns('',
