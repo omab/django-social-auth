@@ -215,7 +215,7 @@ existent ones. This is useful to update custom user fields or `User Profiles`_,
 for example, to store user gender, location, etc. Example::
 
     from social_auth.signals import pre_update
-    from social_auth.backends import FacebookBackend
+    from social_auth.backends.facebook import FacebookBackend
 
     def facebook_extra_values(sender, user, response, details):
         user.gender = response.get('gender')
