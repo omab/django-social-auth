@@ -43,6 +43,8 @@ class OrkutBackend(OAuthBackend):
 class OrkutAuth(BaseGoogleOAuth):
     """Orkut OAuth authentication mechanism"""
     AUTH_BACKEND = OrkutBackend
+    SETTINGS_KEY_NAME = 'ORKUT_CONSUMER_KEY'
+    SETTINGS_SECRET_NAME = 'ORKUT_CONSUMER_SECRET'
 
     def user_data(self, access_token):
         """Loads user data from Orkut service"""
@@ -62,10 +64,6 @@ class OrkutAuth(BaseGoogleOAuth):
             return simplejson.loads(response)['data']
         except (simplejson.JSONDecodeError, KeyError):
             return None
-
-    def get_key_and_secret(self):
-        """Return Orkut Consumer Key and Consumer Secret pair"""
-        return settings.ORKUT_CONSUMER_KEY, settings.ORKUT_CONSUMER_SECRET
 
 
 # Backend definition
