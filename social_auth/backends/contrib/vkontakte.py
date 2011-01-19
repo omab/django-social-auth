@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from urllib import unquote
 from hashlib import md5
+from time import time
 
 from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
 
@@ -60,7 +61,7 @@ class VKontakteAuth(BaseAuth):
         
         hash = md5(check_str + settings.VKONTAKTE_APP_SECRET).hexdigest()
         
-        if hash != cookie_dict['sig']:
+        if hash != cookie_dict['sig'] or int(cookie_dict['expire']) < time() :
             raise ValueError('VKontakte authentication failed: invalid hash')       
         else:
             kwargs.update({'response': self.request, self.AUTH_BACKEND.name: True})
