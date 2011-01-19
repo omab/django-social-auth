@@ -509,6 +509,7 @@ def get_backends():
 
 # load backends from defined modules
 BACKENDS = get_backends()
+BACKENDS[OpenIdAuth.AUTH_BACKEND.name] = OpenIdAuth
 
 def get_backend(name, *args, **kwargs):
     """Return auth backend instance *if* it's registered, None in other case"""
