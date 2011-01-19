@@ -9,4 +9,7 @@ SOCIAL_AUTH_FORCE_RANDOM_USERNAME = False
 SOCIAL_AUTH_DEFAULT_USERNAME      = 'socialauth_user'
 SOCIAL_AUTH_COMPLETE_URL_NAME     = 'social:complete'
 LOGIN_ERROR_URL                   = '/login/error/'
+VKONTAKTE_APP_ID                  = ''
+VKONTAKTE_APP_SECRET              = ''
+VKONTAKTE_LOCAL_HTML              = ''
 #SOCIAL_AUTH_USER_MODEL            = 'app.CustomUser'

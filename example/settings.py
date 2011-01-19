@@ -69,6 +69,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.YahooBackend',
     'social_auth.backends.OpenIDBackend',
     'social_auth.backends.LiveJournalBackend',
+    'social_auth.vk.VKontakteBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
