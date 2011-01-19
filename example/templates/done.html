@@ -57,6 +57,17 @@
       </form>
     </li>
     <li>
+      <form action="/login/yandex/" method="post">{% csrf_token %}
+        <div>
+          <label for="openid_ya_user">Yandex user
+            {% if yandex %} <span class="associated">(associated)</span>{% endif %}:
+          </label>
+          <input id="openid_ya_user" type="text" value="" name="openid_ya_user" />
+          <input type="submit" value="Login"/>
+        </div>
+      </form>
+    </li>
+    <li>
       <form action="/associate/openid/" method="post">{% csrf_token %}
         <div>
           <label for="openid_identifier">Other provider:</label>
