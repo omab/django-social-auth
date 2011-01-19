@@ -29,10 +29,13 @@ credentials, some features are:
     * `Google OpenID`_
     * `Google OAuth`_
     * `Yahoo OpenID`_
-    * `LiveJournal OpenID`_
     * OpenId_ like myOpenID_
     * `Twitter OAuth`_
     * `Facebook OAuth`_
+
+  Some contributions added support for:
+
+    * `LiveJournal OpenID`_
     * `Orkut OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
@@ -95,26 +98,43 @@ Configuration
 - Add desired authentication backends to AUTHENTICATION_BACKENDS_ setting::
 
     AUTHENTICATION_BACKENDS = (
-        'social_auth.backends.TwitterBackend',
-        'social_auth.backends.FacebookBackend',
-        'social_auth.backends.OrkutBackend',
-        'social_auth.backends.GoogleOAuthBackend',
-        'social_auth.backends.GoogleBackend',
-        'social_auth.backends.YahooBackend',
-        'social_auth.backends.LiveJournalBackend',
+        'social_auth.backends.twitter.TwitterBackend',
+        'social_auth.backends.facebook.FacebookBackend',
+        'social_auth.backends.google.GoogleOAuthBackend',
+        'social_auth.backends.google.GoogleBackend',
+        'social_auth.backends.yahoo.YahooBackend',
+        'social_auth.backends.contrib.LiveJournalBackend',
+        'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
 
+  Note: this was introduced in a recent change and it's not backward
+  compatible, take into account that saved sessions won't be able to login
+  because the backend string stored in session (like backends.TwitterBackend)
+  won't match the new paths.
+
+- The app will try to import custom backends from the sources defined in::
+
+    SOCIAL_AUTH_IMPORT_BACKENDS = (
+        'myproy.social_auth_extra_services',
+    )
+
+  This way it's easier to add new providers, check the already defined ones
+  in social_auth.backends for examples.
+
+  Take into account that backends must be defined in AUTHENTICATION_BACKENDS_
+  or Django won't pick them when trying to authenticate the user.
+
 - Setup Twitter, Facebook, Orkut and Google OAuth keys (see OAuth_ section
   for details)::
 
-    TWITTER_CONSUMER_KEY    = ''
-    TWITTER_CONSUMER_SECRET = ''
-    FACEBOOK_APP_ID         = ''
-    FACEBOOK_API_SECRET     = ''
-    ORKUT_CONSUMER_KEY      = ''
-    ORKUT_CONSUMER_SECRET   = ''
+    TWITTER_CONSUMER_KEY     = ''
+    TWITTER_CONSUMER_SECRET  = ''
+    FACEBOOK_APP_ID          = ''
+    FACEBOOK_API_SECRET      = ''
+    ORKUT_CONSUMER_KEY       = ''
+    ORKUT_CONSUMER_SECRET    = ''
     GOOGLE_CONSUMER_KEY      = ''
     GOOGLE_CONSUMER_SECRET   = ''
 
@@ -129,14 +149,14 @@ Configuration
 - Configure authentication and association complete URL names to avoid
   possible clashes::
 
-    SOCIAL_AUTH_COMPLETE_URL_NAME  = 'namespace:complete'
-    SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'namespace:associate_complete'
+    SOCIAL_AUTH_COMPLETE_URL_NAME  = 'complete'
+    SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'associate_complete'
 
 - Add URLs entries::
 
     urlpatterns = patterns('',
         ...
-        url(r'', include('social_auth.urls', namespace='social')),
+        url(r'', include('social_auth.urls')),
         ...
     )
 
@@ -194,15 +214,14 @@ values from authorization service provider, this apply to new users and already
 existent ones. This is useful to update custom user fields or `User Profiles`_,
 for example, to store user gender, location, etc. Example::
 
-    from django.dispatch import receiver
-
-    from social_auth.signals import pre_save
+    from social_auth.signals import pre_update
     from social_auth.backends import FacebookBackend
 
-    @receiver(pre_save, sender=FacebookBackend)
     def facebook_extra_values(sender, user, response, details):
         user.gender = response.get('gender')
         return True
+
+    pre_update.connect(facebook_extra_values, sender=FacebookBackend)
 
 New data updating is made automatically but could be disabled and left only to
 signal handler if this setting value::
@@ -263,6 +282,10 @@ Further documentation at `Facebook development resources`_:
 
       FACEBOOK_APP_ID
       FACEBOOK_API_SECRET
+
+- also it's possible to define extra permissions with::
+
+     FACEBOOK_EXTENDED_PERMISSIONS = [...]
 
 
 -----
@@ -345,6 +368,15 @@ Attributions to whom deserves:
 
   - Improvements and documentation update
 
+- alfredo_ (Alfredo Ramirez)
+
+  - Facebook and Doc improvements
+
+- mattucf_ (Matt Brown)
+
+  - Twitter and OAuth improvements
+
+
 
 ----------
 Copyrights
@@ -398,4 +430,6 @@ Base work is copyrighted by:
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
+.. _alfredo: https://github.com/alfredo
+.. _mattucf: https://github.com/mattucf
 .. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283

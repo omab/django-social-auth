@@ -12,5 +12,5 @@ urlpatterns = patterns('',
     url(r'^error/$', error, name='error'),
     url(r'^logout/$', logout, name='logout'), 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'', include('social_auth.urls', namespace='social')),
+    url(r'', include('social_auth.urls')),
 )

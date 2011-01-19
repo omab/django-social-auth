@@ -1,7 +1,7 @@
 """Admin settings"""
 from django.contrib import admin
 
-from .models import UserSocialAuth, Nonce, Association
+from social_auth.models import UserSocialAuth, Nonce, Association
 
 
 class UserSocialAuthOption(admin.ModelAdmin):

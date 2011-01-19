@@ -1,11 +1,18 @@
+"""
+VKontakte OpenAPI support.
+
+This contribution adds support for VKontakte OpenAPI service in the form
+www.vkontakte.ru. Username is retrieved from the identity returned by server.
+"""
+
 from django.conf import settings
 from django.contrib.auth import authenticate
 from urllib import unquote
 import md5
 
-from backends import SocialAuthBackend, USERNAME
-from auth import BaseAuth, BACKENDS
+from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
 
+VKONTAKTE_LOCAL_HTML  = 'vkontakte.html'
 
 class VKontakteBackend(SocialAuthBackend):
     """VKontakte authentication backend"""
@@ -17,7 +24,8 @@ class VKontakteBackend(SocialAuthBackend):
     
     def get_user_details(self, response):
         """Return user details from VKontakte request"""
-        values = { USERNAME: unquote(response.GET['nickname']), 'email': '', 'fullname': '',
+        nickname = unquote(response.GET['nickname'])
+        values = { USERNAME: response.GET['id'] if len(nickname) == 0 else nickname, 'email': '', 'fullname': '',
                   'first_name': unquote(response.GET['first_name']), 'last_name': unquote(response.GET['last_name'])}
         return values
 
@@ -33,9 +41,9 @@ class VKontakteAuth(BaseAuth):
         from django.template import RequestContext, loader
         
         dict = { 'VK_APP_ID'      : self.APP_ID,
-                 'VK_COMPLETE_URL': reverse('social:complete', args=[VKontakteBackend.name]) }
+                 'VK_COMPLETE_URL': reverse(settings.SOCIAL_AUTH_COMPLETE_URL_NAME, args=[VKontakteBackend.name]) }
         
-        vk_template = loader.get_template(settings.VKONTAKTE_LOCAL_HTML)
+        vk_template = loader.get_template(VKONTAKTE_LOCAL_HTML)
         context = RequestContext(self.request, dict)
     
         return vk_template.render(context)
@@ -66,6 +74,8 @@ class VKontakteAuth(BaseAuth):
         return False
     
     
-def add_VK_Auth():
-    BACKENDS[VKontakteBackend.name] = VKontakteAuth
+# Backend definition
+BACKENDS = {
+    'vkontakte': VKontakteAuth,
+}
     

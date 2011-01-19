@@ -46,10 +46,16 @@
       {% if yahoo %}<span class="associated">(associated)</span>{% endif %}
     </li>
     <li>
-      <a rel="nofollow" href="/associate/livejournal/">LiveJournal</a>
-      {% if livejournal %}<span class="associated">(associated)</span>{% endif %}
+      <form action="/login/livejournal/" method="post">{% csrf_token %}
+        <div>
+          <label for="openid_lj_user">LiveJournal user
+            {% if livejournal %} <span class="associated">(associated)</span>{% endif %}:
+          </label>
+          <input id="openid_lj_user" type="text" value="" name="openid_lj_user" />
+          <input type="submit" value="Login"/>
+        </div>
+      </form>
     </li>
-	
     <li>
       <form action="/associate/openid/" method="post">{% csrf_token %}
         <div>

@@ -4,9 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 
-from social_auth.vk import add_VK_Auth
-add_VK_Auth()
-
 def home(request):
     """Home view, displays login mechanism"""
     if request.user.is_authenticated():
