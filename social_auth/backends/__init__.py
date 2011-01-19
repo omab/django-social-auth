@@ -276,6 +276,11 @@ class BaseAuth(object):
         otherwise return false."""
         return True
 
+    @classmethod
+    def enabled(cls):
+        """Return backend enabled status, all enabled by default"""
+        return True
+
 
 class OpenIdAuth(BaseAuth):
     """
@@ -396,6 +401,8 @@ class ConsumerBasedOAuth(BaseOAuth):
     ACCESS_TOKEN_URL = ''
     SERVER_URL = ''
     AUTH_BACKEND = None
+    SETTINGS_KEY_NAME = ''
+    SETTINGS_SECRET_NAME = ''
 
     def auth_url(self):
         """Returns redirect url"""
@@ -480,9 +487,17 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def get_key_and_secret(self):
         """Return tuple with Consumer Key and Consumer Secret for current
-        service provider. Must return (key, secret), order must be respected.
+        service provider. Must return (key, secret), order *must* be respected.
         """
-        raise NotImplementedError('Implement in subclass')
+        return getattr(settings, self.SETTINGS_KEY_NAME), \
+               getattr(settings, self.SETTINGS_SECRET_NAME)
+
+    @classmethod
+    def enabled(cls):
+        """Return backend enabled status by checking basic settings"""
+        return all(hasattr(settings, name) for name in
+                        (cls.SETTINGS_KEY_NAME,
+                         cls.SETTINGS_SECRET_NAME))
 
 
 # import sources from where check for auth backends
@@ -505,13 +520,17 @@ def get_backends():
                 try:
                     name = basename(name).replace('.py', '')
                     sub = import_module(mod_name + '.' + name)
-                    backends.update(sub.BACKENDS)
+                    # register only enabled backends
+                    backends.update(((key, val)
+                                        for key, val in sub.BACKENDS.items()
+                                            if val.enabled()))
                 except (ImportError, AttributeError):
                     pass
     return backends
 
 # load backends from defined modules
 BACKENDS = get_backends()
+BACKENDS[OpenIdAuth.AUTH_BACKEND.name] = OpenIdAuth
 
 def get_backend(name, *args, **kwargs):
     """Return auth backend instance *if* it's registered, None in other case"""

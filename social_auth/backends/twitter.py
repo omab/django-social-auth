@@ -44,6 +44,8 @@ class TwitterAuth(ConsumerBasedOAuth):
     ACCESS_TOKEN_URL = TWITTER_ACCESS_TOKEN_URL
     SERVER_URL = TWITTER_SERVER
     AUTH_BACKEND = TwitterBackend
+    SETTINGS_KEY_NAME = 'TWITTER_CONSUMER_KEY'
+    SETTINGS_SECRET_NAME = 'TWITTER_CONSUMER_SECRET'
 
     def user_data(self, access_token):
         """Return user data provided"""
@@ -53,10 +55,6 @@ class TwitterAuth(ConsumerBasedOAuth):
             return simplejson.loads(json)
         except simplejson.JSONDecodeError:
             return None
-
-    def get_key_and_secret(self):
-        """Return Twitter Consumer Key and Consumer Secret pair"""
-        return settings.TWITTER_CONSUMER_KEY, settings.TWITTER_CONSUMER_SECRET
 
 
 # Backend definition

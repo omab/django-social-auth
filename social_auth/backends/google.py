@@ -77,14 +77,12 @@ class BaseGoogleOAuth(ConsumerBasedOAuth):
         """Loads user data from G service"""
         raise NotImplementedError('Implement in subclass')
 
-    def get_key_and_secret(self):
-        """Return Consumer Key and Consumer Secret pair"""
-        raise NotImplementedError('Implement in subclass')
-
 
 class GoogleOAuth(BaseGoogleOAuth):
     """Google OAuth authorization mechanism"""
     AUTH_BACKEND = GoogleOAuthBackend
+    SETTINGS_KEY_NAME = 'GOOGLE_CONSUMER_KEY'
+    SETTINGS_SECRET_NAME = 'GOOGLE_CONSUMER_SECRET'
 
     def user_data(self, access_token):
         """Loads user data data from googleapis service, only email so far
@@ -122,8 +120,10 @@ class GoogleOAuth(BaseGoogleOAuth):
         registered and a security badge is displayed on authorization page.
         http://code.google.com/apis/accounts/docs/OAuth_ref.html#SigningOAuth
         """
-        return getattr(settings, 'GOOGLE_CONSUMER_KEY', 'anonymous'), \
-               getattr(settings, 'GOOGLE_CONSUMER_SECRET', 'anonymous')
+        try:
+            return super(GoogleOAuth, self).get_key_and_secret()
+        except AttributeError:
+            return 'anonymous', 'anonymous'
 
 
 # Backend definition
