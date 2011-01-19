@@ -8,7 +8,7 @@ www.vkontakte.ru. Username is retrieved from the identity returned by server.
 from django.conf import settings
 from django.contrib.auth import authenticate
 from urllib import unquote
-import md5
+from hashlib import md5
 
 from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
 
@@ -58,7 +58,7 @@ class VKontakteAuth(BaseAuth):
         cookie_dict = dict(item.split('=') for item in self.request.COOKIES[app_cookie].split('&'))
         check_str = ''.join([item + '=' + cookie_dict[item] for item in ['expire', 'mid', 'secret', 'sid']])
         
-        hash = md5.new(check_str + settings.VKONTAKTE_APP_SECRET).hexdigest()
+        hash = md5(check_str + settings.VKONTAKTE_APP_SECRET).hexdigest()
         
         if hash != cookie_dict['sig']:
             raise ValueError('VKontakte authentication failed: invalid hash')       

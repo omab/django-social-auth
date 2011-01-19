@@ -489,7 +489,7 @@ SOCIAL_AUTH_IMPORT_SOURCES = (
 ) + getattr(settings, 'SOCIAL_AUTH_IMPORT_BACKENDS', ())
 
 def get_backends():
-    backends = {}
+    backends = {'openid' : OpenIdAuth}
 
     for mod_name in SOCIAL_AUTH_IMPORT_SOURCES:
         try:
