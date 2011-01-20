@@ -226,7 +226,7 @@ class OpenIDBackend(SocialAuthBackend):
         # Use Attribute Exchange attributes if provided
         resp = ax.FetchResponse.fromSuccessResponse(response)
         if resp:
-            values.update((alias.replace('old_', ''), resp.getSingle(src))
+            values.update((alias.replace('old_', ''), resp.getSingle(src, ''))
                             for src, alias in OLD_AX_ATTRS + AX_SCHEMA_ATTRS)
 
         fullname = values.get('fullname') or ''

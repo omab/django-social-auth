@@ -266,7 +266,9 @@ Further documentation at `Twitter development resources`_:
       TWITTER_CONSUMER_KEY
       TWITTER_CONSUMER_SECRET
 
-- You don't need to specify the URL callback
+- You need to specify an URL callback or the application will be marked as
+  Client type instead of the Browser. Almost any dummy value will work if
+  you plan some test.
 
 
 --------
