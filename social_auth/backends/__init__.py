@@ -232,9 +232,6 @@ class OpenIDBackend(SocialAuthBackend):
         fullname = values.get('fullname') or ''
         first_name = values.get('first_name') or ''
         last_name = values.get('last_name') or ''
-
-        if not values['email']:
-            values['email'] = ''
         
         if not fullname and first_name and last_name:
             fullname = first_name + ' ' + last_name
