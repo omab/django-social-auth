@@ -59,8 +59,9 @@ def auth_process(request, backend, complete_url_name, default_final_url):
     backend = get_backend(backend, request, redirect)
     if not backend:
         return HttpResponseServerError('Incorrect authentication service')
-    request.session[REDIRECT_FIELD_NAME] = request.GET.get(REDIRECT_FIELD_NAME,
-                                                           default_final_url)
+    data = request.GET if request.method == 'GET' else request.POST
+    request.session[REDIRECT_FIELD_NAME] = data.get(REDIRECT_FIELD_NAME,
+                                                    default_final_url)
     if backend.uses_redirect:
         return HttpResponseRedirect(backend.auth_url())
     else:

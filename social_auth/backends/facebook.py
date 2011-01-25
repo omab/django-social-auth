@@ -50,12 +50,12 @@ class FacebookAuth(BaseOAuth):
 
     def auth_complete(self, *args, **kwargs):
         """Returns user, might be logged in"""
-        if 'code' in self.request.GET:
+        if 'code' in self.data:
             url = FACEBOOK_ACCESS_TOKEN_URL + '?' + \
                   urllib.urlencode({'client_id': settings.FACEBOOK_APP_ID,
                                 'redirect_uri': self.redirect_uri,
                                 'client_secret': settings.FACEBOOK_API_SECRET,
-                                'code': self.request.GET['code']})
+                                'code': self.data['code']})
             response = cgi.parse_qs(urllib.urlopen(url).read())
 
             access_token = response['access_token'][0]

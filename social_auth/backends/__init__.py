@@ -101,7 +101,7 @@ class SocialAuthBackend(ModelBackend):
         # Update extra_data storage, unless disabled by setting
         if getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA', True):
             extra_data = self.extra_data(user, uid, response, details)
-            if extra_data:
+            if extra_data and social_user.extra_data != extra_data:
                 social_user.extra_data = extra_data
                 social_user.save()
 
@@ -253,6 +253,7 @@ class BaseAuth(object):
     and implement needed methods"""
     def __init__(self, request, redirect):
         self.request = request
+        self.data = request.POST if request.method == 'POST' else request.GET
         self.redirect = redirect
 
     def auth_url(self):
@@ -304,7 +305,7 @@ class OpenIdAuth(BaseAuth):
                                          form_tag_attrs=form_tag)
 
     def auth_complete(self, *args, **kwargs):
-        response = self.consumer().complete(dict(self.request.REQUEST.items()),
+        response = self.consumer().complete(dict(self.data.items()),
                                             self.request.build_absolute_uri())
         if not response:
             raise ValueError('This is an OpenID relying party endpoint')
@@ -368,10 +369,9 @@ class OpenIdAuth(BaseAuth):
         """Return service provider URL.
         This base class is generic accepting a POST parameter that specifies
         provider URL."""
-        if self.request.method != 'POST' or \
-           OPENID_ID_FIELD not in self.request.POST:
+        if OPENID_ID_FIELD not in self.data:
             raise ValueError('Missing openid identifier')
-        return self.request.POST[OPENID_ID_FIELD]
+        return self.data[OPENID_ID_FIELD]
 
 
 class BaseOAuth(BaseAuth):
@@ -416,7 +416,7 @@ class ConsumerBasedOAuth(BaseOAuth):
             raise ValueError('Missing unauthorized token')
 
         token = OAuthToken.from_string(unauthed_token)
-        if token.key != self.request.GET.get('oauth_token', 'no-token'):
+        if token.key != self.data.get('oauth_token', 'no-token'):
             raise ValueError('Incorrect tokens')
 
         access_token = self.access_token(token)
@@ -439,8 +439,8 @@ class ConsumerBasedOAuth(BaseOAuth):
         if extra_params:
             params.update(extra_params)
 
-        if 'oauth_verifier' in self.request.GET:
-            params['oauth_verifier'] = self.request.GET['oauth_verifier']
+        if 'oauth_verifier' in self.data:
+            params['oauth_verifier'] = self.data['oauth_verifier']
         request = OAuthRequest.from_consumer_and_token(self.consumer,
                                                        token=token,
                                                        http_url=url,
