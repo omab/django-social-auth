@@ -35,10 +35,9 @@ class YandexAuth(OpenIdAuth):
 
     def openid_url(self):
         """Returns Yandex authentication URL"""
-        if self.request.method != 'POST' or \
-           not self.request.POST.get(YANDEX_USER_FIELD):
+        if YANDEX_USER_FIELD not in self.data:
             raise ValueError, 'Missing Yandex user identifier'
-        return YANDEX_URL % self.request.POST[YANDEX_USER_FIELD]
+        return YANDEX_URL % self.data[YANDEX_USER_FIELD]
     
 # Backend definition
 BACKENDS = {
