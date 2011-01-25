@@ -32,7 +32,12 @@ class YandexBackend(OpenIDBackend):
 class YandexAuth(OpenIdAuth):
     """Yandex OpenID authentication"""
     AUTH_BACKEND = YandexBackend
-
+    
+    def auth_complete(self, *args, **kwargs):
+        # Yandex returns some stuff in both GET and POST
+        self.data = self.request.REQUEST
+        return super(YandexAuth, self).auth_complete(*args, **kwargs)
+        
     def openid_url(self):
         """Returns Yandex authentication URL"""
         if YANDEX_USER_FIELD not in self.data:
