@@ -93,6 +93,13 @@ class SocialAuthBackend(ModelBackend):
                 user = User.objects.create_user(username=username, email=email)
             social_user = self.associate_auth(user, uid, response, details)
         else:
+            # This account was registered to another user, so we raise an
+            # error in such case and the view should decide what to do on
+            # at this moment, merging account is not an option because that
+            # would imply update user references on other apps, that's too
+            # much intrusive
+            if 'user' in kwargs and kwargs['user'] != social_user.user:
+                raise ValueError('Account already in use.')
             user = social_user.user
 
         # Update user account data.
