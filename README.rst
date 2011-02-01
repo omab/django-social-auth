@@ -49,7 +49,7 @@ credentials, some features are:
 ------------
 Dependencies
 ------------
-Dependencies that must be meet to use the app:
+Dependencies that *must* be meet to use the application:
 
 - OpenId_ support depends on python-openid_
 
@@ -114,7 +114,7 @@ Configuration
   because the backend string stored in session (like backends.TwitterBackend)
   won't match the new paths.
 
-- The app will try to import custom backends from the sources defined in::
+- The application will try to import custom backends from the sources defined in::
 
     SOCIAL_AUTH_IMPORT_BACKENDS = (
         'myproy.social_auth_extra_services',
@@ -123,7 +123,7 @@ Configuration
   This way it's easier to add new providers, check the already defined ones
   in social_auth.backends for examples.
 
-  Take into account that backends must be defined in AUTHENTICATION_BACKENDS_
+  Take into account that backends *must* be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.
 
 - Setup Twitter, Facebook, Orkut and Google OAuth keys (see OAuth_ section
@@ -217,18 +217,20 @@ for example, to store user gender, location, etc. Example::
     from social_auth.signals import pre_update
     from social_auth.backends.facebook import FacebookBackend
 
-    def facebook_extra_values(sender, user, response, details):
+    def facebook_extra_values(sender, user, response, details, **kwargs):
         user.gender = response.get('gender')
         return True
 
     pre_update.connect(facebook_extra_values, sender=FacebookBackend)
 
 New data updating is made automatically but could be disabled and left only to
-signal handler if this setting value::
+signal handler if this setting value is set to True::
 
     SOCIAL_AUTH_CHANGE_SIGNAL_ONLY = False
 
-is set to True.
+Take into account that when defining a custom User model and declaring signal
+handler in models.py, the imports and handler definition *must* be made after
+the custom User model is defined or circular imports issues will be raised.
 
 
 ------
@@ -245,7 +247,7 @@ OAuth
 OAuth_ communication demands a set of keys exchange to validate the client
 authenticity prior to user approbation. Twitter, Facebook and Orkut
 facilitates these keys by application registration, Google works the same,
-but provides the option for unregisterd applications.
+but provides the option for unregistered applications.
 
 Check next sections for details.
 
