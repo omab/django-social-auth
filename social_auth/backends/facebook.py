@@ -61,16 +61,15 @@ class FacebookAuth(BaseOAuth):
             data = self.user_data(access_token)
             if data is not None:
                 if 'error' in data:
-                    raise ValueError('Authentication error')
+                    error = self.data.get('error') or 'unknown error'
+                    raise ValueError('Authentication error: %s' % error)
                 data['access_token'] = access_token
                 data['expires'] = response['expires'][0]
             kwargs.update({'response': data, FacebookBackend.name: True})
             return authenticate(*args, **kwargs)
         else:
-            description = self.data['error'] \
-                          if self.data.get('error') \
-                          else 'unknown_error'
-            raise ValueError(description)
+            error = self.data.get('error') or 'unknown error'
+            raise ValueError('Authentication error: %s' % error)
 
     def user_data(self, access_token):
         """Loads user data from service"""
