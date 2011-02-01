@@ -64,7 +64,9 @@ class FacebookAuth(BaseOAuth):
                     error = self.data.get('error') or 'unknown error'
                     raise ValueError('Authentication error: %s' % error)
                 data['access_token'] = access_token
-                data['expires'] = response['expires'][0]
+                #expires will not be part of response if offline access premission was requested
+                if 'expires' in response:
+                    data['expires'] = response['expires'][0]
             kwargs.update({'response': data, FacebookBackend.name: True})
             return authenticate(*args, **kwargs)
         else:
