@@ -57,22 +57,23 @@ class FacebookAuth(BaseOAuth):
                                 'client_secret': settings.FACEBOOK_API_SECRET,
                                 'code': self.data['code']})
             response = cgi.parse_qs(urllib.urlopen(url).read())
-
             access_token = response['access_token'][0]
             data = self.user_data(access_token)
             if data is not None:
                 if 'error' in data:
-                    raise ValueError('Authentication error')
+                    error = self.data.get('error') or 'unknown error'
+                    raise ValueError('Authentication error: %s' % error)
                 data['access_token'] = access_token
-
+                data['expires'] = response['expires'][0]
             kwargs.update({'response': data, FacebookBackend.name: True})
             return authenticate(*args, **kwargs)
         else:
-            raise ValueError('Authentication error')
+            error = self.data.get('error') or 'unknown error'
+            raise ValueError('Authentication error: %s' % error)
 
     def user_data(self, access_token):
         """Loads user data from service"""
-        params = {'access_token': access_token}
+        params = {'access_token': access_token,}
         url = FACEBOOK_CHECK_AUTH + '?' + urllib.urlencode(params)
         try:
             return simplejson.load(urllib.urlopen(url))

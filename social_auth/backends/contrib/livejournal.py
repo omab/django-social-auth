@@ -37,7 +37,7 @@ class LiveJournalAuth(OpenIdAuth):
 
     def openid_url(self):
         """Returns LiveJournal authentication URL"""
-        if LIVEJOURNAL_USER_FIELD not in self.data:
+        if not self.data.get(LIVEJOURNAL_USER_FIELD):
             raise ValueError, 'Missing LiveJournal user identifier'
         return LIVEJOURNAL_URL % self.data[LIVEJOURNAL_USER_FIELD]
 
