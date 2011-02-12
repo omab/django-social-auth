@@ -146,6 +146,14 @@ Configuration
 
   Check Django documentation at `Login URL`_ and `Login redirect URL`_
 
+  In case of authentication error, the message can be stored in session
+  if the following setting is defined::
+
+    SOCIAL_AUTH_ERROR_KEY = 'social_errors'
+
+  This defined the desired session key where last error message should be
+  stored. It's disabled by default.
+
 - Configure authentication and association complete URL names to avoid
   possible clashes::
 

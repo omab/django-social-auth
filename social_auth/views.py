@@ -22,7 +22,15 @@ def complete(request, backend):
     backend = get_backend(backend, request, request.path)
     if not backend:
         return HttpResponseServerError('Incorrect authentication service')
-    user = backend.auth_complete()
+
+    try:
+        user = backend.auth_complete()
+    except ValueError, e: # some Authentication error ocurred
+        user = None
+        error_key = getattr(settings, 'SOCIAL_AUTH_ERROR_KEY', None)
+        if error_key: # store error in session
+            request.session[error_key] = str(e)
+
     if user and getattr(user, 'is_active', True):
         login(request, user)
         url = request.session.pop(REDIRECT_FIELD_NAME, '') or \

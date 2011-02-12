@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -25,7 +26,9 @@ def done(request):
 
 def error(request):
     """Error view"""
-    return render_to_response('error.html', {'version': version},
+    error_msg = request.session.pop(settings.SOCIAL_AUTH_ERROR_KEY, None)
+    return render_to_response('error.html', {'version': version,
+                                             'error_msg': error_msg},
                               RequestContext(request))
 
 def logout(request):
