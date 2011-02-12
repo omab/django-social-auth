@@ -151,7 +151,7 @@ Configuration
 
     SOCIAL_AUTH_ERROR_KEY = 'social_errors'
 
-  This defined the desired session key where last error message should be
+  This defines the desired session key where last error message should be
   stored. It's disabled by default.
 
 - Configure authentication and association complete URL names to avoid
