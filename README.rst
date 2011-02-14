@@ -299,6 +299,10 @@ Further documentation at `Facebook development resources`_:
 
      FACEBOOK_EXTENDED_PERMISSIONS = [...]
 
+If you define a redirect URL in Facebook setup page, be sure to not
+define http://127.0.0.1:8000 or http://localhost:8000 because it won't
+work when testing. Instead I define http://myapp.com and setup a mapping
+on /etc/hosts or use dnsmasq_.
 
 -----
 Orkut
