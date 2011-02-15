@@ -4,8 +4,8 @@ import warnings
 from django.db import models
 from django.conf import settings
 
-# If User class is overrided, it must provide the following fields,
-# or it won't be playing nicely with auth module:
+# If User class is overridden, it *must* provide the following fields,
+# or it won't be playing nicely with django.contrib.auth module:
 #
 #   username   = CharField()
 #   last_login = DateTimeField()
