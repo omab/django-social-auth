@@ -133,10 +133,12 @@ class SocialAuthBackend(ModelBackend):
         else:
             username = get_random_username()
 
+        fixer = getattr(settings, 'SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
+
         name, idx = username, 2
         while True:
             try:
-                User.objects.get(username=name)
+                User.objects.get(username=fixer(name))
                 name = username + str(idx)
                 idx += 1
             except User.DoesNotExist:

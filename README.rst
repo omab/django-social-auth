@@ -181,7 +181,14 @@ Configuration
     import random
     SOCIAL_AUTH_DEFAULT_USERNAME = lambda: random.choice(['Darth Vader', 'Obi-Wan Kenobi', 'R2-D2', 'C-3PO', 'Yoda'])
 
-  final user name will have an integer suffix in case it's already taken.
+  or::
+
+    from django.template.defaultfilter import slugify
+    SOCIAL_AUTH_USERNAME_FIXER = lambda u: slugify(u)
+
+  in case your user layout needs to purify username on some weird way.
+
+  Final user name will have an integer suffix in case it's already taken.
 
 - OAuth_ authentication will store access_token by default, set this value
   to False to avoid such behavior::
