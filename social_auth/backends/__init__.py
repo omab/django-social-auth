@@ -138,7 +138,8 @@ class SocialAuthBackend(ModelBackend):
         name, idx = username, 2
         while True:
             try:
-                User.objects.get(username=fixer(name))
+                name = fixer(name)
+                User.objects.get(username=name)
                 name = username + str(idx)
                 idx += 1
             except User.DoesNotExist:
