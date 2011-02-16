@@ -124,6 +124,11 @@ class GoogleOAuth(BaseGoogleOAuth):
         except AttributeError:
             return 'anonymous', 'anonymous'
 
+    @classmethod
+    def enabled(cls):
+        """Google OAuth is always enabled because of anonymous access"""
+        return True
+
 
 # Backend definition
 BACKENDS = {

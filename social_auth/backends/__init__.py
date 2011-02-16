@@ -70,9 +70,10 @@ class SocialAuthBackend(ModelBackend):
         verification is made by kwargs inspection for current backend
         name presence.
         """
-        # Validate backend and arguments. Require that the OAuth response
-        # be passed in as a keyword argument, to make sure we don't match
-        # the username/password calling conventions of authenticate.
+        # Validate backend and arguments. Require that the Social Auth
+        # response be passed in as a keyword argument, to make sure we
+        # don't match the username/password calling conventions of
+        # authenticate.
         if not (self.name and kwargs.get(self.name) and 'response' in kwargs):
             return None
 
