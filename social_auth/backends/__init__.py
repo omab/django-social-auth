@@ -260,7 +260,12 @@ class OpenIDBackend(SocialAuthBackend):
 
 class BaseAuth(object):
     """Base authentication class, new authenticators should subclass
-    and implement needed methods"""
+    and implement needed methods.
+
+        @AUTH_BACKEND   Authorization backend related with this service
+    """
+    AUTH_BACKEND = None
+
     def __init__(self, request, redirect):
         self.request = request
         self.data = request.POST if request.method == 'POST' else request.GET
@@ -297,10 +302,7 @@ class BaseAuth(object):
 
 
 class OpenIdAuth(BaseAuth):
-    """
-    OpenId process handling
-        @AUTH_BACKEND   Authorization backend related with this service
-    """
+    """OpenId process handling"""
     AUTH_BACKEND = OpenIDBackend
 
     def auth_url(self):
@@ -406,14 +408,11 @@ class ConsumerBasedOAuth(BaseOAuth):
         @REQUEST_TOKEN_URL       Request token URL
         @ACCESS_TOKEN_URL        Access token URL
         @SERVER_URL              Authorization server URL
-        @AUTH_BACKEND            Authorization backend related with
-                                 this service
     """
     AUTHORIZATION_URL = ''
     REQUEST_TOKEN_URL = ''
     ACCESS_TOKEN_URL = ''
     SERVER_URL = ''
-    AUTH_BACKEND = None
     SETTINGS_KEY_NAME = ''
     SETTINGS_SECRET_NAME = ''
 

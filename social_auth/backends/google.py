@@ -71,7 +71,6 @@ class BaseGoogleOAuth(ConsumerBasedOAuth):
     REQUEST_TOKEN_URL = GOOGLE_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = GOOGLE_ACCESS_TOKEN_URL
     SERVER_URL = GOOGLE_SERVER
-    AUTH_BACKEND = None
 
     def user_data(self, access_token):
         """Loads user data from G service"""
