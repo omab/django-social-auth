@@ -24,10 +24,10 @@
       #content {padding: 0 20px;}
       .helptext {font-size: 0.9em; color: #aaa; margin: 0; padding: 0;}
       .description {font-size: 1.0em; color: #333;}
-      a.logout, .associated, .error {color: #c00;}
+      a.logout, span.disconnect a, .error {color: #c00;}
       .error {padding-left: 30px;}
       #forkme {position: absolute; top: 0; right: 0;}
-      #valid-badges {position: absolute; right: 10px; bottom: 10px;}
+      #valid-badges {position: fixed; right: 10px; bottom: 10px;}
       #valid-badges p {display: inline;}
     </style>
   </head>
@@ -35,8 +35,8 @@
     <h1>Django Social Auth (v{{ version }})</h1>
     <p class="description">
       Django Social Auth is an easy to setup social authentication/registration mechanism for Django projects.
-      Check the documentation on <a href="https://github.com/omab/django-social-auth#readme" title="docs">Github</a>
     </p>
+    <p>Check the documentation on <a href="https://github.com/omab/django-social-auth#readme" title="docs">Github</a></p>
 
     <h2 id="heading">{% block heading %}{% endblock %}</h2>
     <div id="content">

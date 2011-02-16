@@ -61,13 +61,25 @@ def associate_complete(request, backend):
     return HttpResponseRedirect(url)
 
 
+@login_required
+def disconnect(request, backend):
+    """Disconnects given backend from current logged in user."""
+    backend = get_backend(backend, request, request.path)
+    if not backend:
+        return HttpResponseServerError('Incorrect authentication service')
+    backend.disconnect(request.user)
+    url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or \
+          getattr(settings, 'LOGIN_REDIRECT_URL', '')
+    return HttpResponseRedirect(url)
+
+
 def auth_process(request, backend, complete_url_name, default_final_url):
     """Authenticate using social backend"""
     redirect = reverse(complete_url_name, args=(backend,))
     backend = get_backend(backend, request, redirect)
     if not backend:
         return HttpResponseServerError('Incorrect authentication service')
-    data = request.GET if request.method == 'GET' else request.POST
+    data = request.REQUEST
     request.session[REDIRECT_FIELD_NAME] = data.get(REDIRECT_FIELD_NAME,
                                                     default_final_url)
     if backend.uses_redirect:

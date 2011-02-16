@@ -8,7 +8,6 @@ values.
 
 User screen name is used to generate username.
 """
-from django.conf import settings
 from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
