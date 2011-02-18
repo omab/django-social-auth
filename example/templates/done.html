@@ -18,38 +18,38 @@
   <h3>Associate new OAuth credentials:</h3>
   <ul>
     <li>
-      <a rel="nofollow" href="/associate/twitter/">Twitter</a>
-      {% if twitter %}<span class="associated">(associated)</span>{% endif %}
+      <a rel="nofollow" href="{% url associate_begin "twitter" %}">Twitter</a>
+      {% if twitter %}<span class="disconnect">(<a href="{% url disconnect "twitter" %}">disconnect</a>)</span>{% endif %}
     </li>
     <li>
-      <a rel="nofollow" href="/associate/facebook/">Facebook</a>
-      {% if facebook %}<span class="associated">(associated)</span>{% endif %}
+      <a rel="nofollow" href="{% url associate_begin "facebook" %}">Facebook</a>
+      {% if facebook %}<span class="disconnect">(<a href="{% url disconnect "facebook" %}">disconnect</a>)</span>{% endif %}
     </li>
     <li>
-      <a rel="nofollow" href="/associate/orkut/">Orkut</a>
-      {% if orkut %}<span class="associated">(associated)</span>{% endif %}
+      <a rel="nofollow" href="{% url associate_begin "orkut" %}">Orkut</a>
+      {% if orkut %}<span class="disconnect">(<a href="{% url disconnect "orkut" %}">disconnect</a>)</span>{% endif %}
     </li>
     <li>
-      <a rel="nofollow" href="/associate/google-oauth/">Google</a>
-      {% if google_oauth %}<span class="associated">(associated)</span>{% endif %}
+      <a rel="nofollow" href="{% url associate_begin "google-oauth" %}">Google</a>
+      {% if google_oauth %}<span class="disconnect">(<a href="{% url disconnect "google-oauth" %}">disconnect</a>)</span>{% endif %}
     </li>
   </ul>
 
   <h3>Associate new OpenID credentials:</h3>
   <ul>
     <li>
-      <a rel="nofollow" href="/associate/google/">Google</a>
-      {% if google %}<span class="associated">(associated)</span>{% endif %}
+      <a rel="nofollow" href="{% url associate_begin "google" %}">Google</a>
+      {% if google %}<span class="disconnect">(<a href="{% url disconnect "google" %}">disconnect</a>)</span>{% endif %}
     </li>
     <li>
-      <a rel="nofollow" href="/associate/yahoo/">Yahoo</a>
-      {% if yahoo %}<span class="associated">(associated)</span>{% endif %}
+      <a rel="nofollow" href="{% url associate_begin "yahoo" %}">Yahoo</a>
+      {% if yahoo %}<span class="disconnect">(<a href="{% url disconnect "yahoo" %}">disconnect</a>)</span>{% endif %}
     </li>
     <li>
-      <form action="/login/livejournal/" method="post">{% csrf_token %}
+      <form action="{% url associate_begin "livejournal" %}" method="post">{% csrf_token %}
         <div>
           <label for="openid_lj_user">LiveJournal user
-            {% if livejournal %} <span class="associated">(associated)</span>{% endif %}:
+            {% if livejournal %}(<span class="disconnect"><a href="{% url disconnect "livejournal" %}">disconnect</a>)</span>{% endif %}
           </label>
           <input id="openid_lj_user" type="text" value="" name="openid_lj_user" />
           <input type="submit" value="Login"/>
@@ -68,7 +68,7 @@
       </form>
     </li>
     <li>
-      <form action="/associate/openid/" method="post">{% csrf_token %}
+      <form action="{% url associate_begin "openid" %}" method="post">{% csrf_token %}
         <div>
           <label for="openid_identifier">Other provider:</label>
           <input id="openid_identifier" type="text" value="" name="openid_identifier" />

@@ -70,9 +70,10 @@ class SocialAuthBackend(ModelBackend):
         verification is made by kwargs inspection for current backend
         name presence.
         """
-        # Validate backend and arguments. Require that the OAuth response
-        # be passed in as a keyword argument, to make sure we don't match
-        # the username/password calling conventions of authenticate.
+        # Validate backend and arguments. Require that the Social Auth
+        # response be passed in as a keyword argument, to make sure we
+        # don't match the username/password calling conventions of
+        # authenticate.
         if not (self.name and kwargs.get(self.name) and 'response' in kwargs):
             return None
 
@@ -133,9 +134,12 @@ class SocialAuthBackend(ModelBackend):
         else:
             username = get_random_username()
 
+        fixer = getattr(settings, 'SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
+
         name, idx = username, 2
         while True:
             try:
+                name = fixer(name)
                 User.objects.get(username=name)
                 name = username + str(idx)
                 idx += 1
@@ -257,7 +261,12 @@ class OpenIDBackend(SocialAuthBackend):
 
 class BaseAuth(object):
     """Base authentication class, new authenticators should subclass
-    and implement needed methods"""
+    and implement needed methods.
+
+        @AUTH_BACKEND   Authorization backend related with this service
+    """
+    AUTH_BACKEND = None
+
     def __init__(self, request, redirect):
         self.request = request
         self.data = request.POST if request.method == 'POST' else request.GET
@@ -286,12 +295,15 @@ class BaseAuth(object):
         """Return backend enabled status, all enabled by default"""
         return True
 
+    def disconnect(self, user):
+        """Deletes current backend from user if associated.
+        Override if extra operations are needed.
+        """
+        user.social_auth.filter(provider=self.AUTH_BACKEND.name).delete()
+
 
 class OpenIdAuth(BaseAuth):
-    """
-    OpenId process handling
-        @AUTH_BACKEND   Authorization backend related with this service
-    """
+    """OpenId process handling"""
     AUTH_BACKEND = OpenIDBackend
 
     def auth_url(self):
@@ -397,14 +409,11 @@ class ConsumerBasedOAuth(BaseOAuth):
         @REQUEST_TOKEN_URL       Request token URL
         @ACCESS_TOKEN_URL        Access token URL
         @SERVER_URL              Authorization server URL
-        @AUTH_BACKEND            Authorization backend related with
-                                 this service
     """
     AUTHORIZATION_URL = ''
     REQUEST_TOKEN_URL = ''
     ACCESS_TOKEN_URL = ''
     SERVER_URL = ''
-    AUTH_BACKEND = None
     SETTINGS_KEY_NAME = ''
     SETTINGS_SECRET_NAME = ''
 

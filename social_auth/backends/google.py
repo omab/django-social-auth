@@ -71,7 +71,6 @@ class BaseGoogleOAuth(ConsumerBasedOAuth):
     REQUEST_TOKEN_URL = GOOGLE_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = GOOGLE_ACCESS_TOKEN_URL
     SERVER_URL = GOOGLE_SERVER
-    AUTH_BACKEND = None
 
     def user_data(self, access_token):
         """Loads user data from G service"""
@@ -124,6 +123,11 @@ class GoogleOAuth(BaseGoogleOAuth):
             return super(GoogleOAuth, self).get_key_and_secret()
         except AttributeError:
             return 'anonymous', 'anonymous'
+
+    @classmethod
+    def enabled(cls):
+        """Google OAuth is always enabled because of anonymous access"""
+        return True
 
 
 # Backend definition

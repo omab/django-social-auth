@@ -181,7 +181,14 @@ Configuration
     import random
     SOCIAL_AUTH_DEFAULT_USERNAME = lambda: random.choice(['Darth Vader', 'Obi-Wan Kenobi', 'R2-D2', 'C-3PO', 'Yoda'])
 
-  final user name will have an integer suffix in case it's already taken.
+  or::
+
+    from django.template.defaultfilter import slugify
+    SOCIAL_AUTH_USERNAME_FIXER = lambda u: slugify(u)
+
+  in case your user layout needs to purify username on some weird way.
+
+  Final user name will have an integer suffix in case it's already taken.
 
 - OAuth_ authentication will store access_token by default, set this value
   to False to avoid such behavior::
@@ -299,6 +306,10 @@ Further documentation at `Facebook development resources`_:
 
      FACEBOOK_EXTENDED_PERMISSIONS = [...]
 
+If you define a redirect URL in Facebook setup page, be sure to not
+define http://127.0.0.1:8000 or http://localhost:8000 because it won't
+work when testing. Instead I define http://myapp.com and setup a mapping
+on /etc/hosts or use dnsmasq_.
 
 -----
 Orkut

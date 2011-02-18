@@ -40,6 +40,8 @@ class FacebookBackend(OAuthBackend):
 
 class FacebookAuth(BaseOAuth):
     """Facebook OAuth mechanism"""
+    AUTH_BACKEND = FacebookBackend
+
     def auth_url(self):
         """Returns redirect url"""
         args = {'client_id': settings.FACEBOOK_APP_ID,
