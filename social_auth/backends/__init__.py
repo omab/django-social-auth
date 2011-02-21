@@ -28,7 +28,7 @@ from django.utils.importlib import import_module
 
 from social_auth.models import UserSocialAuth
 from social_auth.store import DjangoOpenIDStore
-from social_auth.signals import pre_update
+from social_auth.signals import pre_update, socialauth_registered
 
 
 # key for username in user details dict used around, see get_user_details
@@ -80,6 +80,7 @@ class SocialAuthBackend(ModelBackend):
         response = kwargs.get('response')
         details = self.get_user_details(response)
         uid = self.get_user_id(details, response)
+        is_new = False
         try:
             social_user = UserSocialAuth.objects.select_related('user')\
                                                 .get(provider=self.name,
@@ -92,6 +93,7 @@ class SocialAuthBackend(ModelBackend):
                 username = self.username(details)
                 email = details.get('email')
                 user = User.objects.create_user(username=username, email=email)
+                is_new = True
             social_user = self.associate_auth(user, uid, response, details)
         else:
             # This account was registered to another user, so we raise an
@@ -104,7 +106,7 @@ class SocialAuthBackend(ModelBackend):
             user = social_user.user
 
         # Update user account data.
-        self.update_user_details(user, response, details)
+        self.update_user_details(user, response, details, is_new)
 
         # Update extra_data storage, unless disabled by setting
         if getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA', True):
@@ -157,7 +159,7 @@ class SocialAuthBackend(ModelBackend):
         """Return default blank user extra data"""
         return ''
 
-    def update_user_details(self, user, response, details):
+    def update_user_details(self, user, response, details, is_new=False):
         """Update user details with (maybe) new data. Username is not
         changed if associating a new credential."""
         changed = False  # flag to track changes
@@ -174,13 +176,26 @@ class SocialAuthBackend(ModelBackend):
 
         # Fire a pre-update signal sending current backend instance,
         # user instance (created or retrieved from database), service
-        # response and processed details, signal handlers must return
-        # True or False to signal that something has changed. Send method
-        # returns a list of tuples with receiver and it's response
-        updated = filter(lambda (receiver, response): response,
-                         pre_update.send(sender=self.__class__, user=user,
-                                         response=response, details=details))
-        if changed or updated:
+        # response and processed details.
+        #
+        # Also fire socialauth_registered signal for newly registered
+        # users.
+        #
+        # Signal handlers must return True or False to signal instance
+        # changes. Send method returns a list of tuples with receiver
+        # and it's response.
+        signal_response = lambda (receiver, response): response
+
+        kwargs = {'sender': self.__class__, 'user': user,
+                  'response': response, 'details': details}
+        changed |= any(filter(signal_response, pre_update.send(**kwargs)))
+
+        # Fire socialauth_registered signal on new user registration
+        if is_new:
+            changed |= any(filter(signal_response,
+                                  socialauth_registered.send(**kwargs)))
+
+        if changed:
             user.save()
 
     def get_user_id(self, details, response):
