@@ -21,7 +21,6 @@ from oauth.oauth import OAuthConsumer, OAuthToken, OAuthRequest, \
                         OAuthSignatureMethod_HMAC_SHA1
 
 from django.conf import settings
-from django.db import transaction
 from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
 from django.utils.hashcompat import md5_constructor
@@ -115,7 +114,6 @@ class SocialAuthBackend(ModelBackend):
                 social_user.save()
 
         return user
-    authenticate = transaction.commit_on_success(authenticate)
 
     def username(self, details):
         """Return an unique username, if SOCIAL_AUTH_FORCE_RANDOM_USERNAME

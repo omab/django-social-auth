@@ -3,6 +3,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse, \
                         HttpResponseServerError
 from django.core.urlresolvers import reverse
+from django.db import transaction
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 
@@ -17,7 +18,14 @@ def auth(request, backend):
     return auth_process(request, backend, complete_url, redirect)
 
 
+@transaction.commit_on_success
 def complete(request, backend):
+    """Authentication complete view, override this view if transaction
+    management doesn't suit your needs."""
+    return complete_process(request, backend)
+
+
+def complete_process(request, backend):
     """Authentication complete process"""
     backend = get_backend(backend, request, request.path)
     if not backend:
