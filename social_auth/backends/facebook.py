@@ -26,13 +26,14 @@ FACEBOOK_SERVER = 'graph.facebook.com'
 FACEBOOK_AUTHORIZATION_URL = 'https://%s/oauth/authorize' % FACEBOOK_SERVER
 FACEBOOK_ACCESS_TOKEN_URL = 'https://%s/oauth/access_token' % FACEBOOK_SERVER
 FACEBOOK_CHECK_AUTH = 'https://%s/me' % FACEBOOK_SERVER
+EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class FacebookBackend(OAuthBackend):
     """Facebook OAuth authentication backend"""
     name = 'facebook'
     # Default extra data to store
-    EXTRA_DATA = [('id', 'id'), ('expires', 'expires')]
+    EXTRA_DATA = [('id', 'id'), ('expires', EXPIRES_NAME)]
 
     def get_user_details(self, response):
         """Return user details from Facebook account"""

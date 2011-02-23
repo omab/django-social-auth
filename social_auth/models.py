@@ -1,5 +1,6 @@
 """Social auth models"""
 import warnings
+from datetime import timedelta
 
 from django.db import models
 from django.conf import settings
@@ -47,6 +48,19 @@ class UserSocialAuth(models.Model):
     def __unicode__(self):
         """Return associated user unicode representation"""
         return unicode(self.user)
+
+    def expiration_delta(self):
+        """Return saved session expiration seconds if any. Is retuned in
+        the form of a timedelta data type. None is returned if there's no
+        value stored or it's malformed.
+        """
+        if self.extra_data:
+            name = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
+            try:
+                return timedelta(seconds=int(self.extra_data.get(name)))
+            except ValueError:
+                pass
+        return None
 
 
 class Nonce(models.Model):

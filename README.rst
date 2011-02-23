@@ -198,6 +198,14 @@ Configuration
   Also more extra values will be stored if defined, details about this setting
   are listed below on OpenId and OAuth sections.
 
+  Session expiration time is an special value, it's recommended to define::
+
+    SOCIAL_AUTH_EXPIRATION = 'expires'
+
+  to and use such setting name where expiration times are returned. View that
+  completes login process will set session expiration time to this value if
+  it's present.
+
 - It's possible to override the used User model if needed::
 
     SOCIAL_AUTH_USER_MODEL = 'myapp.CustomUser'

@@ -41,6 +41,10 @@ def complete_process(request, backend):
 
     if user and getattr(user, 'is_active', True):
         login(request, user)
+        # set session expiration date if present
+        social_user = user.social_auth.get(provider=backend.AUTH_BACKEND.name)
+        if social_user.expiration_delta():
+            request.session.set_expiry(social_user.expiration_delta())
         url = request.session.pop(REDIRECT_FIELD_NAME, '') or \
               getattr(settings, 'LOGIN_REDIRECT_URL', '')
     else:
