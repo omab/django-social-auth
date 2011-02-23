@@ -58,7 +58,7 @@ class UserSocialAuth(models.Model):
             name = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
             try:
                 return timedelta(seconds=int(self.extra_data.get(name)))
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
         return None
 
