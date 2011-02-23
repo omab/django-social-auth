@@ -7,6 +7,9 @@ given by Facebook application registration process.
 
 Extended permissions are supported by defining FACEBOOK_EXTENDED_PERMISSIONS
 setting, it must be a list of values to request.
+
+By default account id and token expiration time are stored in extra_data
+field, check OAuthBackend class for details on how to extend it.
 """
 import cgi
 import urllib
@@ -28,6 +31,8 @@ FACEBOOK_CHECK_AUTH = 'https://%s/me' % FACEBOOK_SERVER
 class FacebookBackend(OAuthBackend):
     """Facebook OAuth authentication backend"""
     name = 'facebook'
+    # Default extra data to store
+    EXTRA_DATA = [('id', 'id'), ('expires', 'expires')]
 
     def get_user_details(self, response):
         """Return user details from Facebook account"""

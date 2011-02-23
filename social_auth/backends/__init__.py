@@ -50,7 +50,11 @@ AX_SCHEMA_ATTRS = [
     ('http://axschema.org/namePerson/last', 'last_name'),
     ('http://axschema.org/namePerson/friendly', 'nickname'),
 ]
-SREG_ATTR = ['email', 'fullname', 'nickname']
+SREG_ATTR = [
+    ('email', 'email'),
+    ('fullname', 'fullname'),
+    ('nickname', 'nickname')
+]
 OPENID_ID_FIELD = 'openid_identifier'
 SESSION_NAME = 'openid'
 
@@ -221,14 +225,33 @@ class SocialAuthBackend(ModelBackend):
 
 
 class OAuthBackend(SocialAuthBackend):
-    """OAuth authentication backend base class"""
+    """OAuth authentication backend base class.
+
+    EXTRA_DATA defines a set of name that will be stored in
+               extra_data field. It must be a list of tuples with
+               name and alias.
+
+    Also settings will be inspected to get more values names that should be
+    stored on extra_data field. Setting name is created from current backend
+    name (all uppercase) plus _EXTRA_DATA.
+
+    access_token is always stored.
+    """
+    EXTRA_DATA = None
+
     def get_user_id(self, details, response):
         "OAuth providers return an unique user id in response"""
         return response['id']
 
     def extra_data(self, user, uid, response, details):
-        """Return access_token to store in extra_data field"""
-        return response.get('access_token', '')
+        """Return access_token and extra defined names to store in
+        extra_data field"""
+        data = {'access_token': response.get('access_token', '')}
+        name = self.name.replace('-', '_').upper()
+        names = self.EXTRA_DATA or [] + \
+                getattr(settings, name + '_EXTRA_DATA', [])
+        data.update((alias, response.get(name)) for name, alias in names)
+        return data
 
 
 class OpenIDBackend(SocialAuthBackend):
@@ -239,21 +262,41 @@ class OpenIDBackend(SocialAuthBackend):
         """Return user unique id provided by service"""
         return response.identity_url
 
+    def values_from_response(self, response, sreg_names=None, ax_names=None):
+        """Return values from SimpleRegistration response or
+        AttributeExchange response if present.
+
+        @sreg_names and @ax_names must be a list of name and aliases
+        for such name. The alias will be used as mapping key.
+        """
+        values = {}
+
+        # Use Simple Registration attributes if provided
+        if sreg_names:
+            resp = sreg.SRegResponse.fromSuccessResponse(response)
+            if resp:
+                values.update((alias, resp.get(name) or '')
+                                    for name, alias in sreg_names)
+
+        # Use Attribute Exchange attributes if provided
+        if ax_names:
+            resp = ax.FetchResponse.fromSuccessResponse(response)
+            if resp:
+                values.update((alias.replace('old_', ''),
+                               resp.getSingle(src, ''))
+                                for src, alias in ax_names)
+        return values
+
     def get_user_details(self, response):
         """Return user details from an OpenID request"""
         values = {USERNAME: '', 'email': '', 'fullname': '',
                   'first_name': '', 'last_name': ''}
-
-        resp = sreg.SRegResponse.fromSuccessResponse(response)
-        if resp:
-            values.update((name, resp.get(name) or values.get(name) or '')
-                                for name in ('email', 'fullname', 'nickname'))
-
-        # Use Attribute Exchange attributes if provided
-        resp = ax.FetchResponse.fromSuccessResponse(response)
-        if resp:
-            values.update((alias.replace('old_', ''), resp.getSingle(src, ''))
-                            for src, alias in OLD_AX_ATTRS + AX_SCHEMA_ATTRS)
+        # update values using SimpleRegistration or AttributeExchange
+        # values
+        values.update(self.values_from_response(response,
+                                                SREG_ATTR,
+                                                OLD_AX_ATTRS + \
+                                                AX_SCHEMA_ATTRS))
 
         fullname = values.get('fullname') or ''
         first_name = values.get('first_name') or ''
@@ -272,6 +315,23 @@ class OpenIDBackend(SocialAuthBackend):
                        USERNAME: values.get(USERNAME) or \
                                    (first_name.title() + last_name.title())})
         return values
+
+    def extra_data(self, user, uid, response, details):
+        """Return defined extra data names to store in extra_data field.
+        Settings will be inspected to get more values names that should be
+        stored on extra_data field. Setting name is created from current
+        backend name (all uppercase) plus _SREG_EXTRA_DATA and
+        _AX_EXTRA_DATA because values can be returned by SimpleRegistration
+        or AttributeExchange schemas.
+
+        Both list must be a value name and an alias mapping similar to
+        SREG_ATTR, OLD_AX_ATTRS or AX_SCHEMA_ATTRS
+        """
+        name = self.name.replace('-', '_').upper()
+        sreg_names = getattr(settings, name + '_SREG_EXTRA_DATA', None)
+        ax_names = getattr(settings, name + '_AX_EXTRA_DATA', None)
+        data = self.values_from_response(response, ax_names, sreg_names)
+        return data
 
 
 class BaseAuth(object):
@@ -367,7 +427,7 @@ class OpenIdAuth(BaseAuth):
                 fetch_request.add(ax.AttrInfo(attr, alias=alias,
                                               required=True))
         else:
-            fetch_request = sreg.SRegRequest(optional=SREG_ATTR)
+            fetch_request = sreg.SRegRequest(optional=dict(SREG_ATTR).keys())
         openid_request.addExtension(fetch_request)
 
         return openid_request

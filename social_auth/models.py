@@ -4,6 +4,8 @@ import warnings
 from django.db import models
 from django.conf import settings
 
+from social_auth.fields import JSONField
+
 # If User class is overridden, it *must* provide the following fields,
 # or it won't be playing nicely with django.contrib.auth module:
 #
@@ -36,7 +38,7 @@ class UserSocialAuth(models.Model):
     user = models.ForeignKey(User, related_name='social_auth')
     provider = models.CharField(max_length=32)
     uid = models.CharField(max_length=255)
-    extra_data = models.TextField(default='', blank=True)
+    extra_data = JSONField(blank=True)
 
     class Meta:
         """Meta data"""
