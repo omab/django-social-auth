@@ -57,10 +57,10 @@
       </form>
     </li>
     <li>
-      <form action="/login/yandex/" method="post">{% csrf_token %}
+      <form action="{% url begin "yandex" %} method="post">{% csrf_token %}
         <div>
           <label for="openid_ya_user">Yandex user
-            {% if yandex %} <span class="associated">(associated)</span>{% endif %}:
+            {% if yandex %}(<span class="disconnect"><a href="{% url disconnect "yandex" %}">disconnect</a>)</span>{% endif %}
           </label>
           <input id="openid_ya_user" type="text" value="" name="openid_ya_user" />
           <input type="submit" value="Login"/>
