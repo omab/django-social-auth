@@ -1,8 +1,11 @@
 """Social auth models"""
 import warnings
+from datetime import timedelta
 
 from django.db import models
 from django.conf import settings
+
+from social_auth.fields import JSONField
 
 # If User class is overridden, it *must* provide the following fields,
 # or it won't be playing nicely with django.contrib.auth module:
@@ -36,7 +39,7 @@ class UserSocialAuth(models.Model):
     user = models.ForeignKey(User, related_name='social_auth')
     provider = models.CharField(max_length=32)
     uid = models.CharField(max_length=255)
-    extra_data = models.TextField(default='', blank=True)
+    extra_data = JSONField(blank=True)
 
     class Meta:
         """Meta data"""
@@ -45,6 +48,19 @@ class UserSocialAuth(models.Model):
     def __unicode__(self):
         """Return associated user unicode representation"""
         return unicode(self.user)
+
+    def expiration_delta(self):
+        """Return saved session expiration seconds if any. Is retuned in
+        the form of a timedelta data type. None is returned if there's no
+        value stored or it's malformed.
+        """
+        if self.extra_data:
+            name = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
+            try:
+                return timedelta(seconds=int(self.extra_data.get(name)))
+            except (ValueError, TypeError):
+                pass
+        return None
 
 
 class Nonce(models.Model):

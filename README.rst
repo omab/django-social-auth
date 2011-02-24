@@ -190,10 +190,21 @@ Configuration
 
   Final user name will have an integer suffix in case it's already taken.
 
-- OAuth_ authentication will store access_token by default, set this value
-  to False to avoid such behavior::
+- Backends will store extra values from response by default, set this to False
+  to avoid such behavior::
 
     SOCIAL_AUTH_EXTRA_DATA = False
+
+  Also more extra values will be stored if defined, details about this setting
+  are listed below on OpenId and OAuth sections.
+
+  Session expiration time is an special value, it's recommended to define::
+
+    SOCIAL_AUTH_EXPIRATION = 'expires'
+
+  to and use such setting name where expiration times are returned. View that
+  completes login process will set session expiration time to this value if
+  it's present.
 
 - It's possible to override the used User model if needed::
 
@@ -255,6 +266,24 @@ OpenId_ support is simpler to implement than OAuth_. Google and Yahoo
 providers are supported by default, others are supported by POST method
 providing endpoint URL.
 
+OpenId_ backends can store extra data in UserSocialAuth.extra_data field
+by defining a set of values names to retrieve from any of the used schemas,
+pettributeExchange and SimpleRegistration. As their keywords differ we need
+two settings.
+
+Settings is per backend, so we have two possible values for each one. Name
+is dynamically checked using uppercase backend name as prefix::
+
+    <uppercase backend name>_SREG_EXTRA_DATA
+    <uppercase backend name>_AX_EXTRA_DATA
+
+Example::
+
+    GOOGLE_SREG_EXTRA_DATA = [(..., ...)]
+    GOOGLE_AX_EXTRA_DATA = [(..., ...)]
+
+Settings must be a list of tuples mapping value name in response and value
+alias used to store.
 
 -----
 OAuth
@@ -266,6 +295,20 @@ but provides the option for unregistered applications.
 
 Check next sections for details.
 
+OAuth_ backends also can store extra data in UserSocialAuth.extra_data field
+by defining a set of values names to retrieve from service response.
+
+Settings is per backend and it's name is dynamically checked using uppercase
+backend name as prefix::
+
+    <uppercase backend name>_EXTRA_DATA
+
+Example::
+
+    FACEBOOK_EXTRA_DATA = [(..., ...)]
+
+Settings must be a list of tuples mapping value name in response and value
+alias used to store.
 
 -------
 Twitter
