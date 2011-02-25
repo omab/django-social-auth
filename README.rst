@@ -203,8 +203,11 @@ Configuration
     SOCIAL_AUTH_EXPIRATION = 'expires'
 
   to and use such setting name where expiration times are returned. View that
-  completes login process will set session expiration time to this value if
-  it's present.
+  completes login process will set session expiration time using this name if
+  it's present or 'expires' by default. Expiration time saving can be disabled
+  setting::
+
+    SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 - It's possible to override the used User model if needed::
 
