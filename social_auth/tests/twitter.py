@@ -1,41 +1,18 @@
-import urllib
-import urlparse
-import unittest
-from sgmllib import SGMLParser
-
 from django.conf import settings
-from django.test.client import Client
-from django.core.urlresolvers import reverse
 
 from social_auth.backends.twitter import TwitterAuth
-
-
-SERVER_NAME = 'myapp.com'
-SERVER_PORT = '8000'
-USER   = 'social_auth'
-PASSWD = 'pass(twitter).7'
-
-
-class SocialAuthTestsCase(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        self.client = Client()
-        super(SocialAuthTestsCase, self).__init__(*args, **kwargs)
-
-    def get_content(self, url, data=None):
-        """Open URL and return content"""
-        data = data and urllib.urlencode(data) or data
-        return ''.join(urllib.urlopen(url, data=data).readlines())
-
-    def reverse(self, name, backend):
-        return reverse(name, args=(backend,))
-
-    def make_relative(self, value):
-        parsed = urlparse.urlparse(value)
-        return urlparse.urlunparse(('', '', parsed.path, parsed.params,
-                                    parsed.query, parsed.fragment))
+from social_auth.tests.base import SocialAuthTestsCase, FormParser, RefreshParser
 
 
 class TwitterTestCase(SocialAuthTestsCase):
+    def setUp(self, *args, **kwargs):
+        super(TwitterTestCase, self).setUp(*args, **kwargs)
+        self.user = getattr(settings, 'TEST_TWITTER_USER', None)
+        self.passwd = getattr(settings, 'TEST_TWITTER_PASSWORD', None)
+        # check that user and password are setup properly
+        self.assertTrue(self.user)
+        self.assertTrue(self.passwd)
+
     def testLogin(self):
         response = self.client.get(self.reverse('begin', 'twitter'))
         # social_auth must redirect to service page
@@ -46,8 +23,8 @@ class TwitterTestCase(SocialAuthTestsCase):
         login_content = self.get_content(response['Location'])
         parser = FormParser('login_form')
         parser.feed(login_content)
-        auth = {'session[username_or_email]': USER,
-                'session[password]': PASSWD}
+        auth = {'session[username_or_email]': self.user,
+                'session[password]': self.passwd}
 
         # Check that action and values were loaded properly
         self.assertTrue(parser.action)
@@ -82,50 +59,6 @@ class TwitterTestCase(SocialAuthTestsCase):
         self.assertTrue(location == login_redirect)
 
     def runTest(self):
-        # don't run tests if it's not enabled
+        # don't run tests twitter backend is not enabled
         if TwitterAuth.enabled:
             self.testLogin()
-
-
-class TwitterParser(SGMLParser):
-    def feed(self, data):
-        SGMLParser.feed(self, data)
-        self.close()
-        return self
-
-
-class FormParser(TwitterParser):
-    def __init__(self, form_id, *args, **kwargs):
-        TwitterParser.__init__(self, *args, **kwargs)
-        self.form_id = form_id
-        self.inside_form = False
-        self.action = None
-        self.values = {}
-
-    def start_form(self, attributes):
-        attrs = dict(attributes)
-        if attrs.get('id') == self.form_id:
-            self.inside_form = True
-            self.action = attrs.get('action')
-
-    def end_form(self):
-        self.inside_form = False
-
-    def start_input(self, attributes):
-        attrs = dict(attributes)
-        if self.inside_form:
-            type, name, value = attrs.get('type'), attrs.get('name'), \
-                                attrs.get('value')
-            if name and value and type in ('text', 'hidden', 'password'):
-                self.values[name] = value
-
-
-class RefreshParser(TwitterParser):
-    def __init__(self, *args, **kwargs):
-        TwitterParser.__init__(self, *args, **kwargs)
-        self.value = None
-
-    def start_meta(self, attributes):
-        attrs = dict(attributes)
-        if attrs.get('http-equiv') == 'refresh':
-            self.value = attrs.get('content').lstrip('0;url=')
