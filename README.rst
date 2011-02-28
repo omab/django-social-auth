@@ -10,13 +10,6 @@ implements a common interface to define new authentication providers from
 third parties.
 
 
-----
-Demo
-----
-There's a demo at http://social.matiasaguirre.net/, it lacks Orkut support
-at the moment.
-
-
 --------
 Features
 --------
@@ -32,6 +25,7 @@ credentials, some features are:
     * OpenId_ like myOpenID_
     * `Twitter OAuth`_
     * `Facebook OAuth`_
+    * `Linkedin OAuth`_
 
   Some contributions added support for:
 
@@ -63,17 +57,9 @@ Dependencies that *must* be meet to use the application:
 Installation
 ------------
 
-From pypi_::
+Clone from github_::
 
-    $ pip install django-social-auth
-
-or::
-
-    $ easy_install django-social-auth
-
-or clone from github_::
-
-    $ git clone git://github.com/omab/django-social-auth.git
+    $ git clone git://github.com/Quard/django-social-auth.git
 
 and add social_auth to PYTHONPATH::
 
@@ -103,6 +89,7 @@ Configuration
         'social_auth.backends.google.GoogleOAuthBackend',
         'social_auth.backends.google.GoogleBackend',
         'social_auth.backends.yahoo.YahooBackend',
+        'social_auth.backends.linkedin.LinkedinBackend',
         'social_auth.backends.contrib.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.OpenIDBackend',
@@ -133,6 +120,8 @@ Configuration
     TWITTER_CONSUMER_SECRET  = ''
     FACEBOOK_APP_ID          = ''
     FACEBOOK_API_SECRET      = ''
+    LINKEDIN_CONSUMER_KEY    = ''
+    LINKEDIN_CONSUMER_SECRET = ''
     ORKUT_CONSUMER_KEY       = ''
     ORKUT_CONSUMER_SECRET    = ''
     GOOGLE_CONSUMER_KEY      = ''
@@ -507,6 +496,7 @@ Base work is copyrighted by:
 .. _Yahoo OpenID: http://openid.yahoo.com/
 .. _Twitter OAuth: http://dev.twitter.com/pages/oauth_faq
 .. _Facebook OAuth: http://developers.facebook.com/docs/authentication/
+.. _Linkedin OAuth: https://www.linkedin.com/secure/developer
 .. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _myOpenID: https://www.myopenid.com/
 .. _pypi: http://pypi.python.org/pypi/django-social-auth/
