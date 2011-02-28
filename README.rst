@@ -170,7 +170,7 @@ Configuration
 
 - Sync database to create needed models::
 
-    ./manage syncdb
+    ./manage.py syncdb
 
 - Not mandatory, but recommended::
 
