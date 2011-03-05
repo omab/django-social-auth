@@ -170,7 +170,7 @@ Configuration
 
 - Sync database to create needed models::
 
-    ./manage syncdb
+    ./manage.py syncdb
 
 - Not mandatory, but recommended::
 
@@ -203,8 +203,11 @@ Configuration
     SOCIAL_AUTH_EXPIRATION = 'expires'
 
   to and use such setting name where expiration times are returned. View that
-  completes login process will set session expiration time to this value if
-  it's present.
+  completes login process will set session expiration time using this name if
+  it's present or 'expires' by default. Expiration time saving can be disabled
+  setting::
+
+    SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 - It's possible to override the used User model if needed::
 
@@ -409,6 +412,22 @@ anonymous values will be used if not configured as described in their
       GOOGLE_OAUTH_EXTRA_SCOPE = [...]
 
 check which Apps are included in their `Google Data Protocol Directory`_
+
+-------
+Testing
+-------
+To test the app just run::
+
+    ./manage.py test social_auth
+
+This will run a bunch of tests, so far only login process is tested, more
+will come eventually.
+
+User accounts on the different sites are needed to run test, here's how it's
+configured::
+
+    TEST_TWITTER_USER = 'testing_account'
+    TEST_TWITTER_PASSWORD = 'password_for_testing_account'
 
 
 ----
