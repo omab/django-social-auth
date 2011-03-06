@@ -21,7 +21,6 @@ def done(request):
     """Login complete view, displays user data"""
     names = request.user.social_auth.values_list('provider', flat=True)
     ctx = dict((name.lower().replace('-', '_'), True) for name in names)
-    print ctx
     ctx['version'] = version
     return render_to_response('done.html', ctx, RequestContext(request))
 

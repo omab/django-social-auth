@@ -469,6 +469,10 @@ Attributions to whom deserves:
 
   - LinkedIn support
 
+- micrypt_ (Seyi Ogunyemi)
+
+  - OAuth2 migration
+
 
 ----------
 Copyrights
@@ -527,3 +531,4 @@ Base work is copyrighted by:
 .. _alfredo: https://github.com/alfredo
 .. _mattucf: https://github.com/mattucf
 .. _Quard: https://github.com/Quard
+.. _micrypt: https://github.com/micrypt

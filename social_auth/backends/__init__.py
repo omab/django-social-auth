@@ -17,8 +17,10 @@ from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
 from openid.extensions import sreg, ax
 
-from oauth2 import Consumer as OAuthConsumer, Token as OAuthToken, Request as OAuthRequest, \
-                        SignatureMethod_HMAC_SHA1 as OAuthSignatureMethod_HMAC_SHA1
+from oauth2 import Consumer as OAuthConsumer, \
+                   Token as OAuthToken, \
+                   Request as OAuthRequest, \
+                   SignatureMethod_HMAC_SHA1 as OAuthSignatureMethod_HMAC_SHA1
 
 from django.conf import settings
 from django.contrib.auth import authenticate
