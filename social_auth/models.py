@@ -65,7 +65,7 @@ class UserSocialAuth(models.Model):
 
 class Nonce(models.Model):
     """One use numbers"""
-    server_url = models.TextField()
+    server_url = models.CharField(max_length=255)
     timestamp = models.IntegerField()
     salt = models.CharField(max_length=40)
 
@@ -76,7 +76,7 @@ class Nonce(models.Model):
 
 class Association(models.Model):
     """OpenId account association"""
-    server_url = models.TextField()
+    server_url = models.CharField(max_length=255)
     handle = models.CharField(max_length=255)
     secret = models.CharField(max_length=255)  # Stored base64 encoded
     issued = models.IntegerField()
