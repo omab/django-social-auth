@@ -26,6 +26,10 @@
       {% if facebook %}<span class="disconnect">(<a href="{% url disconnect "facebook" %}">disconnect</a>)</span>{% endif %}
     </li>
     <li>
+      <a rel="nofollow" href="{% url associate_begin "linkedin" %}">LinkedIn</a>
+      {% if linkedin %}<span class="disconnect">(<a href="{% url disconnect "linkedin" %}">disconnect</a>)</span>{% endif %}
+    </li>
+    <li>
       <a rel="nofollow" href="{% url associate_begin "orkut" %}">Orkut</a>
       {% if orkut %}<span class="disconnect">(<a href="{% url disconnect "orkut" %}">disconnect</a>)</span>{% endif %}
     </li>

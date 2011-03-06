@@ -4,16 +4,18 @@ Linkedin OAuth support
 No extra configurations are needed to make this work.
 """
 import urlparse
-import xml
 from xml.etree import ElementTree
 
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 
 
 LINKEDIN_SERVER = 'linkedin.com'
-LINKEDIN_REQUEST_TOKEN_URL = 'https://api.%s/uas/oauth/requestToken' % LINKEDIN_SERVER
-LINKEDIN_ACCESS_TOKEN_URL = 'https://api.%s/uas/oauth/accessToken' % LINKEDIN_SERVER
-LINKEDIN_AUTHORIZATION_URL = 'https://www.%s/uas/oauth/authenticate' % LINKEDIN_SERVER
+LINKEDIN_REQUEST_TOKEN_URL = 'https://api.%s/uas/oauth/requestToken' % \
+                                    LINKEDIN_SERVER
+LINKEDIN_ACCESS_TOKEN_URL = 'https://api.%s/uas/oauth/accessToken' % \
+                                    LINKEDIN_SERVER
+LINKEDIN_AUTHORIZATION_URL = 'https://www.%s/uas/oauth/authenticate' % \
+                                    LINKEDIN_SERVER
 LINKEDIN_CHECK_AUTH = 'https://api.%s/v1/people/~' % LINKEDIN_SERVER
 
 
@@ -60,13 +62,8 @@ class LinkedinAuth(ConsumerBasedOAuth):
         return True
 
 
-# Backend definition
-BACKENDS = {
-    'linkedin': LinkedinAuth,
-}
-
-
 def _xml_to_dict(xml):
+    """Convert xml structure to dict"""
     data = {}
     for child in xml.getchildren():
         if child.getchildren():
@@ -75,3 +72,9 @@ def _xml_to_dict(xml):
             data[child.tag] = child.text
 
     return data
+
+
+# Backend definition
+BACKENDS = {
+    'linkedin': LinkedinAuth,
+}

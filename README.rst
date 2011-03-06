@@ -10,6 +10,13 @@ implements a common interface to define new authentication providers from
 third parties.
 
 
+-----
+Demo
+-----
+There's a demo at http://social.matiasaguirre.net/.
+Note: It lacks Orkut support at the moment.
+
+
 --------
 Features
 --------
@@ -57,9 +64,17 @@ Dependencies that *must* be meet to use the application:
 Installation
 ------------
 
-Clone from github_::
+From pypi_::
 
-    $ git clone git://github.com/Quard/django-social-auth.git
+    $ pip install django-social-auth
+
+or::
+
+    $ easy_install django-social-auth
+
+or clone from github_::
+
+    $ git clone git://github.com/omab/django-social-auth.git
 
 and add social_auth to PYTHONPATH::
 
@@ -89,7 +104,7 @@ Configuration
         'social_auth.backends.google.GoogleOAuthBackend',
         'social_auth.backends.google.GoogleBackend',
         'social_auth.backends.yahoo.YahooBackend',
-        'social_auth.backends.linkedin.LinkedinBackend',
+        'social_auth.backends.contrib.linkedin.LinkedinBackend',
         'social_auth.backends.contrib.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.OpenIDBackend',
@@ -450,6 +465,9 @@ Attributions to whom deserves:
 
   - Twitter and OAuth improvements
 
+- Quard_ (Vadym Zakovinko)
+
+  - LinkedIn support
 
 
 ----------
@@ -499,6 +517,7 @@ Base work is copyrighted by:
 .. _Linkedin OAuth: https://www.linkedin.com/secure/developer
 .. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _myOpenID: https://www.myopenid.com/
+.. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
 .. _pypi: http://pypi.python.org/pypi/django-social-auth/
 .. _github: https://github.com/omab/django-social-auth
 .. _issues in github: https://github.com/omab/django-social-auth/issues
@@ -507,4 +526,4 @@ Base work is copyrighted by:
 .. _jezdez: https://github.com/jezdez
 .. _alfredo: https://github.com/alfredo
 .. _mattucf: https://github.com/mattucf
-.. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
+.. _Quard: https://github.com/Quard
