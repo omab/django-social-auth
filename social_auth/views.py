@@ -1,6 +1,7 @@
 """Views"""
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseServerError
+from django.http import HttpResponseRedirect, HttpResponse, \
+                        HttpResponseServerError
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
@@ -35,16 +36,17 @@ def complete_process(request, backend):
 
     try:
         user = backend.auth_complete()
-    except ValueError, e: # some Authentication error ocurred
+    except ValueError, e:  # some Authentication error ocurred
         user = None
         error_key = getattr(settings, 'SOCIAL_AUTH_ERROR_KEY', None)
-        if error_key: # store error in session
+        if error_key:  # store error in session
             request.session[error_key] = str(e)
 
     if user and getattr(user, 'is_active', True):
         login(request, user)
         if getattr(settings, 'SOCIAL_AUTH_SESSION_EXPIRATION', True):
-            # Set session expiration date if present and not disabled by setting
+            # Set session expiration date if present and not disabled by
+            # setting
             backend_name = backend.AUTH_BACKEND.name
             social_user = user.social_auth.get(provider=backend_name)
             if social_user.expiration_delta():
@@ -85,7 +87,7 @@ def disconnect(request, backend):
     return HttpResponseRedirect(url)
 
 
-def auth_process(request, backend, complete_url_name, 
+def auth_process(request, backend, complete_url_name,
                  default_redirect=DEFAULT_REDIRECT):
     """Authenticate using social backend"""
     redirect = reverse(complete_url_name, args=(backend,))
