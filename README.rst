@@ -54,7 +54,7 @@ Dependencies that *must* be meet to use the application:
 
 - OpenId_ support depends on python-openid_
 
-- OAuth_ support depends on python-oauth_
+- OAuth_ support depends on python-oauth2_
 
 - Twitter and Facebook support demands an application registration
   on their corresponding sites.
@@ -503,7 +503,7 @@ Base work is copyrighted by:
 .. _django-twitter-oauth: https://github.com/henriklied/django-twitter-oauth
 .. _django-openid-auth: https://launchpad.net/django-openid-auth
 .. _python-openid: http://pypi.python.org/pypi/python-openid/
-.. _python-oauth: https://github.com/leah/python-oauth
+.. _python-oauth2: https://github.com/simplegeo/python-oauth2
 .. _Twitter development resources: http://dev.twitter.com/pages/auth
 .. _Twitter App Creation: http://twitter.com/apps/new
 .. _dnsmasq: http://www.thekelleys.org.uk/dnsmasq/doc.html
