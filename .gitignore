@@ -6,3 +6,4 @@ build/
 dist/
 django_social_auth.egg-info/
 social_auth.egg-info/
+env/

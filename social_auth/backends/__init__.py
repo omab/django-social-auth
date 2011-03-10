@@ -17,8 +17,10 @@ from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
 from openid.extensions import sreg, ax
 
-from oauth.oauth import OAuthConsumer, OAuthToken, OAuthRequest, \
-                        OAuthSignatureMethod_HMAC_SHA1
+from oauth2 import Consumer as OAuthConsumer, \
+                   Token as OAuthToken, \
+                   Request as OAuthRequest, \
+                   SignatureMethod_HMAC_SHA1 as OAuthSignatureMethod_HMAC_SHA1
 
 from django.conf import settings
 from django.contrib.auth import authenticate
@@ -542,7 +544,7 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def fetch_response(self, request):
         """Executes request and fetchs service response"""
-        self.connection.request(request.http_method, request.to_url())
+        self.connection.request(request.method, request.to_url())
         response = self.connection.getresponse()
         return response.read()
 

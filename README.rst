@@ -10,11 +10,11 @@ implements a common interface to define new authentication providers from
 third parties.
 
 
-----
+-----
 Demo
-----
-There's a demo at http://social.matiasaguirre.net/, it lacks Orkut support
-at the moment.
+-----
+There's a demo at http://social.matiasaguirre.net/.
+Note: It lacks Orkut support at the moment.
 
 
 --------
@@ -32,6 +32,7 @@ credentials, some features are:
     * OpenId_ like myOpenID_
     * `Twitter OAuth`_
     * `Facebook OAuth`_
+    * `Linkedin OAuth`_
 
   Some contributions added support for:
 
@@ -53,7 +54,7 @@ Dependencies that *must* be meet to use the application:
 
 - OpenId_ support depends on python-openid_
 
-- OAuth_ support depends on python-oauth_
+- OAuth_ support depends on python-oauth2_
 
 - Twitter and Facebook support demands an application registration
   on their corresponding sites.
@@ -103,6 +104,7 @@ Configuration
         'social_auth.backends.google.GoogleOAuthBackend',
         'social_auth.backends.google.GoogleBackend',
         'social_auth.backends.yahoo.YahooBackend',
+        'social_auth.backends.contrib.linkedin.LinkedinBackend',
         'social_auth.backends.contrib.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.OpenIDBackend',
@@ -133,6 +135,8 @@ Configuration
     TWITTER_CONSUMER_SECRET  = ''
     FACEBOOK_APP_ID          = ''
     FACEBOOK_API_SECRET      = ''
+    LINKEDIN_CONSUMER_KEY    = ''
+    LINKEDIN_CONSUMER_SECRET = ''
     ORKUT_CONSUMER_KEY       = ''
     ORKUT_CONSUMER_SECRET    = ''
     GOOGLE_CONSUMER_KEY      = ''
@@ -461,6 +465,13 @@ Attributions to whom deserves:
 
   - Twitter and OAuth improvements
 
+- Quard_ (Vadym Zakovinko)
+
+  - LinkedIn support
+
+- micrypt_ (Seyi Ogunyemi)
+
+  - OAuth2 migration
 
 
 ----------
@@ -492,7 +503,7 @@ Base work is copyrighted by:
 .. _django-twitter-oauth: https://github.com/henriklied/django-twitter-oauth
 .. _django-openid-auth: https://launchpad.net/django-openid-auth
 .. _python-openid: http://pypi.python.org/pypi/python-openid/
-.. _python-oauth: https://github.com/leah/python-oauth
+.. _python-oauth2: https://github.com/simplegeo/python-oauth2
 .. _Twitter development resources: http://dev.twitter.com/pages/auth
 .. _Twitter App Creation: http://twitter.com/apps/new
 .. _dnsmasq: http://www.thekelleys.org.uk/dnsmasq/doc.html
@@ -507,8 +518,10 @@ Base work is copyrighted by:
 .. _Yahoo OpenID: http://openid.yahoo.com/
 .. _Twitter OAuth: http://dev.twitter.com/pages/oauth_faq
 .. _Facebook OAuth: http://developers.facebook.com/docs/authentication/
+.. _Linkedin OAuth: https://www.linkedin.com/secure/developer
 .. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _myOpenID: https://www.myopenid.com/
+.. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
 .. _pypi: http://pypi.python.org/pypi/django-social-auth/
 .. _github: https://github.com/omab/django-social-auth
 .. _issues in github: https://github.com/omab/django-social-auth/issues
@@ -517,4 +530,5 @@ Base work is copyrighted by:
 .. _jezdez: https://github.com/jezdez
 .. _alfredo: https://github.com/alfredo
 .. _mattucf: https://github.com/mattucf
-.. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
+.. _Quard: https://github.com/Quard
+.. _micrypt: https://github.com/micrypt
