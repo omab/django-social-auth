@@ -427,8 +427,9 @@ Recently Google launched OAuth2 support following the definition at
 developers *must* register an application and apply for a set of keys. Check
 `Google OAuth2`_ document for details.
 
-**Note**: This support is experimental as Google implementation may change and
-          OAuth2 is still a draft.
+**Note**:
+  This support is experimental as Google implementation may change and 
+  OAuth2 is still a draft.
 
 To enable OAuth2 support:
 
