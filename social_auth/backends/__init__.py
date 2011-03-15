@@ -11,20 +11,21 @@ enabled.
 """
 from os import urandom, walk
 from os.path import basename
+from urllib2 import Request, urlopen
+from urllib import urlencode
 from httplib import HTTPSConnection
 
 from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
 from openid.extensions import sreg, ax
 
-from oauth2 import Consumer as OAuthConsumer, \
-                   Token as OAuthToken, \
-                   Request as OAuthRequest, \
-                   SignatureMethod_HMAC_SHA1 as OAuthSignatureMethod_HMAC_SHA1
+from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
+                   SignatureMethod_HMAC_SHA1
 
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
+from django.utils import simplejson
 from django.utils.hashcompat import md5_constructor
 from django.utils.importlib import import_module
 
@@ -495,20 +496,20 @@ class ConsumerBasedOAuth(BaseOAuth):
     SETTINGS_SECRET_NAME = ''
 
     def auth_url(self):
-        """Returns redirect url"""
+        """Return redirect url"""
         token = self.unauthorized_token()
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
         self.request.session[name] = token.to_string()
         return self.oauth_request(token, self.AUTHORIZATION_URL).to_url()
 
     def auth_complete(self, *args, **kwargs):
-        """Returns user, might be logged in"""
+        """Return user, might be logged in"""
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
         unauthed_token = self.request.session.get(name)
         if not unauthed_token:
             raise ValueError('Missing unauthorized token')
 
-        token = OAuthToken.from_string(unauthed_token)
+        token = Token.from_string(unauthed_token)
         if token.key != self.data.get('oauth_token', 'no-token'):
             raise ValueError('Incorrect tokens')
 
@@ -524,7 +525,7 @@ class ConsumerBasedOAuth(BaseOAuth):
         """Return request for unauthorized token (first stage)"""
         request = self.oauth_request(token=None, url=self.REQUEST_TOKEN_URL)
         response = self.fetch_response(request)
-        return OAuthToken.from_string(response)
+        return Token.from_string(response)
 
     def oauth_request(self, token, url, extra_params=None):
         """Generate OAuth request, setups callback url"""
@@ -538,42 +539,32 @@ class ConsumerBasedOAuth(BaseOAuth):
                                                        token=token,
                                                        http_url=url,
                                                        parameters=params)
-        request.sign_request(OAuthSignatureMethod_HMAC_SHA1(), self.consumer,
-                             token)
+        request.sign_request(SignatureMethod_HMAC_SHA1(), self.consumer, token)
         return request
 
     def fetch_response(self, request):
         """Executes request and fetchs service response"""
-        self.connection.request(request.method, request.to_url())
-        response = self.connection.getresponse()
-        return response.read()
+        connection = HTTPSConnection(self.SERVER_URL)
+        connection.request(request.method.upper(), request.to_url())
+        return connection.getresponse().read()
 
     def access_token(self, token):
         """Return request for access token value"""
         request = self.oauth_request(token, self.ACCESS_TOKEN_URL)
-        return OAuthToken.from_string(self.fetch_response(request))
+        return Token.from_string(self.fetch_response(request))
 
     def user_data(self, access_token):
         """Loads user data from service"""
         raise NotImplementedError('Implement in subclass')
 
     @property
-    def connection(self):
-        """Setups connection"""
-        conn = getattr(self, '_connection', None)
-        if conn is None:
-            conn = HTTPSConnection(self.SERVER_URL)
-            setattr(self, '_connection', conn)
-        return conn
-
-    @property
     def consumer(self):
         """Setups consumer"""
-        cons = getattr(self, '_consumer', None)
-        if cons is None:
-            cons = OAuthConsumer(*self.get_key_and_secret())
-            setattr(self, '_consumer', cons)
-        return cons
+        consumer = getattr(self, '_consumer', None)
+        if consumer is None:
+            consumer = OAuthConsumer(*self.get_key_and_secret())
+            setattr(self, '_consumer', consumer)
+        return consumer
 
     def get_key_and_secret(self):
         """Return tuple with Consumer Key and Consumer Secret for current
@@ -586,8 +577,66 @@ class ConsumerBasedOAuth(BaseOAuth):
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
         return all(hasattr(settings, name) for name in
-                        (cls.SETTINGS_KEY_NAME,
-                         cls.SETTINGS_SECRET_NAME))
+                        (cls.SETTINGS_KEY_NAME, cls.SETTINGS_SECRET_NAME))
+
+
+class BaseOAuth2(BaseOAuth):
+    """Base class for OAuth2 providers.
+
+    OAuth2 draft details at:
+        http://tools.ietf.org/html/draft-ietf-oauth-v2-10
+
+    Attributes:
+        @AUTHORIZATION_URL       Authorization service url
+        @ACCESS_TOKEN_URL        Token URL
+    """
+    AUTHORIZATION_URL = None
+    ACCESS_TOKEN_URL = None
+
+    def auth_url(self):
+        """Return redirect url"""
+        client_id, client_secret = self.get_key_and_secret()
+        args = {'client_id': client_id,
+                'scope': ' '.join(self.get_scope()),
+                'redirect_uri': self.redirect_uri,
+                'response_type': 'code'}  # requesting code
+        return self.AUTHORIZATION_URL + '?' + urlencode(args)
+
+    def auth_complete(self, *args, **kwargs):
+        """Completes loging process, must return user instance"""
+        client_id, client_secret = self.get_key_and_secret()
+        params = {'grant_type': 'authorization_code',  # request auth code
+                  'code': self.data.get('code', ''),  # server response code
+                  'client_id': client_id,
+                  'client_secret': client_secret,
+                  'redirect_uri': self.redirect_uri}
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        request = Request(self.ACCESS_TOKEN_URL, data=urlencode(params),
+                          headers=headers)
+
+        try:
+            response = simplejson.loads(urlopen(request).read())
+        except (simplejson.JSONDecodeError, KeyError):
+            raise ValueError('Unknown OAuth2 response type')
+
+        if response.get('error'):
+            error = response.get('error_description') or response.get('error')
+            raise ValueError('OAuth2 authentication failed: %s' % error)
+        else:
+            response.update(self.user_data(response['access_token']) or {})
+            kwargs.update({'response': response, self.AUTH_BACKEND.name: True})
+            return authenticate(*args, **kwargs)
+
+    def get_scope(self):
+        """Return list with needed access scope"""
+        return []
+
+    def get_key_and_secret(self):
+        """Return tuple with Consumer Key and Consumer Secret for current
+        service provider. Must return (key, secret), order *must* be respected.
+        """
+        return getattr(settings, self.SETTINGS_KEY_NAME), \
+               getattr(settings, self.SETTINGS_SECRET_NAME)
 
 
 # import sources from where check for auth backends
