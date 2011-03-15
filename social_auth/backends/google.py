@@ -103,8 +103,10 @@ class GoogleOAuth(BaseGoogleOAuth):
 
     def user_data(self, access_token):
         """Return user data from Google API"""
-        url = self.oauth_request(access_token, GOOGLEAPIS_EMAIL).to_url()
-        return googleapis_email(url.split('?')[1])
+        request = self.oauth_request(access_token, GOOGLEAPIS_EMAIL,
+                                     {'alt': 'json'}).to_url()
+        url, params = request.to_url().split('?', 1)
+        return googleapis_email(url, params)
 
     def oauth_request(self, token, url, extra_params=None):
         extra_params = extra_params or {}
@@ -148,10 +150,11 @@ class GoogleOAuth2(BaseOAuth2):
 
     def user_data(self, access_token):
         """Return user data from Google API"""
-        return googleapis_email(urlencode({'oauth_token': access_token}))
+        data = {'oauth_token': access_token, 'alt': 'json'}
+        return googleapis_email(GOOGLEAPIS_EMAIL, urlencode(data))
 
 
-def googleapis_email(params):
+def googleapis_email(url, params):
     """Loads user data from googleapis service, only email so far as it's
     described in http://sites.google.com/site/oauthgoog/Home/emaildisplayscope
 
@@ -161,11 +164,10 @@ def googleapis_email(params):
     and:
         http://code.google.com/apis/accounts/docs/OAuth2.html#CallingAnAPI
     """
-    request = Request(GOOGLEAPIS_EMAIL + '?alt=json&' + params,
-                      headers={'Authorization': params})
+    request = Request(url + '?' + params, headers={'Authorization': params})
     try:
         return simplejson.loads(urlopen(request).read())['data']
-    except (simplejson.JSONDecodeError, KeyError, IOError):
+    except (simplejson.JSONDecodeError, KeyError, IOError), e:
         return None
 
 
