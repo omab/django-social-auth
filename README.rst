@@ -28,6 +28,7 @@ credentials, some features are:
 
     * `Google OpenID`_
     * `Google OAuth`_
+    * `Google OAuth2`_
     * `Yahoo OpenID`_
     * OpenId_ like myOpenID_
     * `Twitter OAuth`_
