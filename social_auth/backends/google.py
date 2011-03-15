@@ -104,7 +104,7 @@ class GoogleOAuth(BaseGoogleOAuth):
     def user_data(self, access_token):
         """Return user data from Google API"""
         request = self.oauth_request(access_token, GOOGLEAPIS_EMAIL,
-                                     {'alt': 'json'}).to_url()
+                                     {'alt': 'json'})
         url, params = request.to_url().split('?', 1)
         return googleapis_email(url, params)
 
