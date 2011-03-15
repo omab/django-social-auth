@@ -33,12 +33,12 @@ credentials, some features are:
     * OpenId_ like myOpenID_
     * `Twitter OAuth`_
     * `Facebook OAuth`_
-    * `Linkedin OAuth`_
 
   Some contributions added support for:
 
     * `LiveJournal OpenID`_
     * `Orkut OAuth`_
+    * `Linkedin OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
