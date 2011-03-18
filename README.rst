@@ -28,16 +28,17 @@ credentials, some features are:
 
     * `Google OpenID`_
     * `Google OAuth`_
+    * `Google OAuth2`_
     * `Yahoo OpenID`_
     * OpenId_ like myOpenID_
     * `Twitter OAuth`_
     * `Facebook OAuth`_
-    * `Linkedin OAuth`_
 
   Some contributions added support for:
 
     * `LiveJournal OpenID`_
     * `Orkut OAuth`_
+    * `Linkedin OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -102,6 +103,7 @@ Configuration
         'social_auth.backends.twitter.TwitterBackend',
         'social_auth.backends.facebook.FacebookBackend',
         'social_auth.backends.google.GoogleOAuthBackend',
+        'social_auth.backends.google.GoogleOAuth2Backend',
         'social_auth.backends.google.GoogleBackend',
         'social_auth.backends.yahoo.YahooBackend',
         'social_auth.backends.contrib.linkedin.LinkedinBackend',
@@ -415,7 +417,34 @@ anonymous values will be used if not configured as described in their
 
       GOOGLE_OAUTH_EXTRA_SCOPE = [...]
 
-check which Apps are included in their `Google Data Protocol Directory`_
+Check which applications can be included in their `Google Data Protocol Directory`_
+
+-------------
+Google OAuth2
+-------------
+Recently Google launched OAuth2 support following the definition at
+`OAuth2 draft`. It works in a similar way to plain OAuth mechanism, but
+developers *must* register an application and apply for a set of keys. Check
+`Google OAuth2`_ document for details.
+
+**Note**:
+  This support is experimental as Google implementation may change and 
+  OAuth2 is still a draft.
+
+To enable OAuth2 support:
+
+- fill "Client Key" and "Client Secret" settings, these values can be obtained
+  easily as described on `OAuth2 Registering`_ doc::
+
+      GOOGLE_OAUTH2_CLIENT_KEY = ''
+      GOOGLE_OAUTH2_CLIENT_SECRET = ''
+
+- scopes are shared between OAuth mechanisms::
+
+      GOOGLE_OAUTH_EXTRA_SCOPE = [...]
+
+Check which applications can be included in their `Google Data Protocol Directory`_
+
 
 -------
 Testing
@@ -513,7 +542,10 @@ Base work is copyrighted by:
 .. _Orkut API:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _Google OpenID: http://code.google.com/apis/accounts/docs/OpenID.html
 .. _Google OAuth: http://code.google.com/apis/accounts/docs/OAuth.html
+.. _Google OAuth2: http://code.google.com/apis/accounts/docs/OAuth2.html
+.. _OAuth2 Registering: http://code.google.com/apis/accounts/docs/OAuth2.html#Registering
 .. _Google Data Protocol Directory: http://code.google.com/apis/gdata/docs/directory.html
+.. _OAuth2 draft: http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 .. _OAuth reference: http://code.google.com/apis/accounts/docs/OAuth_ref.html#SigningOAuth
 .. _Yahoo OpenID: http://openid.yahoo.com/
 .. _Twitter OAuth: http://dev.twitter.com/pages/oauth_faq
