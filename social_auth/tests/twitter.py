@@ -1,6 +1,5 @@
 from django.conf import settings
 
-from social_auth.backends.twitter import TwitterAuth
 from social_auth.tests.base import SocialAuthTestsCase, FormParser, RefreshParser
 
 
@@ -13,7 +12,9 @@ class TwitterTestCase(SocialAuthTestsCase):
         self.assertTrue(self.user)
         self.assertTrue(self.passwd)
 
-    def testLogin(self):
+
+class TwitterTestLogin(TwitterTestCase):
+    def test_login_succeful(self):
         response = self.client.get(self.reverse('begin', 'twitter'))
         # social_auth must redirect to service page
         self.assertEqual(response.status_code, 302)
@@ -57,8 +58,3 @@ class TwitterTestCase(SocialAuthTestsCase):
         location = self.make_relative(response['Location'])
         login_redirect = getattr(settings, 'LOGIN_REDIRECT_URL', '')
         self.assertTrue(location == login_redirect)
-
-    def runTest(self):
-        # don't run tests twitter backend is not enabled
-        if TwitterAuth.enabled:
-            self.testLogin()
