@@ -9,6 +9,9 @@ from django.test.client import Client
 from django.core.urlresolvers import reverse
 
 
+USER_AGENT = 'Mozilla/5.0'
+
+
 class SocialAuthTestsCase(unittest.TestCase):
     """Base class for social auth tests"""
     SERVER_NAME = None
@@ -20,18 +23,26 @@ class SocialAuthTestsCase(unittest.TestCase):
             client_kwargs['SERVER_NAME'] = self.SERVER_NAME
         if self.SERVER_PORT:
             client_kwargs['SERVER_PORT'] = self.SERVER_PORT
+        self.jar = None
         self.client = Client(**client_kwargs)
-        self.jar = cookielib.CookieJar()
         super(SocialAuthTestsCase, self).__init__(*args, **kwargs)
 
     def get_content(self, url, data=None, use_cookies=False):
         """Return content for given url, if data is not None, then a POST
         request will be issued, otherwise GET will be used"""
         data = data and urllib.urlencode(data, doseq=True) or data
+        request = urllib2.Request(url)
         agent = urllib2.build_opener()
+
         if use_cookies:
-            agent.add_handler(urllib2.HTTPCookieProcessor(self.jar))
-        return ''.join(agent.open(url, data=data).readlines())
+            agent.add_handler(urllib2.HTTPCookieProcessor(self.get_jar()))
+        request.add_header('User-Agent', USER_AGENT)
+        return ''.join(agent.open(request, data=data).readlines())
+
+    def get_jar(self):
+        if not self.jar:
+            self.jar = cookielib.CookieJar()
+        return self.jar
 
     def reverse(self, name, backend):
         """Reverses backend URL by name"""
