@@ -1,3 +1,5 @@
+import urllib2
+import cookielib
 import urllib
 import urlparse
 import unittest
@@ -9,15 +11,27 @@ from django.core.urlresolvers import reverse
 
 class SocialAuthTestsCase(unittest.TestCase):
     """Base class for social auth tests"""
+    SERVER_NAME = None
+    SERVER_PORT = None
+
     def __init__(self, *args, **kwargs):
-        self.client = Client()
+        client_kwargs = {}
+        if self.SERVER_NAME:
+            client_kwargs['SERVER_NAME'] = self.SERVER_NAME
+        if self.SERVER_PORT:
+            client_kwargs['SERVER_PORT'] = self.SERVER_PORT
+        self.client = Client(**client_kwargs)
+        self.jar = cookielib.CookieJar()
         super(SocialAuthTestsCase, self).__init__(*args, **kwargs)
 
-    def get_content(self, url, data=None):
+    def get_content(self, url, data=None, use_cookies=False):
         """Return content for given url, if data is not None, then a POST
         request will be issued, otherwise GET will be used"""
-        data = data and urllib.urlencode(data) or data
-        return ''.join(urllib.urlopen(url, data=data).readlines())
+        data = data and urllib.urlencode(data, doseq=True) or data
+        agent = urllib2.build_opener()
+        if use_cookies:
+            agent.add_handler(urllib2.HTTPCookieProcessor(self.jar))
+        return ''.join(agent.open(url, data=data).readlines())
 
     def reverse(self, name, backend):
         """Reverses backend URL by name"""
