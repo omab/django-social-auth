@@ -467,6 +467,10 @@ credentials in the following way::
     TEST_FACEBOOK_USER = 'testing_account'
     TEST_FACEBOOK_PASSWORD = 'password_for_testing_account'
 
+    # goole testing
+    TEST_GOOGLE_USER = 'testing_account@gmail.com'
+    TEST_GOOGLE_PASSWORD = 'password_for_testing_account'
+
 ----
 Bugs
 ----

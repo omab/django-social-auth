@@ -1,6 +1,7 @@
 from django.conf import settings
 
-from social_auth.tests.base import SocialAuthTestsCase, FormParser, RefreshParser
+from social_auth.tests.base import SocialAuthTestsCase, FormParserByID, \
+                                   RefreshParser
 
 
 class TwitterTestCase(SocialAuthTestsCase):
@@ -22,7 +23,7 @@ class TwitterTestLogin(TwitterTestCase):
         # Open first redirect page, it contains user login form because
         # we don't have cookie to send to twitter
         login_content = self.get_content(response['Location'])
-        parser = FormParser('login_form')
+        parser = FormParserByID('login_form')
         parser.feed(login_content)
         auth = {'session[username_or_email]': self.user,
                 'session[password]': self.passwd}
@@ -41,7 +42,7 @@ class TwitterTestLogin(TwitterTestCase):
         # a page that redirects to redirect_url
         if 'login_form' in content:
             # authorization form post, returns redirect_page
-            parser = FormParser('login_form').feed(content)
+            parser = FormParserByID('login_form').feed(content)
             self.assertTrue(parser.action)
             self.assertTrue(parser.values)
             parser.values.update(auth)

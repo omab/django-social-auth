@@ -1,9 +1,8 @@
 import re
-import urllib
 
 from django.conf import settings
 
-from social_auth.tests.base import SocialAuthTestsCase, FormParser
+from social_auth.tests.base import SocialAuthTestsCase, FormParserByID
 
 
 class FacebookTestCase(SocialAuthTestsCase):
@@ -29,7 +28,7 @@ class FacebookTestLogin(FacebookTestCase):
 
         # Open first redirect page, it contains user login form because
         # we don't have cookie to send to twitter
-        parser = FormParser('login_form')
+        parser = FormParserByID('login_form')
         parser.feed(self.get_content(response['Location'], use_cookies=True))
         auth = {'email': self.user,
                 'pass': self.passwd}
@@ -49,7 +48,7 @@ class FacebookTestLogin(FacebookTestCase):
         # a page that redirects to redirect_url
         if 'uiserver_form' in content:
             # authorization form post, returns redirect_page
-            parser = FormParser('uiserver_form').feed(content)
+            parser = FormParserByID('uiserver_form').feed(content)
             self.assertTrue(parser.action)
             self.assertTrue(parser.values)
             parser.values.update(auth)

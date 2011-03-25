@@ -1,3 +1,4 @@
+import re
 import urllib2
 import cookielib
 import urllib
@@ -10,6 +11,7 @@ from django.core.urlresolvers import reverse
 
 
 USER_AGENT = 'Mozilla/5.0'
+REFRESH_RE = re.compile(r'\d;\s*url=')
 
 
 class SocialAuthTestsCase(unittest.TestCase):
@@ -39,6 +41,18 @@ class SocialAuthTestsCase(unittest.TestCase):
         request.add_header('User-Agent', USER_AGENT)
         return ''.join(agent.open(request, data=data).readlines())
 
+    def get_redirect(self, url, data=None, use_cookies=False):
+        """Return content for given url, if data is not None, then a POST
+        request will be issued, otherwise GET will be used"""
+        data = data and urllib.urlencode(data, doseq=True) or data
+        request = urllib2.Request(url)
+        agent = urllib2.build_opener(RedirectHandler())
+
+        if use_cookies:
+            agent.add_handler(urllib2.HTTPCookieProcessor(self.get_jar()))
+        request.add_header('User-Agent', USER_AGENT)
+        return agent.open(request, data=data)
+
     def get_jar(self):
         if not self.jar:
             self.jar = cookielib.CookieJar()
@@ -63,11 +77,9 @@ class CustomParser(SGMLParser):
 
 
 class FormParser(CustomParser):
-    """Form parser, load form data and action for given form identified
-    by its id"""
-    def __init__(self, form_id, *args, **kwargs):
+    """Form parser, load form data and action for given form"""
+    def __init__(self, *args, **kwargs):
         CustomParser.__init__(self, *args, **kwargs)
-        self.form_id = form_id
         self.inside_form = False
         self.action = None
         self.values = {}
@@ -75,10 +87,14 @@ class FormParser(CustomParser):
     def start_form(self, attributes):
         """Start form parsing detecting if form is the one requested"""
         attrs = dict(attributes)
-        if attrs.get('id') == self.form_id:
+        if self.in_form(attrs):
             # flag that we are inside the form and save action
             self.inside_form = True 
             self.action = attrs.get('action')
+
+    def in_form(self, attrs):
+        """Override below"""
+        return True
 
     def end_form(self):
         """End form parsing, unset inside_form flag"""
@@ -95,6 +111,17 @@ class FormParser(CustomParser):
                 self.values[name] = value
 
 
+class FormParserByID(FormParser):
+    """Form parser, load form data and action for given form identified
+    by its id"""
+    def __init__(self, form_id, *args, **kwargs):
+        FormParser.__init__(self, *args, **kwargs)
+        self.form_id = form_id
+
+    def in_form(self, attrs):
+        return attrs.get('id') == self.form_id
+
+
 class RefreshParser(CustomParser):
     """Refresh parser, will check refresh by meta tag and store refresh URL"""
     def __init__(self, *args, **kwargs):
@@ -105,4 +132,9 @@ class RefreshParser(CustomParser):
         """Start meta parsing checking by http-equiv attribute"""
         attrs = dict(attributes)
         if attrs.get('http-equiv') == 'refresh':
-            self.value = attrs.get('content').lstrip('0;url=')
+            self.value = REFRESH_RE.sub('', attrs.get('content')).strip("'")
+
+
+class RedirectHandler(urllib2.HTTPRedirectHandler):
+    def http_error_302(self, req, fp, code, msg, headers):
+        return fp
