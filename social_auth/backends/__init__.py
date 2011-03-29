@@ -9,8 +9,9 @@ Also the modules *must* define a BACKENDS dictionary with the backend name
 (which is used for URLs matching) and Auth class, otherwise it won't be
 enabled.
 """
-from os import urandom, walk
+from os import walk
 from os.path import basename
+from uuid import uuid4
 from urllib2 import Request, urlopen
 from urllib import urlencode
 from httplib import HTTPSConnection
@@ -26,17 +27,12 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
-from django.utils.hashcompat import md5_constructor
 from django.utils.importlib import import_module
 
 from social_auth.models import UserSocialAuth
 from social_auth.store import DjangoOpenIDStore
 from social_auth.signals import pre_update, socialauth_registered
 
-
-# key for username in user details dict used around, see get_user_details
-# method
-USERNAME = 'username'
 
 # OpenID configuration
 OLD_AX_ATTRS = [
@@ -61,8 +57,15 @@ SREG_ATTR = [
 OPENID_ID_FIELD = 'openid_identifier'
 SESSION_NAME = 'openid'
 
+# key for username in user details dict used around, see get_user_details
+# method
+USERNAME = 'username'
 # get User class, could not be auth.User
 User = UserSocialAuth._meta.get_field('user').rel.to
+# username field max length
+USERNAME_MAX_LENGTH = User._meta.get_field(USERNAME).max_length
+# uuid hex characters to keep while generating unique usernames
+UUID_MAX_LENGTH = 16
 
 
 class SocialAuthBackend(ModelBackend):
@@ -126,11 +129,12 @@ class SocialAuthBackend(ModelBackend):
 
     def username(self, details):
         """Return an unique username, if SOCIAL_AUTH_FORCE_RANDOM_USERNAME
-        setting is True, then username will be a random 30 chars md5 hash
+        setting is True, then username will be a random USERNAME_MAX_LENGTH
+        chars uuid generated hash
         """
         def get_random_username():
-            """Return hash from random string cut at 30 chars"""
-            return md5_constructor(urandom(10)).hexdigest()[:30]
+            """Return hash from unique string cut at username max length"""
+            return uuid4().get_hex()[:USERNAME_MAX_LENGTH]
 
         if getattr(settings, 'SOCIAL_AUTH_FORCE_RANDOM_USERNAME', False):
             username = get_random_username()
@@ -145,17 +149,28 @@ class SocialAuthBackend(ModelBackend):
 
         fixer = getattr(settings, 'SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
 
-        name, idx = username, 2
-        while True:
+        name = username
+        final_username = None
+
+        while not final_username:
             try:
-                name = fixer(name)
-                User.objects.get(username=name)
-                name = username + str(idx)
-                idx += 1
+                User.objects.get(username=fixer(name))
             except User.DoesNotExist:
-                username = name
-                break
-        return username
+                final_username = name
+            else:
+                # User with same username already exists, generate a unique
+                # username for current user using username as base but adding
+                # a unique hash at the end.
+                #
+                # Generate an uuid number but keep only the needed to avoid
+                # breaking the field max_length value, this reduces the
+                # uniqueness, but it's less likely to happen repetitions than
+                # increasing an index.
+                if len(username) + UUID_MAX_LENGTH > USERNAME_MAX_LENGTH:
+                    username = username[:USERNAME_MAX_LENGTH - UUID_MAX_LENGTH]
+                name = username + uuid4().get_hex()[:UUID_MAX_LENGTH]
+
+        return final_username
 
     def associate_auth(self, user, uid, response, details):
         """Associate a Social Auth with an user account."""
