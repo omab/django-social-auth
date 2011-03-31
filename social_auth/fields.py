@@ -34,7 +34,7 @@ class JSONField(models.TextField):
         except Exception, e:
             raise ValidationError(str(e))
 
-    def get_db_prep_value(self, value, connection, prepared=False):
+    def get_prep_value(self, value):
         """Convert value to JSON string before save"""
         try:
             return simplejson.dumps(value)
