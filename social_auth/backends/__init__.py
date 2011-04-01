@@ -144,8 +144,9 @@ class SocialAuthBackend(ModelBackend):
             username = settings.SOCIAL_AUTH_DEFAULT_USERNAME
             if callable(username):
                 username = username()
-        if not username:
-            username = get_random_username()
+        else:
+            username = None
+        username = username or get_random_username()
 
         fixer = getattr(settings, 'SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
 
