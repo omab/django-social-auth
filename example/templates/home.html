@@ -38,7 +38,7 @@
     <li>
       <form action="{% url begin "yandex" %}" method="post">{% csrf_token %}
         <div>
-          <label for="openid_ya_user">Yandex user:</label>
+          <label for="openid_ya_user">Yandex user:(optional)</label>
           <input id="openid_ya_user" type="text" value="" name="openid_ya_user" />
           <input type="submit" value="Login"/>
         </div>
@@ -61,6 +61,7 @@
   <h3>Login using other authentication systems:</h3>
   	<ul>
   		<li><a rel="nofollow" href="{% url begin "vkontakte" %}">VKontakte OpenAPI</a></li>
+		<li><a rel="nofollow" href="{% url begin "yandex" %}">Yandex OpenID 2.0</a></li>
 	</ul>
 </div>
 {% endblock %}
