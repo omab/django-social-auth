@@ -155,9 +155,10 @@ class SocialAuthBackend(ModelBackend):
 
         while not final_username:
             try:
-                User.objects.get(username=fixer(name))
+                fixed_name = fixer(name)
+                User.objects.get(username=fixed_name)
             except User.DoesNotExist:
-                final_username = name
+                final_username = fixed_name
             else:
                 # User with same username already exists, generate a unique
                 # username for current user using username as base but adding
