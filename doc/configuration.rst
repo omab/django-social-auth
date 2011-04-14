@@ -151,6 +151,17 @@ Configuration
   Check example application for implementation details, but first, please take
   a look to `User Profiles`_, it might be what you were looking for.
 
+  It's possible to disable user creations by django-social-auth with::
+
+      SOCIAL_AUTH_CREATE_USERS = False
+
+  Also, it's possible to associate user accounts that share the same email
+  address if the user entry is unique (that means that if the email is not used
+  by more than one account). This behavior is disabled by default unless::
+
+      SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
+
+
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
 .. _Login URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-url
 .. _Login redirect URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-redirect-url

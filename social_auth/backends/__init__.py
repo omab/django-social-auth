@@ -24,6 +24,7 @@ from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
                    SignatureMethod_HMAC_SHA1
 
 from django.conf import settings
+from django.core.exceptions import MultipleObjectsReturned
 from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
@@ -72,6 +73,7 @@ def _setting(name, default=None):
     return getattr(settings, name, default)
 
 CREATE_USERS = _setting('SOCIAL_AUTH_CREATE_USERS', True)
+ASSOCIATE_BY_MAIL = _setting('SOCIAL_AUTH_ASSOCIATE_BY_MAIL', False)
 LOAD_EXTRA_DATA = _setting('SOCIAL_AUTH_EXTRA_DATA', True)
 FORCE_RANDOM_USERNAME = _setting('SOCIAL_AUTH_FORCE_RANDOM_USERNAME', False)
 USERNAME_FIXER = _setting('SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
@@ -111,10 +113,20 @@ class SocialAuthBackend(ModelBackend):
             if user is None:  # new user
                 if not CREATE_USERS:
                     return None
-                username = self.username(details)
+
                 email = details.get('email')
-                user = User.objects.create_user(username=username, email=email)
-                is_new = True
+                if ASSOCIATE_BY_MAIL:
+                    try:
+                        user = User.objects.get(email=email)
+                    except MultipleObjectsReturned:
+                        raise ValueError('Not unique email address supplied')
+                    except User.DoesNotExist:
+                        user = None
+                if not user:
+                    username = self.username(details)
+                    user = User.objects.create_user(username=username,
+                                                    email=email)
+                    is_new = True
             social_user = self.associate_auth(user, uid, response, details)
         else:
             # This account was registered to another user, so we raise an
