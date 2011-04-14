@@ -115,7 +115,10 @@ class SocialAuthBackend(ModelBackend):
                     return None
 
                 email = details.get('email')
-                if ASSOCIATE_BY_MAIL:
+                if email and ASSOCIATE_BY_MAIL:
+                    # try to associate accounts registered with the same email
+                    # address, only if it's a single object. ValueError is
+                    # raised if multiple objects are returned
                     try:
                         user = User.objects.get(email=email)
                     except MultipleObjectsReturned:
