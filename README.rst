@@ -152,6 +152,11 @@ Configuration
 
   Check Django documentation at `Login URL`_ and `Login redirect URL`_
 
+  If a custom redirect URL is needed that must be different to LOGIN_URL,
+  define the setting::
+
+    SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
+
   In case of authentication error, the message can be stored in session
   if the following setting is defined::
 
