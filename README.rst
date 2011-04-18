@@ -152,6 +152,11 @@ Configuration
 
   Check Django documentation at `Login URL`_ and `Login redirect URL`_
 
+  If a custom redirect URL is needed that must be different to LOGIN_URL,
+  define the setting::
+
+    SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
+
   In case of authentication error, the message can be stored in session
   if the following setting is defined::
 
@@ -240,6 +245,16 @@ Configuration
   Check example application for implementation details, but first, please take
   a look to `User Profiles`_, it might be what you were looking for.
 
+  It's possible to disable user creations by django-social-auth with::
+
+      SOCIAL_AUTH_CREATE_USERS = False
+
+  Also, it's possible to associate user accounts that share the same email
+  address if the user entry is unique (that means that if the email is not used
+  by more than one account). This behavior is disabled by default unless::
+
+      SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
+
 
 -------
 Signals
@@ -266,6 +281,16 @@ signal handler if this setting value is set to True::
 Take into account that when defining a custom User model and declaring signal
 handler in models.py, the imports and handler definition *must* be made after
 the custom User model is defined or circular imports issues will be raised.
+
+Also a new-user signal is sent when new accounts are created::
+
+    from social_auth.signals import socialauth_registered 
+
+    def new_users_handler(sender, user, response, details, **kwargs):
+        user.is_new = True
+        return False
+
+    socialauth_registered.connect(new_users_handler, sender=None)
 
 
 ------

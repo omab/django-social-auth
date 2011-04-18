@@ -11,7 +11,8 @@ from social_auth.backends import get_backend
 from social_auth.utils import sanitize_redirect
 
 
-DEFAULT_REDIRECT = getattr(settings, 'LOGIN_REDIRECT_URL', '')
+DEFAULT_REDIRECT = getattr(settings, 'SOCIAL_AUTH_LOGIN_REDIRECT_URL', '') or \
+                   getattr(settings, 'LOGIN_REDIRECT_URL', '')
 
 
 def auth(request, backend):
@@ -87,8 +88,7 @@ def disconnect(request, backend):
     return HttpResponseRedirect(url)
 
 
-def auth_process(request, backend, complete_url_name,
-                 default_redirect=DEFAULT_REDIRECT):
+def auth_process(request, backend, complete_url_name):
     """Authenticate using social backend"""
     redirect = reverse(complete_url_name, args=(backend,))
     backend = get_backend(backend, request, redirect)

@@ -23,5 +23,15 @@ Take into account that when defining a custom User model and declaring signal
 handler in models.py, the imports and handler definition *must* be made after
 the custom User model is defined or circular imports issues will be raised.
 
+Also a new-user signal is sent when new accounts are created::
+
+    from social_auth.signals import socialauth_registered 
+
+    def new_users_handler(sender, user, response, details, **kwargs):
+        user.is_new = True
+        return False
+
+    socialauth_registered.connect(new_users_handler, sender=None)
+
 
 .. _User Profiles: http://www.djangobook.com/en/1.0/chapter12/#cn222
