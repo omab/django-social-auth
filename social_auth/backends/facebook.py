@@ -88,7 +88,7 @@ class FacebookAuth(BaseOAuth):
         url = FACEBOOK_CHECK_AUTH + '?' + urllib.urlencode(params)
         try:
             return simplejson.load(urllib.urlopen(url))
-        except simplejson.JSONDecodeError:
+        except ValueError:
             return None
 
     @classmethod

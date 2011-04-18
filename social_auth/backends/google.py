@@ -167,7 +167,7 @@ def googleapis_email(url, params):
     request = Request(url + '?' + params, headers={'Authorization': params})
     try:
         return simplejson.loads(urlopen(request).read())['data']
-    except (simplejson.JSONDecodeError, KeyError, IOError):
+    except (ValueError, KeyError, IOError):
         return None
 
 
