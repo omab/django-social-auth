@@ -660,7 +660,7 @@ class BaseOAuth2(BaseOAuth):
 
         try:
             response = simplejson.loads(urlopen(request).read())
-        except (simplejson.JSONDecodeError, KeyError):
+        except (ValueError, KeyError):
             raise ValueError('Unknown OAuth2 response type')
 
         if response.get('error'):

@@ -62,7 +62,7 @@ class OrkutAuth(BaseGoogleOAuth):
         response = urllib.urlopen(request.to_url()).read()
         try:
             return simplejson.loads(response)['data']
-        except (simplejson.JSONDecodeError, KeyError):
+        except (ValueError, KeyError):
             return None
 
 

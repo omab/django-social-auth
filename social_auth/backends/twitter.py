@@ -56,7 +56,7 @@ class TwitterAuth(ConsumerBasedOAuth):
         json = self.fetch_response(request)
         try:
             return simplejson.loads(json)
-        except simplejson.JSONDecodeError:
+        except ValueError:
             return None
 
 
