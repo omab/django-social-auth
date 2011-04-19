@@ -73,6 +73,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.livejournal.LiveJournalBackend',
     'social_auth.backends.contrib.vkontakte.VKontakteBackend',
     'social_auth.backends.contrib.yandex.YandexBackend',
+    'social_auth.backends.contrib.odnoklassniki.OdnoklassnikiBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

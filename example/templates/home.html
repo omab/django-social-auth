@@ -18,6 +18,7 @@
   <h3>Login using <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-10" title="OAuth2">OAuth2</a> from:</h3>
   <ul>
     <li><a rel="nofollow" href="{% url begin "google-oauth2" %}">Google OAuth2</a></li>
+	<li><a rel="nofollow" href="{% url begin "odnoklassniki" %}">Odnoklassniki OAuth 2.0</a></li>
   </ul>
 </div>
 
@@ -38,12 +39,13 @@
     <li>
       <form action="{% url begin "yandex" %}" method="post">{% csrf_token %}
         <div>
-          <label for="openid_ya_user">Yandex user:(optional)</label>
+          <label for="openid_ya_user">Yandex user(optional):</label>
           <input id="openid_ya_user" type="text" value="" name="openid_ya_user" />
           <input type="submit" value="Login"/>
         </div>
       </form>
     </li>
+	<li><a rel="nofollow" href="{% url begin "yandex" %}">Yandex OpenID 2.0</a></li>
     <li>
       <form action="{% url begin "openid" %}" method="post">{% csrf_token %}
         <div>
@@ -61,7 +63,6 @@
   <h3>Login using other authentication systems:</h3>
   	<ul>
   		<li><a rel="nofollow" href="{% url begin "vkontakte" %}">VKontakte OpenAPI</a></li>
-		<li><a rel="nofollow" href="{% url begin "yandex" %}">Yandex OpenID 2.0</a></li>
 	</ul>
 </div>
 {% endblock %}

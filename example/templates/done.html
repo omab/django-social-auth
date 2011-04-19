@@ -44,6 +44,8 @@
     <li>
       <a rel="nofollow" href="{% url associate_begin "google-oauth2" %}">Google OAuth2</a>
       {% if google_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "google-oauth2" %}">disconnect</a>)</span>{% endif %}
+	  <li><a rel="nofollow" href="{% url associate_begin "odnoklassniki" %}">Odnoklassniki OAuth 2.0</a></li>
+	  {% if odnoklassniki %}<span class="disconnect">(<a href="{% url disconnect "odnoklassniki" %}">disconnect</a>)</span>{% endif %}
     </li>
   </ul>
 
