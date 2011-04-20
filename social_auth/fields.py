@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import simplejson
+from django.utils.encoding import smart_unicode
 
 
 class JSONField(models.TextField):
@@ -40,3 +41,7 @@ class JSONField(models.TextField):
             return simplejson.dumps(value)
         except Exception, e:
             raise ValidationError(str(e))
+
+    def value_to_string(self, obj):
+        """Return value from object converted to string properly"""
+        return smart_unicode(self.get_prep_value(self._get_val_from_obj(obj)))
