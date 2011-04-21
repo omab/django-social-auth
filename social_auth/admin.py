@@ -7,7 +7,7 @@ from social_auth.models import UserSocialAuth, Nonce, Association
 class UserSocialAuthOption(admin.ModelAdmin):
     """Social Auth user options"""
     list_display = ('id', 'user', 'provider', 'uid')
-    search_fields = ('user__name',)
+    search_fields = ('user__first_name', 'user__last_name', 'user__email')
     list_filter = ('provider',)
     raw_id_fields = ('user',)
     list_select_related = True
