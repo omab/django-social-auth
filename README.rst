@@ -194,7 +194,7 @@ Configuration
 
   or::
 
-    from django.template.defaultfilter import slugify
+    from django.template.defaultfilters import slugify
     SOCIAL_AUTH_USERNAME_FIXER = lambda u: slugify(u)
 
   in case your user layout needs to purify username on some weird way.
