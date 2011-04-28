@@ -1,19 +1,28 @@
 """
-VKontakte OpenAPI support.
+VKontakte OpenAPI and OAuth 2.0 support.
 
-This contribution adds support for VKontakte OpenAPI service in the form
+This contribution adds support for VKontakte OpenAPI and OAuth 2.0 service in the form
 www.vkontakte.ru. Username is retrieved from the identity returned by server.
 """
 
 from django.conf import settings
 from django.contrib.auth import authenticate
-from urllib import unquote
+from django.utils import simplejson
+
+from urllib import urlencode, unquote
+from urllib2 import Request, urlopen
 from hashlib import md5
 from time import time
 
-from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
+from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, BaseOAuth2, USERNAME
 
 VKONTAKTE_LOCAL_HTML  = 'vkontakte.html'
+
+VKONTAKTE_API_URL       = 'https://api.vkontakte.ru/method/'
+VKONTAKTE_OAUTH2_SCOPE  = [''] # Enough for authentication
+
+EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
+
 
 class VKontakteBackend(SocialAuthBackend):
     """VKontakte authentication backend"""
@@ -28,6 +37,28 @@ class VKontakteBackend(SocialAuthBackend):
         nickname = unquote(response.GET['nickname'])
         values = { USERNAME: response.GET['id'] if len(nickname) == 0 else nickname, 'email': '', 'fullname': '',
                   'first_name': unquote(response.GET['first_name']), 'last_name': unquote(response.GET['last_name'])}
+        return values
+
+
+class VKontakteOAuth2Backend(OAuthBackend):
+    """VKontakteOAuth2 authentication backend"""
+    name = 'vkontakte-oauth2'
+    EXTRA_DATA = [('expires_in', EXPIRES_NAME)]
+
+    def get_user_id(self, details, response):
+        """Return user unique id provided by VKontakte"""
+        return int(response['user_id'])
+    
+    def get_user_details(self, response):
+        """Return user details from VKontakte request"""
+        values = { USERNAME: response['user_id'], 'email': '', 'fullname': unquote(response['response']['user_name']),
+                  'first_name': '', 'last_name': ''}
+        
+        if ' ' in values['fullname']:
+            values['first_name'], values['last_name'] = values['fullname'].split()
+        else:
+            values['first_name'] = values['fullname']
+            
         return values
 
 
@@ -73,10 +104,41 @@ class VKontakteAuth(BaseAuth):
         to do authentication, so auth_xxx methods are not needed to be called.
         Their current implementation is just an example"""
         return False
+
     
-    
+class VKontakteOAuth2(BaseOAuth2):
+    """VKontakte OAuth2 support"""
+    AUTH_BACKEND = VKontakteOAuth2Backend
+    AUTHORIZATION_URL = 'http://api.vkontakte.ru/oauth/authorize'
+    ACCESS_TOKEN_URL = ' https://api.vkontakte.ru/oauth/access_token'
+    SETTINGS_KEY_NAME = 'VKONTAKTE_APP_ID'
+    SETTINGS_SECRET_NAME = 'VKONTAKTE_APP_SECRET'
+
+    def get_scope(self):
+        return VKONTAKTE_OAUTH2_SCOPE + getattr(settings, 'VKONTAKTE_OAUTH2_EXTRA_SCOPE', [])
+
+    def user_data(self, access_token):
+        """Return user data from VKontakte OpenAPI"""
+        data = {'access_token': access_token }
+        
+        return vkontakte_api('getUserInfoEx', data)
+
+def vkontakte_api(method, data):
+    """ Calls VKontakte OpenAPI method
+        http://vkontakte.ru/apiclub, 
+        http://vkontakte.ru/pages.php?o=-1&p=%C2%FB%EF%EE%EB%ED%E5%ED%E8%E5%20%E7%E0%EF%F0%EE%F1%EE%E2%20%EA%20API
+    """
+
+    params = urlencode(data)
+    request = Request(VKONTAKTE_API_URL + method + '?' + params)
+    try:
+        return simplejson.loads(urlopen(request).read())
+    except (TypeError, KeyError, IOError, ValueError, IndexError):
+        return None
+        
 # Backend definition
 BACKENDS = {
     'vkontakte': VKontakteAuth,
+    'vkontakte-oauth2': VKontakteOAuth2
 }
     
