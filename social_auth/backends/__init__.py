@@ -138,7 +138,7 @@ class SocialAuthBackend(ModelBackend):
             # would imply update user references on other apps, that's too
             # much intrusive
             if 'user' in kwargs and kwargs['user'] != social_user.user:
-                raise ValueError('Account already in use.')
+                raise ValueError('Account already in use.', social_user)
             user = social_user.user
 
         # Update user account data.
