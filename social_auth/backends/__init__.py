@@ -138,7 +138,7 @@ class SocialAuthBackend(ModelBackend):
             # would imply update user references on other apps, that's too
             # much intrusive
             if 'user' in kwargs and kwargs['user'] != social_user.user:
-                raise ValueError('Account already in use.')
+                raise ValueError('Account already in use.', social_user)
             user = social_user.user
 
         # Update user account data.
@@ -292,7 +292,7 @@ class OAuthBackend(SocialAuthBackend):
         extra_data field"""
         data = {'access_token': response.get('access_token', '')}
         name = self.name.replace('-', '_').upper()
-        names = self.EXTRA_DATA or [] + _setting(name + '_EXTRA_DATA', [])
+        names = (self.EXTRA_DATA or []) + _setting(name + '_EXTRA_DATA', [])
         data.update((alias, response.get(name)) for name, alias in names)
         return data
 
