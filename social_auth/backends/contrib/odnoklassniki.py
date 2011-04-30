@@ -46,7 +46,7 @@ class OdnoklassnikiOAuth2(BaseOAuth2):
     """Odnoklassniki OAuth2 support"""
     AUTH_BACKEND = OdnoklassnikiBackend
     AUTHORIZATION_URL = 'http://www.odnoklassniki.ru/oauth/authorize'
-    ACCESS_TOKEN_URL = ' http://api.odnoklassniki.ru/oauth/token.do'
+    ACCESS_TOKEN_URL = 'http://api.odnoklassniki.ru/oauth/token.do'
     SETTINGS_KEY_NAME = 'ODNOKLASSNIKI_OAUTH2_CLIENT_KEY'
     SETTINGS_SECRET_NAME = 'ODNOKLASSNIKI_OAUTH2_CLIENT_SECRET'
 

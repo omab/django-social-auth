@@ -48,7 +48,8 @@
 	  {% if odnoklassniki %}<span class="disconnect">(<a href="{% url disconnect "odnoklassniki" %}">disconnect</a>)</span>{% endif %}
 	  <li><a rel="nofollow" href="{% url associate_begin "vkontakte-oauth2" %}">VKontakte OAuth 2.0</a></li>
 	  {% if vkontakte_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "vkontakte-oauth2" %}">disconnect</a>)</span>{% endif %}
-
+	  <li><a rel="nofollow" href="{% url associate_begin "mailru-oauth2" %}">Mail.ru OAuth 2.0</a></li>
+	  {% if mailru_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "mailru-oauth2" %}">disconnect</a>)</span>{% endif %}
     </li>
   </ul>
 
@@ -74,7 +75,7 @@
       </form>
     </li>
     <li>
-      <form action="{% url begin "yandex" %} method="post">{% csrf_token %}
+      <form action="{% url associate_begin "yandex" %}" method="post">{% csrf_token %}
         <div>
           <label for="openid_ya_user">Yandex user
             {% if yandex %}(<span class="disconnect"><a href="{% url disconnect "yandex" %}">disconnect</a>)</span>{% endif %}

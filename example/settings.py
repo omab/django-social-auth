@@ -75,6 +75,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.yandex.YandexBackend',
     'social_auth.backends.contrib.odnoklassniki.OdnoklassnikiBackend',
     'social_auth.backends.contrib.vkontakte.VKontakteOAuth2Backend',
+    'social_auth.backends.contrib.mailru.MailruBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
