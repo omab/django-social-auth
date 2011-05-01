@@ -26,19 +26,31 @@
       {% if facebook %}<span class="disconnect">(<a href="{% url disconnect "facebook" %}">disconnect</a>)</span>{% endif %}
     </li>
     <li>
+      <a rel="nofollow" href="{% url associate_begin "linkedin" %}">LinkedIn</a>
+      {% if linkedin %}<span class="disconnect">(<a href="{% url disconnect "linkedin" %}">disconnect</a>)</span>{% endif %}
+    </li>
+    <li>
       <a rel="nofollow" href="{% url associate_begin "orkut" %}">Orkut</a>
       {% if orkut %}<span class="disconnect">(<a href="{% url disconnect "orkut" %}">disconnect</a>)</span>{% endif %}
     </li>
     <li>
-      <a rel="nofollow" href="{% url associate_begin "google-oauth" %}">Google</a>
+      <a rel="nofollow" href="{% url associate_begin "google-oauth" %}">Google OAuth</a>
       {% if google_oauth %}<span class="disconnect">(<a href="{% url disconnect "google-oauth" %}">disconnect</a>)</span>{% endif %}
+    </li>
+  </ul>
+
+  <h3>Associate new OAuth2 credentials:</h3>
+  <ul>
+    <li>
+      <a rel="nofollow" href="{% url associate_begin "google-oauth2" %}">Google OAuth2</a>
+      {% if google_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "google-oauth2" %}">disconnect</a>)</span>{% endif %}
     </li>
   </ul>
 
   <h3>Associate new OpenID credentials:</h3>
   <ul>
     <li>
-      <a rel="nofollow" href="{% url associate_begin "google" %}">Google</a>
+      <a rel="nofollow" href="{% url associate_begin "google" %}">Google OpenID</a>
       {% if google %}<span class="disconnect">(<a href="{% url disconnect "google" %}">disconnect</a>)</span>{% endif %}
     </li>
     <li>

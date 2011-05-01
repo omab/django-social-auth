@@ -8,27 +8,38 @@ and GOOGLE_CONSUMER_SECRET and they will be used in the auth process.
 Setting GOOGLE_OAUTH_EXTRA_SCOPE can be used to access different user
 related data, like calendar, contacts, docs, etc.
 
+OAuth2 works similar to OAuth but application must be defined on Google
+APIs console https://code.google.com/apis/console/ Identity option.
+
 OpenID also works straightforward, it doesn't need further configurations.
 """
+from urllib import urlencode
 from urllib2 import Request, urlopen
 
 from django.conf import settings
 from django.utils import simplejson
 
-from social_auth.backends import OpenIdAuth, ConsumerBasedOAuth, \
+from social_auth.backends import OpenIdAuth, ConsumerBasedOAuth, BaseOAuth2, \
                                  OAuthBackend, OpenIDBackend, USERNAME
 
 
 # Google OAuth base configuration
-GOOGLE_SERVER = 'www.google.com'
-GOOGLE_REQUEST_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetRequestToken'
-GOOGLE_ACCESS_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetAccessToken'
-GOOGLE_AUTHORIZATION_URL = 'https://www.google.com/accounts/OAuthAuthorizeToken'
+GOOGLE_OAUTH_SERVER = 'www.google.com'
+GOOGLE_OAUTH_AUTHORIZATION_URL = 'https://www.google.com/accounts/OAuthAuthorizeToken'
+GOOGLE_OAUTH_REQUEST_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetRequestToken'
+GOOGLE_OAUTH_ACCESS_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetAccessToken'
+
+# Google OAuth2 base configuration
+GOOGLE_OAUTH2_SERVER = 'accounts.google.com'
+GOOGLE_OATUH2_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth'
+
 # scope for user email, specify extra scopes in settings, for example:
 # GOOGLE_OAUTH_EXTRA_SCOPE = ['https://www.google.com/m8/feeds/']
 GOOGLE_OAUTH_SCOPE = ['https://www.googleapis.com/auth/userinfo#email']
 GOOGLEAPIS_EMAIL = 'https://www.googleapis.com/userinfo/email'
 GOOGLE_OPENID_URL = 'https://www.google.com/accounts/o8/id'
+
+EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 # Backends
@@ -50,6 +61,13 @@ class GoogleOAuthBackend(OAuthBackend):
                 'last_name': ''}
 
 
+class GoogleOAuth2Backend(GoogleOAuthBackend):
+    """Google OAuth2 authentication backend"""
+    name = 'google-oauth2'
+    EXTRA_DATA = [('refresh_token', 'refresh_token'),
+                  ('expires_in', EXPIRES_NAME)]
+
+
 class GoogleBackend(OpenIDBackend):
     """Google OpenID authentication backend"""
     name = 'google'
@@ -67,10 +85,10 @@ class GoogleAuth(OpenIdAuth):
 
 class BaseGoogleOAuth(ConsumerBasedOAuth):
     """Base class for Google OAuth mechanism"""
-    AUTHORIZATION_URL = GOOGLE_AUTHORIZATION_URL
-    REQUEST_TOKEN_URL = GOOGLE_REQUEST_TOKEN_URL
-    ACCESS_TOKEN_URL = GOOGLE_ACCESS_TOKEN_URL
-    SERVER_URL = GOOGLE_SERVER
+    AUTHORIZATION_URL = GOOGLE_OAUTH_AUTHORIZATION_URL
+    REQUEST_TOKEN_URL = GOOGLE_OAUTH_REQUEST_TOKEN_URL
+    ACCESS_TOKEN_URL = GOOGLE_OAUTH_ACCESS_TOKEN_URL
+    SERVER_URL = GOOGLE_OAUTH_SERVER
 
     def user_data(self, access_token):
         """Loads user data from G service"""
@@ -84,23 +102,11 @@ class GoogleOAuth(BaseGoogleOAuth):
     SETTINGS_SECRET_NAME = 'GOOGLE_CONSUMER_SECRET'
 
     def user_data(self, access_token):
-        """Loads user data data from googleapis service, only email so far
-        as it's described in:
-            http://sites.google.com/site/oauthgoog/Home/emaildisplayscope
-        OAuth parameters needs to be passed in the queryset and
-        Authorization header, this behavior is listed in:
-            http://groups.google.com/group/oauth/browse_thread/thread/d15add9beb418ebc
-        """
-        url = self.oauth_request(access_token, GOOGLEAPIS_EMAIL,
-                                 {'alt': 'json'}).to_url()
-        params = url.split('?', 1)[1]
-        request = Request(url)
-        request.headers['Authorization'] = params  # setup header
-        response = urlopen(request).read()
-        try:
-            return simplejson.loads(response)['data']
-        except (simplejson.JSONDecodeError, KeyError):
-            return None
+        """Return user data from Google API"""
+        request = self.oauth_request(access_token, GOOGLEAPIS_EMAIL,
+                                     {'alt': 'json'})
+        url, params = request.to_url().split('?', 1)
+        return googleapis_email(url, params)
 
     def oauth_request(self, token, url, extra_params=None):
         extra_params = extra_params or {}
@@ -130,8 +136,44 @@ class GoogleOAuth(BaseGoogleOAuth):
         return True
 
 
+class GoogleOAuth2(BaseOAuth2):
+    """Google OAuth2 support"""
+    AUTH_BACKEND = GoogleOAuth2Backend
+    AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth'
+    ACCESS_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
+    SETTINGS_KEY_NAME = 'GOOGLE_OAUTH2_CLIENT_KEY'
+    SETTINGS_SECRET_NAME = 'GOOGLE_OAUTH2_CLIENT_SECRET'
+
+    def get_scope(self):
+        return GOOGLE_OAUTH_SCOPE + \
+               getattr(settings, 'GOOGLE_OAUTH_EXTRA_SCOPE', [])
+
+    def user_data(self, access_token):
+        """Return user data from Google API"""
+        data = {'oauth_token': access_token, 'alt': 'json'}
+        return googleapis_email(GOOGLEAPIS_EMAIL, urlencode(data))
+
+
+def googleapis_email(url, params):
+    """Loads user data from googleapis service, only email so far as it's
+    described in http://sites.google.com/site/oauthgoog/Home/emaildisplayscope
+
+    Parameters must be passed in queryset and Authorization header as described
+    on Google OAuth documentation at:
+        http://groups.google.com/group/oauth/browse_thread/thread/d15add9beb418ebc
+    and:
+        http://code.google.com/apis/accounts/docs/OAuth2.html#CallingAnAPI
+    """
+    request = Request(url + '?' + params, headers={'Authorization': params})
+    try:
+        return simplejson.loads(urlopen(request).read())['data']
+    except (ValueError, KeyError, IOError):
+        return None
+
+
 # Backend definition
 BACKENDS = {
     'google': GoogleAuth,
     'google-oauth': GoogleOAuth,
+    'google-oauth2': GoogleOAuth2,
 }

@@ -16,3 +16,5 @@ from django.dispatch import Signal
 #       response: Raw auth service response
 #       details:  Processed details values (basic fields)
 pre_update = Signal(providing_args=['user', 'response', 'details'])
+
+socialauth_registered = Signal(providing_args=['user', 'response', 'details'])

@@ -7,6 +7,9 @@ and TWITTER_CONSUMER_SECRET must be defined with they corresponding
 values.
 
 User screen name is used to generate username.
+
+By default account id is stored in extra_data field, check OAuthBackend
+class for details on how to extend it.
 """
 from django.utils import simplejson
 
@@ -26,6 +29,7 @@ TWITTER_CHECK_AUTH = 'https://twitter.com/account/verify_credentials.json'
 class TwitterBackend(OAuthBackend):
     """Twitter OAuth authentication backend"""
     name = 'twitter'
+    EXTRA_DATA = [('id', 'id')]
 
     def get_user_details(self, response):
         """Return user details from Twitter account"""
@@ -52,7 +56,7 @@ class TwitterAuth(ConsumerBasedOAuth):
         json = self.fetch_response(request)
         try:
             return simplejson.loads(json)
-        except simplejson.JSONDecodeError:
+        except ValueError:
             return None
 
 
