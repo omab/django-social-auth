@@ -122,3 +122,26 @@ class BackendsTest(TestCase):
             raise Exception("The user didn't logged in")
 
         # Here we could test the User's fields
+
+    def test_linkedin_backend(self):
+        TEST_LINKEDIN_USER = getattr(settings, 'TEST_LINKEDIN_USER', None)
+        TEST_LINKEDIN_PASSWORD = getattr(settings, 'TEST_LINKEDIN_PASSWORD', None)
+        self.assertTrue(TEST_LINKEDIN_USER)
+        self.assertTrue(TEST_LINKEDIN_PASSWORD)
+
+        self.driver.get("http://social.matiasaguirre.net/login/linkedin/")
+
+        # We log in
+        username_field = self.driver.find_element_by_id("session_key-oauthAuthorizeForm")
+        username_field.send_keys(TEST_LINKEDIN_USER)
+
+        password_field = self.driver.find_element_by_id("session_password-oauthAuthorizeForm")
+        password_field.send_keys(TEST_LINKEDIN_PASSWORD)
+        password_field.submit()
+
+        # We check the user logged in
+        heading = self.driver.find_element_by_id("heading")
+        if not heading.text == u'Logged in!':
+            raise Exception("The user didn't logged in")
+
+        # Here we could test the User's fields
