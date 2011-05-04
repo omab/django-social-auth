@@ -47,9 +47,11 @@ def complete_process(request, backend):
         login(request, user)
         if getattr(settings, 'SOCIAL_AUTH_SESSION_EXPIRATION', True):
             # Set session expiration date if present and not disabled by
-            # setting
+            # setting. Use last social-auth instance for current provider,
+            # users can associate several accounts with a same provider.
             backend_name = backend.AUTH_BACKEND.name
-            social_user = user.social_auth.get(provider=backend_name)
+            social_user = user.social_auth.filter(provider=backend_name) \
+                                          .order_by('-id')[0]
             if social_user.expiration_delta():
                 request.session.set_expiry(social_user.expiration_delta())
         url = request.session.pop(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
