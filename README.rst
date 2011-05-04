@@ -199,7 +199,10 @@ Configuration
 
   in case your user layout needs to purify username on some weird way.
 
-  Final user name will have an integer suffix in case it's already taken.
+  Final user name will have a random UUID-generated suffix in case it's already
+  taken. The UUID token max length can be changed with the setting::
+
+    SOCIAL_AUTH_UUID_LENGTH = 16
 
 - Backends will store extra values from response by default, set this to False
   to avoid such behavior::
