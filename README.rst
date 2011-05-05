@@ -499,6 +499,20 @@ credentials in the following way::
     TEST_GOOGLE_USER = 'testing_account@gmail.com'
     TEST_GOOGLE_PASSWORD = 'password_for_testing_account'
 
+
+-------------
+Miscellaneous
+-------------
+
+South_ users should add this rule to enable migrations::
+    try:
+        import south
+        from south.modelsinspector import add_introspection_rules
+        add_introspection_rules([], ["^social_auth\.fields\.JSONField"])
+    except:
+        pass
+
+
 ----
 Bugs
 ----
@@ -600,3 +614,4 @@ Base work is copyrighted by:
 .. _mattucf: https://github.com/mattucf
 .. _Quard: https://github.com/Quard
 .. _micrypt: https://github.com/micrypt
+.. _South: http://south.aeracode.org/
