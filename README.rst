@@ -253,8 +253,9 @@ Configuration
       SOCIAL_AUTH_CREATE_USERS = False
 
   It is also possible to associate multiple user accounts with a single email
-  address as long as the rest of the user data is unique. To enable, set to True
-  and false otherwise. This behavior is disabled by default (false) unless::
+  address as long as the rest of the user data is unique. Set value as True 
+  to enable, otherwise set as False to disable.
+  This behavior is disabled by default (false) unless specifically set::
 
       SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 
