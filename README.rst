@@ -199,7 +199,10 @@ Configuration
 
   in case your user layout needs to purify username on some weird way.
 
-  Final user name will have an integer suffix in case it's already taken.
+  Final user name will have a random UUID-generated suffix in case it's already
+  taken. The UUID token max length can be changed with the setting::
+
+    SOCIAL_AUTH_UUID_LENGTH = 16
 
 - Backends will store extra values from response by default, set this to False
   to avoid such behavior::
@@ -496,6 +499,20 @@ credentials in the following way::
     TEST_GOOGLE_USER = 'testing_account@gmail.com'
     TEST_GOOGLE_PASSWORD = 'password_for_testing_account'
 
+
+-------------
+Miscellaneous
+-------------
+
+South_ users should add this rule to enable migrations::
+    try:
+        import south
+        from south.modelsinspector import add_introspection_rules
+        add_introspection_rules([], ["^social_auth\.fields\.JSONField"])
+    except:
+        pass
+
+
 ----
 Bugs
 ----
@@ -597,3 +614,4 @@ Base work is copyrighted by:
 .. _mattucf: https://github.com/mattucf
 .. _Quard: https://github.com/Quard
 .. _micrypt: https://github.com/micrypt
+.. _South: http://south.aeracode.org/
