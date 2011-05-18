@@ -19,6 +19,7 @@ Contents:
    signals
    contributions
    testing
+   miscellaneous
    bugs
 
 Indices and tables
