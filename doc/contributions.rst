@@ -33,6 +33,9 @@ bernardokyotoku_ (Bernardo Kyotoku)
 maraujop_ (Miguel Araujo)
   * Improvements
 
+bedspax_
+  * Foursquare support
+
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
@@ -43,4 +46,5 @@ maraujop_ (Miguel Araujo)
 .. _djm: https://github.com/djm
 .. _bernardokyotoku: https://github.com/bernardokyotoku
 .. _maraujop: https://github.com/maraujop
+.. _bedspax: https://github.com/bedspax
 .. _python-oauth2: https://github.com/simplegeo/python-oauth2
