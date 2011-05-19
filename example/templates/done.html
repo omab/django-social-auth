@@ -45,6 +45,10 @@
       <a rel="nofollow" href="{% url associate_begin "google-oauth2" %}">Google OAuth2</a>
       {% if google_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "google-oauth2" %}">disconnect</a>)</span>{% endif %}
     </li>
+    <li>
+      <a rel="nofollow" href="{% url associate_begin "foursquare" %}">Foursquare</a>
+      {% if foursquare %}<span class="disconnect">(<a href="{% url disconnect "foursquare" %}">disconnect</a>)</span>{% endif %}
+    </li>
   </ul>
 
   <h3>Associate new OpenID credentials:</h3>
