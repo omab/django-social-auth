@@ -30,7 +30,7 @@ class BackendsTest(TestCase):
         username_field = self.driver.find_element_by_id('username_or_email')
         username_field.send_keys(TEST_TWITTER_USER)
 
-        password_field = self.driver.find_element_by_id('session[password]')
+        password_field = self.driver.find_element_by_id('password')
         password_field.send_keys(TEST_TWITTER_PASSWORD)
         password_field.submit()
 
