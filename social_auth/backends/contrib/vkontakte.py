@@ -51,7 +51,7 @@ class VKontakteOAuth2Backend(OAuthBackend):
     
     def get_user_details(self, response):
         """Return user details from VKontakte request"""
-        values = { USERNAME: response['user_id'], 'email': '', 'fullname': unquote(response['response']['user_name']),
+        values = { USERNAME: str(response['user_id']), 'email': '', 'fullname': unquote(response['response']['user_name']),
                   'first_name': '', 'last_name': ''}
         
         if ' ' in values['fullname']:

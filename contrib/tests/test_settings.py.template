@@ -1,0 +1,27 @@
+import os
+
+BASE_DIR = os.path.dirname(__file__)
+
+INSTALLED_APPS = (
+    'contrib',
+)
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+    }
+}
+
+TEST_DOMAIN = 'http://social.matiasaguirre.net'
+
+TEST_TWITTER_USER = ''
+TEST_TWITTER_PASSWORD = ''
+
+TEST_GOOGLE_USER = ''
+TEST_GOOGLE_PASSWORD = ''
+
+TEST_FACEBOOK_USER = ''
+TEST_FACEBOOK_PASSWORD = ''
+
+TEST_LINKEDIN_USER = ''
+TEST_LINKEDIN_PASSWORD = ''

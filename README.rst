@@ -39,6 +39,7 @@ credentials, some features are:
     * `LiveJournal OpenID`_
     * `Orkut OAuth`_
     * `Linkedin OAuth`_
+    * `Foursquare OAuth2`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -109,6 +110,7 @@ Configuration
         'social_auth.backends.contrib.linkedin.LinkedinBackend',
         'social_auth.backends.contrib.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
+        'social_auth.backends.contrib.orkut.FoursquareBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -130,19 +132,22 @@ Configuration
   Take into account that backends *must* be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.
 
-- Setup Twitter, Facebook, Orkut and Google OAuth keys (see OAuth_ section
-  for details)::
+- Setup needed OAuth keys (see OAuth_ section for details)::
 
-    TWITTER_CONSUMER_KEY     = ''
-    TWITTER_CONSUMER_SECRET  = ''
-    FACEBOOK_APP_ID          = ''
-    FACEBOOK_API_SECRET      = ''
-    LINKEDIN_CONSUMER_KEY    = ''
-    LINKEDIN_CONSUMER_SECRET = ''
-    ORKUT_CONSUMER_KEY       = ''
-    ORKUT_CONSUMER_SECRET    = ''
-    GOOGLE_CONSUMER_KEY      = ''
-    GOOGLE_CONSUMER_SECRET   = ''
+    TWITTER_CONSUMER_KEY         = ''
+    TWITTER_CONSUMER_SECRET      = ''
+    FACEBOOK_APP_ID              = ''
+    FACEBOOK_API_SECRET          = ''
+    LINKEDIN_CONSUMER_KEY        = ''
+    LINKEDIN_CONSUMER_SECRET     = ''
+    ORKUT_CONSUMER_KEY           = ''
+    ORKUT_CONSUMER_SECRET        = ''
+    GOOGLE_CONSUMER_KEY          = ''
+    GOOGLE_CONSUMER_SECRET       = ''
+    GOOGLE_OAUTH2_CLIENT_KEY     = ''
+    GOOGLE_OAUTH2_CLIENT_SECRET  = ''
+    FOURSQUARE_CONSUMER_KEY      = ''
+    FOURSQUARE_CONSUMER_SECRET   = ''
 
 - Setup login URLs::
 
@@ -252,9 +257,10 @@ Configuration
 
       SOCIAL_AUTH_CREATE_USERS = False
 
-  Also, it's possible to associate user accounts that share the same email
-  address if the user entry is unique (that means that if the email is not used
-  by more than one account). This behavior is disabled by default unless::
+  It is also possible to associate multiple user accounts with a single email
+  address as long as the rest of the user data is unique. Set value as True 
+  to enable, otherwise set as False to disable.
+  This behavior is disabled by default (false) unless specifically set::
 
       SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 
@@ -322,6 +328,7 @@ Example::
 Settings must be a list of tuples mapping value name in response and value
 alias used to store.
 
+
 -----
 OAuth
 -----
@@ -346,6 +353,7 @@ Example::
 
 Settings must be a list of tuples mapping value name in response and value
 alias used to store.
+
 
 -------
 Twitter
@@ -390,6 +398,7 @@ If you define a redirect URL in Facebook setup page, be sure to not
 define http://127.0.0.1:8000 or http://localhost:8000 because it won't
 work when testing. Instead I define http://myapp.com and setup a mapping
 on /etc/hosts or use dnsmasq_.
+
 
 -----
 Orkut
@@ -552,6 +561,9 @@ Attributions to whom deserves:
 
   - OAuth2 migration
 
+bedspax_
+
+  - Foursquare support
 
 ----------
 Copyrights
@@ -604,6 +616,7 @@ Base work is copyrighted by:
 .. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _myOpenID: https://www.myopenid.com/
 .. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
+.. _Foursquare OAuth2: https://developer.foursquare.com/docs/oauth.html
 .. _pypi: http://pypi.python.org/pypi/django-social-auth/
 .. _github: https://github.com/omab/django-social-auth
 .. _issues in github: https://github.com/omab/django-social-auth/issues
@@ -615,3 +628,4 @@ Base work is copyrighted by:
 .. _Quard: https://github.com/Quard
 .. _micrypt: https://github.com/micrypt
 .. _South: http://south.aeracode.org/
+.. _bedspax: https://github.com/bedspax

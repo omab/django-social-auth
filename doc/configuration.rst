@@ -20,6 +20,7 @@ Configuration
         'social_auth.backends.contrib.linkedin.LinkedinBackend',
         'social_auth.backends.contrib.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
+        'social_auth.backends.contrib.orkut.FoursquareBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -41,19 +42,22 @@ Configuration
   Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.
 
-- Setup Twitter, Facebook, Orkut and Google OAuth keys (see OAuth_ section
-  for details)::
+- Setup needed OAuth keys (see OAuth_ section for details)::
 
-    TWITTER_CONSUMER_KEY     = ''
-    TWITTER_CONSUMER_SECRET  = ''
-    FACEBOOK_APP_ID          = ''
-    FACEBOOK_API_SECRET      = ''
-    LINKEDIN_CONSUMER_KEY    = ''
-    LINKEDIN_CONSUMER_SECRET = ''
-    ORKUT_CONSUMER_KEY       = ''
-    ORKUT_CONSUMER_SECRET    = ''
-    GOOGLE_CONSUMER_KEY      = ''
-    GOOGLE_CONSUMER_SECRET   = ''
+    TWITTER_CONSUMER_KEY         = ''
+    TWITTER_CONSUMER_SECRET      = ''
+    FACEBOOK_APP_ID              = ''
+    FACEBOOK_API_SECRET          = ''
+    LINKEDIN_CONSUMER_KEY        = ''
+    LINKEDIN_CONSUMER_SECRET     = ''
+    ORKUT_CONSUMER_KEY           = ''
+    ORKUT_CONSUMER_SECRET        = ''
+    GOOGLE_CONSUMER_KEY          = ''
+    GOOGLE_CONSUMER_SECRET       = ''
+    GOOGLE_OAUTH2_CLIENT_KEY     = ''
+    GOOGLE_OAUTH2_CLIENT_SECRET  = ''
+    FOURSQUARE_CONSUMER_KEY      = ''
+    FOURSQUARE_CONSUMER_SECRET   = ''
 
 - Setup login URLs::
 

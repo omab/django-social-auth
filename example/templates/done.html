@@ -51,6 +51,10 @@
 	  <li><a rel="nofollow" href="{% url associate_begin "mailru-oauth2" %}">Mail.ru OAuth 2.0</a></li>
 	  {% if mailru_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "mailru-oauth2" %}">disconnect</a>)</span>{% endif %}
     </li>
+    <li>
+      <a rel="nofollow" href="{% url associate_begin "foursquare" %}">Foursquare</a>
+      {% if foursquare %}<span class="disconnect">(<a href="{% url disconnect "foursquare" %}">disconnect</a>)</span>{% endif %}
+    </li>
   </ul>
 
   <h3>Associate new OpenID credentials:</h3>

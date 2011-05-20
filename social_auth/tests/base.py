@@ -89,7 +89,7 @@ class FormParser(CustomParser):
         attrs = dict(attributes)
         if self.in_form(attrs):
             # flag that we are inside the form and save action
-            self.inside_form = True 
+            self.inside_form = True
             self.action = attrs.get('action')
 
     def in_form(self, attrs):
