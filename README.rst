@@ -513,6 +513,9 @@ credentials in the following way::
 Miscellaneous
 -------------
 
+Join to django-social-auth_ community on Convore_ and bring any questions or
+suggestions that will improve this app.
+
 South_ users should add this rule to enable migrations::
     try:
         import south
@@ -629,3 +632,5 @@ Base work is copyrighted by:
 .. _micrypt: https://github.com/micrypt
 .. _South: http://south.aeracode.org/
 .. _bedspax: https://github.com/bedspax
+.. _django-social-auth: https://convore.com/django-social-auth/
+.. _Convore: https://convore.com/
