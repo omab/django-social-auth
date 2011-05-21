@@ -6,6 +6,7 @@ suggestions that will improve this app.
 
 
 South_ users should add this rule to enable migrations::
+
     try:
         import south
         from south.modelsinspector import add_introspection_rules
