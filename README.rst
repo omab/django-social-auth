@@ -566,7 +566,7 @@ Attributions to whom deserves:
 
   - OAuth2 migration
 
-bedspax_
+- bedspax_
 
   - Foursquare support
 
