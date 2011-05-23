@@ -43,7 +43,7 @@ class BackendsTest(TestCase):
         # We check the user logged in
         heading = self.driver.find_element_by_id('heading')
         if not heading.text == u'Logged in!':
-            raise Exception('The user didn\'t logged in')
+            raise Exception('The user didn\'t log in')
 
         # Here we could test the User's fields
 
@@ -72,7 +72,7 @@ class BackendsTest(TestCase):
         # We check the user logged in
         heading = self.driver.find_element_by_id('heading')
         if not heading.text == u'Logged in!':
-            raise Exception('The user didn\'t logged in')
+            raise Exception('The user didn\'t log in')
 
         # Here we could test the User's fields
 
@@ -101,7 +101,7 @@ class BackendsTest(TestCase):
         # We check the user logged in
         heading = self.driver.find_element_by_id('heading')
         if not heading.text == u'Logged in!':
-            raise Exception('The user didn\'t logged in')
+            raise Exception('The user didn\'t log in')
 
         # Here we could test the User's fields
 
@@ -124,7 +124,7 @@ class BackendsTest(TestCase):
         # We check the user logged in
         heading = self.driver.find_element_by_id('heading')
         if not heading.text == u'Logged in!':
-            raise Exception('The user didn\'t logged in')
+            raise Exception('The user didn\'t log in')
 
         # Here we could test the User's fields
 
@@ -147,6 +147,6 @@ class BackendsTest(TestCase):
         # We check the user logged in
         heading = self.driver.find_element_by_id('heading')
         if not heading.text == u'Logged in!':
-            raise Exception('The user didn\'t logged in')
+            raise Exception('The user didn\'t log in')
 
         # Here we could test the User's fields
