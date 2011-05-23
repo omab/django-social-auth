@@ -509,6 +509,18 @@ credentials in the following way::
     TEST_GOOGLE_PASSWORD = 'password_for_testing_account'
 
 
+There's support for Selenium_ tests too on root contrib directory. To run
+install selenium::
+
+    pip install selenium
+
+and create a test_settings.py copying test_settings.py.template and fill
+the needed account information. Then run::
+
+    cd contrib/tests
+    ./runtests.py
+
+
 -------------
 Miscellaneous
 -------------
@@ -636,3 +648,4 @@ Base work is copyrighted by:
 .. _bedspax: https://github.com/bedspax
 .. _django-social-auth: https://convore.com/django-social-auth/
 .. _Convore: https://convore.com/
+.. _Selenium: http://seleniumhq.org/
