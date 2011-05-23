@@ -103,9 +103,7 @@ class SocialAuthBackend(ModelBackend):
         uid = self.get_user_id(details, response)
         is_new = False
         try:
-            social_user = UserSocialAuth.objects.select_related('user')\
-                                                .get(provider=self.name,
-                                                     uid=uid)
+            social_user = self.get_social_auth_user(uid)
         except UserSocialAuth.DoesNotExist:
             user = kwargs.get('user')
             if user is None:  # new user
@@ -149,6 +147,7 @@ class SocialAuthBackend(ModelBackend):
                 social_user.extra_data = extra_data
                 social_user.save()
 
+        user.social_user = social_user
         return user
 
     def username(self, details):
@@ -245,6 +244,15 @@ class SocialAuthBackend(ModelBackend):
         if changed:
             user.save()
 
+    def get_social_auth_user(self, uid):
+        """Return social auth user instance for given uid for current
+        backend.
+
+        Riase DoesNotExist exception if no entry.
+        """
+        return UserSocialAuth.objects.select_related('user')\
+                                     .get(provider=self.name, uid=uid)
+
     def get_user_id(self, details, response):
         """Must return a unique ID from values returned on details"""
         raise NotImplementedError('Implement in subclass')
@@ -299,6 +307,15 @@ class OAuthBackend(SocialAuthBackend):
 class OpenIDBackend(SocialAuthBackend):
     """Generic OpenID authentication backend"""
     name = 'openid'
+
+    def get_social_auth_user(self, uid):
+        """Return social auth user instance for given uid. OpenId uses
+        identity_url to identify the user in a unique way and that value
+        identifies the provider too.
+
+        Riase DoesNotExist exception if no entry.
+        """
+        return UserSocialAuth.objects.select_related('user').get(uid=uid)
 
     def get_user_id(self, details, response):
         """Return user unique id provided by service"""
