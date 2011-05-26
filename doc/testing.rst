@@ -23,3 +23,17 @@ credentials in the following way::
     # goole testing
     TEST_GOOGLE_USER = 'testing_account@gmail.com'
     TEST_GOOGLE_PASSWORD = 'password_for_testing_account'
+
+
+There's support for Selenium_ tests too on root contrib directory. To run
+install selenium::
+
+    pip install selenium
+
+and create a test_settings.py copying test_settings.py.template and fill
+the needed account information. Then run::
+
+    cd contrib/tests
+    ./runtests.py
+
+.. _Selenium: http://seleniumhq.org/

@@ -509,11 +509,28 @@ credentials in the following way::
     TEST_GOOGLE_PASSWORD = 'password_for_testing_account'
 
 
+There's support for Selenium_ tests too on root contrib directory. To run
+install selenium::
+
+    pip install selenium
+
+and create a test_settings.py copying test_settings.py.template and fill
+the needed account information. Then run::
+
+    cd contrib/tests
+    ./runtests.py
+
+
 -------------
 Miscellaneous
 -------------
 
+Join to django-social-auth_ community on Convore_ and bring any questions or
+suggestions that will improve this app.
+
+
 South_ users should add this rule to enable migrations::
+
     try:
         import south
         from south.modelsinspector import add_introspection_rules
@@ -561,7 +578,7 @@ Attributions to whom deserves:
 
   - OAuth2 migration
 
-bedspax_
+- bedspax_
 
   - Foursquare support
 
@@ -629,3 +646,6 @@ Base work is copyrighted by:
 .. _micrypt: https://github.com/micrypt
 .. _South: http://south.aeracode.org/
 .. _bedspax: https://github.com/bedspax
+.. _django-social-auth: https://convore.com/django-social-auth/
+.. _Convore: https://convore.com/
+.. _Selenium: http://seleniumhq.org/
