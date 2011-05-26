@@ -13,6 +13,10 @@ field, check OAuthBackend class for details on how to extend it.
 """
 import cgi
 import urllib
+import base64
+import hmac
+import hashlib
+import time
 
 from django.conf import settings
 from django.utils import simplejson
@@ -57,15 +61,33 @@ class FacebookAuth(BaseOAuth):
         return FACEBOOK_AUTHORIZATION_URL + '?' + urllib.urlencode(args)
 
     def auth_complete(self, *args, **kwargs):
+        access_token = None
+        expires = None
+        
         """Returns user, might be logged in"""
+        
         if 'code' in self.data:
             url = FACEBOOK_ACCESS_TOKEN_URL + '?' + \
                   urllib.urlencode({'client_id': settings.FACEBOOK_APP_ID,
                                 'redirect_uri': self.redirect_uri,
                                 'client_secret': settings.FACEBOOK_API_SECRET,
                                 'code': self.data['code']})
-            response = cgi.parse_qs(urllib.urlopen(url).read())
+                  
+            response = cgi.parse_qs(urllib.urlopen(url).read())            
             access_token = response['access_token'][0]
+            if 'expires' in response:
+                    expires = response['expires'][0]
+
+        if 'signed_request' in self.data:
+            response = load_signed_request(self.data.get('signed_request'))
+            
+            if response is not None:
+                access_token = response.get('access_token') or response.get('oauth_token')
+            
+                if 'expires' in response:
+                    expires = response['expires']
+        
+        if access_token:
             data = self.user_data(access_token)
             if data is not None:
                 if 'error' in data:
@@ -73,9 +95,9 @@ class FacebookAuth(BaseOAuth):
                     raise ValueError('Authentication error: %s' % error)
                 data['access_token'] = access_token
                 # expires will not be part of response if offline access
-                # premission was requested
-                if 'expires' in response:
-                    data['expires'] = response['expires'][0]
+                # premission was requested                
+                if expires:
+                    data['expires'] = expires
             kwargs.update({'response': data, FacebookBackend.name: True})
             return authenticate(*args, **kwargs)
         else:
@@ -98,6 +120,30 @@ class FacebookAuth(BaseOAuth):
                         ('FACEBOOK_APP_ID',
                          'FACEBOOK_API_SECRET'))
 
+
+def base64_url_decode(data):
+    data = data.encode(u'ascii')
+    data += '=' * (4 - (len(data) % 4))
+    return base64.urlsafe_b64decode(data)
+
+def base64_url_encode(data):
+    return base64.urlsafe_b64encode(data).rstrip('=')
+    
+def load_signed_request(signed_request):
+    try:
+        sig, payload = signed_request.split(u'.', 1)
+        sig = base64_url_decode(sig)
+        data = simplejson.loads(base64_url_decode(payload))
+
+        expected_sig = hmac.new(
+            settings.FACEBOOK_API_SECRET, msg=payload, digestmod=hashlib.sha256).digest()
+
+        # allow the signed_request to function for upto 1 day
+        if sig == expected_sig and \
+                data[u'issued_at'] > (time.time() - 86400):
+            return data 
+    except ValueError, ex:
+        pass # ignore if can't split on dot
 
 # Backend definition
 BACKENDS = {
