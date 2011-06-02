@@ -11,3 +11,4 @@ Contents:
    google
    twitter
    facebook
+   linkedin
