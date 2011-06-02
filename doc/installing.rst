@@ -11,8 +11,8 @@ Dependencies that **must** be meet to use the application:
 
 - OAuth_ support depends on python-oauth2_
 
-- Twitter and Facebook support demands an application registration
-  on their corresponding sites.
+- Several backends demands application registration on their corresponding
+  sites.
 
 
 ----------

@@ -1,6 +1,6 @@
 Signals
 =======
-A pre_update signal is sent when user data is about to be updated with new
+A ``pre_update`` signal is sent when user data is about to be updated with new
 values from authorization service provider, this apply to new users and already
 existent ones. This is useful to update custom user fields or `User Profiles`_,
 for example, to store user gender, location, etc. Example::
@@ -19,11 +19,13 @@ signal handler if this setting value is set to True::
 
     SOCIAL_AUTH_CHANGE_SIGNAL_ONLY = False
 
-Take into account that when defining a custom User model and declaring signal
-handler in models.py, the imports and handler definition *must* be made after
-the custom User model is defined or circular imports issues will be raised.
+Take into account that when defining a custom ``User`` model and declaring signal
+handler in ``models.py``, the imports and handler definition **must** be made
+after the custom ``User`` model is defined or circular imports issues will be
+raised.
 
-Also a new-user signal is sent when new accounts are created::
+Also a new-user signal (``socialauth_registered``) is sent when new accounts are
+created::
 
     from social_auth.signals import socialauth_registered 
 

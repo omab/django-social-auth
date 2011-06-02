@@ -8,8 +8,8 @@ but provides the option for unregistered applications.
 
 Check next sections for details.
 
-OAuth_ backends also can store extra data in UserSocialAuth.extra_data field
-by defining a set of values names to retrieve from service response.
+OAuth_ backends also can store extra data in ``UserSocialAuth.extra_data``
+field by defining a set of values names to retrieve from service response.
 
 Settings is per backend and it's name is dynamically checked using uppercase
 backend name as prefix::

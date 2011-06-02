@@ -5,9 +5,9 @@ OpenId_ support is simpler to implement than OAuth_. Google and Yahoo
 providers are supported by default, others are supported by POST method
 providing endpoint URL.
 
-OpenId_ backends can store extra data in UserSocialAuth.extra_data field
+OpenId_ backends can store extra data in ``UserSocialAuth.extra_data`` field
 by defining a set of values names to retrieve from any of the used schemas,
-pettributeExchange and SimpleRegistration. As their keywords differ we need
+AttributeExchange and SimpleRegistration. As their keywords differ we need
 two settings.
 
 Settings is per backend, so we have two possible values for each one. Name

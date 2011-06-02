@@ -7,22 +7,20 @@ Google.
 Google OAuth
 ------------
 
-Google provides **Consumer Key** and **Consumer Secret** keys to
-registered applications, but also allows unregistered application to
-use their authorization system with, but beware that this method
-will display a security banner to the user telling that the application
-is not trusted.
+Google provides ``Consumer Key`` and ``Consumer Secret`` keys to registered
+applications, but also allows unregistered application to use their authorization
+system with, but beware that this method will display a security banner to the
+user telling that the application is not trusted.
 
 Check `Google OAuth`_ and make your choice.
 
-- fill **Consumer Key** and **Consumer Secret** values::
+- fill ``Consumer Key`` and ``Consumer Secret`` values::
 
       GOOGLE_CONSUMER_KEY
       GOOGLE_CONSUMER_SECRET
 
 anonymous values will be used if not configured as described in their
 `OAuth reference`_
-
 
 - configure the display name to be used in the *grant permissions* dialog
   that Google will display to users in::
@@ -41,18 +39,17 @@ Check which applications can be included in their `Google Data Protocol Director
 Google OAuth2
 -------------
 
-Recently Google launched OAuth2 support following the definition at
-`OAuth2 draft`. It works in a similar way to plain OAuth mechanism, but
-developers **must** register an application and apply for a set of keys. Check
-`Google OAuth2`_ document for details.
+Recently Google launched OAuth2 support following the definition at `OAuth2 draft`.
+It works in a similar way to plain OAuth mechanism, but developers **must** register
+an application and apply for a set of keys. Check `Google OAuth2`_ document for details.
 
 **Note**:
-  This support is experimental as Google implementation may change and 
-  OAuth2 is still a draft.
+  This support is experimental as Google implementation may change and OAuth2 is still
+  a draft.
 
 To enable OAuth2 support:
 
-- fill **Client Key** and **Client Secret** settings, these values can be obtained
+- fill ``Client Key`` and ``Client Secret`` settings, these values can be obtained
   easily as described on `OAuth2 Registering`_ doc::
 
       GOOGLE_OAUTH2_CLIENT_KEY = ''
@@ -68,13 +65,13 @@ Check which applications can be included in their `Google Data Protocol Director
 Orkut
 -----
 
-Orkut offers per application keys named **Consumer Key** and
-**Consumer Secret**. To enable Orkut these two keys are needed.
+Orkut offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
+To enable Orkut these two keys are needed.
 
 Check `Google support`_ and `Orkut API`_ for details on getting
 your consumer_key and consumer_secret keys.
 
-- fill **Consumer Key** and **Consumer Secret** values::
+- fill ``Consumer Key`` and ``Consumer Secret`` values::
 
       ORKUT_CONSUMER_KEY
       ORKUT_CONSUMER_SECRET
