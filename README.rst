@@ -9,6 +9,7 @@ Crafted using base code from django-twitter-oauth_ and django-openid-auth_,
 implements a common interface to define new authentication providers from
 third parties.
 
+You can check this documentation on `Read the Docs`_ too.
 
 ----
 Demo
@@ -663,3 +664,4 @@ Base work is copyrighted by:
 .. _Convore: https://convore.com/
 .. _Selenium: http://seleniumhq.org/
 .. _LinkedIn fields selectors: http://developer.linkedin.com/docs/DOC-1014
+.. _Read the Docs: http://django-social-auth.readthedocs.org/
