@@ -67,6 +67,10 @@ Configuration
 
     SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
 
+  A different URL could be defined for newly registered users::
+
+    SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-login-url/'
+
   In case of authentication error, the message can be stored in session
   if the following setting is defined::
 

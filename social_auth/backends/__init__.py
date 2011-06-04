@@ -139,6 +139,7 @@ class SocialAuthBackend(ModelBackend):
 
         # Update user account data.
         self.update_user_details(user, response, details, is_new)
+        setattr(user, 'is_new', is_new)
 
         # Update extra_data storage, unless disabled by setting
         if LOAD_EXTRA_DATA:

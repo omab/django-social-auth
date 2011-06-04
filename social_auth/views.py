@@ -13,6 +13,7 @@ from social_auth.utils import sanitize_redirect
 
 DEFAULT_REDIRECT = getattr(settings, 'SOCIAL_AUTH_LOGIN_REDIRECT_URL', '') or \
                    getattr(settings, 'LOGIN_REDIRECT_URL', '')
+NEW_USER_REDIRECT = getattr(settings, 'SOCIAL_AUTH_NEW_USER_REDIRECT_URL', '')
 SOCIAL_AUTH_LAST_LOGIN = getattr(settings, 'SOCIAL_AUTH_LAST_LOGIN',
                                  'social_auth_last_login_backend')
 
@@ -57,7 +58,13 @@ def complete_process(request, backend):
             social_user = user.social_user
             if social_user.expiration_delta():
                 request.session.set_expiry(social_user.expiration_delta())
-        url = request.session.pop(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
+
+        url = request.session.pop(REDIRECT_FIELD_NAME, '')
+        if not url:
+            if NEW_USER_REDIRECT and getattr(user, 'is_new', False):
+                url = NEW_USER_REDIRECT
+            else:
+                url = DEFAULT_REDIRECT
 
         # store last login backend name in session
         request.session[SOCIAL_AUTH_LAST_LOGIN] = social_user.provider
