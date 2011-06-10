@@ -28,10 +28,10 @@ credentials in the following way::
 There's support for Selenium_ tests too on root contrib directory. To run
 install selenium::
 
-    pip install selenium
+    $ pip install selenium
 
-and create a test_settings.py copying test_settings.py.template and fill
-the needed account information. Then run::
+and create a ``test_settings.py`` copying ``test_settings.py.template`` and
+fill the needed account information. Then run::
 
     cd contrib/tests
     ./runtests.py

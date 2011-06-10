@@ -1,9 +1,9 @@
 Twitter
 =======
 
-Twitter offers per application keys named "Consumer Key" and
-"Consumer Secret". To enable Twitter these two keys are needed.
-Further documentation at `Twitter development resources`_:
+Twitter offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
+To enable Twitter these two keys are needed. Further documentation at
+`Twitter development resources`_:
 
 - Register a new application at `Twitter App Creation`_,
 

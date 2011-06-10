@@ -33,8 +33,13 @@ class OrkutBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Orkut account"""
+        try:
+            emails = response['emails'][0]['value']
+        except (KeyError, IndexError):
+            emails = ''
+
         return {USERNAME: response['displayName'],
-                'email': response['emails'][0]['value'],
+                'email': emails,
                 'fullname': response['displayName'],
                 'first_name': response['name']['givenName'],
                 'last_name': response['name']['familyName']}
@@ -64,6 +69,12 @@ class OrkutAuth(BaseGoogleOAuth):
             return simplejson.loads(response)['data']
         except (ValueError, KeyError):
             return None
+
+    def oauth_request(self, token, url, extra_params=None):
+        extra_params = extra_params or {}
+        scope = ORKUT_SCOPE + getattr(settings, 'ORKUT_EXTRA_SCOPE', [])
+        extra_params['scope'] = ' '.join(scope)
+        return super(OrkutAuth, self).oauth_request(token, url, extra_params)
 
 
 # Backend definition

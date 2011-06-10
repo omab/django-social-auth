@@ -9,12 +9,13 @@ Crafted using base code from django-twitter-oauth_ and django-openid-auth_,
 implements a common interface to define new authentication providers from
 third parties.
 
+You can check this documentation on `Read the Docs`_ too.
 
------
+----
 Demo
------
+----
 There's a demo at http://social.matiasaguirre.net/.
-Note: It lacks Orkut support at the moment.
+Note: It lacks some backends support at the moment.
 
 
 --------
@@ -52,14 +53,14 @@ credentials, some features are:
 ------------
 Dependencies
 ------------
-Dependencies that *must* be meet to use the application:
+Dependencies that **must** be meet to use the application:
 
 - OpenId_ support depends on python-openid_
 
 - OAuth_ support depends on python-oauth2_
 
-- Twitter and Facebook support demands an application registration
-  on their corresponding sites.
+- Several backends demands application registration on their corresponding
+  sites.
 
 
 ------------
@@ -91,7 +92,7 @@ or::
 -------------
 Configuration
 -------------
-- Add social_auth to PYTHONPATH and installed applications::
+- Add social_auth to ``PYTHONPATH`` and installed applications::
 
     INSTALLED_APPS = (
         ...
@@ -115,11 +116,6 @@ Configuration
         'django.contrib.auth.backends.ModelBackend',
     )
 
-  Note: this was introduced in a recent change and it's not backward
-  compatible, take into account that saved sessions won't be able to login
-  because the backend string stored in session (like backends.TwitterBackend)
-  won't match the new paths.
-
 - The application will try to import custom backends from the sources defined in::
 
     SOCIAL_AUTH_IMPORT_BACKENDS = (
@@ -127,9 +123,9 @@ Configuration
     )
 
   This way it's easier to add new providers, check the already defined ones
-  in social_auth.backends for examples.
+  in ``social_auth.backends`` for examples.
 
-  Take into account that backends *must* be defined in AUTHENTICATION_BACKENDS_
+  Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.
 
 - Setup needed OAuth keys (see OAuth_ section for details)::
@@ -157,10 +153,14 @@ Configuration
 
   Check Django documentation at `Login URL`_ and `Login redirect URL`_
 
-  If a custom redirect URL is needed that must be different to LOGIN_URL,
+  If a custom redirect URL is needed that must be different to ``LOGIN_URL``,
   define the setting::
 
     SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
+
+  A different URL could be defined for newly registered users::
+
+    SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-login-url/'
 
   In case of authentication error, the message can be stored in session
   if the following setting is defined::
@@ -221,18 +221,18 @@ Configuration
 
     SOCIAL_AUTH_EXPIRATION = 'expires'
 
-  to and use such setting name where expiration times are returned. View that
+  and use such setting name where expiration times are returned. View that
   completes login process will set session expiration time using this name if
-  it's present or 'expires' by default. Expiration time saving can be disabled
-  setting::
+  it's present or ``expires`` by default. Expiration configuration can be disabled
+  with setting::
 
     SOCIAL_AUTH_SESSION_EXPIRATION = False
 
-- It's possible to override the used User model if needed::
+- It's possible to override the used ``User`` model if needed::
 
     SOCIAL_AUTH_USER_MODEL = 'myapp.CustomUser'
 
-  This class *must* have a custom `Model Manager`_ with a create_user method
+  This class **must** have a custom `Model Manager`_ with a ``create_user`` method
   that resembles the one on `auth.UserManager`_.
 
   Also, it's highly recommended that this class define the following fields::
@@ -246,14 +246,14 @@ Configuration
     is_authenticated():
         ...
 
-  These are needed to ensure a better django-auth integration, in other case
+  These are needed to ensure a better ``django-auth`` integration, in other case
   `login_required`_ won't be usable. A warning is displayed if any of these are
   missing. By default `auth.User`_ is used.
 
   Check example application for implementation details, but first, please take
   a look to `User Profiles`_, it might be what you were looking for.
 
-  It's possible to disable user creations by django-social-auth with::
+  It's possible to disable user creations by ``django-social-auth`` with::
 
       SOCIAL_AUTH_CREATE_USERS = False
 
@@ -268,7 +268,7 @@ Configuration
 -------
 Signals
 -------
-A pre_update signal is sent when user data is about to be updated with new
+A ``pre_update`` signal is sent when user data is about to be updated with new
 values from authorization service provider, this apply to new users and already
 existent ones. This is useful to update custom user fields or `User Profiles`_,
 for example, to store user gender, location, etc. Example::
@@ -287,11 +287,13 @@ signal handler if this setting value is set to True::
 
     SOCIAL_AUTH_CHANGE_SIGNAL_ONLY = False
 
-Take into account that when defining a custom User model and declaring signal
-handler in models.py, the imports and handler definition *must* be made after
-the custom User model is defined or circular imports issues will be raised.
+Take into account that when defining a custom ``User`` model and declaring signal
+handler in ``models.py``, the imports and handler definition **must** be made
+after the custom ``User`` model is defined or circular imports issues will be
+raised.
 
-Also a new-user signal is sent when new accounts are created::
+Also a new-user signal (``socialauth_registered``) is sent when new accounts are
+created::
 
     from social_auth.signals import socialauth_registered 
 
@@ -309,10 +311,10 @@ OpenId_ support is simpler to implement than OAuth_. Google and Yahoo
 providers are supported by default, others are supported by POST method
 providing endpoint URL.
 
-OpenId_ backends can store extra data in UserSocialAuth.extra_data field
+OpenId_ backends can store extra data in ``UserSocialAuth.extra_data`` field
 by defining a set of values names to retrieve from any of the used schemas,
-pettributeExchange and SimpleRegistration. As their keywords differ we need
-two settings.
+``AttributeExchange`` and ``SimpleRegistration``. As their keywords differ we
+need two settings.
 
 Settings is per backend, so we have two possible values for each one. Name
 is dynamically checked using uppercase backend name as prefix::
@@ -339,8 +341,8 @@ but provides the option for unregistered applications.
 
 Check next sections for details.
 
-OAuth_ backends also can store extra data in UserSocialAuth.extra_data field
-by defining a set of values names to retrieve from service response.
+OAuth_ backends also can store extra data in ``UserSocialAuth.extra_data``
+field by defining a set of values names to retrieve from service response.
 
 Settings is per backend and it's name is dynamically checked using uppercase
 backend name as prefix::
@@ -358,15 +360,15 @@ alias used to store.
 -------
 Twitter
 -------
-Twitter offers per application keys named "Consumer Key" and
-"Consumer Secret". To enable Twitter these two keys are needed.
-Further documentation at `Twitter development resources`_:
+Twitter offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
+To enable Twitter these two keys are needed. Further documentation at
+`Twitter development resources`_:
 
 - Register a new application at `Twitter App Creation`_,
 
 - mark the "Yes, use Twitter for login" checkbox, and
 
-- fill "Consumer Key" and "Consumer Secret" values::
+- fill ``Consumer Key`` and ``Consumer Secret`` values::
 
       TWITTER_CONSUMER_KEY
       TWITTER_CONSUMER_SECRET
@@ -379,13 +381,13 @@ Further documentation at `Twitter development resources`_:
 --------
 Facebook
 --------
-Facebook works similar to Twitter but it's simpler to setup and
-redirect URL is passed as a parameter when issuing an authorization.
-Further documentation at `Facebook development resources`_:
+Facebook works similar to Twitter but it's simpler to setup and redirect URL
+is passed as a parameter when issuing an authorization. Further documentation
+at `Facebook development resources`_:
 
 - Register a new application at `Facebook App Creation`_, and
 
-- fill "App Id" and "App Secret" values in values::
+- fill ``App Id`` and ``App Secret`` values in values::
 
       FACEBOOK_APP_ID
       FACEBOOK_API_SECRET
@@ -394,22 +396,22 @@ Further documentation at `Facebook development resources`_:
 
      FACEBOOK_EXTENDED_PERMISSIONS = [...]
 
-If you define a redirect URL in Facebook setup page, be sure to not
-define http://127.0.0.1:8000 or http://localhost:8000 because it won't
-work when testing. Instead I define http://myapp.com and setup a mapping
-on /etc/hosts or use dnsmasq_.
+If you define a redirect URL in Facebook setup page, be sure to not define
+http://127.0.0.1:8000 or http://localhost:8000 because it won't work when
+testing. Instead I define http://myapp.com and setup a mapping on /etc/hosts
+or use dnsmasq_.
 
 
 -----
 Orkut
 -----
-Orkut offers per application keys named "Consumer Key" and
-"Consumer Secret". To enable Orkut these two keys are needed.
+Orkut offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
+To enable Orkut these two keys are needed.
 
 Check `Google support`_ and `Orkut API`_ for details on getting
 your consumer_key and consumer_secret keys.
 
-- fill "Consumer Key" and "Consumer Secret" values::
+- fill ``Consumer Key`` and ``Consumer Secret`` values::
 
       ORKUT_CONSUMER_KEY
       ORKUT_CONSUMER_SECRET
@@ -426,22 +428,20 @@ your consumer_key and consumer_secret keys.
 ------------
 Google OAuth
 ------------
-Google provides "Consumer Key" and "Consumer Secret" keys to
-registered applications, but also allows unregistered application to
-use their authorization system with, but beware that this method
-will display a security banner to the user telling that the application
-is not trusted.
+Google provides ``Consumer Key`` and ``Consumer Secret`` keys to registered
+applications, but also allows unregistered application to use their authorization
+system with, but beware that this method will display a security banner to the
+user telling that the application is not trusted.
 
 Check `Google OAuth`_ and make your choice.
 
-- fill "Consumer Key" and "Consumer Secret" values::
+- fill ``Consumer Key`` and ``Consumer Secret`` values::
 
       GOOGLE_CONSUMER_KEY
       GOOGLE_CONSUMER_SECRET
 
 anonymous values will be used if not configured as described in their
 `OAuth reference`_
-
 
 - configure the display name to be used in the "grant permissions" dialog
   that Google will display to users in::
@@ -456,21 +456,21 @@ anonymous values will be used if not configured as described in their
 
 Check which applications can be included in their `Google Data Protocol Directory`_
 
+
 -------------
 Google OAuth2
 -------------
-Recently Google launched OAuth2 support following the definition at
-`OAuth2 draft`. It works in a similar way to plain OAuth mechanism, but
-developers *must* register an application and apply for a set of keys. Check
-`Google OAuth2`_ document for details.
+Recently Google launched OAuth2 support following the definition at `OAuth2 draft`.
+It works in a similar way to plain OAuth mechanism, but developers **must** register
+an application and apply for a set of keys. Check `Google OAuth2`_ document for details.
 
 **Note**:
-  This support is experimental as Google implementation may change and 
-  OAuth2 is still a draft.
+  This support is experimental as Google implementation may change and OAuth2 is still
+  a draft.
 
 To enable OAuth2 support:
 
-- fill "Client Key" and "Client Secret" settings, these values can be obtained
+- fill ``Client Key`` and ``Client Secret`` settings, these values can be obtained
   easily as described on `OAuth2 Registering`_ doc::
 
       GOOGLE_OAUTH2_CLIENT_KEY = ''
@@ -481,6 +481,20 @@ To enable OAuth2 support:
       GOOGLE_OAUTH_EXTRA_SCOPE = [...]
 
 Check which applications can be included in their `Google Data Protocol Directory`_
+
+
+--------
+LinkedIn
+--------
+LinkedIn setup is similar to any other OAuth service. To request extra fields
+using `LinkedIn fields selectors`_ just define the setting::
+
+    LINKEDIN_EXTRA_FIELD_SELECTORS = [...]
+
+with the needed fields selectors, also define LINKEDIN_EXTRA_DATA properly, that
+way the values will be stored in ``UserSocialAuth.extra_data`` field.
+
+By default ``id``, ``first-name`` and ``last-name`` are requested and stored.
 
 
 -------
@@ -512,10 +526,10 @@ credentials in the following way::
 There's support for Selenium_ tests too on root contrib directory. To run
 install selenium::
 
-    pip install selenium
+    $ pip install selenium
 
-and create a test_settings.py copying test_settings.py.template and fill
-the needed account information. Then run::
+and create a ``test_settings.py`` copying ``test_settings.py.template`` and
+fill the needed account information. Then run::
 
     cd contrib/tests
     ./runtests.py
@@ -649,3 +663,5 @@ Base work is copyrighted by:
 .. _django-social-auth: https://convore.com/django-social-auth/
 .. _Convore: https://convore.com/
 .. _Selenium: http://seleniumhq.org/
+.. _LinkedIn fields selectors: http://developer.linkedin.com/docs/DOC-1014
+.. _Read the Docs: http://django-social-auth.readthedocs.org/

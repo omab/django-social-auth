@@ -1,7 +1,7 @@
 Configuration
 =============
 
-- Add social_auth to PYTHONPATH and installed applications::
+- Add social_auth to ``PYTHONPATH`` and installed applications::
 
     INSTALLED_APPS = (
         ...
@@ -25,11 +25,6 @@ Configuration
         'django.contrib.auth.backends.ModelBackend',
     )
 
-  Note: this was introduced in a recent change and it's not backward
-  compatible, take into account that saved sessions won't be able to login
-  because the backend string stored in session (like backends.TwitterBackend)
-  won't match the new paths.
-
 - The application will try to import custom backends from the sources defined in::
 
     SOCIAL_AUTH_IMPORT_BACKENDS = (
@@ -37,7 +32,7 @@ Configuration
     )
 
   This way it's easier to add new providers, check the already defined ones
-  in social_auth.backends for examples.
+  in ``social_auth.backends`` for examples.
 
   Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.
@@ -67,10 +62,14 @@ Configuration
 
   Check Django documentation at `Login URL`_ and `Login redirect URL`_
 
-  If a custom redirect URL is needed that must be different to LOGIN_URL,
+  If a custom redirect URL is needed that must be different to ``LOGIN_URL``,
   define the setting::
 
     SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/another-login-url/'
+
+  A different URL could be defined for newly registered users::
+
+    SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-login-url/'
 
   In case of authentication error, the message can be stored in session
   if the following setting is defined::
@@ -131,18 +130,18 @@ Configuration
 
     SOCIAL_AUTH_EXPIRATION = 'expires'
 
-  to and use such setting name where expiration times are returned. View that
+  and use such setting name where expiration times are returned. View that
   completes login process will set session expiration time using this name if
-  it's present or 'expires' by default. Expiration time saving can be disabled
-  setting::
+  it's present or ``expires`` by default. Expiration configuration can be disabled
+  with setting::
 
     SOCIAL_AUTH_SESSION_EXPIRATION = False
 
-- It's possible to override the used User model if needed::
+- It's possible to override the used ``User`` model if needed::
 
     SOCIAL_AUTH_USER_MODEL = 'myapp.CustomUser'
 
-  This class **must** have a custom `Model Manager`_ with a create_user method
+  This class **must** have a custom `Model Manager`_ with a ``create_user`` method
   that resembles the one on `auth.UserManager`_.
 
   Also, it's highly recommended that this class define the following fields::
@@ -156,14 +155,14 @@ Configuration
     is_authenticated():
         ...
 
-  These are needed to ensure a better django-auth integration, in other case
+  These are needed to ensure a better ``django-auth`` integration, in other case
   `login_required`_ won't be usable. A warning is displayed if any of these are
   missing. By default `auth.User`_ is used.
 
   Check example application for implementation details, but first, please take
   a look to `User Profiles`_, it might be what you were looking for.
 
-  It's possible to disable user creations by django-social-auth with::
+  It's possible to disable user creations by ``django-social-auth`` with::
 
       SOCIAL_AUTH_CREATE_USERS = False
 

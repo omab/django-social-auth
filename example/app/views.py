@@ -21,6 +21,7 @@ def done(request):
     names = request.user.social_auth.values_list('provider', flat=True)
     ctx = dict((name.lower().replace('-', '_'), True) for name in names)
     ctx['version'] = version
+    ctx['last_login'] = request.session.get('social_auth_last_login_backend')
     return render_to_response('done.html', ctx, RequestContext(request))
 
 def error(request):

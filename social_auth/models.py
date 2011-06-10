@@ -22,7 +22,8 @@ RECOMMENDED_FIELDS = ('username', 'last_login', 'is_active')
 RECOMMENDED_METHODS = ('is_authenticated',)
 
 if getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None):
-    User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.split('.'))
+    User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.rsplit('.', 1))
+
     missing = list(set(RECOMMENDED_FIELDS) -
                    set(User._meta.get_all_field_names())) + \
               [name for name in RECOMMENDED_METHODS
