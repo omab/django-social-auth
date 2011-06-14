@@ -22,7 +22,7 @@ VKONTAKTE_API_URL       = 'https://api.vkontakte.ru/method/'
 VKONTAKTE_OAUTH2_SCOPE  = [''] # Enough for authentication
 
 EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
-
+USE_APP_AUTH = getattr(settings, 'VKONTAKTE_APP_AUTH', False)
 
 class VKontakteBackend(SocialAuthBackend):
     """VKontakte authentication backend"""
@@ -117,11 +117,54 @@ class VKontakteOAuth2(BaseOAuth2):
     def get_scope(self):
         return VKONTAKTE_OAUTH2_SCOPE + getattr(settings, 'VKONTAKTE_OAUTH2_EXTRA_SCOPE', [])
 
+    def auth_complete(self, *args, **kwargs):
+        if USE_APP_AUTH:
+            stop, app_auth = self.application_auth()
+
+            if app_auth:
+                return app_auth
+
+            if stop:
+                return None
+
+        return super(VKontakteOAuth2, self).auth_complete(*args, **kwargs)
+
     def user_data(self, access_token):
         """Return user data from VKontakte OpenAPI"""
         data = {'access_token': access_token }
         
         return vkontakte_api('getUserInfoEx', data)
+
+    def application_auth(self):
+        required_params = ('is_app_user', 'viewer_id', 'access_token', 'api_id', )
+
+        for param in required_params:
+            if not param in self.request.REQUEST:
+                return (False, None,)
+
+        is_user = self.request.REQUEST.get('is_app_user')
+
+        if not int(is_user):
+            return (True, None,)
+
+        auth_key = self.request.REQUEST.get('auth_key')
+
+        # Verify signature, if present
+        if auth_key:
+            check_key = md5(self.request.REQUEST.get('api_id') + '_' + self.request.REQUEST.get('viewer_id') + '_' + \
+                            USE_APP_AUTH).hexdigest()
+            if check_key != auth_key:
+                raise('VKontakte authentication failed: invalid auth key')
+
+        access_token = self.request.REQUEST.get('access_token')
+
+        data = self.user_data(access_token)
+        data['user_id'] = self.request.REQUEST.get('viewer_id')
+        data['access_token'] = access_token
+        data['secret'] = self.request.REQUEST.get('secret')
+
+        return (True, authenticate(**{'response': data, self.AUTH_BACKEND.name: True}))
+
 
 def vkontakte_api(method, data):
     """ Calls VKontakte OpenAPI method
