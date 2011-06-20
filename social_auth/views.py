@@ -48,6 +48,8 @@ def complete_process(request, backend):
 
     if user and getattr(user, 'is_active', True):
         login(request, user)
+        social_user = user.social_user
+
         if getattr(settings, 'SOCIAL_AUTH_SESSION_EXPIRATION', True):
             # Set session expiration date if present and not disabled by
             # setting. Use last social-auth instance for current provider,
@@ -55,7 +57,6 @@ def complete_process(request, backend):
             #
             # user.social_user is the used UserSocialAuth instance defined
             # in authenticate process
-            social_user = user.social_user
             if social_user.expiration_delta():
                 request.session.set_expiry(social_user.expiration_delta())
 
