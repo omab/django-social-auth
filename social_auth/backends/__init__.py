@@ -426,12 +426,14 @@ class BaseAuth(object):
         """Return backend enabled status, all enabled by default"""
         return True
 
-    def disconnect(self, user):
+    def disconnect(self, user, association_id=None):
         """Deletes current backend from user if associated.
         Override if extra operations are needed.
         """
-        user.social_auth.filter(provider=self.AUTH_BACKEND.name).delete()
-
+        if association_id:
+            user.social_auth.get(id=association_id).delete()
+        else:
+            user.social_auth.filter(provider=self.AUTH_BACKEND.name).delete()
 
 class OpenIdAuth(BaseAuth):
     """OpenId process handling"""
