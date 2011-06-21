@@ -60,9 +60,7 @@ class LinkedinAuth(ConsumerBasedOAuth):
         request = self.oauth_request(access_token, url)
         raw_xml = self.fetch_response(request)
         try:
-            xml = ElementTree.fromstring(raw_xml)
-            data = to_dict(xml)
-            return data
+            return to_dict(ElementTree.fromstring(raw_xml))
         except (ExpatError, KeyError, IndexError):
             return None
 
@@ -72,9 +70,21 @@ class LinkedinAuth(ConsumerBasedOAuth):
 
 
 def to_dict(xml):
-    """Convert XML structure to dict recursively"""
-    return dict((node.tag, to_dict(node) if node.getchildren() else node.text)
-                        for node in xml.getchildren())
+    """Convert XML structure to dict recursively, repeated keys entries
+    are returned as in list containers."""
+    children = xml.getchildren()
+    if not children:
+        return xml.text
+    else:
+        out = {}
+        for node in xml.getchildren():
+            if node.tag in out:
+                if not isinstance(out[node.tag], list):
+                    out[node.tag] = [out[node.tag]]
+                out[node.tag].append(to_dict(node))
+            else:
+                out[node.tag] = to_dict(node)
+        return out
 
 
 # Backend definition
