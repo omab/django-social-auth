@@ -553,6 +553,11 @@ South_ users should add this rule to enable migrations::
         pass
 
 
+If defining a custom user model, do not import social_auth from any models.py
+that would finally import from the models.py that defines your User class or it
+will make your project fail with a recursive import because social_auth uses
+get_model() to retrieve your User.
+
 ----
 Bugs
 ----
