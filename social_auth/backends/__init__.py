@@ -435,6 +435,7 @@ class BaseAuth(object):
         else:
             user.social_auth.filter(provider=self.AUTH_BACKEND.name).delete()
 
+
 class OpenIdAuth(BaseAuth):
     """OpenId process handling"""
     AUTH_BACKEND = OpenIDBackend

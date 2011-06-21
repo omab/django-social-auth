@@ -16,17 +16,17 @@
 </div>
 
 <div>
+{% if accounts %}
   <h3>Disconnect accounts</h3>
-    <ul>
-    {% for account in names %}
-      <li>
-          <span class="disconnect">
-              <a href={% url disconnect-individual account.provider account.id %}>{{ account.provider }} ({{ account.id }})</a>
-          </span>
-          </br>
-      </li>
-    {% endfor %}
-    </ul>
+  <ul>
+  {% for account in accounts %}
+    <li>
+        <span class="disconnect"><a href={% url disconnect_individual account.provider account.id %}>{{ account.provider|title }} (ID {{ account.id }})</a></span>
+    </li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
   <h3>Associate new OAuth credentials:</h3>
   <ul>
     <li>

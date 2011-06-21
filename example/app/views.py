@@ -19,12 +19,9 @@ def home(request):
 @login_required
 def done(request):
     """Login complete view, displays user data"""
-    names = request.user.social_auth.all()
-    ctx = {
-        'names':names,
-    }
-    ctx['version'] = version
-    ctx['last_login'] = request.session.get('social_auth_last_login_backend')
+    ctx = {'accounts': request.user.social_auth.all(),
+           'version': version,
+           'last_login': request.session.get('social_auth_last_login_backend')}
     return render_to_response('done.html', ctx, RequestContext(request))
 
 def error(request):
