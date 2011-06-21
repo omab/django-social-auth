@@ -95,12 +95,12 @@ def associate_complete(request, backend):
 
 
 @login_required
-def disconnect(request, backend):
+def disconnect(request, backend, association_id=None):
     """Disconnects given backend from current logged in user."""
     backend = get_backend(backend, request, request.path)
     if not backend:
         return HttpResponseServerError('Incorrect authentication service')
-    backend.disconnect(request.user)
+    backend.disconnect(request.user, association_id)
     url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
