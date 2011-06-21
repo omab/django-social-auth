@@ -14,15 +14,19 @@ from social_auth.utils import sanitize_redirect
 DEFAULT_REDIRECT = getattr(settings, 'SOCIAL_AUTH_LOGIN_REDIRECT_URL', '') or \
                    getattr(settings, 'LOGIN_REDIRECT_URL', '')
 NEW_USER_REDIRECT = getattr(settings, 'SOCIAL_AUTH_NEW_USER_REDIRECT_URL', '')
+LOGIN_ERROR_URL = getattr(settings, 'LOGIN_ERROR_URL', settings.LOGIN_URL)
+COMPLETE_URL_NAME = getattr(settings, 'SOCIAL_AUTH_COMPLETE_URL_NAME',
+                            'complete')
+ASSOCIATE_URL_NAME = getattr(settings, 'SOCIAL_AUTH_ASSOCIATE_URL_NAME',
+                             'associate_complete')
 SOCIAL_AUTH_LAST_LOGIN = getattr(settings, 'SOCIAL_AUTH_LAST_LOGIN',
                                  'social_auth_last_login_backend')
+SESSION_EXPIRATION = getattr(settings, 'SOCIAL_AUTH_SESSION_EXPIRATION', True)
 
 
 def auth(request, backend):
     """Start authentication process"""
-    complete_url = getattr(settings, 'SOCIAL_AUTH_COMPLETE_URL_NAME',
-                           'complete')
-    return auth_process(request, backend, complete_url)
+    return auth_process(request, backend, COMPLETE_URL_NAME)
 
 
 @transaction.commit_on_success
@@ -48,7 +52,7 @@ def complete_process(request, backend):
 
     if user and getattr(user, 'is_active', True):
         login(request, user)
-        if getattr(settings, 'SOCIAL_AUTH_SESSION_EXPIRATION', True):
+        if SESSION_EXPIRATION :
             # Set session expiration date if present and not disabled by
             # setting. Use last social-auth instance for current provider,
             # users can associate several accounts with a same provider.
@@ -69,16 +73,14 @@ def complete_process(request, backend):
         # store last login backend name in session
         request.session[SOCIAL_AUTH_LAST_LOGIN] = social_user.provider
     else:
-        url = getattr(settings, 'LOGIN_ERROR_URL', settings.LOGIN_URL)
+        url = LOGIN_ERROR_URL
     return HttpResponseRedirect(url)
 
 
 @login_required
 def associate(request, backend):
     """Authentication starting process"""
-    complete_url = getattr(settings, 'SOCIAL_AUTH_ASSOCIATE_URL_NAME',
-                           'associate_complete')
-    return auth_process(request, backend, complete_url)
+    return auth_process(request, backend, ASSOCIATE_URL_NAME)
 
 
 @login_required
