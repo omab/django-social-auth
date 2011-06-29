@@ -11,17 +11,21 @@ from social_auth.backends import get_backend
 from social_auth.utils import sanitize_redirect
 
 
-DEFAULT_REDIRECT = getattr(settings, 'SOCIAL_AUTH_LOGIN_REDIRECT_URL', '') or \
-                   getattr(settings, 'LOGIN_REDIRECT_URL', '')
-NEW_USER_REDIRECT = getattr(settings, 'SOCIAL_AUTH_NEW_USER_REDIRECT_URL', '')
-LOGIN_ERROR_URL = getattr(settings, 'LOGIN_ERROR_URL', settings.LOGIN_URL)
-COMPLETE_URL_NAME = getattr(settings, 'SOCIAL_AUTH_COMPLETE_URL_NAME',
-                            'complete')
-ASSOCIATE_URL_NAME = getattr(settings, 'SOCIAL_AUTH_ASSOCIATE_URL_NAME',
-                             'associate_complete')
-SOCIAL_AUTH_LAST_LOGIN = getattr(settings, 'SOCIAL_AUTH_LAST_LOGIN',
+def _setting(name, default=''):
+    return getattr(settings, name, default)
+
+DEFAULT_REDIRECT = _setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
+                   _setting('LOGIN_REDIRECT_URL')
+NEW_USER_REDIRECT = _setting('SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
+NEW_ASSOCIATION_REDIRECT = _setting('SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL')
+DISCONNECT_REDIRECT_URL = _setting('SOCIAL_AUTH_DISCONNECT_REDIRECT_URL')
+LOGIN_ERROR_URL = _setting('LOGIN_ERROR_URL', settings.LOGIN_URL)
+COMPLETE_URL_NAME = _setting('SOCIAL_AUTH_COMPLETE_URL_NAME', 'complete')
+ASSOCIATE_URL_NAME = _setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
+                              'associate_complete')
+SOCIAL_AUTH_LAST_LOGIN = _setting('SOCIAL_AUTH_LAST_LOGIN',
                                  'social_auth_last_login_backend')
-SESSION_EXPIRATION = getattr(settings, 'SOCIAL_AUTH_SESSION_EXPIRATION', True)
+SESSION_EXPIRATION = _setting('SOCIAL_AUTH_SESSION_EXPIRATION', True)
 
 
 def auth(request, backend):
@@ -90,7 +94,11 @@ def associate_complete(request, backend):
     if not backend:
         return HttpResponseServerError('Incorrect authentication service')
     backend.auth_complete(user=request.user)
-    url = request.session.pop(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
+
+    url = request.session.pop(REDIRECT_FIELD_NAME, '') or \
+          NEW_ASSOCIATION_REDIRECT or \
+          DEFAULT_REDIRECT
+
     return HttpResponseRedirect(url)
 
 
@@ -101,7 +109,9 @@ def disconnect(request, backend, association_id=None):
     if not backend:
         return HttpResponseServerError('Incorrect authentication service')
     backend.disconnect(request.user, association_id)
-    url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
+    url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or \
+          DISCONNECT_REDIRECT_URL or \
+          DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
 
