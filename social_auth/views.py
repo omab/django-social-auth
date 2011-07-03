@@ -67,12 +67,11 @@ def complete_process(request, backend):
             if social_user.expiration_delta():
                 request.session.set_expiry(social_user.expiration_delta())
 
-        url = request.session.pop(REDIRECT_FIELD_NAME, '')
-        if not url:
-            if NEW_USER_REDIRECT and getattr(user, 'is_new', False):
-                url = NEW_USER_REDIRECT
-            else:
-                url = DEFAULT_REDIRECT
+        # Remove URL possible redirect from session, if this is a new account,
+        # send him to the new-users-page if any.
+        url = request.session.pop(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
+        if NEW_USER_REDIRECT and getattr(user, 'is_new', False):
+            url = NEW_USER_REDIRECT
 
         # store last login backend name in session
         request.session[SOCIAL_AUTH_LAST_LOGIN] = social_user.provider
