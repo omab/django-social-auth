@@ -27,43 +27,29 @@
   </ul>
 {% endif %}
 
-  <h3>Associate new OAuth credentials:</h3>
+  <h3>Associate new <a href="http://oauth.net/" title="OAuth">OAuth</a> credentials:</h3>
   <ul>
-    <li>
-      <a rel="nofollow" href="{% url socialauth_associate_begin "twitter" %}">Twitter</a>
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url socialauth_associate_begin "facebook" %}">Facebook</a>
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url socialauth_associate_begin "linkedin" %}">LinkedIn</a>
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url socialauth_associate_begin "orkut" %}">Orkut</a>
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url socialauth_associate_begin "google-oauth" %}">Google OAuth</a>
-    </li>
+  {% for name, backend in backends.oauth %}
+    <li><a rel="nofollow" href="{% url socialauth_associate_begin name %}">{{ name|title }}</a></li>
+  {% endfor %}
   </ul>
 
-  <h3>Associate new OAuth2 credentials:</h3>
+  <h3>Associate new <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-10" title="OAuth2">OAuth2</a> credentials:</h3>
   <ul>
-    <li>
-      <a rel="nofollow" href="{% url socialauth_associate_begin "google-oauth2" %}">Google OAuth2</a>
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url socialauth_associate_begin "foursquare" %}">Foursquare</a>
-    </li>
+  {% for name, backend in backends.oauth2 %}
+    <li><a rel="nofollow" href="{% url socialauth_associate_begin name %}">{{ name|title }}</a></li>
+  {% endfor %}
   </ul>
 
-  <h3>Associate new OpenID credentials:</h3>
+  <h3>Associate new <a href="http://openid.net/" title="OpenId">OpenId</a> credentials:</h3>
   <ul>
-    <li>
-      <a rel="nofollow" href="{% url socialauth_associate_begin "google" %}">Google OpenID</a>
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url socialauth_associate_begin "yahoo" %}">Yahoo</a>
-    </li>
+    {% for name, backend in backends.openid %}
+      {% if name != "livejournal" and name != "openid" %}
+      <li>
+        <a rel="nofollow" href="{% url socialauth_begin name %}">{{ name|title }}</a>
+      </li>
+      {% endif %}
+    {% endfor %}
     <li>
       <form action="{% url socialauth_associate_begin "livejournal" %}" method="post">{% csrf_token %}
         <div>
