@@ -16,7 +16,7 @@ class TwitterTestCase(SocialAuthTestsCase):
 
 class TwitterTestLogin(TwitterTestCase):
     def test_login_succeful(self):
-        response = self.client.get(self.reverse('begin', 'twitter'))
+        response = self.client.get(self.reverse('socialauth_begin', 'twitter'))
         # social_auth must redirect to service page
         self.assertEqual(response.status_code, 302)
 

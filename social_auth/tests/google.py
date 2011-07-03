@@ -23,7 +23,7 @@ class GoogleOpenIdTestLogin(GoogleTestCase):
     SERVER_PORT = '8000'
 
     def test_login_succeful(self):
-        response = self.client.get(self.reverse('begin', 'google'))
+        response = self.client.get(self.reverse('socialauth_begin', 'google'))
 
         parser = FormParserByID('openid_message')
         parser.feed(response.content)
