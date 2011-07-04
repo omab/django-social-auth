@@ -22,7 +22,7 @@ REDIRECT_RE = re.compile('window.location.replace\("(.*)"\);')
 
 class FacebookTestLogin(FacebookTestCase):
     def test_login_succeful(self):
-        response = self.client.get(self.reverse('begin', 'facebook'))
+        response = self.client.get(self.reverse('socialauth_begin', 'facebook'))
         # social_auth must redirect to service page
         self.assertEqual(response.status_code, 302)
 

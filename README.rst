@@ -160,7 +160,15 @@ Configuration
 
   A different URL could be defined for newly registered users::
 
-    SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-login-url/'
+    SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
+
+  or for newly associated accounts::
+
+    SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'
+
+  or for account disconnections::
+
+    SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
 
   In case of authentication error, the message can be stored in session
   if the following setting is defined::
@@ -552,6 +560,11 @@ South_ users should add this rule to enable migrations::
     except:
         pass
 
+
+If defining a custom user model, do not import social_auth from any models.py
+that would finally import from the models.py that defines your User class or it
+will make your project fail with a recursive import because social_auth uses
+get_model() to retrieve your User.
 
 ----
 Bugs

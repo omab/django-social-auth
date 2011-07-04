@@ -16,63 +16,50 @@
 </div>
 
 <div>
-  <h3>Associate new OAuth credentials:</h3>
+{% if accounts %}
+  <h3>Disconnect accounts</h3>
   <ul>
+  {% for account in accounts %}
     <li>
-      <a rel="nofollow" href="{% url associate_begin "twitter" %}">Twitter</a>
-      {% if twitter %}<span class="disconnect">(<a href="{% url disconnect "twitter" %}">disconnect</a>)</span>{% endif %}
+        <span class="disconnect"><a href={% url socialauth_disconnect_individual account.provider account.id %}>{{ account.provider|title }} (ID {{ account.id }})</a></span>
     </li>
-    <li>
-      <a rel="nofollow" href="{% url associate_begin "facebook" %}">Facebook</a>
-      {% if facebook %}<span class="disconnect">(<a href="{% url disconnect "facebook" %}">disconnect</a>)</span>{% endif %}
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url associate_begin "linkedin" %}">LinkedIn</a>
-      {% if linkedin %}<span class="disconnect">(<a href="{% url disconnect "linkedin" %}">disconnect</a>)</span>{% endif %}
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url associate_begin "orkut" %}">Orkut</a>
-      {% if orkut %}<span class="disconnect">(<a href="{% url disconnect "orkut" %}">disconnect</a>)</span>{% endif %}
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url associate_begin "google-oauth" %}">Google OAuth</a>
-      {% if google_oauth %}<span class="disconnect">(<a href="{% url disconnect "google-oauth" %}">disconnect</a>)</span>{% endif %}
-    </li>
+  {% endfor %}
   </ul>
+{% endif %}
 
-  <h3>Associate new OAuth2 credentials:</h3>
+  <h3>Associate new <a href="http://oauth.net/" title="OAuth">OAuth</a> credentials:</h3>
   <ul>
-    <li>
-      <a rel="nofollow" href="{% url associate_begin "google-oauth2" %}">Google OAuth2</a>
-      {% if google_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "google-oauth2" %}">disconnect</a>)</span>{% endif %}
+  {% for name, backend in backends.oauth %}
+    <li><a rel="nofollow" href="{% url socialauth_associate_begin name %}">{{ name|title }}</a></li>
+  {% endfor %}
 	  <li><a rel="nofollow" href="{% url associate_begin "odnoklassniki" %}">Odnoklassniki OAuth 2.0</a></li>
 	  {% if odnoklassniki %}<span class="disconnect">(<a href="{% url disconnect "odnoklassniki" %}">disconnect</a>)</span>{% endif %}
 	  <li><a rel="nofollow" href="{% url associate_begin "vkontakte-oauth2" %}">VKontakte OAuth 2.0</a></li>
 	  {% if vkontakte_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "vkontakte-oauth2" %}">disconnect</a>)</span>{% endif %}
 	  <li><a rel="nofollow" href="{% url associate_begin "mailru-oauth2" %}">Mail.ru OAuth 2.0</a></li>
 	  {% if mailru_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "mailru-oauth2" %}">disconnect</a>)</span>{% endif %}
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url associate_begin "foursquare" %}">Foursquare</a>
-      {% if foursquare %}<span class="disconnect">(<a href="{% url disconnect "foursquare" %}">disconnect</a>)</span>{% endif %}
-    </li>
   </ul>
 
-  <h3>Associate new OpenID credentials:</h3>
+  <h3>Associate new <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-10" title="OAuth2">OAuth2</a> credentials:</h3>
   <ul>
+  {% for name, backend in backends.oauth2 %}
+    <li><a rel="nofollow" href="{% url socialauth_associate_begin name %}">{{ name|title }}</a></li>
+  {% endfor %}
+  </ul>
+
+  <h3>Associate new <a href="http://openid.net/" title="OpenId">OpenId</a> credentials:</h3>
+  <ul>
+    {% for name, backend in backends.openid %}
+      {% if name != "livejournal" and name != "openid" %}
+      <li>
+        <a rel="nofollow" href="{% url socialauth_begin name %}">{{ name|title }}</a>
+      </li>
+      {% endif %}
+    {% endfor %}
     <li>
-      <a rel="nofollow" href="{% url associate_begin "google" %}">Google OpenID</a>
-      {% if google %}<span class="disconnect">(<a href="{% url disconnect "google" %}">disconnect</a>)</span>{% endif %}
-    </li>
-    <li>
-      <a rel="nofollow" href="{% url associate_begin "yahoo" %}">Yahoo</a>
-      {% if yahoo %}<span class="disconnect">(<a href="{% url disconnect "yahoo" %}">disconnect</a>)</span>{% endif %}
-    </li>
-    <li>
-      <form action="{% url associate_begin "livejournal" %}" method="post">{% csrf_token %}
+      <form action="{% url socialauth_associate_begin "livejournal" %}" method="post">{% csrf_token %}
         <div>
           <label for="openid_lj_user">LiveJournal user
-            {% if livejournal %}(<span class="disconnect"><a href="{% url disconnect "livejournal" %}">disconnect</a>)</span>{% endif %}
           </label>
           <input id="openid_lj_user" type="text" value="" name="openid_lj_user" />
           <input type="submit" value="Login"/>
@@ -91,7 +78,7 @@
       </form>
     </li>
     <li>
-      <form action="{% url associate_begin "openid" %}" method="post">{% csrf_token %}
+      <form action="{% url socialauth_associate_begin "openid" %}" method="post">{% csrf_token %}
         <div>
           <label for="openid_identifier">Other provider:</label>
           <input id="openid_identifier" type="text" value="" name="openid_identifier" />

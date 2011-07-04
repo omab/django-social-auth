@@ -11,18 +11,26 @@ from social_auth.backends import get_backend
 from social_auth.utils import sanitize_redirect
 
 
-DEFAULT_REDIRECT = getattr(settings, 'SOCIAL_AUTH_LOGIN_REDIRECT_URL', '') or \
-                   getattr(settings, 'LOGIN_REDIRECT_URL', '')
-NEW_USER_REDIRECT = getattr(settings, 'SOCIAL_AUTH_NEW_USER_REDIRECT_URL', '')
-SOCIAL_AUTH_LAST_LOGIN = getattr(settings, 'SOCIAL_AUTH_LAST_LOGIN',
-                                 'social_auth_last_login_backend')
+def _setting(name, default=''):
+    return getattr(settings, name, default)
+
+DEFAULT_REDIRECT = _setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
+                   _setting('LOGIN_REDIRECT_URL')
+NEW_USER_REDIRECT = _setting('SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
+NEW_ASSOCIATION_REDIRECT = _setting('SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL')
+DISCONNECT_REDIRECT_URL = _setting('SOCIAL_AUTH_DISCONNECT_REDIRECT_URL')
+LOGIN_ERROR_URL = _setting('LOGIN_ERROR_URL', settings.LOGIN_URL)
+COMPLETE_URL_NAME = _setting('SOCIAL_AUTH_COMPLETE_URL_NAME', 'socialauth_complete')
+ASSOCIATE_URL_NAME = _setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
+                              'socialauth_associate_complete')
+SOCIAL_AUTH_LAST_LOGIN = _setting('SOCIAL_AUTH_LAST_LOGIN',
+                                  'social_auth_last_login_backend')
+SESSION_EXPIRATION = _setting('SOCIAL_AUTH_SESSION_EXPIRATION', True)
 
 
 def auth(request, backend):
     """Start authentication process"""
-    complete_url = getattr(settings, 'SOCIAL_AUTH_COMPLETE_URL_NAME',
-                           'complete')
-    return auth_process(request, backend, complete_url)
+    return auth_process(request, backend, COMPLETE_URL_NAME)
 
 
 @transaction.commit_on_success
@@ -48,37 +56,34 @@ def complete_process(request, backend):
 
     if user and getattr(user, 'is_active', True):
         login(request, user)
-        if getattr(settings, 'SOCIAL_AUTH_SESSION_EXPIRATION', True):
+        # user.social_user is the used UserSocialAuth instance defined
+        # in authenticate process
+        social_user = user.social_user
+
+        if SESSION_EXPIRATION :
             # Set session expiration date if present and not disabled by
             # setting. Use last social-auth instance for current provider,
             # users can associate several accounts with a same provider.
-            #
-            # user.social_user is the used UserSocialAuth instance defined
-            # in authenticate process
-            social_user = user.social_user
             if social_user.expiration_delta():
                 request.session.set_expiry(social_user.expiration_delta())
 
-        url = request.session.pop(REDIRECT_FIELD_NAME, '')
-        if not url:
-            if NEW_USER_REDIRECT and getattr(user, 'is_new', False):
-                url = NEW_USER_REDIRECT
-            else:
-                url = DEFAULT_REDIRECT
+        # Remove URL possible redirect from session, if this is a new account,
+        # send him to the new-users-page if any.
+        url = request.session.pop(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
+        if NEW_USER_REDIRECT and getattr(user, 'is_new', False):
+            url = NEW_USER_REDIRECT
 
         # store last login backend name in session
         request.session[SOCIAL_AUTH_LAST_LOGIN] = social_user.provider
     else:
-        url = getattr(settings, 'LOGIN_ERROR_URL', settings.LOGIN_URL)
+        url = LOGIN_ERROR_URL
     return HttpResponseRedirect(url)
 
 
 @login_required
 def associate(request, backend):
     """Authentication starting process"""
-    complete_url = getattr(settings, 'SOCIAL_AUTH_ASSOCIATE_URL_NAME',
-                           'associate_complete')
-    return auth_process(request, backend, complete_url)
+    return auth_process(request, backend, ASSOCIATE_URL_NAME)
 
 
 @login_required
@@ -88,18 +93,24 @@ def associate_complete(request, backend):
     if not backend:
         return HttpResponseServerError('Incorrect authentication service')
     backend.auth_complete(user=request.user)
-    url = request.session.pop(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
+
+    url = request.session.pop(REDIRECT_FIELD_NAME, '') or \
+          NEW_ASSOCIATION_REDIRECT or \
+          DEFAULT_REDIRECT
+
     return HttpResponseRedirect(url)
 
 
 @login_required
-def disconnect(request, backend):
+def disconnect(request, backend, association_id=None):
     """Disconnects given backend from current logged in user."""
     backend = get_backend(backend, request, request.path)
     if not backend:
         return HttpResponseServerError('Incorrect authentication service')
-    backend.disconnect(request.user)
-    url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
+    backend.disconnect(request.user, association_id)
+    url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or \
+          DISCONNECT_REDIRECT_URL or \
+          DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
 
