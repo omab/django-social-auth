@@ -94,9 +94,9 @@ def associate_complete(request, backend):
         return HttpResponseServerError('Incorrect authentication service')
     backend.auth_complete(user=request.user)
 
-    url = request.session.pop(REDIRECT_FIELD_NAME, '') or \
-          NEW_ASSOCIATION_REDIRECT or \
-          DEFAULT_REDIRECT
+    url = request.session.pop(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
+    if NEW_ASSOCIATION_REDIRECT:
+        url = NEW_ASSOCIATION_REDIRECT
 
     return HttpResponseRedirect(url)
 
@@ -120,10 +120,16 @@ def auth_process(request, backend, complete_url_name):
     backend = get_backend(backend, request, redirect)
     if not backend:
         return HttpResponseServerError('Incorrect authentication service')
-    # Check and sanitize a user-defined GET/POST redirect_to field value.
-    redirect = sanitize_redirect(request.get_host(),
-                                 request.REQUEST.get(REDIRECT_FIELD_NAME))
-    request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
+
+    # Save any defined redirect_to value into session
+    if REDIRECT_FIELD_NAME in request.REQUEST:
+        data = request.POST if request.method == 'POST' else request.GET
+        if REDIRECT_FIELD_NAME in data:
+            # Check and sanitize a user-defined GET/POST redirect_to field value.
+            redirect = sanitize_redirect(request.get_host(),
+                                         data[REDIRECT_FIELD_NAME])
+            request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
+
     if backend.uses_redirect:
         return HttpResponseRedirect(backend.auth_url())
     else:
