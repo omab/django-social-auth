@@ -32,12 +32,6 @@
   {% for name, backend in backends.oauth %}
     <li><a rel="nofollow" href="{% url socialauth_associate_begin name %}">{{ name|title }}</a></li>
   {% endfor %}
-	  <li><a rel="nofollow" href="{% url associate_begin "odnoklassniki" %}">Odnoklassniki OAuth 2.0</a></li>
-	  {% if odnoklassniki %}<span class="disconnect">(<a href="{% url disconnect "odnoklassniki" %}">disconnect</a>)</span>{% endif %}
-	  <li><a rel="nofollow" href="{% url associate_begin "vkontakte-oauth2" %}">VKontakte OAuth 2.0</a></li>
-	  {% if vkontakte_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "vkontakte-oauth2" %}">disconnect</a>)</span>{% endif %}
-	  <li><a rel="nofollow" href="{% url associate_begin "mailru-oauth2" %}">Mail.ru OAuth 2.0</a></li>
-	  {% if mailru_oauth2 %}<span class="disconnect">(<a href="{% url disconnect "mailru-oauth2" %}">disconnect</a>)</span>{% endif %}
   </ul>
 
   <h3>Associate new <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-10" title="OAuth2">OAuth2</a> credentials:</h3>
@@ -67,7 +61,7 @@
       </form>
     </li>
     <li>
-      <form action="{% url associate_begin "yandex" %}" method="post">{% csrf_token %}
+      <form action="{% url socialauth_associate_begin "yandex" %}" method="post">{% csrf_token %}
         <div>
           <label for="openid_ya_user">Yandex user
             {% if yandex %}(<span class="disconnect"><a href="{% url disconnect "yandex" %}">disconnect</a>)</span>{% endif %}

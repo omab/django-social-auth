@@ -18,8 +18,6 @@
   {% for name, backend in backends.oauth2 %}
     <li><a rel="nofollow" href="{% url socialauth_begin name %}">{{ name|title }}</a></li>
   {% endfor %}
-	<li><a rel="nofollow" href="{% url begin "vkontakte-oauth2" %}">VKontakte OAuth 2.0</a></li>
-	<li><a rel="nofollow" href="{% url begin "mailru-oauth2" %}">Mail.ru OAuth 2.0</a></li>
   </ul>
 </div>
 
@@ -51,9 +49,9 @@
         </div>
       </form>
     </li>
-	<li><a rel="nofollow" href="{% url begin "yandex" %}">Yandex OpenID 2.0</a></li>
+	<li><a rel="nofollow" href="{% url socialauth_begin "socialauth_begin" %}">Yandex OpenID 2.0</a></li>
     <li>
-<form action="{% url socialauth_begin "openid" %}" method="post">{% csrf_token %}
+    <form action="{% url socialauth_begin "openid" %}" method="post">{% csrf_token %}
         <div>
           <label for="openid_identifier">Other provider</label>
           <input id="openid_identifier" type="text" value="" name="openid_identifier" />
@@ -68,7 +66,7 @@
 <div>
   <h3>Login using other authentication systems:</h3>
   	<ul>
-  		<li><a rel="nofollow" href="{% url begin "vkontakte" %}">VKontakte OpenAPI</a></li>
+  		<li><a rel="nofollow" href="{% url socialauth_begin "vkontakte" %}">VKontakte OpenAPI</a></li>
 	</ul>
 </div>
 {% endblock %}
