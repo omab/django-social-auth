@@ -138,8 +138,7 @@ class SocialAuthBackend(ModelBackend):
                 raise ValueError('Account already in use.', social_user)
             user = social_user.user
 
-        # Update user account data.
-        self.update_user_details(user, response, details, is_new)
+        # Flag user "new" status
         setattr(user, 'is_new', is_new)
 
         # Update extra_data storage, unless disabled by setting
@@ -150,6 +149,9 @@ class SocialAuthBackend(ModelBackend):
                 social_user.save()
 
         user.social_user = social_user
+
+        # Update user account data.
+        self.update_user_details(user, response, details, is_new)
         return user
 
     def username(self, details):
