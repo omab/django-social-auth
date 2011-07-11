@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate
 from django.utils import simplejson
 
 from urllib import urlencode, unquote
-from urllib2 import Request, urlopen
+from urllib2 import Request, urlopen, HTTPError
 from hashlib import md5
 from time import time
 
@@ -127,7 +127,12 @@ class VKontakteOAuth2(BaseOAuth2):
             if stop:
                 return None
 
-        return super(VKontakteOAuth2, self).auth_complete(*args, **kwargs)
+        try:
+            auth_result = super(VKontakteOAuth2, self).auth_complete(*args, **kwargs)
+        except HTTPError: # VKontakte returns HTTPError 400 if cancelled
+            raise ValueError('Authentication cancelled')
+
+        return auth_result
 
     def user_data(self, access_token):
         """Return user data from VKontakte OpenAPI"""
