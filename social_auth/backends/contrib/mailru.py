@@ -55,6 +55,14 @@ class MailruOAuth2(BaseOAuth2):
     def get_scope(self):
         return MAILRU_OAUTH2_SCOPE + getattr(settings, 'MAILRU_OAUTH2_EXTRA_SCOPE', [])
 
+    def auth_complete(self, *args, **kwargs):
+        try:
+            auth_result = super(MailruOAuth2, self).auth_complete(*args, **kwargs)
+        except HTTPError: # Mail.ru returns HTTPError 400 if cancelled
+            raise ValueError('Authentication cancelled')
+
+        return auth_result
+
     def user_data(self, access_token):
         """Return user data from Mail.ru REST API"""
         data = {'method': 'users.getInfo', 'session_key': access_token}
