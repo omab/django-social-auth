@@ -92,8 +92,15 @@ def associate_complete(request, backend):
     backend = get_backend(backend, request, request.path)
     if not backend:
         return HttpResponseServerError('Incorrect authentication service')
-    backend.auth_complete(user=request.user)
-
+        
+    try:
+        backend.auth_complete(user=request.user)
+    except ValueError, e:  # some Authentication error ocurred
+        user = None
+        error_key = getattr(settings, 'SOCIAL_AUTH_ERROR_KEY', None)
+        if error_key:  # store error in session
+            request.session[error_key] = str(e)
+    
     url = request.session.pop(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
     if NEW_ASSOCIATION_REDIRECT:
         url = NEW_ASSOCIATION_REDIRECT
