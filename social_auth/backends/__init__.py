@@ -166,7 +166,7 @@ class SocialAuthBackend(ModelBackend):
 
         if FORCE_RANDOM_USERNAME:
             username = mk_uuid()
-        elif USERNAME in details:
+        elif details.get(USERNAME):
             username = details[USERNAME]
         elif DEFAULT_USERNAME:
             username = DEFAULT_USERNAME
