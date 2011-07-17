@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
 from social_auth.utils import sanitize_redirect
@@ -33,6 +34,7 @@ def auth(request, backend):
     return auth_process(request, backend, COMPLETE_URL_NAME)
 
 
+@csrf_exempt  # If provider uses POST it won't be sending a CSRF token
 @transaction.commit_on_success
 def complete(request, backend):
     """Authentication complete view, override this view if transaction
@@ -77,6 +79,7 @@ def associate(request, backend):
     return auth_process(request, backend, ASSOCIATE_URL_NAME)
 
 
+@csrf_exempt  # If provider uses POST it won't be sending a CSRF token
 @login_required
 def associate_complete(request, backend):
     """Authentication complete process"""
