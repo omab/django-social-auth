@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
 from social_auth.utils import sanitize_redirect
@@ -33,6 +34,7 @@ def auth(request, backend):
     return auth_process(request, backend, COMPLETE_URL_NAME)
 
 
+@csrf_exempt  # If provider uses POST it won't be sending a CSRF token
 @transaction.commit_on_success
 def complete(request, backend):
     """Authentication complete view, override this view if transaction
@@ -42,17 +44,7 @@ def complete(request, backend):
 
 def complete_process(request, backend):
     """Authentication complete process"""
-    backend = get_backend(backend, request, request.path)
-    if not backend:
-        return HttpResponseServerError('Incorrect authentication service')
-
-    try:
-        user = backend.auth_complete()
-    except ValueError, e:  # some Authentication error ocurred
-        user = None
-        error_key = getattr(settings, 'SOCIAL_AUTH_ERROR_KEY', None)
-        if error_key:  # store error in session
-            request.session[error_key] = str(e)
+    user = auth_complete(request, backend)
 
     if user and getattr(user, 'is_active', True):
         login(request, user)
@@ -67,14 +59,15 @@ def complete_process(request, backend):
             if social_user.expiration_delta():
                 request.session.set_expiry(social_user.expiration_delta())
 
-        # Remove URL possible redirect from session, if this is a new account,
-        # send him to the new-users-page if any.
-        url = request.session.pop(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
-        if NEW_USER_REDIRECT and getattr(user, 'is_new', False):
-            url = NEW_USER_REDIRECT
-
         # store last login backend name in session
         request.session[SOCIAL_AUTH_LAST_LOGIN] = social_user.provider
+
+        # Remove possible redirect URL from session, if this is a new account,
+        # send him to the new-users-page if defined.
+        url = NEW_USER_REDIRECT if NEW_USER_REDIRECT and \
+                                   getattr(user, 'is_new', False) else \
+              request.session.pop(REDIRECT_FIELD_NAME, '') or \
+              DEFAULT_REDIRECT
     else:
         url = LOGIN_ERROR_URL
     return HttpResponseRedirect(url)
@@ -86,17 +79,16 @@ def associate(request, backend):
     return auth_process(request, backend, ASSOCIATE_URL_NAME)
 
 
+@csrf_exempt  # If provider uses POST it won't be sending a CSRF token
 @login_required
 def associate_complete(request, backend):
     """Authentication complete process"""
-    backend = get_backend(backend, request, request.path)
-    if not backend:
-        return HttpResponseServerError('Incorrect authentication service')
-    backend.auth_complete(user=request.user)
-
-    url = request.session.pop(REDIRECT_FIELD_NAME, '') or DEFAULT_REDIRECT
-    if NEW_ASSOCIATION_REDIRECT:
-        url = NEW_ASSOCIATION_REDIRECT
+    if auth_complete(request, backend):
+        url = NEW_ASSOCIATION_REDIRECT if NEW_ASSOCIATION_REDIRECT else \
+              request.session.pop(REDIRECT_FIELD_NAME, '') or \
+              DEFAULT_REDIRECT
+    else:
+        url = LOGIN_ERROR_URL
 
     return HttpResponseRedirect(url)
 
@@ -135,3 +127,20 @@ def auth_process(request, backend, complete_url_name):
     else:
         return HttpResponse(backend.auth_html(),
                             content_type='text/html;charset=UTF-8')
+
+
+def auth_complete(request, backend):
+    """Complete auth process. Return authenticated user or None."""
+    backend = get_backend(backend, request, request.path)
+    if not backend:
+        return HttpResponseServerError('Incorrect authentication service')
+
+    user = request.user if request.user.is_authenticated() else None
+
+    try:
+        user = backend.auth_complete(user=user)
+    except ValueError, e:  # some Authentication error ocurred
+        error_key = getattr(settings, 'SOCIAL_AUTH_ERROR_KEY', None)
+        if error_key:  # store error in session
+            request.session[error_key] = str(e)
+    return user

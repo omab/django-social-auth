@@ -103,10 +103,11 @@ class SocialAuthBackend(ModelBackend):
         details = self.get_user_details(response)
         uid = self.get_user_id(details, response)
         is_new = False
+        user = kwargs.get('user')
+
         try:
             social_user = self.get_social_auth_user(uid)
         except UserSocialAuth.DoesNotExist:
-            user = kwargs.get('user')
             if user is None:  # new user
                 if not CREATE_USERS:
                     return None
@@ -134,7 +135,7 @@ class SocialAuthBackend(ModelBackend):
             # at this moment, merging account is not an option because that
             # would imply update user references on other apps, that's too
             # much intrusive
-            if 'user' in kwargs and kwargs['user'] != social_user.user:
+            if user and user != social_user.user:
                 raise ValueError('Account already in use.', social_user)
             user = social_user.user
 
@@ -165,7 +166,7 @@ class SocialAuthBackend(ModelBackend):
 
         if FORCE_RANDOM_USERNAME:
             username = mk_uuid()
-        elif USERNAME in details:
+        elif details.get(USERNAME):
             username = details[USERNAME]
         elif DEFAULT_USERNAME:
             username = DEFAULT_USERNAME
