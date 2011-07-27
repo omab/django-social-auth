@@ -15,6 +15,10 @@ SOCIAL_AUTH_COMPLETE_URL_NAME     = 'socialauth_complete'
 LOGIN_ERROR_URL                   = '/login/error/'
 VKONTAKTE_APP_ID                  = ''
 VKONTAKTE_APP_SECRET              = ''
+# Usage for applications auth: {'key': application_key, 'user_mode': 0 (default) | 1 (check) | 2 (online check) }
+# 0 means is_app_user request parameter is ignored, 1 - must be = 1, 2 - checked via VK API request (useful when user
+# connects to your application on app page and you reload the iframe)
+VKONTAKTE_APP_AUTH                = None
 ODNOKLASSNIKI_OAUTH2_CLIENT_KEY   = ''
 ODNOKLASSNIKI_OAUTH2_APP_KEY      = ''
 ODNOKLASSNIKI_OAUTH2_CLIENT_SECRET = ''
