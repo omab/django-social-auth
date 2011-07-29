@@ -16,13 +16,12 @@ from time import time
 
 from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, BaseOAuth2, USERNAME
 
-VKONTAKTE_LOCAL_HTML  = 'vkontakte.html'
-
 VKONTAKTE_API_URL       = 'https://api.vkontakte.ru/method/'
 VKONTAKTE_OAUTH2_SCOPE  = [''] # Enough for authentication
 
 EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 USE_APP_AUTH = getattr(settings, 'VKONTAKTE_APP_AUTH', False)
+LOCAL_HTML = getattr(settings, 'VKONTAKTE_LOCAL_HTML', 'vkontakte.html')
 
 class VKontakteBackend(SocialAuthBackend):
     """VKontakte authentication backend"""
@@ -75,7 +74,7 @@ class VKontakteAuth(BaseAuth):
         dict = { 'VK_APP_ID'      : self.APP_ID,
                  'VK_COMPLETE_URL': reverse(settings.SOCIAL_AUTH_COMPLETE_URL_NAME, args=[VKontakteBackend.name]) }
         
-        vk_template = loader.get_template(VKONTAKTE_LOCAL_HTML)
+        vk_template = loader.get_template(LOCAL_HTML)
         context = RequestContext(self.request, dict)
     
         return vk_template.render(context)
