@@ -134,10 +134,16 @@ class VKontakteOAuth2(BaseOAuth2):
         return auth_result
 
     def user_data(self, access_token):
-        """Return user data from VKontakte OpenAPI"""
+        """Return user data from VKontakte API"""
         data = {'access_token': access_token }
         
         return vkontakte_api('getUserInfoEx', data)
+
+    def is_app_user(self, access_token):
+        """Returs app usage flag from VKontakte API"""
+        data = {'access_token': access_token }
+
+        return vkontakte_api('isAppUser', data)['response']
 
     def application_auth(self):
         required_params = ('is_app_user', 'viewer_id', 'access_token', 'api_id', )
@@ -146,21 +152,24 @@ class VKontakteOAuth2(BaseOAuth2):
             if not param in self.request.REQUEST:
                 return (False, None,)
 
-        is_user = self.request.REQUEST.get('is_app_user')
-
-        if not int(is_user):
-            return (True, None,)
-
         auth_key = self.request.REQUEST.get('auth_key')
 
         # Verify signature, if present
         if auth_key:
             check_key = md5(self.request.REQUEST.get('api_id') + '_' + self.request.REQUEST.get('viewer_id') + '_' + \
-                            USE_APP_AUTH).hexdigest()
+                            USE_APP_AUTH['key']).hexdigest()
             if check_key != auth_key:
                 raise('VKontakte authentication failed: invalid auth key')
 
         access_token = self.request.REQUEST.get('access_token')
+
+        user_check = USE_APP_AUTH.get('user_mode', 0)
+
+        if user_check:
+            is_user = self.request.REQUEST.get('is_app_user') if user_check == 1 else self.is_app_user(access_token)
+
+            if not int(is_user):
+                return (True, None,)
 
         data = self.user_data(access_token)
         data['user_id'] = self.request.REQUEST.get('viewer_id')
