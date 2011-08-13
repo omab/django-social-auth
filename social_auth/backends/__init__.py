@@ -387,7 +387,7 @@ class OpenIDBackend(SocialAuthBackend):
         name = self.name.replace('-', '_').upper()
         sreg_names = _setting(name + '_SREG_EXTRA_DATA')
         ax_names = _setting(name + '_AX_EXTRA_DATA')
-        data = self.values_from_response(response, ax_names, sreg_names)
+        data = self.values_from_response(response, sreg_names, ax_names)
         return data
 
 
