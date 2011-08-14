@@ -339,9 +339,9 @@ class OpenIDBackend(SocialAuthBackend):
         if ax_names:
             resp = ax.FetchResponse.fromSuccessResponse(response)
             if resp:
-                values.update((alias.replace('old_', ''),
-                               resp.getSingle(src, ''))
-                                for src, alias in ax_names)
+                for src, alias in ax_names:
+                    name = alias.replace('old_', '')
+                    values[name] = resp.getSingle(src, '') or values.get(name)
         return values
 
     def get_user_details(self, response):
