@@ -198,6 +198,15 @@ Configuration
         ...
     )
 
+- Define context processors if needed::
+
+    TEMPLATE_CONTEXT_PROCESSORS = (
+        ...
+        'social_auth.context_processors.social_auth_by_type_backends',
+    )
+
+   check `social_auth.context_processors`.
+
 - Sync database to create needed models::
 
     ./manage.py syncdb
