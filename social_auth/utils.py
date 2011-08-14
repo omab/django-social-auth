@@ -1,4 +1,7 @@
 import urlparse
+from collections import defaultdict
+
+from social_auth.backends import BACKENDS, OpenIdAuth, BaseOAuth, BaseOAuth2
 
 
 def sanitize_redirect(host, redirect_to):
@@ -36,6 +39,21 @@ def sanitize_redirect(host, redirect_to):
         return None
 
     return redirect_to
+
+
+def group_backend_by_type(items, key=lambda x: x):
+    """Group items by backend type."""
+    result = defaultdict(list)
+
+    for item in items:
+        backend = BACKENDS[key(item)]
+        if issubclass(backend, OpenIdAuth):
+            result['openid'].append(item)
+        elif issubclass(backend, BaseOAuth2):
+            result['oauth2'].append(item)
+        elif issubclass(backend, BaseOAuth):
+            result['oauth'].append(item)
+    return dict(result)
 
 
 if __name__ == '__main__':
