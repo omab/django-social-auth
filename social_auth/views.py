@@ -50,9 +50,7 @@ def dsa_view(redirect_name=None):
                 redirect = reverse(redirect_name, args=(backend,))
             else:
                 redirect = request.path
-            print "BACKEND:", backend
             backend = get_backend(backend, request, redirect)
-            print "BACKEND:", backend
 
             if not backend:
                 return HttpResponseServerError('Incorrect authentication ' + \
