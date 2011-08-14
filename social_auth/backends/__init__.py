@@ -710,6 +710,7 @@ SOCIAL_AUTH_IMPORT_SOURCES = (
 
 def get_backends():
     backends = {}
+    enabled_backends = _setting('SOCIAL_AUTH_ENABLED_BACKENDS')
 
     for mod_name in SOCIAL_AUTH_IMPORT_SOURCES:
         try:
@@ -725,7 +726,9 @@ def get_backends():
                     # register only enabled backends
                     backends.update(((key, val)
                                         for key, val in sub.BACKENDS.items()
-                                            if val.enabled()))
+                                            if val.enabled() and
+                                               (not enabled_backends or
+                                                key in enabled_backends)))
                 except (ImportError, AttributeError):
                     pass
     return backends

@@ -74,6 +74,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+#SOCIAL_AUTH_ENABLED_BACKENDS = ('google', 'google-oauth', 'facebook')
+
 LOGIN_REDIRECT_URL = '/'
 
 try:

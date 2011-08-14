@@ -37,6 +37,12 @@ Configuration
   Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.
 
+- Define desired backends for your site::
+
+    SOCIAL_AUTH_ENABLED_BACKENDS = ('google', 'google-oauth', 'facebook', ...)
+
+  All backends are enabled by default.
+
 - Setup needed OAuth keys (see OAuth_ section for details)::
 
     TWITTER_CONSUMER_KEY         = ''
