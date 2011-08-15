@@ -198,6 +198,8 @@ Configuration
         ...
     )
 
+  All ``django-social-auth`` URLs names have ``socialauth_`` prefix.
+
 - Define context processors if needed::
 
     TEMPLATE_CONTEXT_PROCESSORS = (
