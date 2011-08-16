@@ -87,7 +87,7 @@ def associate(request, backend):
 @dsa_view()
 def associate_complete(request, backend):
     """Authentication complete process"""
-    if auth_complete(request, backend):
+    if auth_complete(request, backend, request.user):
         url = NEW_ASSOCIATION_REDIRECT if NEW_ASSOCIATION_REDIRECT else \
               request.session.pop(REDIRECT_FIELD_NAME, '') or \
               DEFAULT_REDIRECT
@@ -125,19 +125,6 @@ def auth_process(request, backend):
                             content_type='text/html;charset=UTF-8')
 
 
-def auth_complete(request, backend):
-    """Complete auth process. Return authenticated user or None."""
-    user = request.user if request.user.is_authenticated() else None
-
-    try:
-        user = backend.auth_complete(user=user)
-    except ValueError, e:  # some Authentication error ocurred
-        error_key = getattr(settings, 'SOCIAL_AUTH_ERROR_KEY', None)
-        if error_key:  # store error in session
-            request.session[error_key] = str(e)
-    return user
-
-
 def complete_process(request, backend):
     """Authentication complete process"""
     user = auth_complete(request, backend)
@@ -167,3 +154,17 @@ def complete_process(request, backend):
     else:
         url = LOGIN_ERROR_URL
     return HttpResponseRedirect(url)
+
+
+def auth_complete(request, backend, user=None):
+    """Complete auth process. Return authenticated user or None."""
+    if user and not user.is_authenticated():
+        user = None
+
+    try:
+        user = backend.auth_complete(user=user)
+    except ValueError, e:  # some Authentication error ocurred
+        error_key = getattr(settings, 'SOCIAL_AUTH_ERROR_KEY', None)
+        if error_key:  # store error in session
+            request.session[error_key] = str(e)
+    return user
