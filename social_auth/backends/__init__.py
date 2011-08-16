@@ -339,9 +339,9 @@ class OpenIDBackend(SocialAuthBackend):
         if ax_names:
             resp = ax.FetchResponse.fromSuccessResponse(response)
             if resp:
-                values.update((alias.replace('old_', ''),
-                               resp.getSingle(src, ''))
-                                for src, alias in ax_names)
+                for src, alias in ax_names:
+                    name = alias.replace('old_', '')
+                    values[name] = resp.getSingle(src, '') or values.get(name)
         return values
 
     def get_user_details(self, response):
@@ -387,7 +387,7 @@ class OpenIDBackend(SocialAuthBackend):
         name = self.name.replace('-', '_').upper()
         sreg_names = _setting(name + '_SREG_EXTRA_DATA')
         ax_names = _setting(name + '_AX_EXTRA_DATA')
-        data = self.values_from_response(response, ax_names, sreg_names)
+        data = self.values_from_response(response, sreg_names, ax_names)
         return data
 
 
@@ -710,6 +710,7 @@ SOCIAL_AUTH_IMPORT_SOURCES = (
 
 def get_backends():
     backends = {}
+    enabled_backends = _setting('SOCIAL_AUTH_ENABLED_BACKENDS')
 
     for mod_name in SOCIAL_AUTH_IMPORT_SOURCES:
         try:
@@ -725,7 +726,9 @@ def get_backends():
                     # register only enabled backends
                     backends.update(((key, val)
                                         for key, val in sub.BACKENDS.items()
-                                            if val.enabled()))
+                                            if val.enabled() and
+                                               (not enabled_backends or
+                                                key in enabled_backends)))
                 except (ImportError, AttributeError):
                     pass
     return backends

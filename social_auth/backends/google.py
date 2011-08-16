@@ -72,6 +72,11 @@ class GoogleBackend(OpenIDBackend):
     """Google OpenID authentication backend"""
     name = 'google'
 
+    def get_user_id(self, details, response):
+        """Return user unique id provided by service. For google user email
+        is unique enought to flag a single user. Email comes from schema:
+        http://axschema.org/contact/email"""
+        return details['email']
 
 # Auth classes
 class GoogleAuth(OpenIdAuth):

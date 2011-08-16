@@ -37,6 +37,12 @@ Configuration
   Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.
 
+- Define desired backends for your site::
+
+    SOCIAL_AUTH_ENABLED_BACKENDS = ('google', 'google-oauth', 'facebook', ...)
+
+  All backends are enabled by default.
+
 - Setup needed OAuth keys (see OAuth_ section for details)::
 
     TWITTER_CONSUMER_KEY         = ''
@@ -100,6 +106,17 @@ Configuration
         url(r'', include('social_auth.urls')),
         ...
     )
+
+  All ``django-social-auth`` URLs names have ``socialauth_`` prefix.
+
+- Define context processors if needed::
+
+    TEMPLATE_CONTEXT_PROCESSORS = (
+        ...
+        'social_auth.context_processors.social_auth_by_type_backends',
+    )
+
+   check `social_auth.context_processors`.
 
 - Sync database to create needed models::
 
