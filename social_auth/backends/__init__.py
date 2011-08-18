@@ -232,13 +232,12 @@ class SocialAuthBackend(ModelBackend):
 
         kwargs = {'sender': self.__class__, 'user': user,
                   'response': response, 'details': details}
+        changed |= any(filter(signal_response, pre_update.send(**kwargs)))
 
         # Fire socialauth_registered signal on new user registration
         if is_new:
             changed |= any(filter(signal_response,
                                   socialauth_registered.send(**kwargs)))
-
-        changed |= any(filter(signal_response, pre_update.send(**kwargs)))
 
         if changed:
             user.save()
