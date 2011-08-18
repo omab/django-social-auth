@@ -61,11 +61,10 @@ class FacebookAuth(BaseOAuth):
         return FACEBOOK_AUTHORIZATION_URL + '?' + urllib.urlencode(args)
 
     def auth_complete(self, *args, **kwargs):
+        """Returns user, might be logged in"""
         access_token = None
         expires = None
-        
-        """Returns user, might be logged in"""
-        
+
         if 'code' in self.data:
             url = FACEBOOK_ACCESS_TOKEN_URL + '?' + \
                   urllib.urlencode({'client_id': settings.FACEBOOK_APP_ID,

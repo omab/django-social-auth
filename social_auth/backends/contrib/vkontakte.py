@@ -16,8 +16,6 @@ from time import time
 
 from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, BaseOAuth2, USERNAME
 
-VKONTAKTE_LOCAL_HTML  = 'vkontakte.html'
-
 VKONTAKTE_API_URL        = 'https://api.vkontakte.ru/method/'
 VKONTAKTE_SERVER_API_URL = 'http://api.vkontakte.ru/api.php'
 VKONTAKTE_API_VERSION    = '3.0'
@@ -26,6 +24,7 @@ VKONTAKTE_OAUTH2_SCOPE  = [''] # Enough for authentication
 
 EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 USE_APP_AUTH = getattr(settings, 'VKONTAKTE_APP_AUTH', False)
+LOCAL_HTML = getattr(settings, 'VKONTAKTE_LOCAL_HTML', 'vkontakte.html')
 
 class VKontakteBackend(SocialAuthBackend):
     """VKontakte authentication backend"""
@@ -34,7 +33,7 @@ class VKontakteBackend(SocialAuthBackend):
     def get_user_id(self, details, response):
         """Return user unique id provided by VKontakte"""
         return int(response.GET['id'])
-    
+
     def get_user_details(self, response):
         """Return user details from VKontakte request"""
         nickname = unquote(response.GET['nickname'])
@@ -51,7 +50,7 @@ class VKontakteOAuth2Backend(OAuthBackend):
     def get_user_id(self, details, response):
         """Return user unique id provided by VKontakte"""
         return int(response['user_id'])
-    
+
     def get_user_details(self, response):
         """Return user details from VKontakte request"""
         values = { USERNAME: str(response['user_id']), 'email': ''}
@@ -80,34 +79,34 @@ class VKontakteAuth(BaseAuth):
     """VKontakte OpenAPI authorization mechanism"""
     AUTH_BACKEND = VKontakteBackend
     APP_ID = settings.VKONTAKTE_APP_ID
-    
+
     def auth_html(self):
         """Returns local VK authentication page, not necessary for VK to authenticate """
         from django.core.urlresolvers import reverse
         from django.template import RequestContext, loader
-        
+
         dict = { 'VK_APP_ID'      : self.APP_ID,
                  'VK_COMPLETE_URL': reverse(settings.SOCIAL_AUTH_COMPLETE_URL_NAME, args=[VKontakteBackend.name]) }
-        
-        vk_template = loader.get_template(VKONTAKTE_LOCAL_HTML)
+
+        vk_template = loader.get_template(LOCAL_HTML)
         context = RequestContext(self.request, dict)
-    
+
         return vk_template.render(context)
-        
+
     def auth_complete(self, *args, **kwargs):
         """Performs check of authentication in VKontakte, returns User if succeeded"""
         app_cookie = 'vk_app_' + self.APP_ID
-        
+
         if not 'id' in self.request.GET or not app_cookie in self.request.COOKIES:
             raise ValueError('VKontakte authentication is not completed')
-        
+
         cookie_dict = dict(item.split('=') for item in self.request.COOKIES[app_cookie].split('&'))
         check_str = ''.join([item + '=' + cookie_dict[item] for item in ['expire', 'mid', 'secret', 'sid']])
-        
+
         hash = md5(check_str + settings.VKONTAKTE_APP_SECRET).hexdigest()
-        
+
         if hash != cookie_dict['sig'] or int(cookie_dict['expire']) < time() :
-            raise ValueError('VKontakte authentication failed: invalid hash')       
+            raise ValueError('VKontakte authentication failed: invalid hash')
         else:
             kwargs.update({'response': self.request, self.AUTH_BACKEND.name: True})
             return authenticate(*args, **kwargs)
@@ -119,7 +118,7 @@ class VKontakteAuth(BaseAuth):
         Their current implementation is just an example"""
         return False
 
-    
+
 class VKontakteOAuth2(BaseOAuth2):
     """VKontakte OAuth2 support"""
     AUTH_BACKEND = VKontakteOAuth2Backend
@@ -151,7 +150,7 @@ class VKontakteOAuth2(BaseOAuth2):
     def user_data(self, access_token):
         """Return user data from VKontakte API"""
         data = {'access_token': access_token }
-        
+
         return vkontakte_api('getUserInfoEx', data)
 
     def user_profile(self, user_id, access_token = None):
@@ -206,7 +205,7 @@ class VKontakteOAuth2(BaseOAuth2):
 
 def vkontakte_api(method, data):
     """ Calls VKontakte OpenAPI method
-        http://vkontakte.ru/apiclub, 
+        http://vkontakte.ru/apiclub,
         http://vkontakte.ru/pages.php?o=-1&p=%C2%FB%EF%EE%EB%ED%E5%ED%E8%E5%20%E7%E0%EF%F0%EE%F1%EE%E2%20%EA%20API
     """
 
@@ -242,4 +241,3 @@ BACKENDS = {
     'vkontakte': VKontakteAuth,
     'vkontakte-oauth2': VKontakteOAuth2
 }
-    
