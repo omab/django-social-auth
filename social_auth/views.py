@@ -1,4 +1,12 @@
-"""Views"""
+"""Views
+
+Notes:
+    * Some views are marked to avoid csrf tocken check becuase they relay
+      on third party providers that (if using POST) won't be sending crfs
+      token back.
+"""
+from functools import wraps
+
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse, \
                         HttpResponseServerError
@@ -29,17 +37,92 @@ SOCIAL_AUTH_LAST_LOGIN = _setting('SOCIAL_AUTH_LAST_LOGIN',
 SESSION_EXPIRATION = _setting('SOCIAL_AUTH_SESSION_EXPIRATION', True)
 
 
+def dsa_view(redirect_name=None):
+    """Decorate djangos-social-auth views. Will check and retrieve backend
+    or return HttpResponseServerError if backend is not found.
+
+        redirect_name parameter is used to build redirect URL used by backend.
+    """
+    def dec(func):
+        @wraps(func)
+        def wrapper(request, backend, *args, **kwargs):
+            if redirect_name:
+                redirect = reverse(redirect_name, args=(backend,))
+            else:
+                redirect = request.path
+            backend = get_backend(backend, request, redirect)
+
+            if not backend:
+                return HttpResponseServerError('Incorrect authentication ' + \
+                                               'service')
+            return func(request, backend, *args, **kwargs)
+        return wrapper
+    return dec
+
+
+@dsa_view(COMPLETE_URL_NAME)
 def auth(request, backend):
     """Start authentication process"""
-    return auth_process(request, backend, COMPLETE_URL_NAME)
+    return auth_process(request, backend)
 
 
-@csrf_exempt  # If provider uses POST it won't be sending a CSRF token
+@csrf_exempt
 @transaction.commit_on_success
+@dsa_view()
 def complete(request, backend):
     """Authentication complete view, override this view if transaction
     management doesn't suit your needs."""
     return complete_process(request, backend)
+
+
+@login_required
+@dsa_view(ASSOCIATE_URL_NAME)
+def associate(request, backend):
+    """Authentication starting process"""
+    return auth_process(request, backend)
+
+
+@csrf_exempt
+@login_required
+@dsa_view()
+def associate_complete(request, backend):
+    """Authentication complete process"""
+    if auth_complete(request, backend, request.user):
+        url = NEW_ASSOCIATION_REDIRECT if NEW_ASSOCIATION_REDIRECT else \
+              request.session.pop(REDIRECT_FIELD_NAME, '') or \
+              DEFAULT_REDIRECT
+    else:
+        url = LOGIN_ERROR_URL
+    return HttpResponseRedirect(url)
+
+
+@login_required
+@dsa_view()
+def disconnect(request, backend, association_id=None):
+    """Disconnects given backend from current logged in user."""
+    backend.disconnect(request.user, association_id)
+    url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or \
+          DISCONNECT_REDIRECT_URL or \
+          DEFAULT_REDIRECT
+    return HttpResponseRedirect(url)
+
+
+def auth_process(request, backend):
+    """Authenticate using social backend"""
+    # Save any defined redirect_to value into session
+    if REDIRECT_FIELD_NAME in request.REQUEST:
+        data = request.POST if request.method == 'POST' else request.GET
+        if REDIRECT_FIELD_NAME in data:
+            # Check and sanitize a user-defined GET/POST redirect_to field value.
+            redirect = sanitize_redirect(request.get_host(),
+                                         data[REDIRECT_FIELD_NAME])
+            request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
+
+    if backend.uses_redirect:
+        return HttpResponseRedirect(backend.auth_url())
+    else:
+        return HttpResponse(backend.auth_html(),
+                            content_type='text/html;charset=UTF-8')
 
 
 def complete_process(request, backend):
@@ -73,69 +156,10 @@ def complete_process(request, backend):
     return HttpResponseRedirect(url)
 
 
-@login_required
-def associate(request, backend):
-    """Authentication starting process"""
-    return auth_process(request, backend, ASSOCIATE_URL_NAME)
-
-
-@csrf_exempt  # If provider uses POST it won't be sending a CSRF token
-@login_required
-def associate_complete(request, backend):
-    """Authentication complete process"""
-    if auth_complete(request, backend):
-        url = NEW_ASSOCIATION_REDIRECT if NEW_ASSOCIATION_REDIRECT else \
-              request.session.pop(REDIRECT_FIELD_NAME, '') or \
-              DEFAULT_REDIRECT
-    else:
-        url = LOGIN_ERROR_URL
-
-    return HttpResponseRedirect(url)
-
-
-@login_required
-def disconnect(request, backend, association_id=None):
-    """Disconnects given backend from current logged in user."""
-    backend = get_backend(backend, request, request.path)
-    if not backend:
-        return HttpResponseServerError('Incorrect authentication service')
-    backend.disconnect(request.user, association_id)
-    url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or \
-          DISCONNECT_REDIRECT_URL or \
-          DEFAULT_REDIRECT
-    return HttpResponseRedirect(url)
-
-
-def auth_process(request, backend, complete_url_name):
-    """Authenticate using social backend"""
-    redirect = reverse(complete_url_name, args=(backend,))
-    backend = get_backend(backend, request, redirect)
-    if not backend:
-        return HttpResponseServerError('Incorrect authentication service')
-
-    # Save any defined redirect_to value into session
-    if REDIRECT_FIELD_NAME in request.REQUEST:
-        data = request.POST if request.method == 'POST' else request.GET
-        if REDIRECT_FIELD_NAME in data:
-            # Check and sanitize a user-defined GET/POST redirect_to field value.
-            redirect = sanitize_redirect(request.get_host(),
-                                         data[REDIRECT_FIELD_NAME])
-            request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
-
-    if backend.uses_redirect:
-        return HttpResponseRedirect(backend.auth_url())
-    else:
-        return HttpResponse(backend.auth_html(),
-                            content_type='text/html;charset=UTF-8')
-
-
-def auth_complete(request, backend):
+def auth_complete(request, backend, user=None):
     """Complete auth process. Return authenticated user or None."""
-    backend = get_backend(backend, request, request.path)
-    if not backend:
-        return HttpResponseServerError('Incorrect authentication service')
-
-    user = request.user if request.user.is_authenticated() else None
+    if user and not user.is_authenticated():
+        user = None
 
     try:
         user = backend.auth_complete(user=user)

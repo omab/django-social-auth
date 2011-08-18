@@ -6,7 +6,7 @@
 <div>
   <h3>Login using <a href="http://oauth.net/" title="OAuth">OAuth</a> from:</h3>
   <ul>
-  {% for name, backend in backends.oauth %}
+  {% for name in social_auth.backends.oauth %}
     <li><a rel="nofollow" href="{% url socialauth_begin name %}">{{ name|title }}</a></li>
   {% endfor %}
   </ul>
@@ -15,7 +15,7 @@
 <div>
   <h3>Login using <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-10" title="OAuth2">OAuth2</a> from:</h3>
   <ul>
-  {% for name, backend in backends.oauth2 %}
+  {% for name in social_auth.backends.oauth2 %}
     <li><a rel="nofollow" href="{% url socialauth_begin name %}">{{ name|title }}</a></li>
   {% endfor %}
   </ul>
@@ -24,14 +24,12 @@
 <div>
   <h3>Login using <a href="http://openid.net/" title="OpenId">OpenId</a> from:</h3>
   <ul>
-    {% for name, backend in backends.openid %}
-      {% if name != "livejournal" and name != "openid" %}
-      <li>
-        <a rel="nofollow" href="{% url socialauth_begin name %}">{{ name|title }}</a>
-      </li>
-      {% endif %}
-    {% endfor %}
+  {% for name in social_auth.backends.openid %}
     <li>
+    {% if name != "livejournal" and name != "openid" %}
+      <a rel="nofollow" href="{% url socialauth_begin name %}">{{ name|title }}</a>
+    {% else %}
+      {% if name == "livejournal" %}
       <form action="{% url socialauth_begin "livejournal" %}" method="post">{% csrf_token %}
         <div>
           <label for="openid_lj_user">LiveJournal user:</label>
@@ -39,27 +37,21 @@
           <input type="submit" value="Login"/>
         </div>
       </form>
+      {% else %}
+        {% if name == "openid" %}
+        <form action="{% url socialauth_begin "openid" %}" method="post">{% csrf_token %}
+          <div>
+            <label for="openid_identifier">Other provider</label>
+            <input id="openid_identifier" type="text" value="" name="openid_identifier" />
+            <input type="submit" value="Login" />
+          </div>
+          <p class="helptext">Like your personal <a href="https://www.myopenid.com/" title="My OpenId">myopenid</a></p>
+        </form>
+        {% endif %}
+      {% endif %}
+    {% endif %}
     </li>
-    <li>
-      <form action="{% url socialauth_begin "yandex" %}" method="post">{% csrf_token %}
-        <div>
-          <label for="openid_ya_user">Yandex user(optional):</label>
-          <input id="openid_ya_user" type="text" value="" name="openid_ya_user" />
-          <input type="submit" value="Login"/>
-        </div>
-      </form>
-    </li>
-	<li><a rel="nofollow" href="{% url socialauth_begin "socialauth_begin" %}">Yandex OpenID 2.0</a></li>
-    <li>
-    <form action="{% url socialauth_begin "openid" %}" method="post">{% csrf_token %}
-        <div>
-          <label for="openid_identifier">Other provider</label>
-          <input id="openid_identifier" type="text" value="" name="openid_identifier" />
-          <input type="submit" value="Login" />
-        </div>
-        <p class="helptext">Like your personal <a href="https://www.myopenid.com/" title="My OpenId">myopenid</a></p>
-      </form>
-    </li>
+  {% endfor %}
   </ul>
 </div>
 
