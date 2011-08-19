@@ -526,6 +526,23 @@ way the values will be stored in ``UserSocialAuth.extra_data`` field.
 By default ``id``, ``first-name`` and ``last-name`` are requested and stored.
 
 
+--------
+Github
+--------
+Github works similar to Facebook (OAuth).
+
+- Register a new application at `Github Developers`_, and
+
+- fill ``App Id`` and ``App Secret`` values in the settings::
+
+      GITHUB_APP_ID
+      GITHUB_API_SECRET
+
+- also it's possible to define extra permissions with::
+
+     GITHUB_EXTENDED_PERMISSIONS = [...]
+ 
+
 -------
 Testing
 -------
@@ -547,7 +564,7 @@ credentials in the following way::
     TEST_FACEBOOK_USER = 'testing_account'
     TEST_FACEBOOK_PASSWORD = 'password_for_testing_account'
 
-    # goole testing
+    # google testing
     TEST_GOOGLE_USER = 'testing_account@gmail.com'
     TEST_GOOGLE_PASSWORD = 'password_for_testing_account'
 
@@ -630,6 +647,10 @@ Attributions to whom deserves:
 
   - Foursquare support
 
+- revolunet_ (Julien Bouquillon)
+
+  - Github support
+
 ----------
 Copyrights
 ----------
@@ -699,3 +720,6 @@ Base work is copyrighted by:
 .. _Selenium: http://seleniumhq.org/
 .. _LinkedIn fields selectors: http://developer.linkedin.com/docs/DOC-1014
 .. _Read the Docs: http://django-social-auth.readthedocs.org/
+.. _revolunet: https://github.com/revolunet
+.. _GitHub OAuth: http://developer.github.com/v3/oauth/
+.. _github developers: https://github.com/account/applications/new
