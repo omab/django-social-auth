@@ -41,6 +41,7 @@ credentials, some features are:
     * `Orkut OAuth`_
     * `Linkedin OAuth`_
     * `Foursquare OAuth2`_
+    * `GitHub OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -112,6 +113,7 @@ Configuration
         'social_auth.backends.contrib.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.contrib.orkut.FoursquareBackend',
+        'social_auth.backends.contrib.github.GithubBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -150,6 +152,8 @@ Configuration
     GOOGLE_OAUTH2_CLIENT_SECRET  = ''
     FOURSQUARE_CONSUMER_KEY      = ''
     FOURSQUARE_CONSUMER_SECRET   = ''
+    GITHUB_APP_ID                = ''
+    GITHUB_API_SECRET            = ''
 
 - Setup login URLs::
 
