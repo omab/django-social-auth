@@ -12,3 +12,4 @@ Contents:
    twitter
    facebook
    linkedin
+   github

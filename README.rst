@@ -526,17 +526,17 @@ way the values will be stored in ``UserSocialAuth.extra_data`` field.
 By default ``id``, ``first-name`` and ``last-name`` are requested and stored.
 
 
---------
-Github
---------
-Github works similar to Facebook (OAuth).
+------
+GitHub
+------
+GitHub works similar to Facebook (OAuth).
 
-- Register a new application at `Github Developers`_, and
+- Register a new application at `GitHub Developers`_, and
 
 - fill ``App Id`` and ``App Secret`` values in the settings::
 
-      GITHUB_APP_ID
-      GITHUB_API_SECRET
+      GITHUB_APP_ID = ''
+      GITHUB_API_SECRET = ''
 
 - also it's possible to define extra permissions with::
 
@@ -649,7 +649,7 @@ Attributions to whom deserves:
 
 - revolunet_ (Julien Bouquillon)
 
-  - Github support
+  - GitHub support
 
 ----------
 Copyrights
@@ -722,4 +722,4 @@ Base work is copyrighted by:
 .. _Read the Docs: http://django-social-auth.readthedocs.org/
 .. _revolunet: https://github.com/revolunet
 .. _GitHub OAuth: http://developer.github.com/v3/oauth/
-.. _github developers: https://github.com/account/applications/new
+.. _GitHub Developers: https://github.com/account/applications/new
