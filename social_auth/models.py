@@ -1,5 +1,4 @@
 """Social auth models"""
-import warnings
 from datetime import timedelta
 
 from django.db import models
@@ -7,30 +6,17 @@ from django.conf import settings
 
 from social_auth.fields import JSONField
 
-# If User class is overridden, it *must* provide the following fields,
-# or it won't be playing nicely with django.contrib.auth module:
+# If User class is overridden, it *must* provide the following fields
+# and methods work with django-social-auth:
 #
 #   username   = CharField()
 #   last_login = DateTimeField()
 #   is_active  = BooleanField()
-#
-# and methods:
-#
 #   def is_authenticated():
 #       ...
-RECOMMENDED_FIELDS = ('username', 'last_login', 'is_active')
-RECOMMENDED_METHODS = ('is_authenticated',)
 
 if getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None):
     User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.rsplit('.', 1))
-
-    missing = list(set(RECOMMENDED_FIELDS) -
-                   set(User._meta.get_all_field_names())) + \
-              [name for name in RECOMMENDED_METHODS
-                      if not callable(getattr(User, name, None))]
-    if missing:
-        warnings.warn('Missing recommended attributes or methods '\
-                      'in custom User model: "%s"' % ', '.join(missing))
 else:
     from django.contrib.auth.models import User
 

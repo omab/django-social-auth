@@ -188,7 +188,7 @@ class VKontakteOAuth2(BaseOAuth2):
             check_key = md5(self.request.REQUEST.get('api_id') + '_' + self.request.REQUEST.get('viewer_id') + '_' + \
                             USE_APP_AUTH['key']).hexdigest()
             if check_key != auth_key:
-                raise('VKontakte authentication failed: invalid auth key')
+                raise ValueError('VKontakte authentication failed: invalid auth key')
 
         user_check = USE_APP_AUTH.get('user_mode', 0)
         user_id = self.request.REQUEST.get('viewer_id')

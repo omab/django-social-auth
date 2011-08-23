@@ -12,7 +12,8 @@ By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
 import cgi
-import urllib
+from urllib import urlencode
+from urllib2 import urlopen
 import base64
 import hmac
 import hashlib
@@ -58,7 +59,7 @@ class FacebookAuth(BaseOAuth):
                 'redirect_uri': self.redirect_uri}
         if hasattr(settings, 'FACEBOOK_EXTENDED_PERMISSIONS'):
             args['scope'] = ','.join(settings.FACEBOOK_EXTENDED_PERMISSIONS)
-        return FACEBOOK_AUTHORIZATION_URL + '?' + urllib.urlencode(args)
+        return FACEBOOK_AUTHORIZATION_URL + '?' + urlencode(args)
 
     def auth_complete(self, *args, **kwargs):
         access_token = None
@@ -68,12 +69,11 @@ class FacebookAuth(BaseOAuth):
         
         if 'code' in self.data:
             url = FACEBOOK_ACCESS_TOKEN_URL + '?' + \
-                  urllib.urlencode({'client_id': settings.FACEBOOK_APP_ID,
+                  urlencode({'client_id': settings.FACEBOOK_APP_ID,
                                 'redirect_uri': self.redirect_uri,
                                 'client_secret': settings.FACEBOOK_API_SECRET,
                                 'code': self.data['code']})
-                  
-            response = cgi.parse_qs(urllib.urlopen(url).read())            
+            response = cgi.parse_qs(urlopen(url).read())
             access_token = response['access_token'][0]
             if 'expires' in response:
                     expires = response['expires'][0]
@@ -122,9 +122,9 @@ class FacebookAuth(BaseOAuth):
     def user_data(self, access_token):
         """Loads user data from service"""
         params = {'access_token': access_token,}
-        url = FACEBOOK_CHECK_AUTH + '?' + urllib.urlencode(params)
+        url = FACEBOOK_CHECK_AUTH + '?' + urlencode(params)
         try:
-            return simplejson.load(urllib.urlopen(url))
+            return simplejson.load(urlopen(url))
         except ValueError:
             return None
 

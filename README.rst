@@ -41,6 +41,7 @@ credentials, some features are:
     * `Orkut OAuth`_
     * `Linkedin OAuth`_
     * `Foursquare OAuth2`_
+    * `GitHub OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -112,6 +113,7 @@ Configuration
         'social_auth.backends.contrib.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.contrib.orkut.FoursquareBackend',
+        'social_auth.backends.contrib.github.GithubBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -150,6 +152,8 @@ Configuration
     GOOGLE_OAUTH2_CLIENT_SECRET  = ''
     FOURSQUARE_CONSUMER_KEY      = ''
     FOURSQUARE_CONSUMER_SECRET   = ''
+    GITHUB_APP_ID                = ''
+    GITHUB_API_SECRET            = ''
 
 - Setup login URLs::
 
@@ -522,6 +526,23 @@ way the values will be stored in ``UserSocialAuth.extra_data`` field.
 By default ``id``, ``first-name`` and ``last-name`` are requested and stored.
 
 
+------
+GitHub
+------
+GitHub works similar to Facebook (OAuth).
+
+- Register a new application at `GitHub Developers`_, and
+
+- fill ``App Id`` and ``App Secret`` values in the settings::
+
+      GITHUB_APP_ID = ''
+      GITHUB_API_SECRET = ''
+
+- also it's possible to define extra permissions with::
+
+     GITHUB_EXTENDED_PERMISSIONS = [...]
+ 
+
 -------
 Testing
 -------
@@ -543,7 +564,7 @@ credentials in the following way::
     TEST_FACEBOOK_USER = 'testing_account'
     TEST_FACEBOOK_PASSWORD = 'password_for_testing_account'
 
-    # goole testing
+    # google testing
     TEST_GOOGLE_USER = 'testing_account@gmail.com'
     TEST_GOOGLE_PASSWORD = 'password_for_testing_account'
 
@@ -626,6 +647,10 @@ Attributions to whom deserves:
 
   - Foursquare support
 
+- revolunet_ (Julien Bouquillon)
+
+  - GitHub support
+
 ----------
 Copyrights
 ----------
@@ -695,3 +720,6 @@ Base work is copyrighted by:
 .. _Selenium: http://seleniumhq.org/
 .. _LinkedIn fields selectors: http://developer.linkedin.com/docs/DOC-1014
 .. _Read the Docs: http://django-social-auth.readthedocs.org/
+.. _revolunet: https://github.com/revolunet
+.. _GitHub OAuth: http://developer.github.com/v3/oauth/
+.. _GitHub Developers: https://github.com/account/applications/new
