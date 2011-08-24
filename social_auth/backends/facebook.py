@@ -95,9 +95,8 @@ class FacebookAuth(BaseOAuth):
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return all(hasattr(settings, name) for name in
-                        ('FACEBOOK_APP_ID',
-                         'FACEBOOK_API_SECRET'))
+        return all(hasattr(settings, name) for name in ('FACEBOOK_APP_ID',
+                                                        'FACEBOOK_API_SECRET'))
 
 
 # Backend definition
