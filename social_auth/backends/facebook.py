@@ -62,9 +62,9 @@ class FacebookAuth(BaseOAuth):
         if 'code' in self.data:
             url = FACEBOOK_ACCESS_TOKEN_URL + '?' + \
                   urlencode({'client_id': settings.FACEBOOK_APP_ID,
-                                'redirect_uri': self.redirect_uri,
-                                'client_secret': settings.FACEBOOK_API_SECRET,
-                                'code': self.data['code']})
+                             'redirect_uri': self.redirect_uri,
+                             'client_secret': settings.FACEBOOK_API_SECRET,
+                             'code': self.data['code']})
             response = cgi.parse_qs(urlopen(url).read())
             access_token = response['access_token'][0]
             data = self.user_data(access_token)
