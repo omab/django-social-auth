@@ -112,7 +112,7 @@ Configuration
         'social_auth.backends.contrib.linkedin.LinkedinBackend',
         'social_auth.backends.contrib.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
-        'social_auth.backends.contrib.orkut.FoursquareBackend',
+        'social_auth.backends.contrib.foursquare.FoursquareBackend',
         'social_auth.backends.contrib.github.GithubBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
