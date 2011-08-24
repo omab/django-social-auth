@@ -52,6 +52,7 @@ class GithubAuth(BaseOAuth):
                 'redirect_uri': self.redirect_uri}
         if hasattr(settings, 'GITHUB_EXTENDED_PERMISSIONS'):
             args['scope'] = ','.join(settings.GITHUB_EXTENDED_PERMISSIONS)
+        args.update(self.auth_extra_arguments())
         return GITHUB_AUTHORIZATION_URL + '?' + urllib.urlencode(args)
 
     def auth_complete(self, *args, **kwargs):

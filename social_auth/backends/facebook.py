@@ -55,6 +55,7 @@ class FacebookAuth(BaseOAuth):
                 'redirect_uri': self.redirect_uri}
         if hasattr(settings, 'FACEBOOK_EXTENDED_PERMISSIONS'):
             args['scope'] = ','.join(settings.FACEBOOK_EXTENDED_PERMISSIONS)
+        args.update(self.auth_extra_arguments())
         return FACEBOOK_AUTHORIZATION_URL + '?' + urlencode(args)
 
     def auth_complete(self, *args, **kwargs):
