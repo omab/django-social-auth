@@ -148,7 +148,7 @@ Configuration
     ORKUT_CONSUMER_SECRET        = ''
     GOOGLE_CONSUMER_KEY          = ''
     GOOGLE_CONSUMER_SECRET       = ''
-    GOOGLE_OAUTH2_CLIENT_KEY     = ''
+    GOOGLE_OAUTH2_CLIENT_ID      = ''
     GOOGLE_OAUTH2_CLIENT_SECRET  = ''
     FOURSQUARE_CONSUMER_KEY      = ''
     FOURSQUARE_CONSUMER_SECRET   = ''
@@ -512,12 +512,11 @@ To enable OAuth2 support:
 - fill ``Client ID`` and ``Client Secret`` settings, these values can be obtained
   easily as described on `OAuth2 Registering`_ doc::
 
-      GOOGLE_OAUTH2_CLIENT_KEY = ''
+      GOOGLE_OAUTH2_CLIENT_ID = ''
       GOOGLE_OAUTH2_CLIENT_SECRET = ''
 
-  Take into account that ``GOOGLE_OAUTH2_CLIENT_KEY`` is the value referred as
-  ``Client ID`` on Google's doc, but ``django-social-auth`` uses ``*_KEY``
-  terminology on all backends to keep it consistent.
+  previous name ``GOOGLE_OAUTH2_CLIENT_KEY`` is supported for backward
+  compatibility.
 
 - scopes are shared between OAuth mechanisms::
 
