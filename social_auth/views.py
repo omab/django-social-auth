@@ -5,6 +5,7 @@ Notes:
       on third party providers that (if using POST) won't be sending crfs
       token back.
 """
+import logging
 from functools import wraps
 
 from django.conf import settings
@@ -19,6 +20,8 @@ from django.views.decorators.csrf import csrf_exempt
 from social_auth.backends import get_backend
 from social_auth.utils import sanitize_redirect
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
 
 def _setting(name, default=''):
     return getattr(settings, name, default)
@@ -35,6 +38,7 @@ ASSOCIATE_URL_NAME = _setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
 SOCIAL_AUTH_LAST_LOGIN = _setting('SOCIAL_AUTH_LAST_LOGIN',
                                   'social_auth_last_login_backend')
 SESSION_EXPIRATION = _setting('SOCIAL_AUTH_SESSION_EXPIRATION', True)
+BACKEND_ERROR = _setting('SOCIAL_AUTH_BACKEND_ERROR', 'socialauth_backend_error')
 
 
 def dsa_view(redirect_name=None):
@@ -63,7 +67,12 @@ def dsa_view(redirect_name=None):
 @dsa_view(COMPLETE_URL_NAME)
 def auth(request, backend):
     """Start authentication process"""
-    return auth_process(request, backend)
+    try:
+        return auth_process(request, backend)
+    except:
+        logger.exception("Backend failed to respond")
+        return HttpResponseRedirect(reverse(BACKEND_ERROR,
+                                kwargs={'backend': backend.AUTH_BACKEND.name}))
 
 
 @csrf_exempt
