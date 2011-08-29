@@ -5,10 +5,17 @@
 {% block content %}
 <div>
   <p>Sorry but some error made you impossible to login.</p>
+
+  {% if messages %}
+    {% for msg in messages %}
+        <p class="error">{{ msg.message }} ({{ msg.extra_tags }})</p>
+    {% endfor %}
+  {% endif %}
   {% if error_msg %}
     <p>Details:</p>
     <p class="error">{{ error_msg }}</p>
   {% endif %}
+
   <p>Please try again <a href="/">Home</a></p>
 </div>
 {% endblock %}
