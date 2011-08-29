@@ -141,12 +141,18 @@ class GoogleOAuth(BaseGoogleOAuth):
         return True
 
 
+# TODO: Remove this setting name check, keep for backward compatibility
+_OAUTH2_KEY_NAME = hasattr(settings, 'GOOGLE_OAUTH2_CLIENT_ID') and \
+                   'GOOGLE_OAUTH2_CLIENT_ID' or \
+                   'GOOGLE_OAUTH2_CLIENT_KEY'
+
+
 class GoogleOAuth2(BaseOAuth2):
     """Google OAuth2 support"""
     AUTH_BACKEND = GoogleOAuth2Backend
     AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth'
     ACCESS_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
-    SETTINGS_KEY_NAME = 'GOOGLE_OAUTH2_CLIENT_KEY'
+    SETTINGS_KEY_NAME = _OAUTH2_KEY_NAME
     SETTINGS_SECRET_NAME = 'GOOGLE_OAUTH2_CLIENT_SECRET'
 
     def get_scope(self):

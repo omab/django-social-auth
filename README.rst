@@ -112,7 +112,7 @@ Configuration
         'social_auth.backends.contrib.linkedin.LinkedinBackend',
         'social_auth.backends.contrib.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
-        'social_auth.backends.contrib.orkut.FoursquareBackend',
+        'social_auth.backends.contrib.foursquare.FoursquareBackend',
         'social_auth.backends.contrib.github.GithubBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
@@ -148,7 +148,7 @@ Configuration
     ORKUT_CONSUMER_SECRET        = ''
     GOOGLE_CONSUMER_KEY          = ''
     GOOGLE_CONSUMER_SECRET       = ''
-    GOOGLE_OAUTH2_CLIENT_KEY     = ''
+    GOOGLE_OAUTH2_CLIENT_ID      = ''
     GOOGLE_OAUTH2_CLIENT_SECRET  = ''
     FOURSQUARE_CONSUMER_KEY      = ''
     FOURSQUARE_CONSUMER_SECRET   = ''
@@ -292,6 +292,16 @@ Configuration
   This behavior is disabled by default (false) unless specifically set::
 
       SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
+
+- You can send extra parameters on auth process by defining settings per
+  provider, example to request Facebook to show Mobile authorization page,
+  define::
+
+      FACEBOOK_AUTH_EXTRA_ARGUMENTS = {'display': 'touch'}
+
+  For other providers, just define settings in the form::
+
+      <uppercase backend name>_AUTH_EXTRA_ARGUMENTS = {...}
 
 
 -------
@@ -499,11 +509,14 @@ an application and apply for a set of keys. Check `Google OAuth2`_ document for 
 
 To enable OAuth2 support:
 
-- fill ``Client Key`` and ``Client Secret`` settings, these values can be obtained
+- fill ``Client ID`` and ``Client Secret`` settings, these values can be obtained
   easily as described on `OAuth2 Registering`_ doc::
 
-      GOOGLE_OAUTH2_CLIENT_KEY = ''
+      GOOGLE_OAUTH2_CLIENT_ID = ''
       GOOGLE_OAUTH2_CLIENT_SECRET = ''
+
+  previous name ``GOOGLE_OAUTH2_CLIENT_KEY`` is supported for backward
+  compatibility.
 
 - scopes are shared between OAuth mechanisms::
 

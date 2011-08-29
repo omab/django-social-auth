@@ -49,11 +49,14 @@ an application and apply for a set of keys. Check `Google OAuth2`_ document for 
 
 To enable OAuth2 support:
 
-- fill ``Client Key`` and ``Client Secret`` settings, these values can be obtained
+- fill ``Client ID`` and ``Client Secret`` settings, these values can be obtained
   easily as described on `OAuth2 Registering`_ doc::
 
-      GOOGLE_OAUTH2_CLIENT_KEY = ''
+      GOOGLE_OAUTH2_CLIENT_ID = ''
       GOOGLE_OAUTH2_CLIENT_SECRET = ''
+
+  previous name ``GOOGLE_OAUTH2_CLIENT_KEY`` is supported for backward
+  compatibility.
 
 - scopes are shared between OAuth mechanisms::
 

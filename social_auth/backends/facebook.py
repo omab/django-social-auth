@@ -59,6 +59,7 @@ class FacebookAuth(BaseOAuth):
                 'redirect_uri': self.redirect_uri}
         if hasattr(settings, 'FACEBOOK_EXTENDED_PERMISSIONS'):
             args['scope'] = ','.join(settings.FACEBOOK_EXTENDED_PERMISSIONS)
+        args.update(self.auth_extra_arguments())
         return FACEBOOK_AUTHORIZATION_URL + '?' + urlencode(args)
 
     def auth_complete(self, *args, **kwargs):
@@ -69,9 +70,9 @@ class FacebookAuth(BaseOAuth):
         if 'code' in self.data:
             url = FACEBOOK_ACCESS_TOKEN_URL + '?' + \
                   urlencode({'client_id': settings.FACEBOOK_APP_ID,
-                                'redirect_uri': self.redirect_uri,
-                                'client_secret': settings.FACEBOOK_API_SECRET,
-                                'code': self.data['code']})
+                             'redirect_uri': self.redirect_uri,
+                             'client_secret': settings.FACEBOOK_API_SECRET,
+                             'code': self.data['code']})
             response = cgi.parse_qs(urlopen(url).read())
             access_token = response['access_token'][0]
             if 'expires' in response:
@@ -130,9 +131,8 @@ class FacebookAuth(BaseOAuth):
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return all(hasattr(settings, name) for name in
-                        ('FACEBOOK_APP_ID',
-                         'FACEBOOK_API_SECRET'))
+        return all(hasattr(settings, name) for name in ('FACEBOOK_APP_ID',
+                                                        'FACEBOOK_API_SECRET'))
 
 
 def base64_url_decode(data):

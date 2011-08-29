@@ -55,7 +55,7 @@ Configuration
     ORKUT_CONSUMER_SECRET        = ''
     GOOGLE_CONSUMER_KEY          = ''
     GOOGLE_CONSUMER_SECRET       = ''
-    GOOGLE_OAUTH2_CLIENT_KEY     = ''
+    GOOGLE_OAUTH2_CLIENT_ID      = ''
     GOOGLE_OAUTH2_CLIENT_SECRET  = ''
     FOURSQUARE_CONSUMER_KEY      = ''
     FOURSQUARE_CONSUMER_SECRET   = ''
@@ -196,6 +196,16 @@ Configuration
   by more than one account). This behavior is disabled by default unless::
 
       SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
+
+- You can send extra parameters on auth process by defining settings per
+  provider, example to request Facebook to show Mobile authorization page,
+  define::
+
+      FACEBOOK_AUTH_EXTRA_ARGUMENTS = {'display': 'touch'}
+
+  For other providers, just define settings in the form::
+
+      <uppercase backend name>_AUTH_EXTRA_ARGUMENTS = {...}
 
 
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
