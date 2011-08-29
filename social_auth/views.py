@@ -5,7 +5,6 @@ Notes:
       on third party providers that (if using POST) won't be sending crfs
       token back.
 """
-import logging
 from functools import wraps
 
 from django.conf import settings
@@ -19,9 +18,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
 from social_auth.utils import sanitize_redirect
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)
 
 def _setting(name, default=''):
     return getattr(settings, name, default)
