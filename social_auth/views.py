@@ -38,7 +38,7 @@ ASSOCIATE_URL_NAME = _setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
 SOCIAL_AUTH_LAST_LOGIN = _setting('SOCIAL_AUTH_LAST_LOGIN',
                                   'social_auth_last_login_backend')
 SESSION_EXPIRATION = _setting('SOCIAL_AUTH_SESSION_EXPIRATION', True)
-BACKEND_ERROR = _setting('SOCIAL_AUTH_BACKEND_ERROR', 'socialauth_backend_error')
+BACKEND_ERROR_REDIRECT = _setting('SOCIAL_AUTH_BACKEND_ERROR_URL')
 
 
 def dsa_view(redirect_name=None):
@@ -69,10 +69,16 @@ def auth(request, backend):
     """Start authentication process"""
     try:
         return auth_process(request, backend)
-    except:
-        logger.exception("Backend failed to respond")
-        return HttpResponseRedirect(reverse(BACKEND_ERROR,
-                                kwargs={'backend': backend.AUTH_BACKEND.name}))
+    except Exception, e:  # some Authentication error ocurred
+        error_key = getattr(settings, 'SOCIAL_AUTH_ERROR_KEY', None)
+        backend_name_key = _setting('SOCIAL_AUTH_BACKEND_KEY',
+                                    'social_auth_backend_name')
+        if error_key:  # store error in session
+            request.session[error_key] = str(e)
+        if backend_name_key:
+            # store the backend name in the session for convenience
+            request.session[backend_name_key] = backend.AUTH_BACKEND.name
+        return HttpResponseRedirect(BACKEND_ERROR_REDIRECT)
 
 
 @csrf_exempt
