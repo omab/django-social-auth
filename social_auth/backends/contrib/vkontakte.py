@@ -86,7 +86,7 @@ class VKontakteAuth(BaseAuth):
         from django.template import RequestContext, loader
 
         dict = { 'VK_APP_ID'      : self.APP_ID,
-                 'VK_COMPLETE_URL': reverse(settings.SOCIAL_AUTH_COMPLETE_URL_NAME, args=[VKontakteBackend.name]) }
+                 'VK_COMPLETE_URL': self.redirect }
 
         vk_template = loader.get_template(LOCAL_HTML)
         context = RequestContext(self.request, dict)
