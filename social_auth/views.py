@@ -67,7 +67,7 @@ def auth(request, backend):
 
 
 @csrf_exempt
-@transaction.commit_on_success
+#@transaction.commit_on_success
 @dsa_view()
 def complete(request, backend):
     """Authentication complete view, override this view if transaction
