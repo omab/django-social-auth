@@ -19,7 +19,6 @@ from django.views.decorators.csrf import csrf_exempt
 from social_auth.backends import get_backend
 from social_auth.utils import sanitize_redirect
 
-
 def _setting(name, default=''):
     return getattr(settings, name, default)
 
@@ -35,6 +34,7 @@ ASSOCIATE_URL_NAME = _setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
 SOCIAL_AUTH_LAST_LOGIN = _setting('SOCIAL_AUTH_LAST_LOGIN',
                                   'social_auth_last_login_backend')
 SESSION_EXPIRATION = _setting('SOCIAL_AUTH_SESSION_EXPIRATION', True)
+BACKEND_ERROR_REDIRECT = _setting('SOCIAL_AUTH_BACKEND_ERROR_URL')
 
 
 def dsa_view(redirect_name=None):
@@ -63,7 +63,18 @@ def dsa_view(redirect_name=None):
 @dsa_view(COMPLETE_URL_NAME)
 def auth(request, backend):
     """Start authentication process"""
-    return auth_process(request, backend)
+    try:
+        return auth_process(request, backend)
+    except Exception, e:  # some Authentication error ocurred
+        error_key = getattr(settings, 'SOCIAL_AUTH_ERROR_KEY', None)
+        backend_name_key = _setting('SOCIAL_AUTH_BACKEND_KEY',
+                                    'social_auth_backend_name')
+        if error_key:  # store error in session
+            request.session[error_key] = str(e)
+        if backend_name_key:
+            # store the backend name in the session for convenience
+            request.session[backend_name_key] = backend.AUTH_BACKEND.name
+        return HttpResponseRedirect(BACKEND_ERROR_REDIRECT)
 
 
 @csrf_exempt
