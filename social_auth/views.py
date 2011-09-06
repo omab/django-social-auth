@@ -40,6 +40,7 @@ BACKEND_ERROR_REDIRECT = _setting('SOCIAL_AUTH_BACKEND_ERROR_URL',
                                   LOGIN_ERROR_URL)
 ERROR_KEY = _setting('SOCIAL_AUTH_BACKEND_ERROR', 'socialauth_backend_error')
 NAME_KEY = _setting('SOCIAL_AUTH_BACKEND_KEY', 'socialauth_backend_name')
+SANITIZE_REDIRECTS = _setting('SOCIAL_AUTH_SANITIZE_REDIRECTS', True)
 
 
 def dsa_view(redirect_name=None):
@@ -134,8 +135,10 @@ def auth_process(request, backend):
         data = request.POST if request.method == 'POST' else request.GET
         if REDIRECT_FIELD_NAME in data:
             # Check and sanitize a user-defined GET/POST redirect_to field value.
-            redirect = sanitize_redirect(request.get_host(),
-                                         data[REDIRECT_FIELD_NAME])
+            redirect = data[REDIRECT_FIELD_NAME]
+
+            if SANITIZE_REDIRECTS:
+                redirect = sanitize_redirect(request.get_host(), redirect)
             request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
 
     if backend.uses_redirect:

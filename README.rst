@@ -303,6 +303,11 @@ Configuration
 
       <uppercase backend name>_AUTH_EXTRA_ARGUMENTS = {...}
 
+- By default the application doesn't make redirects to different domains, to
+  disable this behavior::
+
+      SOCIAL_AUTH_SANITIZE_REDIRECTS = False
+
 
 -------
 Signals
