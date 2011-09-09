@@ -183,11 +183,4 @@ def auth_complete(request, backend, user=None):
     """Complete auth process. Return authenticated user or None."""
     if user and not user.is_authenticated():
         user = None
-
-    try:
-        user = backend.auth_complete(user=user)
-    except ValueError, e:  # some Authentication error ocurred
-        error_key = getattr(settings, 'SOCIAL_AUTH_ERROR_KEY', None)
-        if error_key:  # store error in session
-            request.session[error_key] = str(e)
-    return user
+    return backend.auth_complete(user=user)
