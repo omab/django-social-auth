@@ -748,4 +748,4 @@ Base work is copyrighted by:
 .. _revolunet: https://github.com/revolunet
 .. _GitHub OAuth: http://developer.github.com/v3/oauth/
 .. _GitHub Developers: https://github.com/account/applications/new
-.. _djangoproject.com: http://djangopackages.com/grids/g/social-auth-backends/
+.. _djangopackages.com: http://djangopackages.com/grids/g/social-auth-backends/
