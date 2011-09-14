@@ -27,12 +27,13 @@
 			window.location = "{{ VK_COMPLETE_URL }}?" + params;
 
 		});
+
 		return false;
 	}
 	
-	window.onload = authVK();
-	
 </script>
 
-<div id="status">Logging in, please wait...</div>
+<p>
+    <a href="javascript:void(0);" onclick="authVK();">Click to authorize</a>
+</p>
 {% endblock %}
