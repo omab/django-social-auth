@@ -1,9 +1,9 @@
-from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import render_to_response
+from django.contrib.messages.api import get_messages
 
 from social_auth import __version__ as version
 
@@ -24,9 +24,9 @@ def done(request):
 
 def error(request):
     """Error view"""
-    error_msg = request.session.pop(settings.SOCIAL_AUTH_ERROR_KEY, None)
+    messages = get_messages(request)
     return render_to_response('error.html', {'version': version,
-                                             'error_msg': error_msg},
+                                             'messages': messages},
                               RequestContext(request))
 
 def logout(request):

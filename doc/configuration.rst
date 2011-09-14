@@ -207,6 +207,11 @@ Configuration
 
       <uppercase backend name>_AUTH_EXTRA_ARGUMENTS = {...}
 
+- By default the application doesn't make redirects to different domains, to
+  disable this behavior::
+
+      SOCIAL_AUTH_SANITIZE_REDIRECTS = False
+
 
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
 .. _Login URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-url

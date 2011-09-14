@@ -1,5 +1,6 @@
 from social_auth.backends import BACKENDS
 from social_auth.utils import group_backend_by_type
+from social_auth.models import User
 
 
 # Note: social_auth_backends and social_auth_by_type_backends don't play nice
@@ -42,7 +43,9 @@ def backends_data(user):
               'not_associated': available,
               'backends': available}
 
-    if user.is_authenticated():
+    # user comes from request.user usually, on /admin/ it will be an instance
+    # of auth.User and this code will fail if a custom User model was defined
+    if isinstance(user, User) and user.is_authenticated():
         associated = user.social_auth.all()
         not_associated = list(set(available) -
                               set(assoc.provider for assoc in associated))

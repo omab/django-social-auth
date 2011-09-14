@@ -29,6 +29,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
+from django.db.utils import IntegrityError
 
 from social_auth.models import UserSocialAuth
 from social_auth.store import DjangoOpenIDStore
@@ -128,16 +129,18 @@ class SocialAuthBackend(ModelBackend):
                     user = User.objects.create_user(username=username,
                                                     email=email)
                     is_new = True
-            social_user = self.associate_auth(user, uid, response, details)
-        else:
-            # This account was registered to another user, so we raise an
-            # error in such case and the view should decide what to do on
-            # at this moment, merging account is not an option because that
-            # would imply update user references on other apps, that's too
-            # much intrusive
-            if user and user != social_user.user:
-                raise ValueError('Account already in use.', social_user)
-            user = social_user.user
+
+            try:
+                social_user = self.associate_auth(user, uid, response, details)
+            except IntegrityError:
+                # Protect for possible race condition, those bastard with FTL
+                # clicking capabilities
+                social_user = self.get_social_auth_user(uid)
+
+        # Raise ValueError if this account was registered by another user.
+        if user and user != social_user.user:
+            raise ValueError('Account already in use.', social_user)
+        user = social_user.user
 
         # Flag user "new" status
         setattr(user, 'is_new', is_new)

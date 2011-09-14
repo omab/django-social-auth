@@ -303,6 +303,11 @@ Configuration
 
       <uppercase backend name>_AUTH_EXTRA_ARGUMENTS = {...}
 
+- By default the application doesn't make redirects to different domains, to
+  disable this behavior::
+
+      SOCIAL_AUTH_SANITIZE_REDIRECTS = False
+
 
 -------
 Signals
@@ -617,6 +622,13 @@ that would finally import from the models.py that defines your User class or it
 will make your project fail with a recursive import because social_auth uses
 get_model() to retrieve your User.
 
+
+There's an ongoing movement to create a list of third party backends on
+djangopackages.com_, so, if somebody doesn't want it's backend in the
+``contrib`` directory but still wants to share, just split it in a separated
+package and link it there.
+
+
 ----
 Bugs
 ----
@@ -736,3 +748,4 @@ Base work is copyrighted by:
 .. _revolunet: https://github.com/revolunet
 .. _GitHub OAuth: http://developer.github.com/v3/oauth/
 .. _GitHub Developers: https://github.com/account/applications/new
+.. _djangopackages.com: http://djangopackages.com/grids/g/social-auth-backends/
