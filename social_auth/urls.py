@@ -12,6 +12,6 @@ urlpatterns = patterns('',
     url(r'^associate/complete/(?P<backend>[^/]+)/$', associate_complete,
         name='socialauth_associate_complete'),
     url(r'^disconnect/(?P<backend>[^/]+)/$', disconnect, name='socialauth_disconnect'),
-    url(r'^disconnect/(?P<backend>[^/]+)/(?P<association_id>\d+)/$', disconnect,
+    url(r'^disconnect/(?P<backend>[^/]+)/(?P<association_id>[^/]+)/$', disconnect,
         name='socialauth_disconnect_individual'),
 )
