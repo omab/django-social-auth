@@ -114,7 +114,9 @@ class SocialAuthBackend(ModelBackend):
                 if not CREATE_USERS or not kwargs.get('create_user', True):
                     # Send signal for cases where tracking failed registering
                     # is useful.
-                    socialauth_not_registered.send(uid=uid, response=response,
+                    socialauth_not_registered.send(sender=self.__class__,
+                                                   uid=uid,
+                                                   response=response,
                                                    details=details)
                     return None
 
