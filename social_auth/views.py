@@ -88,10 +88,10 @@ def auth(request, backend):
 
 @csrf_exempt
 @dsa_view()
-def complete(request, backend):
+def complete(request, backend, *args, **kwargs):
     """Authentication complete view, override this view if transaction
     management doesn't suit your needs."""
-    return complete_process(request, backend)
+    return complete_process(request, backend, *args, **kwargs)
 
 
 @login_required
