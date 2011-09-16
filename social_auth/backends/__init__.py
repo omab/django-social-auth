@@ -110,7 +110,7 @@ class SocialAuthBackend(ModelBackend):
             social_user = self.get_social_auth_user(uid)
         except UserSocialAuth.DoesNotExist:
             if user is None:  # new user
-                if not CREATE_USERS:
+                if not CREATE_USERS or not kwargs.get('create_user', True):
                     return None
 
                 email = details.get('email')
