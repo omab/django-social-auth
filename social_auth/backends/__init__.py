@@ -33,7 +33,8 @@ from django.db.utils import IntegrityError
 
 from social_auth.models import UserSocialAuth
 from social_auth.store import DjangoOpenIDStore
-from social_auth.signals import pre_update, socialauth_registered
+from social_auth.signals import pre_update, socialauth_registered, \
+                                socialauth_not_registered
 
 
 # OpenID configuration
@@ -111,6 +112,10 @@ class SocialAuthBackend(ModelBackend):
         except UserSocialAuth.DoesNotExist:
             if user is None:  # new user
                 if not CREATE_USERS or not kwargs.get('create_user', True):
+                    # Send signal for cases where tracking failed registering
+                    # is useful.
+                    socialauth_not_registered.send(uid=uid, response=response,
+                                                   details=details)
                     return None
 
                 email = details.get('email')
