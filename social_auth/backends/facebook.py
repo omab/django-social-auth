@@ -92,7 +92,12 @@ class FacebookAuth(BaseOAuth):
         params = {'access_token': access_token,}
         url = FACEBOOK_CHECK_AUTH + '?' + urlencode(params)
         try:
-            return simplejson.load(urlopen(url))
+            data = simplejson.load(urlopen(url))
+            logger.debug('Found user data for token %s',
+                         sanitize_log_data(access_token),
+                         extra=dict(data=data))
+            return data
+
         except ValueError:
             params.update({'access_token': sanitize_log_data(access_token)})
             logger.error('Could not load user data from Facebook.',
