@@ -14,7 +14,6 @@ from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse, \
                         HttpResponseServerError
 from django.core.urlresolvers import reverse
-from django.db import transaction
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -91,12 +90,11 @@ def auth(request, backend):
 
 
 @csrf_exempt
-#@transaction.commit_on_success
 @dsa_view()
-def complete(request, backend):
+def complete(request, backend, *args, **kwargs):
     """Authentication complete view, override this view if transaction
     management doesn't suit your needs."""
-    return complete_process(request, backend)
+    return complete_process(request, backend, *args, **kwargs)
 
 
 @login_required
@@ -109,9 +107,9 @@ def associate(request, backend):
 @csrf_exempt
 @login_required
 @dsa_view()
-def associate_complete(request, backend):
+def associate_complete(request, backend, *args, **kwargs):
     """Authentication complete process"""
-    if auth_complete(request, backend, request.user):
+    if auth_complete(request, backend, request.user, *args, **kwargs):
         url = NEW_ASSOCIATION_REDIRECT if NEW_ASSOCIATION_REDIRECT else \
               request.session.pop(REDIRECT_FIELD_NAME, '') or \
               DEFAULT_REDIRECT
@@ -151,9 +149,9 @@ def auth_process(request, backend):
                             content_type='text/html;charset=UTF-8')
 
 
-def complete_process(request, backend):
+def complete_process(request, backend, *args, **kwargs):
     """Authentication complete process"""
-    user = auth_complete(request, backend)
+    user = auth_complete(request, backend, *args, **kwargs)
 
     if user and getattr(user, 'is_active', True):
         login(request, user)
@@ -182,8 +180,8 @@ def complete_process(request, backend):
     return HttpResponseRedirect(url)
 
 
-def auth_complete(request, backend, user=None):
+def auth_complete(request, backend, user=None, *args, **kwargs):
     """Complete auth process. Return authenticated user or None."""
     if user and not user.is_authenticated():
         user = None
-    return backend.auth_complete(user=user)
+    return backend.auth_complete(user=user, *args, **kwargs)
