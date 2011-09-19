@@ -40,8 +40,6 @@ SOCIAL_AUTH_LAST_LOGIN = _setting('SOCIAL_AUTH_LAST_LOGIN',
 SESSION_EXPIRATION = _setting('SOCIAL_AUTH_SESSION_EXPIRATION', True)
 BACKEND_ERROR_REDIRECT = _setting('SOCIAL_AUTH_BACKEND_ERROR_URL',
                                   LOGIN_ERROR_URL)
-ERROR_KEY = _setting('SOCIAL_AUTH_BACKEND_ERROR', 'socialauth_backend_error')
-NAME_KEY = _setting('SOCIAL_AUTH_BACKEND_KEY', 'socialauth_backend_name')
 SANITIZE_REDIRECTS = _setting('SOCIAL_AUTH_SANITIZE_REDIRECTS', True)
 
 
@@ -81,16 +79,6 @@ def dsa_view(redirect_name=None):
                 else:
                     logger.warn('Messages framework not in place, some '+
                                 'errors have not been shown to the user.')
-                # What's the use in this, having not both the messages
-                # framework and decent logging in place?
-                # Also: do we really want to share all and any errors back
-                # to the user, in a security-wise sensitive application?
-                #
-                # else:
-                #     if ERROR_KEY:  # store error in session
-                #         request.session[ERROR_KEY] = msg
-                #     if NAME_KEY:  # store the backend name for convenience
-                #         request.session[NAME_KEY] = backend_name
                 return HttpResponseRedirect(BACKEND_ERROR_REDIRECT)
         return wrapper
     return dec
