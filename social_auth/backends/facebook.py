@@ -95,8 +95,8 @@ class FacebookAuth(BaseOAuth):
             return simplejson.load(urlopen(url))
         except ValueError:
             params.update({'access_token': sanitize_log_data(access_token)})
-            logger.exception('Could not load user data from Facebook.',
-                             extra=params)
+            logger.error('Could not load user data from Facebook.',
+                         exc_info=True, extra=dict(data=params))
             return None
 
     @classmethod
