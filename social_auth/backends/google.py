@@ -13,6 +13,9 @@ APIs console https://code.google.com/apis/console/ Identity option.
 
 OpenID also works straightforward, it doesn't need further configurations.
 """
+import logging
+logger = logging.getLogger(__name__)
+
 from urllib import urlencode
 from urllib2 import Request, urlopen
 

@@ -5,6 +5,9 @@ Notes:
       on third party providers that (if using POST) won't be sending crfs
       token back.
 """
+import logging
+logger = logging.getLogger(__name__)
+
 from functools import wraps
 
 from django.conf import settings

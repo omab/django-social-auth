@@ -11,6 +11,9 @@ setting, it must be a list of values to request.
 By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
+import logging
+logger = logging.getLogger(__name__)
+
 import cgi
 import urllib
 

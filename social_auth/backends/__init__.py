@@ -9,6 +9,9 @@ Also the modules *must* define a BACKENDS dictionary with the backend name
 (which is used for URLs matching) and Auth class, otherwise it won't be
 enabled.
 """
+import logging
+logger = logging.getLogger(__name__)
+
 from os import walk
 from os.path import basename
 from uuid import uuid4
