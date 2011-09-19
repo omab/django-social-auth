@@ -23,7 +23,7 @@ from django.utils import simplejson
 from django.contrib.auth import authenticate
 
 from social_auth.backends import BaseOAuth, OAuthBackend, USERNAME
-
+from social_auth.utils import sanitize_log_data
 
 # Facebook configuration
 FACEBOOK_SERVER = 'graph.facebook.com'
@@ -94,6 +94,9 @@ class FacebookAuth(BaseOAuth):
         try:
             return simplejson.load(urlopen(url))
         except ValueError:
+            params.update({'access_token': sanitize_log_data(access_token)})
+            logger.exception('Could not load user data from Facebook.',
+                             extra=params)
             return None
 
     @classmethod

@@ -727,6 +727,7 @@ def get_backends():
         try:
             mod = import_module(mod_name)
         except ImportError:
+            logger.exception('Error importing %s', mod_name)
             continue
 
         for directory, subdir, files in walk(mod.__path__[0]):
