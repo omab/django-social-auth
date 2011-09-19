@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 import urllib
 
 from django.utils import simplejson

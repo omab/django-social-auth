@@ -10,6 +10,9 @@ can be specified by defining ORKUT_EXTRA_DATA setting.
 OAuth settings ORKUT_CONSUMER_KEY and ORKUT_CONSUMER_SECRET are needed
 to enable this service support.
 """
+import logging
+logger = logging.getLogger(__name__)
+
 import urllib
 
 from django.conf import settings

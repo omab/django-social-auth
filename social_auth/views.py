@@ -5,6 +5,9 @@ Notes:
       on third party providers that (if using POST) won't be sending crfs
       token back.
 """
+import logging
+logger = logging.getLogger(__name__)
+
 from functools import wraps
 
 from django.conf import settings
@@ -65,16 +68,29 @@ def dsa_view(redirect_name=None):
                 return func(request, backend, *args, **kwargs)
             except Exception, e:  # some error ocurred
                 backend_name = backend.AUTH_BACKEND.name
+
+                logger.error(unicode(e), exc_info=True,
+                             extra=dict(request=request))
+
+                # Why!?
                 msg = str(e)
 
                 if 'django.contrib.messages' in settings.INSTALLED_APPS:
                     from django.contrib.messages.api import error
                     error(request, msg, extra_tags=backend_name)
                 else:
-                    if ERROR_KEY:  # store error in session
-                        request.session[ERROR_KEY] = msg
-                    if NAME_KEY:  # store the backend name for convenience
-                        request.session[NAME_KEY] = backend_name
+                    logger.warn('Messages framework not in place, some '+
+                                'errors have not been shown to the user.')
+                # What's the use in this, having not both the messages
+                # framework and decent logging in place?
+                # Also: do we really want to share all and any errors back
+                # to the user, in a security-wise sensitive application?
+                #
+                # else:
+                #     if ERROR_KEY:  # store error in session
+                #         request.session[ERROR_KEY] = msg
+                #     if NAME_KEY:  # store the backend name for convenience
+                #         request.session[NAME_KEY] = backend_name
                 return HttpResponseRedirect(BACKEND_ERROR_REDIRECT)
         return wrapper
     return dec
