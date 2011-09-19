@@ -4,6 +4,25 @@ from collections import defaultdict
 from social_auth.backends import BACKENDS, OpenIdAuth, BaseOAuth, BaseOAuth2
 
 
+def sanitize_log_data(secret, data=None, leave_characters=4):
+    """
+    Clean private/secret data from log statements and other data.
+
+    Assumes data and secret are strings. Replaces all but the first
+    `leave_characters` of `secret`, as found in `data`, with '*'.
+
+    If no data is given, all but the first `leave_characters` of secret
+    are simply replaced and returned.
+    """
+    replace_secret = (secret[:leave_characters] +
+                      (len(secret) - leave_characters) * '*')
+
+    if data:
+        return data.replace(secret, replace_secret)
+
+    return replace_secret
+
+
 def sanitize_redirect(host, redirect_to):
     """
     Given the hostname and an untrusted URL to redirect to,
