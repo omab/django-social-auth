@@ -83,10 +83,11 @@ class FacebookAuth(BaseOAuth):
 
         if 'signed_request' in self.data:
             response = load_signed_request(self.data.get('signed_request'))
-            
+
             if response is not None:
-                access_token = response.get('access_token') or response.get('oauth_token')
-            
+                access_token = response.get('access_token') or response.get('oauth_token') \
+                               or self.data.get('access_token')
+
                 if 'expires' in response:
                     expires = response['expires']
 
@@ -96,7 +97,7 @@ class FacebookAuth(BaseOAuth):
 
             sorted = params_dict.items()
             sorted.sort(key=lambda x:x[0])
-            
+
             check_str = ''.join(["%s=%s"%(x[0], x[1]) for x in sorted]) + settings.FACEBOOK_API_SECRET
             expected_sig = hashlib.md5(check_str).hexdigest()
             sig = self.data['sig']
