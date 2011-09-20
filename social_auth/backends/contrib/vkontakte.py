@@ -5,6 +5,9 @@ This contribution adds support for VKontakte OpenAPI and OAuth 2.0 service in th
 www.vkontakte.ru. Username is retrieved from the identity returned by server.
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.utils import simplejson
@@ -233,6 +236,7 @@ def vkontakte_api(method, data):
     try:
         return simplejson.loads(urlopen(api_request).read())
     except (TypeError, KeyError, IOError, ValueError, IndexError):
+        logger.error('Could not load data from VKontakte.', exc_info=True, extra=dict(data=params))
         return None
 
 

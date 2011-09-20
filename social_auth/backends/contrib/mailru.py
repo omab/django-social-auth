@@ -10,6 +10,9 @@ Then update your settings values using registration information
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
+
 from django.conf import settings
 from django.utils import simplejson
 
@@ -87,6 +90,7 @@ def mailru_api(data):
     try:
         return simplejson.loads(urlopen(request).read())
     except (TypeError, KeyError, IOError, ValueError, IndexError):
+        logger.error('Could not load data from Mail.ru.', exc_info=True, extra=dict(data=params))
         return None
     
 
