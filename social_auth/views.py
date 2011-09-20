@@ -5,13 +5,15 @@ Notes:
       on third party providers that (if using POST) won't be sending crfs
       token back.
 """
+import logging
+logger = logging.getLogger(__name__)
+
 from functools import wraps
 
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse, \
                         HttpResponseServerError
 from django.core.urlresolvers import reverse
-from django.db import transaction
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -66,16 +68,29 @@ def dsa_view(redirect_name=None):
                 return func(request, backend, *args, **kwargs)
             except Exception, e:  # some error ocurred
                 backend_name = backend.AUTH_BACKEND.name
+
+                logger.error(unicode(e), exc_info=True,
+                             extra=dict(request=request))
+
+                # Why!?
                 msg = str(e)
 
                 if 'django.contrib.messages' in settings.INSTALLED_APPS:
                     from django.contrib.messages.api import error
                     error(request, msg, extra_tags=backend_name)
                 else:
-                    if ERROR_KEY:  # store error in session
-                        request.session[ERROR_KEY] = msg
-                    if NAME_KEY:  # store the backend name for convenience
-                        request.session[NAME_KEY] = backend_name
+                    logger.warn('Messages framework not in place, some '+
+                                'errors have not been shown to the user.')
+                # What's the use in this, having not both the messages
+                # framework and decent logging in place?
+                # Also: do we really want to share all and any errors back
+                # to the user, in a security-wise sensitive application?
+                #
+                # else:
+                #     if ERROR_KEY:  # store error in session
+                #         request.session[ERROR_KEY] = msg
+                #     if NAME_KEY:  # store the backend name for convenience
+                #         request.session[NAME_KEY] = backend_name
                 return HttpResponseRedirect(BACKEND_ERROR_REDIRECT)
         return wrapper
     return dec
@@ -88,12 +103,11 @@ def auth(request, backend):
 
 
 @csrf_exempt
-#@transaction.commit_on_success
 @dsa_view()
-def complete(request, backend):
+def complete(request, backend, *args, **kwargs):
     """Authentication complete view, override this view if transaction
     management doesn't suit your needs."""
-    return complete_process(request, backend)
+    return complete_process(request, backend, *args, **kwargs)
 
 
 @login_required
@@ -106,9 +120,9 @@ def associate(request, backend):
 @csrf_exempt
 @login_required
 @dsa_view()
-def associate_complete(request, backend):
+def associate_complete(request, backend, *args, **kwargs):
     """Authentication complete process"""
-    if auth_complete(request, backend, request.user):
+    if auth_complete(request, backend, request.user, *args, **kwargs):
         url = NEW_ASSOCIATION_REDIRECT if NEW_ASSOCIATION_REDIRECT else \
               request.session.pop(REDIRECT_FIELD_NAME, '') or \
               DEFAULT_REDIRECT
@@ -148,9 +162,9 @@ def auth_process(request, backend):
                             content_type='text/html;charset=UTF-8')
 
 
-def complete_process(request, backend):
+def complete_process(request, backend, *args, **kwargs):
     """Authentication complete process"""
-    user = auth_complete(request, backend)
+    user = auth_complete(request, backend, *args, **kwargs)
 
     if user and getattr(user, 'is_active', True):
         login(request, user)
@@ -179,8 +193,8 @@ def complete_process(request, backend):
     return HttpResponseRedirect(url)
 
 
-def auth_complete(request, backend, user=None):
+def auth_complete(request, backend, user=None, *args, **kwargs):
     """Complete auth process. Return authenticated user or None."""
     if user and not user.is_authenticated():
         user = None
-    return backend.auth_complete(user=user)
+    return backend.auth_complete(user=user, *args, **kwargs)

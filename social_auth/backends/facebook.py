@@ -11,6 +11,9 @@ setting, it must be a list of values to request.
 By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
+import logging
+logger = logging.getLogger(__name__)
+
 import cgi
 from urllib import urlencode
 from urllib2 import urlopen
@@ -24,7 +27,7 @@ from django.utils import simplejson
 from django.contrib.auth import authenticate
 
 from social_auth.backends import BaseOAuth, OAuthBackend, USERNAME
-
+from social_auth.utils import sanitize_log_data
 
 # Facebook configuration
 FACEBOOK_SERVER = 'graph.facebook.com'
@@ -124,8 +127,16 @@ class FacebookAuth(BaseOAuth):
         params = {'access_token': access_token,}
         url = FACEBOOK_CHECK_AUTH + '?' + urlencode(params)
         try:
-            return simplejson.load(urlopen(url))
+            data = simplejson.load(urlopen(url))
+            logger.debug('Found user data for token %s',
+                         sanitize_log_data(access_token),
+                         extra=dict(data=data))
+            return data
+
         except ValueError:
+            params.update({'access_token': sanitize_log_data(access_token)})
+            logger.error('Could not load user data from Facebook.',
+                         exc_info=True, extra=dict(data=params))
             return None
 
     @classmethod

@@ -3,6 +3,9 @@ Linkedin OAuth support
 
 No extra configurations are needed to make this work.
 """
+import logging
+logger = logging.getLogger(__name__)
+
 from xml.etree import ElementTree
 from xml.parsers.expat import ExpatError
 
