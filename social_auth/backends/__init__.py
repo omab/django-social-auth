@@ -674,14 +674,20 @@ class BaseOAuth2(BaseOAuth):
     """
     AUTHORIZATION_URL = None
     ACCESS_TOKEN_URL = None
+    SCOPE_SEPARATOR = ' '
+    RESPONSE_TYPE = 'code'
 
     def auth_url(self):
         """Return redirect url"""
         client_id, client_secret = self.get_key_and_secret()
-        args = {'client_id': client_id,
-                'scope': ' '.join(self.get_scope()),
-                'redirect_uri': self.redirect_uri,
-                'response_type': 'code'}  # requesting code
+        args = {'client_id': client_id, 'redirect_uri': self.redirect_uri}
+
+        scope = self.get_scope()
+        if scope:
+            args['scope'] = self.SCOPE_SEPARATOR.join(self.get_scope())
+        if self.RESPONSE_TYPE:
+            args['response_type'] = self.RESPONSE_TYPE
+
         args.update(self.auth_extra_arguments())
         return self.AUTHORIZATION_URL + '?' + urlencode(args)
 
