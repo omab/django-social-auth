@@ -6,6 +6,7 @@ from django.conf import settings
 
 from social_auth.fields import JSONField
 
+
 # If User class is overridden, it *must* provide the following fields
 # and methods work with django-social-auth:
 #

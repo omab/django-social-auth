@@ -26,19 +26,16 @@ from django.conf import settings
 from django.utils import simplejson
 from django.contrib.auth import authenticate
 
-from social_auth.backends import BaseOAuth, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.utils import sanitize_log_data
 
+
 # Facebook configuration
-FACEBOOK_SERVER = 'graph.facebook.com'
-FACEBOOK_AUTHORIZATION_URL = 'https://%s/oauth/authorize' % FACEBOOK_SERVER
-FACEBOOK_ACCESS_TOKEN_URL = 'https://%s/oauth/access_token' % FACEBOOK_SERVER
-FACEBOOK_CHECK_AUTH = 'https://%s/me' % FACEBOOK_SERVER
 EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class FacebookBackend(OAuthBackend):
-    """Facebook OAuth authentication backend"""
+    """Facebook OAuth2 authentication backend"""
     name = 'facebook'
     # Default extra data to store
     EXTRA_DATA = [('id', 'id'), ('expires', EXPIRES_NAME)]
@@ -52,26 +49,43 @@ class FacebookBackend(OAuthBackend):
                 'last_name': response.get('last_name', '')}
 
 
-class FacebookAuth(BaseOAuth):
-    """Facebook OAuth mechanism"""
-    AUTH_BACKEND = FacebookBackend
 
-    def auth_url(self):
-        """Returns redirect url"""
-        args = {'client_id': settings.FACEBOOK_APP_ID,
-                'redirect_uri': self.redirect_uri}
-        if hasattr(settings, 'FACEBOOK_EXTENDED_PERMISSIONS'):
-            args['scope'] = ','.join(settings.FACEBOOK_EXTENDED_PERMISSIONS)
-        args.update(self.auth_extra_arguments())
-        return FACEBOOK_AUTHORIZATION_URL + '?' + urlencode(args)
+class FacebookAuth(BaseOAuth2):
+    """Facebook OAuth2 support"""
+    AUTH_BACKEND = FacebookBackend
+    RESPONSE_TYPE = None
+    SCOPE_SEPARATOR = ','
+    AUTHORIZATION_URL = 'https://www.facebook.com/dialog/oauth'
+    SETTINGS_KEY_NAME = 'FACEBOOK_APP_ID'
+    SETTINGS_SECRET_NAME = 'FACEBOOK_API_SECRET'
+
+    def get_scope(self):
+        return getattr(settings, 'FACEBOOK_EXTENDED_PERMISSIONS', [])
+
+    def user_data(self, access_token):
+        """Loads user data from service"""
+        params = {'access_token': access_token,}
+        url = 'https://graph.facebook.com/me?' + urlencode(params)
+        try:
+            data = simplejson.load(urlopen(url))
+            logger.debug('Found user data for token %s',
+                         sanitize_log_data(access_token),
+                         extra=dict(data=data))
+            return data
+
+        except ValueError:
+            params.update({'access_token': sanitize_log_data(access_token)})
+            logger.error('Could not load user data from Facebook.',
+                         exc_info=True, extra=dict(data=params))
+            return None
 
     def auth_complete(self, *args, **kwargs):
-        """Returns user, might be logged in"""
+        """Completes loging process, must return user instance"""
         access_token = None
         expires = None
 
         if 'code' in self.data:
-            url = FACEBOOK_ACCESS_TOKEN_URL + '?' + \
+            url = 'https://graph.facebook.com/oauth/access_token?' + \
                   urlencode({'client_id': settings.FACEBOOK_APP_ID,
                              'redirect_uri': self.redirect_uri,
                              'client_secret': settings.FACEBOOK_API_SECRET,
@@ -117,28 +131,11 @@ class FacebookAuth(BaseOAuth):
                 # premission was requested                
                 if expires:
                     data['expires'] = expires
-            kwargs.update({'response': data, FacebookBackend.name: True})
+            kwargs.update({'response': data, self.AUTH_BACKEND.name: True})
             return authenticate(*args, **kwargs)
         else:
             error = self.data.get('error') or 'unknown error'
             raise ValueError('Authentication error: %s' % error)
-
-    def user_data(self, access_token):
-        """Loads user data from service"""
-        params = {'access_token': access_token,}
-        url = FACEBOOK_CHECK_AUTH + '?' + urlencode(params)
-        try:
-            data = simplejson.load(urlopen(url))
-            logger.debug('Found user data for token %s',
-                         sanitize_log_data(access_token),
-                         extra=dict(data=data))
-            return data
-
-        except ValueError:
-            params.update({'access_token': sanitize_log_data(access_token)})
-            logger.error('Could not load user data from Facebook.',
-                         exc_info=True, extra=dict(data=params))
-            return None
 
     @classmethod
     def enabled(cls):
