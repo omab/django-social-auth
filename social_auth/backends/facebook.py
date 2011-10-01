@@ -105,21 +105,6 @@ class FacebookAuth(BaseOAuth2):
                 if 'expires' in response:
                     expires = response['expires']
 
-        if 'session_key' in self.data:
-            params=['secret', 'uid', 'session_key', 'access_token', 'expires', 'base_domain']
-            params_dict = dict([(p, self.data[p]) for p in params])
-
-            sorted = params_dict.items()
-            sorted.sort(key=lambda x:x[0])
-
-            check_str = ''.join(["%s=%s"%(x[0], x[1]) for x in sorted]) + settings.FACEBOOK_API_SECRET
-            expected_sig = hashlib.md5(check_str).hexdigest()
-            sig = self.data['sig']
-
-            if sig == expected_sig:
-                access_token = params_dict['access_token']
-                expires = params_dict['expires']
-
         if access_token:
             data = self.user_data(access_token)
             if data is not None:
