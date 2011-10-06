@@ -42,7 +42,7 @@ credentials, some features are:
     * `Linkedin OAuth`_
     * `Foursquare OAuth2`_
     * `GitHub OAuth`_
-    * `Drobpox OAuth`_
+    * `Dropbox OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
