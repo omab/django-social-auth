@@ -3,7 +3,7 @@ Flickr OAuth support.
 
 This contribution adds support for Flickr OAuth service. The settings
 FLICKR_APP_ID and FLICKR_API_SECRET must be defined with the values
-given by Dropbox application registration process.
+given by Flickr application registration process.
 
 By default account id, username and token expiration time are stored in
 extra_data field, check OAuthBackend class for details on how to extend it.
@@ -21,7 +21,7 @@ from django.utils import simplejson
 from oauth2 import Token
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
 
-# Dropbox configuration
+# Flickr configuration
 FLICKR_SERVER = 'http://www.flickr.com/services'
 FLICKR_REQUEST_TOKEN_URL = '%s/oauth/request_token' % FLICKR_SERVER
 FLICKR_AUTHORIZATION_URL = '%s/oauth/authorize' % FLICKR_SERVER
@@ -30,7 +30,7 @@ EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class FlickrBackend(OAuthBackend):
-    """Dropbox OAuth authentication backend"""
+    """Flickr OAuth authentication backend"""
     name = 'flickr'
     # Default extra data to store
     EXTRA_DATA = [('id', 'id'), ('username', 'username'), ('expires', EXPIRES_NAME)]
