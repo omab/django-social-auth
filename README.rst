@@ -710,6 +710,12 @@ Attributions to whom deserves:
 
   - GitHub support
 
+- danielgtaylor_ (Daniel G. Taylor)
+
+  - Dropbox support
+  - Flickr support
+  - Provider name context processor
+
 ----------
 Copyrights
 ----------
@@ -787,3 +793,4 @@ Base work is copyrighted by:
 .. _Dropbox Developers: https://www.dropbox.com/developers/apps
 .. _Flickr OAuth: http://www.flickr.com/services/api/
 .. _Flickr App Garden: http://www.flickr.com/services/apps/create/
+.. _danielgtaylor: https://github.com/danielgtaylor
