@@ -1,0 +1,72 @@
+"""
+Dropbox OAuth support.
+
+This contribution adds support for Dropbox OAuth service. The settings
+DROPBOX_APP_ID and DROPBOX_API_SECRET must be defined with the values
+given by Dropbox application registration process.
+
+By default account id and token expiration time are stored in extra_data
+field, check OAuthBackend class for details on how to extend it.
+"""
+from django.conf import settings
+from django.utils import simplejson
+
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+
+# Dropbox configuration
+DROPBOX_SERVER = 'dropbox.com'
+DROPBOX_API = 'api.%s' % DROPBOX_SERVER
+DROPBOX_REQUEST_TOKEN_URL = 'https://%s/1/oauth/request_token' % DROPBOX_API
+DROPBOX_AUTHORIZATION_URL = 'https://www.%s/1/oauth/authorize' % DROPBOX_SERVER
+DROPBOX_ACCESS_TOKEN_URL = 'https://%s/1/oauth/access_token' % DROPBOX_API
+EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
+
+
+class DropboxBackend(OAuthBackend):
+    """Dropbox OAuth authentication backend"""
+    name = 'dropbox'
+    # Default extra data to store
+    EXTRA_DATA = [('id', 'id'), ('expires', EXPIRES_NAME)]
+
+    def get_user_details(self, response):
+        """Return user details from Dropbox account"""
+        return {USERNAME: response.get('uid'),
+                'email': response.get('email'),
+                'first_name': response.get('display_name')}
+    
+    def get_user_id(self, details, response):
+        """OAuth providers return an unique user id in response"""
+        # Dropbox uses a uid parameter instead of id like most others...
+        return response['uid']
+
+class DropboxAuth(ConsumerBasedOAuth):
+    """Dropbox OAuth authentication mechanism"""
+    AUTHORIZATION_URL = DROPBOX_AUTHORIZATION_URL
+    REQUEST_TOKEN_URL = DROPBOX_REQUEST_TOKEN_URL
+    ACCESS_TOKEN_URL = DROPBOX_ACCESS_TOKEN_URL
+    SERVER_URL = DROPBOX_API
+    AUTH_BACKEND = DropboxBackend
+    SETTINGS_KEY_NAME = 'DROPBOX_APP_ID'
+    SETTINGS_SECRET_NAME = 'DROPBOX_API_SECRET'
+
+    def user_data(self, access_token):
+        """Loads user data from service"""
+        url = 'https://' + DROPBOX_API + '/1/account/info'
+        request = self.oauth_request(access_token, url)
+        response = self.fetch_response(request)
+        try:
+            return simplejson.loads(response)
+        except ValueError:
+            return None
+
+    @classmethod
+    def enabled(cls):
+        """Return backend enabled status by checking basic settings"""
+        return all(hasattr(settings, name) for name in
+                        ('DROPBOX_APP_ID',
+                         'DROPBOX_API_SECRET'))
+
+# Backend definition
+BACKENDS = {
+    'dropbox': DropboxAuth,
+}

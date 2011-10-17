@@ -6,6 +6,9 @@ openid.yandex.ru/user. Username is retrieved from the identity url.
 
 If username is not specified, OpenID 2.0 url used for authentication.
 """
+import logging
+logger = logging.getLogger(__name__)
+
 import urlparse
 
 from social_auth.backends import OpenIDBackend, OpenIdAuth, USERNAME
@@ -27,7 +30,9 @@ class YandexBackend(OpenIDBackend):
         values[USERNAME] = values.get(USERNAME) or \
                            urlparse.urlsplit(response.identity_url)\
                                    .path.strip('/')
-                                   
+
+        values['email'] = values.get('email') or ''
+
         return values
 
 

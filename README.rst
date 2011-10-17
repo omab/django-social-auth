@@ -42,6 +42,8 @@ credentials, some features are:
     * `Linkedin OAuth`_
     * `Foursquare OAuth2`_
     * `GitHub OAuth`_
+    * `Dropbox OAuth`_
+    * `Flickr OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -114,6 +116,8 @@ Configuration
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.contrib.foursquare.FoursquareBackend',
         'social_auth.backends.contrib.github.GithubBackend',
+        'social_auth.backends.contrib.dropbox.DropboxBackend',
+        'social_auth.backends.contrib.flickr.FlickrBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -154,6 +158,10 @@ Configuration
     FOURSQUARE_CONSUMER_SECRET   = ''
     GITHUB_APP_ID                = ''
     GITHUB_API_SECRET            = ''
+    DROPBOX_APP_ID               = ''
+    DROPBOX_API_SECRET           = ''
+    FLICKR_APP_ID                = ''
+    FLICKR_API_SECRET            = ''
 
 - Setup login URLs::
 
@@ -562,6 +570,32 @@ GitHub works similar to Facebook (OAuth).
  
 
 -------
+Dropbox
+-------
+Dropbox uses OAuth v1.0 for authentication.
+
+- Register a new application at `Dropbox Developers`_, and
+
+- fill ``App Key`` and ``App Secret`` values in the settings::
+
+      DROPBOX_APP_ID = ''
+      DROPBOX_API_SECRET = ''
+
+
+------
+Flickr
+------
+Flickr uses OAuth v1.0 for authentication.
+
+- Register a new application at the `Flickr App Garden`_, and
+
+- fill ``Key`` and ``Secret`` values in the settings::
+
+      FLICKR_APP_ID = ''
+      FLICKR_API_SECRET = ''
+
+
+-------
 Testing
 -------
 To test the app just run::
@@ -676,6 +710,12 @@ Attributions to whom deserves:
 
   - GitHub support
 
+- danielgtaylor_ (Daniel G. Taylor)
+
+  - Dropbox support
+  - Flickr support
+  - Provider name context processor
+
 ----------
 Copyrights
 ----------
@@ -749,3 +789,8 @@ Base work is copyrighted by:
 .. _GitHub OAuth: http://developer.github.com/v3/oauth/
 .. _GitHub Developers: https://github.com/account/applications/new
 .. _djangopackages.com: http://djangopackages.com/grids/g/social-auth-backends/
+.. _Dropbox OAuth: https://www.dropbox.com/developers_beta/reference/api
+.. _Dropbox Developers: https://www.dropbox.com/developers/apps
+.. _Flickr OAuth: http://www.flickr.com/services/api/
+.. _Flickr App Garden: http://www.flickr.com/services/apps/create/
+.. _danielgtaylor: https://github.com/danielgtaylor

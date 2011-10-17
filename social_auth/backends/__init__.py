@@ -27,18 +27,15 @@ from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
                    SignatureMethod_HMAC_SHA1
 
 from django.conf import settings
-from django.core.exceptions import MultipleObjectsReturned
 from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
-from django.db.utils import IntegrityError
 
 from social_auth.models import UserSocialAuth
 from social_auth.store import DjangoOpenIDStore
-from social_auth.signals import pre_update, socialauth_registered, \
-                                socialauth_not_registered
-from social_auth.utils import sanitize_log_data
+from social_auth.signals import pre_update, socialauth_registered
+from social_auth.backends.exceptions import StopPipeline
 
 
 # OpenID configuration
@@ -84,6 +81,15 @@ USERNAME_FIXER = _setting('SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
 DEFAULT_USERNAME = _setting('SOCIAL_AUTH_DEFAULT_USERNAME')
 CHANGE_SIGNAL_ONLY = _setting('SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False)
 UUID_LENGHT = _setting('SOCIAL_AUTH_UUID_LENGTH', 16)
+PIPELINE = _setting('SOCIAL_AUTH_PIPELINE', (
+                'social_auth.backends.pipeline.social.social_auth_user',
+                'social_auth.backends.pipeline.associate.associate_by_email',
+                'social_auth.backends.pipeline.user.get_username',
+                'social_auth.backends.pipeline.user.create_user',
+                'social_auth.backends.pipeline.social.associate_user',
+                'social_auth.backends.pipeline.social.load_extra_data',
+                'social_auth.backends.pipeline.user.update_user_details',
+           ))
 
 
 class SocialAuthBackend(ModelBackend):
@@ -108,167 +114,49 @@ class SocialAuthBackend(ModelBackend):
         response = kwargs.get('response')
         details = self.get_user_details(response)
         uid = self.get_user_id(details, response)
-        is_new = False
         user = kwargs.get('user')
+        request = kwargs.get('request')
 
-        try:
-            social_user = self.get_social_auth_user(uid)
-        except UserSocialAuth.DoesNotExist:
-            if user is None:  # new user
-                if not CREATE_USERS or not kwargs.get('create_user', True):
-                    # Send signal for cases where tracking failed registering
-                    # is useful.
-                    socialauth_not_registered.send(sender=self.__class__,
-                                                   uid=uid,
-                                                   response=response,
-                                                   details=details)
-                    return None
-
-                email = details.get('email')
-                if email and ASSOCIATE_BY_MAIL:
-                    # try to associate accounts registered with the same email
-                    # address, only if it's a single object. ValueError is
-                    # raised if multiple objects are returned
-                    try:
-                        user = User.objects.get(email=email)
-                    except MultipleObjectsReturned:
-                        raise ValueError('Not unique email address supplied')
-                    except User.DoesNotExist:
-                        user = None
-                if not user:
-                    username = self.username(details)
-                    logger.debug('Creating new user with username %s and email %s',
-                                 username, sanitize_log_data(email))
-                    user = User.objects.create_user(username=username,
-                                                    email=email)
-                    is_new = True
-
+        # Pipeline:
+        #   Arguments:
+        #       request, backend, social_user, uid, response, details
+        #       user, is_new, args, kwargs
+        kwargs = kwargs.copy()
+        kwargs.update({
+            'backend': self,
+            'request': request,
+            'uid': uid,
+            'user': user,
+            'social_user': None,
+            'response': response,
+            'details': details,
+            'is_new': False,
+        })
+        for name in PIPELINE:
+            mod_name, func_name = name.rsplit('.', 1)
             try:
-                social_user = self.associate_auth(user, uid, response, details)
-            except IntegrityError:
-                # Protect for possible race condition, those bastard with FTL
-                # clicking capabilities
-                social_user = self.get_social_auth_user(uid)
-
-        # Raise ValueError if this account was registered by another user.
-        if user and user != social_user.user:
-            raise ValueError('Account already in use.', social_user)
-        user = social_user.user
-
-        # Flag user "new" status
-        setattr(user, 'is_new', is_new)
-
-        # Update extra_data storage, unless disabled by setting
-        if LOAD_EXTRA_DATA:
-            extra_data = self.extra_data(user, uid, response, details)
-            if extra_data and social_user.extra_data != extra_data:
-                social_user.extra_data = extra_data
-                social_user.save()
-
-        user.social_user = social_user
-
-        # Update user account data.
-        self.update_user_details(user, response, details, is_new)
-        return user
-
-    def username(self, details):
-        """Return an unique username, if SOCIAL_AUTH_FORCE_RANDOM_USERNAME
-        setting is True, then username will be a random USERNAME_MAX_LENGTH
-        chars uuid generated hash
-        """
-        def mk_uuid():
-            """Return hash from unique string"""
-            return uuid4().get_hex()
-
-        if FORCE_RANDOM_USERNAME:
-            username = mk_uuid()
-        elif details.get(USERNAME):
-            username = details[USERNAME]
-        elif DEFAULT_USERNAME:
-            username = DEFAULT_USERNAME
-            if callable(username):
-                username = username()
-        else:
-            username = mk_uuid()
-
-        short_username = username[:USERNAME_MAX_LENGTH - UUID_LENGHT]
-        final_username = None
-
-        while True:
-            final_username = USERNAME_FIXER(username)[:USERNAME_MAX_LENGTH]
-
-            try:
-                User.objects.get(username=final_username)
-            except User.DoesNotExist:
-                break
+                mod = import_module(mod_name)
+            except ImportError:
+                logger.exception('Error importing pipeline %s', name)
             else:
-                # User with same username already exists, generate a unique
-                # username for current user using username as base but adding
-                # a unique hash at the end. Original username is cut to avoid
-                # the field max_length.
-                username = short_username + mk_uuid()[:UUID_LENGHT]
+                pipeline = getattr(mod, func_name, None)
+                if callable(pipeline):
+                    try:
+                        kwargs.update(pipeline(*args, **kwargs) or {})
+                    except StopPipeline:
+                        break
 
-        return final_username
-
-    def associate_auth(self, user, uid, response, details):
-        """Associate a Social Auth with an user account."""
-        return UserSocialAuth.objects.create(user=user, uid=uid,
-                                             provider=self.name)
+        social_user = kwargs.get('social_user')
+        if social_user:
+            # define user.social_user attribute to track current social
+            # account
+            user = social_user.user
+            user.social_user = social_user
+            return user
 
     def extra_data(self, user, uid, response, details):
         """Return default blank user extra data"""
         return ''
-
-    def update_user_details(self, user, response, details, is_new=False):
-        """Update user details with (maybe) new data. Username is not
-        changed if associating a new credential."""
-        changed = False  # flag to track changes
-
-        # check if values update should be left to signals handlers only
-        if not CHANGE_SIGNAL_ONLY:
-            logger.debug('Updating user details for user %s', user,
-                         extra=dict(data=details))
-
-            for name, value in details.iteritems():
-                # do not update username, it was already generated by
-                # self.username(...) and loaded in given instance
-                if name != USERNAME and value and value != getattr(user, name,
-                                                                   None):
-                    setattr(user, name, value)
-                    changed = True
-
-        # Fire a pre-update signal sending current backend instance,
-        # user instance (created or retrieved from database), service
-        # response and processed details.
-        #
-        # Also fire socialauth_registered signal for newly registered
-        # users.
-        #
-        # Signal handlers must return True or False to signal instance
-        # changes. Send method returns a list of tuples with receiver
-        # and it's response.
-        signal_response = lambda (receiver, response): response
-
-        kwargs = {'sender': self.__class__, 'user': user,
-                  'response': response, 'details': details}
-        changed |= any(filter(signal_response, pre_update.send(**kwargs)))
-
-        # Fire socialauth_registered signal on new user registration
-        if is_new:
-            changed |= any(filter(signal_response,
-                                  socialauth_registered.send(**kwargs)))
-
-        if changed:
-            user.save()
-
-    def get_social_auth_user(self, uid):
-        """Return social auth user instance for given uid for current
-        backend.
-
-        Raise DoesNotExist exception if no entry.
-        """
-        return UserSocialAuth.objects.select_related('user')\
-                                     .get(provider=self.name, uid=str(uid))
 
     def get_user_id(self, details, response):
         """Must return a unique ID from values returned on details"""
@@ -283,13 +171,6 @@ class SocialAuthBackend(ModelBackend):
              'last_name': <user last name if any>}
         """
         raise NotImplementedError('Implement in subclass')
-
-    def get_user(self, user_id):
-        """Return user instance for @user_id"""
-        try:
-            return User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return None
 
 
 class OAuthBackend(SocialAuthBackend):
@@ -324,15 +205,6 @@ class OAuthBackend(SocialAuthBackend):
 class OpenIDBackend(SocialAuthBackend):
     """Generic OpenID authentication backend"""
     name = 'openid'
-
-    def get_social_auth_user(self, uid):
-        """Return social auth user instance for given uid. OpenId uses
-        identity_url to identify the user in a unique way and that value
-        identifies the provider too.
-
-        Riase DoesNotExist exception if no entry.
-        """
-        return UserSocialAuth.objects.select_related('user').get(uid=uid)
 
     def get_user_id(self, details, response):
         """Return user unique id provided by service"""
