@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db.utils import IntegrityError
 
 from social_auth.models import User, UserSocialAuth
+from social_auth.backends.pipeline import warn_setting
 
 
 def social_auth_user(backend, uid, user=None, *args, **kwargs):
@@ -45,6 +46,8 @@ def load_extra_data(backend, details, response, social_user, uid, user,
     """Load extra data from provider and store it on current UserSocialAuth
     extra_data field.
     """
+    warn_setting('SOCIAL_AUTH_EXTRA_DATA', 'load_extra_data')
+
     if getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA', True):
         extra_data = backend.extra_data(user, uid, response, details)
         if extra_data and social_user.extra_data != extra_data:

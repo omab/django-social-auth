@@ -3,7 +3,7 @@ from uuid import uuid4
 from django.conf import settings
 
 from social_auth.models import User
-from social_auth.backends.pipeline import USERNAME, USERNAME_MAX_LENGTH
+from social_auth.backends.pipeline import USERNAME, USERNAME_MAX_LENGTH, warn_setting
 from social_auth.signals import socialauth_not_registered, \
                                 socialauth_registered, \
                                 pre_update
@@ -16,10 +16,12 @@ def get_username(details, user=None, *args, **kwargs):
     if user:
         return {'username': user.username}
 
-    FORCE_RANDOM_USERNAME = getattr(settings,
-                                    'SOCIAL_AUTH_FORCE_RANDOM_USERNAME',
-                                    False)
-    if FORCE_RANDOM_USERNAME:
+    warn_setting('SOCIAL_AUTH_FORCE_RANDOM_USERNAME', 'get_username')
+    warn_setting('SOCIAL_AUTH_DEFAULT_USERNAME', 'get_username')
+    warn_setting('SOCIAL_AUTH_UUID_LENGTH', 'get_username')
+    warn_setting('SOCIAL_AUTH_USERNAME_FIXER', 'get_username')
+
+    if getattr(settings, 'SOCIAL_AUTH_FORCE_RANDOM_USERNAME', False):
         username = uuid4().get_hex()
     elif details.get(USERNAME):
         username = details[USERNAME]
@@ -53,12 +55,15 @@ def get_username(details, user=None, *args, **kwargs):
     return {'username': final_username}
 
 
-def create_user(backend, details, response, uid, username, user=None, *args, **kwargs):
+def create_user(backend, details, response, uid, username, user=None, *args,
+                **kwargs):
     """Create user. Depends on get_username pipeline."""
     if user:
         return {'user': user}
     if not username:
         return None
+
+    warn_setting('SOCIAL_AUTH_CREATE_USERS', 'create_user')
 
     if not getattr(settings, 'SOCIAL_AUTH_CREATE_USERS', True):
         # Send signal for cases where tracking failed registering is useful.
@@ -78,6 +83,8 @@ def create_user(backend, details, response, uid, username, user=None, *args, **k
 def update_user_details(backend, details, response, user, is_new=False, *args, **kwargs):
     """Update user details using data from provider."""
     changed = False  # flag to track changes
+
+    warn_setting('SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', 'update_user_details')
 
     # check if values update should be left to signals handlers only
     if not getattr(settings, 'SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False):
