@@ -70,12 +70,9 @@ def dsa_view(redirect_name=None):
                 logger.error(unicode(e), exc_info=True,
                              extra=dict(request=request))
 
-                # Why!?
-                msg = str(e)
-
                 if 'django.contrib.messages' in settings.INSTALLED_APPS:
                     from django.contrib.messages.api import error
-                    error(request, msg, extra_tags=backend_name)
+                    error(request, unicode(e), extra_tags=backend_name)
                 else:
                     logger.warn('Messages framework not in place, some '+
                                 'errors have not been shown to the user.')
@@ -185,4 +182,5 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
     """Complete auth process. Return authenticated user or None."""
     if user and not user.is_authenticated():
         user = None
-    return backend.auth_complete(user=user, *args, **kwargs)
+    kwargs.update({'user': user, 'request': request})
+    return backend.auth_complete(*args, **kwargs)
