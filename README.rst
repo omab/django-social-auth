@@ -11,6 +11,9 @@ third parties.
 
 You can check this documentation on `Read the Docs`_ too.
 
+For Russian services backends (Yandex, Mail.ru, etc.) see http://www.ikrvss.ru/tag/django-social-auth/
+
+
 ----
 Demo
 ----
