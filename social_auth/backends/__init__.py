@@ -133,23 +133,18 @@ class SocialAuthBackend(ModelBackend):
             'is_new': False,
         })
         for name in PIPELINE:
+            mod_name, func_name = name.rsplit('.', 1)
             try:
-                mod_name, func_name = name.rsplit('.', 1)
-                try:
-                    mod = import_module(mod_name)
-                except ImportError:
-                    print "IMPORT ERROR", mod_name, func_name
-                    logger.exception('Error importing pipeline %s', name)
-                else:
-                    pipeline = getattr(mod, func_name, None)
-                    if callable(pipeline):
-                        print "CALLABLE", mod_name, func_name
-                        try:
-                            kwargs.update(pipeline(*args, **kwargs) or {})
-                        except StopPipeline:
-                            break
-            except Exception, e:
-                print "EXCEPTION:", str(e)
+                mod = import_module(mod_name)
+            except ImportError:
+                logger.exception('Error importing pipeline %s', name)
+            else:
+                pipeline = getattr(mod, func_name, None)
+                if callable(pipeline):
+                    try:
+                        kwargs.update(pipeline(*args, **kwargs) or {})
+                    except StopPipeline:
+                        break
 
         social_user = kwargs.get('social_user')
         if social_user:
