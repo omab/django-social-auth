@@ -342,7 +342,7 @@ class OpenIdAuth(BaseAuth):
     def trust_root(self):
         """Return trust-root option"""
         return setting('OPENID_TRUST_ROOT') or \
-               self.request.build_absolute_uri('/'))
+               self.request.build_absolute_uri('/')
 
     def auth_complete(self, *args, **kwargs):
         """Complete auth process"""
