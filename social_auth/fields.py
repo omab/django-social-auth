@@ -45,3 +45,10 @@ class JSONField(models.TextField):
     def value_to_string(self, obj):
         """Return value from object converted to string properly"""
         return smart_unicode(self.get_prep_value(self._get_val_from_obj(obj)))
+
+
+try:
+    from south.modelsinspector import add_introspection_rules
+    add_introspection_rules([], ["^social_auth\.fields\.JSONField"])
+except:
+    pass
