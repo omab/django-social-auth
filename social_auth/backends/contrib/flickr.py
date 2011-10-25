@@ -33,7 +33,9 @@ class FlickrBackend(OAuthBackend):
     """Flickr OAuth authentication backend"""
     name = 'flickr'
     # Default extra data to store
-    EXTRA_DATA = [('id', 'id'), ('username', 'username'), ('expires', EXPIRES_NAME)]
+    EXTRA_DATA = [('id', 'id'),
+                  ('username', 'username'),
+                  ('expires', EXPIRES_NAME)]
 
     def get_user_details(self, response):
         """Return user details from Flickr account"""
@@ -41,6 +43,7 @@ class FlickrBackend(OAuthBackend):
         return {USERNAME: response.get('id'),
                 'email': '',
                 'first_name': response.get('fullname')}
+
 
 class FlickrAuth(ConsumerBasedOAuth):
     """Flickr OAuth authentication mechanism"""
@@ -73,6 +76,7 @@ class FlickrAuth(ConsumerBasedOAuth):
             'username': access_token.username,
             'fullname': access_token.fullname,
         }
+
 
 # Backend definition
 BACKENDS = {
