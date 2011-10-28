@@ -18,9 +18,12 @@ def social_auth_user(backend, uid, user=None, *args, **kwargs):
     except UserSocialAuth.DoesNotExist:
         social_user = None
 
-    if user and social_user and social_user.user != user:
-        raise ValueError('Account already in use.', social_user)
-    return {'social_user': social_user}
+    if social_user:
+        if user and social_user.user != user:
+            raise ValueError('Account already in use.', social_user)
+        elif not user:
+            user = social_user.user
+    return {'social_user': social_user, 'user': user}
 
 
 def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
@@ -38,7 +41,7 @@ def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
         return social_auth_user(backend, uid, user, social_user=social_user,
                                 *args, **kwargs)
     else:
-        return {'social_user': social}
+        return {'social_user': social, 'user': social.user}
 
 
 def load_extra_data(backend, details, response, social_user, uid, user,
