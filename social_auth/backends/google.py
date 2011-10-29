@@ -122,9 +122,10 @@ class GoogleOAuth(BaseGoogleOAuth):
                 getattr(settings, 'GOOGLE_OAUTH_EXTRA_SCOPE', [])
         extra_params.update({
             'scope': ' '.join(scope),
-            'xoauth_displayname': getattr(settings, 'GOOGLE_DISPLAY_NAME',
-                                          'Social Auth')
         })
+        if not self.registered():
+            xoauth_displayname = getattr(settings, 'GOOGLE_DISPLAY_NAME', 'Social Auth')
+            extra_params['xoauth_displayname'] = xoauth_displayname
         return super(GoogleOAuth, self).oauth_request(token, url, extra_params)
 
     def get_key_and_secret(self):
@@ -142,6 +143,11 @@ class GoogleOAuth(BaseGoogleOAuth):
     def enabled(cls):
         """Google OAuth is always enabled because of anonymous access"""
         return True
+
+    def registered(self):
+        """Check if Google OAuth Consumer Key and Consumer Secret are set"""
+        key, secret = self.get_key_and_secret()
+        return key != 'anonymous' and secret != 'anonymous'
 
 
 # TODO: Remove this setting name check, keep for backward compatibility
