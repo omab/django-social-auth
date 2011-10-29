@@ -124,7 +124,8 @@ class GoogleOAuth(BaseGoogleOAuth):
             'scope': ' '.join(scope),
         })
         if not self.registered():
-            xoauth_displayname = getattr(settings, 'GOOGLE_DISPLAY_NAME', 'Social Auth')
+            xoauth_displayname = getattr(settings, 'GOOGLE_DISPLAY_NAME',
+                                         'Social Auth')
             extra_params['xoauth_displayname'] = xoauth_displayname
         return super(GoogleOAuth, self).oauth_request(token, url, extra_params)
 
