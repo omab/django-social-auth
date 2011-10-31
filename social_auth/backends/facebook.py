@@ -28,6 +28,7 @@ from social_auth.utils import sanitize_log_data
 
 # Facebook configuration
 EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
+FACEBOOK_ME = 'https://graph.facebook.com/me?'
 
 
 class FacebookBackend(OAuthBackend):
@@ -60,20 +61,19 @@ class FacebookAuth(BaseOAuth2):
 
     def user_data(self, access_token):
         """Loads user data from service"""
-        params = {'access_token': access_token,}
-        url = 'https://graph.facebook.com/me?' + urlencode(params)
+        data = None
+        url = FACEBOOK_ME + urlencode({'access_token': access_token})
+
         try:
             data = simplejson.load(urlopen(url))
             logger.debug('Found user data for token %s',
                          sanitize_log_data(access_token),
                          extra=dict(data=data))
-            return data
-
         except ValueError:
             params.update({'access_token': sanitize_log_data(access_token)})
             logger.error('Could not load user data from Facebook.',
                          exc_info=True, extra=dict(data=params))
-            return None
+        return data
 
     def auth_complete(self, *args, **kwargs):
         """Completes loging process, must return user instance"""
