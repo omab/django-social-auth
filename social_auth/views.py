@@ -19,28 +19,24 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
-from social_auth.utils import sanitize_redirect
+from social_auth.utils import sanitize_redirect, setting
 
 
-def _setting(name, default=''):
-    return getattr(settings, name, default)
-
-
-DEFAULT_REDIRECT = _setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
-                   _setting('LOGIN_REDIRECT_URL')
-NEW_USER_REDIRECT = _setting('SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
-NEW_ASSOCIATION_REDIRECT = _setting('SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL')
-DISCONNECT_REDIRECT_URL = _setting('SOCIAL_AUTH_DISCONNECT_REDIRECT_URL')
-LOGIN_ERROR_URL = _setting('LOGIN_ERROR_URL', settings.LOGIN_URL)
-COMPLETE_URL_NAME = _setting('SOCIAL_AUTH_COMPLETE_URL_NAME', 'socialauth_complete')
-ASSOCIATE_URL_NAME = _setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
+DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
+                   setting('LOGIN_REDIRECT_URL')
+NEW_USER_REDIRECT = setting('SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
+NEW_ASSOCIATION_REDIRECT = setting('SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL')
+DISCONNECT_REDIRECT_URL = setting('SOCIAL_AUTH_DISCONNECT_REDIRECT_URL')
+LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', settings.LOGIN_URL)
+COMPLETE_URL_NAME = setting('SOCIAL_AUTH_COMPLETE_URL_NAME', 'socialauth_complete')
+ASSOCIATE_URL_NAME = setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
                               'socialauth_associate_complete')
-SOCIAL_AUTH_LAST_LOGIN = _setting('SOCIAL_AUTH_LAST_LOGIN',
+SOCIAL_AUTH_LAST_LOGIN = setting('SOCIAL_AUTH_LAST_LOGIN',
                                   'social_auth_last_login_backend')
-SESSION_EXPIRATION = _setting('SOCIAL_AUTH_SESSION_EXPIRATION', True)
-BACKEND_ERROR_REDIRECT = _setting('SOCIAL_AUTH_BACKEND_ERROR_URL',
-                                  LOGIN_ERROR_URL)
-SANITIZE_REDIRECTS = _setting('SOCIAL_AUTH_SANITIZE_REDIRECTS', True)
+SESSION_EXPIRATION = setting('SOCIAL_AUTH_SESSION_EXPIRATION', True)
+BACKEND_ERROR_REDIRECT = setting('SOCIAL_AUTH_BACKEND_ERROR_URL',
+                                 LOGIN_ERROR_URL)
+SANITIZE_REDIRECTS = setting('SOCIAL_AUTH_SANITIZE_REDIRECTS', True)
 
 
 def dsa_view(redirect_name=None):

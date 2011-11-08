@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 from os import walk
 from os.path import basename
-from uuid import uuid4
 from urllib2 import Request, urlopen
 from urllib import urlencode
 from urlparse import urlsplit
@@ -33,8 +32,8 @@ from django.utils import simplejson
 from django.utils.importlib import import_module
 
 from social_auth.models import UserSocialAuth
+from social_auth.utils import setting
 from social_auth.store import DjangoOpenIDStore
-from social_auth.signals import pre_update, socialauth_registered
 from social_auth.backends.exceptions import StopPipeline
 
 
@@ -64,24 +63,8 @@ SESSION_NAME = 'openid'
 # key for username in user details dict used around, see get_user_details
 # method
 USERNAME = 'username'
-# get User class, could not be auth.User
-User = UserSocialAuth._meta.get_field('user').rel.to
-# username field max length
-USERNAME_MAX_LENGTH = User._meta.get_field(USERNAME).max_length
 
-# a few settings values
-def _setting(name, default=None):
-    return getattr(settings, name, default)
-
-CREATE_USERS = _setting('SOCIAL_AUTH_CREATE_USERS', True)
-ASSOCIATE_BY_MAIL = _setting('SOCIAL_AUTH_ASSOCIATE_BY_MAIL', False)
-LOAD_EXTRA_DATA = _setting('SOCIAL_AUTH_EXTRA_DATA', True)
-FORCE_RANDOM_USERNAME = _setting('SOCIAL_AUTH_FORCE_RANDOM_USERNAME', False)
-USERNAME_FIXER = _setting('SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
-DEFAULT_USERNAME = _setting('SOCIAL_AUTH_DEFAULT_USERNAME')
-CHANGE_SIGNAL_ONLY = _setting('SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False)
-UUID_LENGHT = _setting('SOCIAL_AUTH_UUID_LENGTH', 16)
-PIPELINE = _setting('SOCIAL_AUTH_PIPELINE', (
+PIPELINE = setting('SOCIAL_AUTH_PIPELINE', (
                 'social_auth.backends.pipeline.social.social_auth_user',
                 'social_auth.backends.pipeline.associate.associate_by_email',
                 'social_auth.backends.pipeline.user.get_username',
@@ -197,7 +180,7 @@ class OAuthBackend(SocialAuthBackend):
         extra_data field"""
         data = {'access_token': response.get('access_token', '')}
         name = self.name.replace('-', '_').upper()
-        names = (self.EXTRA_DATA or []) + _setting(name + '_EXTRA_DATA', [])
+        names = (self.EXTRA_DATA or []) + setting(name + '_EXTRA_DATA', [])
         data.update((alias, response.get(name)) for name, alias in names)
         return data
 
@@ -276,8 +259,8 @@ class OpenIDBackend(SocialAuthBackend):
         SREG_ATTR, OLD_AX_ATTRS or AX_SCHEMA_ATTRS
         """
         name = self.name.replace('-', '_').upper()
-        sreg_names = _setting(name + '_SREG_EXTRA_DATA')
-        ax_names = _setting(name + '_AX_EXTRA_DATA')
+        sreg_names = setting(name + '_SREG_EXTRA_DATA')
+        ax_names = setting(name + '_AX_EXTRA_DATA')
         data = self.values_from_response(response, sreg_names, ax_names)
         return data
 
@@ -358,8 +341,8 @@ class OpenIdAuth(BaseAuth):
 
     def trust_root(self):
         """Return trust-root option"""
-        return _setting('OPENID_TRUST_ROOT',
-                        self.request.build_absolute_uri('/'))
+        return setting('OPENID_TRUST_ROOT') or \
+               self.request.build_absolute_uri('/')
 
     def auth_complete(self, *args, **kwargs):
         """Complete auth process"""
@@ -524,8 +507,8 @@ class ConsumerBasedOAuth(BaseOAuth):
         """Return tuple with Consumer Key and Consumer Secret for current
         service provider. Must return (key, secret), order *must* be respected.
         """
-        return _setting(self.SETTINGS_KEY_NAME), \
-               _setting(self.SETTINGS_SECRET_NAME)
+        return setting(self.SETTINGS_KEY_NAME), \
+               setting(self.SETTINGS_SECRET_NAME)
 
     @classmethod
     def enabled(cls):
@@ -600,19 +583,19 @@ class BaseOAuth2(BaseOAuth):
         """Return tuple with Consumer Key and Consumer Secret for current
         service provider. Must return (key, secret), order *must* be respected.
         """
-        return _setting(self.SETTINGS_KEY_NAME), \
-               _setting(self.SETTINGS_SECRET_NAME)
+        return setting(self.SETTINGS_KEY_NAME), \
+               setting(self.SETTINGS_SECRET_NAME)
 
 
 # import sources from where check for auth backends
 SOCIAL_AUTH_IMPORT_SOURCES = (
     'social_auth.backends',
     'social_auth.backends.contrib',
-) + _setting('SOCIAL_AUTH_IMPORT_BACKENDS', ())
+) + setting('SOCIAL_AUTH_IMPORT_BACKENDS', ())
 
 def get_backends():
     backends = {}
-    enabled_backends = _setting('SOCIAL_AUTH_ENABLED_BACKENDS')
+    enabled_backends = setting('SOCIAL_AUTH_ENABLED_BACKENDS')
 
     for mod_name in SOCIAL_AUTH_IMPORT_SOURCES:
         try:

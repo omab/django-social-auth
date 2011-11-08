@@ -1,6 +1,8 @@
 import urlparse
 from collections import defaultdict
 
+from django.conf import settings
+
 
 def sanitize_log_data(secret, data=None, leave_characters=4):
     """
@@ -76,6 +78,11 @@ def group_backend_by_type(items, key=lambda x: x):
         elif issubclass(backend, BaseOAuth):
             result['oauth'].append(item)
     return dict(result)
+
+
+def setting(name, default=None):
+    """Return setting value for given name or default value."""
+    return getattr(settings, name, default)
 
 
 if __name__ == '__main__':
