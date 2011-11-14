@@ -17,6 +17,7 @@ from os.path import basename
 from urllib2 import Request, urlopen
 from urllib import urlencode
 from urlparse import urlsplit
+from collections import defaultdict
 
 from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
@@ -594,9 +595,13 @@ SOCIAL_AUTH_IMPORT_SOURCES = (
 ) + setting('SOCIAL_AUTH_IMPORT_BACKENDS', ())
 
 def get_backends():
-    backends = {}
-    enabled_backends = setting('SOCIAL_AUTH_ENABLED_BACKENDS')
+    enabled = setting('SOCIAL_AUTH_ENABLED_BACKENDS')
+    if enabled:
+        enabled = defaultdict(lambda: False, ((bak, True) for bak in enabled))
+    else:
+        enabled = defaultdict(lambda: True)
 
+    backends = {}
     for mod_name in SOCIAL_AUTH_IMPORT_SOURCES:
         try:
             mod = import_module(mod_name)
@@ -609,19 +614,22 @@ def get_backends():
                 try:
                     name = basename(name).replace('.py', '')
                     sub = import_module(mod_name + '.' + name)
+
                     # register only enabled backends
-                    backends.update(((key, val)
-                                        for key, val in sub.BACKENDS.items()
-                                            if val.enabled() and
-                                               (not enabled_backends or
-                                                key in enabled_backends)))
+                    new = ((key, val) for key, val in sub.BACKENDS.items()
+                                if val.enabled() and enabled[key])
+                    backends.update(new)
                 except (ImportError, AttributeError):
                     pass
+
+    if enabled[OpenIdAuth.AUTH_BACKEND.name]:
+        backends[OpenIdAuth.AUTH_BACKEND.name] = OpenIdAuth
     return backends
+
 
 # load backends from defined modules
 BACKENDS = get_backends()
-BACKENDS[OpenIdAuth.AUTH_BACKEND.name] = OpenIdAuth
+
 
 def get_backend(name, *args, **kwargs):
     """Return auth backend instance *if* it's registered, None in other case"""
