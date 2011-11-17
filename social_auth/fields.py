@@ -21,7 +21,7 @@ class JSONField(models.TextField):
             try:
                 return simplejson.loads(value)
             except Exception, e:
-                raise ValidationError(e.message)
+                raise ValidationError(str(e))
         else:
             return value
 
@@ -33,14 +33,14 @@ class JSONField(models.TextField):
             try:
                 simplejson.loads(value)
             except Exception, e:
-                raise ValidationError(e.message)
+                raise ValidationError(str(e))
 
     def get_prep_value(self, value):
         """Convert value to JSON string before save"""
         try:
             return simplejson.dumps(value)
         except Exception, e:
-            raise ValidationError(e.message)
+            raise ValidationError(str(e))
 
     def value_to_string(self, obj):
         """Return value from object converted to string properly"""
