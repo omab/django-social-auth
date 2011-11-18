@@ -26,6 +26,7 @@ from openid.extensions import sreg, ax
 from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
                    SignatureMethod_HMAC_SHA1
 
+from django.db import models
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
@@ -36,6 +37,12 @@ from social_auth.models import UserSocialAuth
 from social_auth.utils import setting
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline
+
+
+if getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None):
+    User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.rsplit('.', 1))
+else:
+    from django.contrib.auth.models import User
 
 
 # OpenID configuration
@@ -156,6 +163,12 @@ class SocialAuthBackend(ModelBackend):
         """
         raise NotImplementedError('Implement in subclass')
 
+    def get_user(self, user_id):
+        """Return user with given ID from the User model used by this backend"""
+        try:
+            return User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return None
 
 class OAuthBackend(SocialAuthBackend):
     """OAuth authentication backend base class.
