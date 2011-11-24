@@ -17,6 +17,7 @@ from os.path import basename
 from urllib2 import Request, urlopen
 from urllib import urlencode
 from urlparse import urlsplit
+from collections import defaultdict
 
 from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
@@ -25,6 +26,7 @@ from openid.extensions import sreg, ax
 from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
                    SignatureMethod_HMAC_SHA1
 
+from django.db import models
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
@@ -35,6 +37,12 @@ from social_auth.models import UserSocialAuth
 from social_auth.utils import setting
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline
+
+
+if getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None):
+    User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.rsplit('.', 1))
+else:
+    from django.contrib.auth.models import User
 
 
 # OpenID configuration
@@ -155,6 +163,12 @@ class SocialAuthBackend(ModelBackend):
         """
         raise NotImplementedError('Implement in subclass')
 
+    def get_user(self, user_id):
+        """Return user with given ID from the User model used by this backend"""
+        try:
+            return User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return None
 
 class OAuthBackend(SocialAuthBackend):
     """OAuth authentication backend base class.
@@ -594,9 +608,13 @@ SOCIAL_AUTH_IMPORT_SOURCES = (
 ) + setting('SOCIAL_AUTH_IMPORT_BACKENDS', ())
 
 def get_backends():
-    backends = {}
-    enabled_backends = setting('SOCIAL_AUTH_ENABLED_BACKENDS')
+    enabled = setting('SOCIAL_AUTH_ENABLED_BACKENDS')
+    if enabled:
+        enabled = defaultdict(lambda: False, ((bak, True) for bak in enabled))
+    else:
+        enabled = defaultdict(lambda: True)
 
+    backends = {}
     for mod_name in SOCIAL_AUTH_IMPORT_SOURCES:
         try:
             mod = import_module(mod_name)
@@ -609,19 +627,22 @@ def get_backends():
                 try:
                     name = basename(name).replace('.py', '')
                     sub = import_module(mod_name + '.' + name)
+
                     # register only enabled backends
-                    backends.update(((key, val)
-                                        for key, val in sub.BACKENDS.items()
-                                            if val.enabled() and
-                                               (not enabled_backends or
-                                                key in enabled_backends)))
+                    new = ((key, val) for key, val in sub.BACKENDS.items()
+                                if val.enabled() and enabled[key])
+                    backends.update(new)
                 except (ImportError, AttributeError):
                     pass
+
+    if enabled[OpenIdAuth.AUTH_BACKEND.name]:
+        backends[OpenIdAuth.AUTH_BACKEND.name] = OpenIdAuth
     return backends
+
 
 # load backends from defined modules
 BACKENDS = get_backends()
-BACKENDS[OpenIdAuth.AUTH_BACKEND.name] = OpenIdAuth
+
 
 def get_backend(name, *args, **kwargs):
     """Return auth backend instance *if* it's registered, None in other case"""

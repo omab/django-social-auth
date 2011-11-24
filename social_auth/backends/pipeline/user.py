@@ -25,7 +25,7 @@ def get_username(details, user=None, *args, **kwargs):
         username = uuid4().get_hex()
     elif details.get(USERNAME):
         username = details[USERNAME]
-    elif settings.hasattr('SOCIAL_AUTH_DEFAULT_USERNAME'):
+    elif hasattr(settings, 'SOCIAL_AUTH_DEFAULT_USERNAME'):
         username = settings.SOCIAL_AUTH_DEFAULT_USERNAME
         if callable(username):
             username = username()
