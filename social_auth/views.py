@@ -148,6 +148,7 @@ def auth_process(request, backend):
 def complete_process(request, backend, *args, **kwargs):
     """Authentication complete process"""
     user = auth_complete(request, backend, *args, **kwargs)
+    redirect_value = request.session.pop(REDIRECT_FIELD_NAME, '')
 
     if user and getattr(user, 'is_active', True):
         login(request, user)
@@ -169,7 +170,7 @@ def complete_process(request, backend, *args, **kwargs):
         # send him to the new-users-page if defined.
         url = NEW_USER_REDIRECT if NEW_USER_REDIRECT and \
                                    getattr(user, 'is_new', False) else \
-              request.session.pop(REDIRECT_FIELD_NAME, '') or \
+              redirect_value or \
               DEFAULT_REDIRECT
     else:
         if ERROR_MESSAGE:
