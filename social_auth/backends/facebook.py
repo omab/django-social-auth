@@ -70,9 +70,9 @@ class FacebookAuth(BaseOAuth2):
                          sanitize_log_data(access_token),
                          extra=dict(data=data))
         except ValueError:
-            params.update({'access_token': sanitize_log_data(access_token)})
+            extra = {'access_token': sanitize_log_data(access_token)}
             logger.error('Could not load user data from Facebook.',
-                         exc_info=True, extra=dict(data=params))
+                         exc_info=True, extra=extra)
         return data
 
     def auth_complete(self, *args, **kwargs):
