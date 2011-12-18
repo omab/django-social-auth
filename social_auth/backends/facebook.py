@@ -47,7 +47,6 @@ class FacebookBackend(OAuthBackend):
                 'last_name': response.get('last_name', '')}
 
 
-
 class FacebookAuth(BaseOAuth2):
     """Facebook OAuth2 support"""
     AUTH_BACKEND = FacebookBackend
