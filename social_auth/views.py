@@ -29,7 +29,9 @@ NEW_USER_REDIRECT = setting('SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
 NEW_ASSOCIATION_REDIRECT = setting('SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL')
 DISCONNECT_REDIRECT_URL = setting('SOCIAL_AUTH_DISCONNECT_REDIRECT_URL')
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', settings.LOGIN_URL)
-COMPLETE_URL_NAME = setting('SOCIAL_AUTH_COMPLETE_URL_NAME', 'socialauth_complete')
+INACTIVE_USER_URL = setting('SOCIAL_AUTH_INACTIVE_USER_URL', LOGIN_ERROR_URL)
+COMPLETE_URL_NAME = setting('SOCIAL_AUTH_COMPLETE_URL_NAME',
+                            'socialauth_complete')
 ASSOCIATE_URL_NAME = setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
                               'socialauth_associate_complete')
 SOCIAL_AUTH_LAST_LOGIN = setting('SOCIAL_AUTH_LAST_LOGIN',
@@ -150,28 +152,34 @@ def complete_process(request, backend, *args, **kwargs):
     user = auth_complete(request, backend, *args, **kwargs)
     redirect_value = request.session.pop(REDIRECT_FIELD_NAME, '')
 
-    if user and getattr(user, 'is_active', True):
-        login(request, user)
-        # user.social_user is the used UserSocialAuth instance defined
-        # in authenticate process
-        social_user = user.social_user
+    if isinstance(user, HttpResponse):
+        return user
 
-        if SESSION_EXPIRATION :
-            # Set session expiration date if present and not disabled by
-            # setting. Use last social-auth instance for current provider,
-            # users can associate several accounts with a same provider.
-            if social_user.expiration_delta():
-                request.session.set_expiry(social_user.expiration_delta())
+    if user:
+        if getattr(user, 'is_active', True):
+            login(request, user)
+            # user.social_user is the used UserSocialAuth instance defined
+            # in authenticate process
+            social_user = user.social_user
 
-        # store last login backend name in session
-        request.session[SOCIAL_AUTH_LAST_LOGIN] = social_user.provider
+            if SESSION_EXPIRATION :
+                # Set session expiration date if present and not disabled by
+                # setting. Use last social-auth instance for current provider,
+                # users can associate several accounts with a same provider.
+                if social_user.expiration_delta():
+                    request.session.set_expiry(social_user.expiration_delta())
 
-        # Remove possible redirect URL from session, if this is a new account,
-        # send him to the new-users-page if defined.
-        url = NEW_USER_REDIRECT if NEW_USER_REDIRECT and \
-                                   getattr(user, 'is_new', False) else \
-              redirect_value or \
-              DEFAULT_REDIRECT
+            # store last login backend name in session
+            request.session[SOCIAL_AUTH_LAST_LOGIN] = social_user.provider
+
+            # Remove possible redirect URL from session, if this is a new
+            # account, send him to the new-users-page if defined.
+            url = NEW_USER_REDIRECT if NEW_USER_REDIRECT and \
+                                       getattr(user, 'is_new', False) else \
+                  redirect_value or \
+                  DEFAULT_REDIRECT
+        else:
+            url = INACTIVE_USER_URL or LOGIN_ERROR_URL
     else:
         if ERROR_MESSAGE:
             messages.error(request, ERROR_MESSAGE)
