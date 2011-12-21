@@ -319,6 +319,13 @@ Configuration
 
       SOCIAL_AUTH_SANITIZE_REDIRECTS = False
 
+- Inactive users can be redirected to a different page if this setting is
+  defined::
+
+      SOCIAL_AUTH_INACTIVE_USER_URL = '...'
+
+  Defaults to ``LOGIN_ERROR_URL``.
+
 
 -------
 Signals

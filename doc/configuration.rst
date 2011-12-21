@@ -213,6 +213,13 @@ Configuration
 
       SOCIAL_AUTH_SANITIZE_REDIRECTS = False
 
+- Inactive users can be redirected to a different page if this setting is
+  defined::
+
+      SOCIAL_AUTH_INACTIVE_USER_URL = '...'
+
+  Defaults to ``LOGIN_ERROR_URL``.
+
 
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
 .. _Login URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-url
