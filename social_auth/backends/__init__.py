@@ -311,7 +311,7 @@ class BaseAuth(object):
         """Return extra argumens needed on auth process, setting is per bancked
         and defined by <backend name in uppercase>_AUTH_EXTRA_ARGUMENTS.
         """
-        name = self.AUTH_BACKEND.name.upper() + '_AUTH_EXTRA_ARGUMENTS'
+        name = self.AUTH_BACKEND.name.upper().replace('-','_') + '_AUTH_EXTRA_ARGUMENTS'
         return getattr(settings, name, {})
 
     @property
