@@ -171,6 +171,7 @@ class SocialAuthBackend(ModelBackend):
         except User.DoesNotExist:
             return None
 
+
 class OAuthBackend(SocialAuthBackend):
     """OAuth authentication backend base class.
 
@@ -456,8 +457,7 @@ class ConsumerBasedOAuth(BaseOAuth):
         token = self.unauthorized_token()
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
         self.request.session[name] = token.to_string()
-        return self.oauth_request(token, self.AUTHORIZATION_URL,
-                                  self.auth_extra_arguments()).to_url()
+        return self.oauth_authorization_request(token).to_url()
 
     def auth_complete(self, *args, **kwargs):
         """Return user, might be logged in"""
@@ -483,6 +483,11 @@ class ConsumerBasedOAuth(BaseOAuth):
         request = self.oauth_request(token=None, url=self.REQUEST_TOKEN_URL)
         response = self.fetch_response(request)
         return Token.from_string(response)
+
+    def oauth_authorization_request(self, token):
+        """Generate OAuth request to authorize token."""
+        return self.oauth_request(token, self.AUTHORIZATION_URL,
+                                  self.auth_extra_arguments())
 
     def oauth_request(self, token, url, extra_params=None):
         """Generate OAuth request, setups callback url"""
