@@ -102,7 +102,7 @@ Configuration
         'social_auth'
     )
 
-- Add desired authentication backends to AUTHENTICATION_BACKENDS_ setting::
+- Add desired authentication backends to Django's AUTHENTICATION_BACKENDS_ setting::
 
     AUTHENTICATION_BACKENDS = (
         'social_auth.backends.twitter.TwitterBackend',
