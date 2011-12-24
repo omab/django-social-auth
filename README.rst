@@ -323,6 +323,29 @@ Configuration
 
   Defaults to ``LOGIN_ERROR_URL``.
 
+-------------
+Usage example
+-------------
+
+Authentication process starts with ``socialauth_begin`` URL.
+
+Template code example::
+
+    <ul>
+      <li>
+        <a href="{% url socialauth_begin 'twitter' %}">Enter using Twitter</a>
+      </li>
+      <li>
+        <a href="{% url socialauth_begin 'facebook' %}">Enter using Facebook</a>
+      </li>
+    </ul>
+
+In the example above we assume that Twitter and Facebook authentication backends enabled, and following settings provided::
+
+    TWITTER_CONSUMER_KEY = 'real key here'
+    TWITTER_CONSUMER_SECRET = 'real secret here'
+    FACEBOOK_APP_ID = 'real id here'
+    FACEBOOK_API_SECRET = 'real secret here'
 
 -------
 Signals
