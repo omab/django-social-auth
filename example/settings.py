@@ -1,5 +1,11 @@
 from os.path import abspath, dirname, basename, join
 
+try:
+    import social_auth
+except ImportError:
+    import sys
+    sys.path.insert(0, "..")
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -83,8 +89,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'social_auth.context_processors.social_auth_by_type_backends',
 )
-
-#SOCIAL_AUTH_ENABLED_BACKENDS = ('google', 'google-oauth', 'facebook')
 
 LOGIN_REDIRECT_URL = '/'
 
