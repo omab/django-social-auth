@@ -97,8 +97,8 @@ Configuration
 - Configure authentication and association complete URL names to avoid
   possible clashes::
 
-    SOCIAL_AUTH_COMPLETE_URL_NAME  = 'complete'
-    SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'associate_complete'
+    SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
+    SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 
 - Add URLs entries::
 
