@@ -21,7 +21,6 @@ class TwitterTestLogin(TwitterTestCase):
     def test_login_succeful(self):
         response = self.client.get(self.reverse('socialauth_begin', 'twitter'))
         # social_auth must redirect to service page
-        #import pdb; pdb.set_trace()
         self.assertEqual(response.status_code, 302)
 
         # Open first redirect page, it contains user login form because
