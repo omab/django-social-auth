@@ -7,6 +7,9 @@ from social_auth.tests.base import SocialAuthTestsCase, FormParserByID, \
 
 
 class GoogleTestCase(SocialAuthTestsCase):
+
+    name = 'google'
+
     def setUp(self, *args, **kwargs):
         super(GoogleTestCase, self).setUp(*args, **kwargs)
         self.user = getattr(settings, 'TEST_GOOGLE_USER', None)

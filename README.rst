@@ -102,7 +102,7 @@ Configuration
         'social_auth'
     )
 
-- Add desired authentication backends to AUTHENTICATION_BACKENDS_ setting::
+- Add desired authentication backends to Django's AUTHENTICATION_BACKENDS_ setting::
 
     AUTHENTICATION_BACKENDS = (
         'social_auth.backends.twitter.TwitterBackend',
@@ -121,15 +121,6 @@ Configuration
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
-
-- The application will try to import custom backends from the sources defined in::
-
-    SOCIAL_AUTH_IMPORT_BACKENDS = (
-        'myproy.social_auth_extra_services',
-    )
-
-  This way it's easier to add new providers, check the already defined ones
-  in ``social_auth.backends`` for examples.
 
   Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.
@@ -295,7 +286,7 @@ Configuration
       SOCIAL_AUTH_CREATE_USERS = False
 
   It is also possible to associate multiple user accounts with a single email
-  address as long as the rest of the user data is unique. Set value as True 
+  address as long as the rest of the user data is unique. Set value as True
   to enable, otherwise set as False to disable.
   This behavior is disabled by default (false) unless specifically set::
 
@@ -377,7 +368,7 @@ raised.
 Also a new-user signal (``socialauth_registered``) is sent when new accounts are
 created::
 
-    from social_auth.signals import socialauth_registered 
+    from social_auth.signals import socialauth_registered
 
     def new_users_handler(sender, user, response, details, **kwargs):
         user.is_new = True
@@ -597,7 +588,7 @@ GitHub works similar to Facebook (OAuth).
 - also it's possible to define extra permissions with::
 
      GITHUB_EXTENDED_PERMISSIONS = [...]
- 
+
 
 -------
 Dropbox

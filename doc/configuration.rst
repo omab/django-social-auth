@@ -8,7 +8,7 @@ Configuration
         'social_auth'
     )
 
-- Add desired authentication backends to AUTHENTICATION_BACKENDS_ setting::
+- Add desired authentication backends to Django's AUTHENTICATION_BACKENDS_ setting::
 
     AUTHENTICATION_BACKENDS = (
         'social_auth.backends.twitter.TwitterBackend',
@@ -25,15 +25,6 @@ Configuration
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
-
-- The application will try to import custom backends from the sources defined in::
-
-    SOCIAL_AUTH_IMPORT_BACKENDS = (
-        'myproy.social_auth_extra_services',
-    )
-
-  This way it's easier to add new providers, check the already defined ones
-  in ``social_auth.backends`` for examples.
 
   Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.

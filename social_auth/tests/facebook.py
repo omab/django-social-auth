@@ -8,6 +8,7 @@ from social_auth.tests.base import SocialAuthTestsCase, FormParserByID
 class FacebookTestCase(SocialAuthTestsCase):
     SERVER_NAME = 'myapp.com'
     SERVER_PORT = '8000'
+    name = 'facebook'
 
     def setUp(self, *args, **kwargs):
         super(FacebookTestCase, self).setUp(*args, **kwargs)
