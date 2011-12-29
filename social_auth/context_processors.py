@@ -1,4 +1,4 @@
-from social_auth.backends import BACKENDS
+from social_auth.backends import get_backends
 from social_auth.utils import group_backend_by_type
 from social_auth.models import User
 
@@ -29,18 +29,18 @@ def social_auth_by_type_backends(request):
 def social_auth_by_name_backends(request):
     """Load Social Auth current user data to context.
     Will add a social_auth object whose attribute names are the names of each
-    provider, e.g. social_auth.facebook would be the facebook association or 
+    provider, e.g. social_auth.facebook would be the facebook association or
     None, depending on the logged in user's current associations. Providers
-    with a hyphen have the hyphen replaced with an underscore, e.g. 
+    with a hyphen have the hyphen replaced with an underscore, e.g.
     google-oauth2 becomes google_oauth2 when referenced in templates.
     """
-    keys = BACKENDS.keys()
+    keys = get_backends().keys()
     accounts = dict(zip(keys, [None] * len(keys)))
-    
+
     if isinstance(request.user, User) and request.user.is_authenticated():
         for associated in request.user.social_auth.all():
             accounts[associated.provider.replace('-', '_')] = associated
-    
+
     return {'social_auth': accounts}
 
 
@@ -56,7 +56,7 @@ def backends_data(user):
     If user is not authenticated, then first list is empty, and there's no
     difference between the second and third lists.
     """
-    available = BACKENDS.keys()
+    available = get_backends().keys()
     values = {'associated': [],
               'not_associated': available,
               'backends': available}

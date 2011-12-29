@@ -618,12 +618,12 @@ if setting('SOCIAL_AUTH_IMPORT_BACKENDS'):
 # Cache for discovered backends.
 BACKENDS = {}
 
-def get_backend(name, *args, **kwargs):
-    """Returns a backend by name. Backends are stored in the BACKENDS
-    cache dict. If not found, each of the modules referenced in
+def get_backends(force_load=False):
+    """
+    Entry point to the BACKENDS cache. If BACKENDS hasn't been
+    populated, each of the modules referenced in
     AUTHENTICATION_BACKENDS is imported and checked for a BACKENDS
-    definition. If the named backend is found in the module's BACKENDS
-    definition, it's then stored in the cache for future access.
+    definition and if enabled, added to the cache.
 
     Previously all backends were attempted to be loaded at
     import time of this module, which meant that backends that subclass
@@ -633,24 +633,35 @@ def get_backend(name, *args, **kwargs):
 
     This new approach ensures that backends are allowed to subclass from
     bases in this module and still be picked up.
+
+    A force_load boolean arg is also provided so that get_backend
+    below can retry a requested backend that may not yet be discovered.
+    """
+    if not BACKENDS or force_load:
+        for auth_backend in settings.AUTHENTICATION_BACKENDS:
+            module = import_module(auth_backend.rsplit(".", 1)[0])
+            backends = getattr(module, "BACKENDS", {})
+            for name, backend in backends.items():
+                if backend.enabled():
+                    BACKENDS[name] = backend
+    return BACKENDS
+
+
+def get_backend(name, *args, **kwargs):
+    """Returns a backend by name. Backends are stored in the BACKENDS
+    cache dict. If not found, each of the modules referenced in
+    AUTHENTICATION_BACKENDS is imported and checked for a BACKENDS
+    definition. If the named backend is found in the module's BACKENDS
+    definition, it's then stored in the cache for future access.
     """
     try:
         # Cached backend which has previously been discovered.
         return BACKENDS[name](*args, **kwargs)
     except KeyError:
-        pass
-    # Look for a BACKENDS definition on each of the modules for
-    # AUTHENTICATION_BACKENDS.
-    for auth_backend in settings.AUTHENTICATION_BACKENDS:
-        module = import_module(auth_backend.rsplit(".", 1)[0])
-        backends = getattr(module, "BACKENDS", {})
+        # Force a reload of BACKENDS to ensure a missing
+        # backend hasn't been missed.
+        get_backends(force_load=True)
         try:
-            backend = backends[name]
+            return BACKENDS[name](*args, **kwargs)
         except KeyError:
-            pass
-        else:
-            # If the backend is enabled, add it to the cache and
-            # return it.
-            if backend.enabled():
-                BACKENDS[name] = backend
-                return backend(*args, **kwargs)
+            return None
