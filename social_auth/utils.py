@@ -65,12 +65,12 @@ def group_backend_by_type(items, key=lambda x: x):
 
     # Beware of cyclical imports!
     from social_auth.backends import \
-        BACKENDS, OpenIdAuth, BaseOAuth, BaseOAuth2
+        get_backends, OpenIdAuth, BaseOAuth, BaseOAuth2
 
     result = defaultdict(list)
 
     for item in items:
-        backend = BACKENDS[key(item)]
+        backend = get_backends()[key(item)]
         if issubclass(backend, OpenIdAuth):
             result['openid'].append(item)
         elif issubclass(backend, BaseOAuth2):

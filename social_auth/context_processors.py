@@ -1,4 +1,4 @@
-from social_auth.backends import BACKENDS
+from social_auth.backends import get_backends
 from social_auth.utils import group_backend_by_type
 from social_auth.models import User
 
@@ -34,7 +34,7 @@ def social_auth_by_name_backends(request):
     with a hyphen have the hyphen replaced with an underscore, e.g.
     google-oauth2 becomes google_oauth2 when referenced in templates.
     """
-    keys = BACKENDS.keys()
+    keys = get_backends().keys()
     accounts = dict(zip(keys, [None] * len(keys)))
 
     if isinstance(request.user, User) and request.user.is_authenticated():
@@ -56,7 +56,7 @@ def backends_data(user):
     If user is not authenticated, then first list is empty, and there's no
     difference between the second and third lists.
     """
-    available = BACKENDS.keys()
+    available = get_backends().keys()
     values = {'associated': [],
               'not_associated': available,
               'backends': available}
