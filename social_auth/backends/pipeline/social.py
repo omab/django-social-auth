@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db.utils import IntegrityError
 
-from social_auth.models import User, UserSocialAuth
+from social_auth.models import UserSocialAuth
 from social_auth.backends.pipeline import warn_setting
 
 

@@ -12,12 +12,9 @@ enabled.
 import logging
 logger = logging.getLogger(__name__)
 
-from os import walk
-from os.path import basename
 from urllib2 import Request, urlopen
 from urllib import urlencode
 from urlparse import urlsplit
-from collections import defaultdict
 
 from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
@@ -33,7 +30,6 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
-from social_auth.models import UserSocialAuth
 from social_auth.utils import setting
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline

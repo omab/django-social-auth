@@ -13,6 +13,7 @@ from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
 
+
 # Dropbox configuration
 DROPBOX_SERVER = 'dropbox.com'
 DROPBOX_API = 'api.%s' % DROPBOX_SERVER
@@ -33,11 +34,12 @@ class DropboxBackend(OAuthBackend):
         return {USERNAME: response.get('uid'),
                 'email': response.get('email'),
                 'first_name': response.get('display_name')}
-    
+
     def get_user_id(self, details, response):
         """OAuth providers return an unique user id in response"""
         # Dropbox uses a uid parameter instead of id like most others...
         return response['uid']
+
 
 class DropboxAuth(ConsumerBasedOAuth):
     """Dropbox OAuth authentication mechanism"""
@@ -65,6 +67,7 @@ class DropboxAuth(ConsumerBasedOAuth):
         return all(hasattr(settings, name) for name in
                         ('DROPBOX_APP_ID',
                          'DROPBOX_API_SECRET'))
+
 
 # Backend definition
 BACKENDS = {
