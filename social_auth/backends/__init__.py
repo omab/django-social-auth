@@ -105,39 +105,14 @@ class SocialAuthBackend(ModelBackend):
         response = kwargs.get('response')
         details = self.get_user_details(response)
         uid = self.get_user_id(details, response)
-        user = kwargs.get('user')
-        request = kwargs.get('request')
 
-        # Pipeline:
-        #   Arguments:
-        #       request, backend, social_user, uid, response, details
-        #       user, is_new, args, kwargs
-        kwargs = kwargs.copy()
-        kwargs.update({
-            'backend': self,
-            'request': request,
-            'uid': uid,
-            'user': user,
-            'social_user': None,
-            'response': response,
-            'details': details,
-            'is_new': False,
-        })
-        for name in PIPELINE:
-            mod_name, func_name = name.rsplit('.', 1)
-            try:
-                mod = import_module(mod_name)
-            except ImportError:
-                logger.exception('Error importing pipeline %s', name)
-            else:
-                pipeline = getattr(mod, func_name, None)
-                if callable(pipeline):
-                    try:
-                        kwargs.update(pipeline(*args, **kwargs) or {})
-                    except StopPipeline:
-                        break
+        out = self.pipeline(PIPELINE, backend=self, uid=uid,
+                            social_user=None, details=details,
+                            is_new=False, *args, **kwargs)
+        if not isinstance(out, dict):
+            return out
 
-        social_user = kwargs.get('social_user')
+        social_user = out.get('social_user')
         if social_user:
             # define user.social_user attribute to track current social
             # account
@@ -145,6 +120,31 @@ class SocialAuthBackend(ModelBackend):
             user.social_user = social_user
             user.is_new = kwargs.get('is_new')
             return user
+
+    def pipeline(self, pipeline, request, *args, **kwargs):
+        """Pipeline"""
+        out = kwargs.copy()
+
+        for name in pipeline:
+            mod_name, func_name = name.rsplit('.', 1)
+            try:
+                mod = import_module(mod_name)
+            except ImportError:
+                logger.exception('Error importing pipeline %s', name)
+            else:
+                func = getattr(mod, func_name, None)
+
+                if callable(func):
+                    try:
+                        result = func(*args, **out) or {}
+                    except StopPipeline:
+                        break
+
+                    if isinstance(result, dict):
+                        out.update(result)
+                    else:
+                        return result
+        return out
 
     def extra_data(self, user, uid, response, details):
         """Return default blank user extra data"""
