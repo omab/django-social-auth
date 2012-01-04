@@ -12,12 +12,9 @@ enabled.
 import logging
 logger = logging.getLogger(__name__)
 
-from os import walk
-from os.path import basename
 from urllib2 import Request, urlopen
 from urllib import urlencode
 from urlparse import urlsplit
-from collections import defaultdict
 
 from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
@@ -33,7 +30,6 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
-from social_auth.models import UserSocialAuth
 from social_auth.utils import setting
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline
@@ -105,39 +101,14 @@ class SocialAuthBackend(ModelBackend):
         response = kwargs.get('response')
         details = self.get_user_details(response)
         uid = self.get_user_id(details, response)
-        user = kwargs.get('user')
-        request = kwargs.get('request')
 
-        # Pipeline:
-        #   Arguments:
-        #       request, backend, social_user, uid, response, details
-        #       user, is_new, args, kwargs
-        kwargs = kwargs.copy()
-        kwargs.update({
-            'backend': self,
-            'request': request,
-            'uid': uid,
-            'user': user,
-            'social_user': None,
-            'response': response,
-            'details': details,
-            'is_new': False,
-        })
-        for name in PIPELINE:
-            mod_name, func_name = name.rsplit('.', 1)
-            try:
-                mod = import_module(mod_name)
-            except ImportError:
-                logger.exception('Error importing pipeline %s', name)
-            else:
-                pipeline = getattr(mod, func_name, None)
-                if callable(pipeline):
-                    try:
-                        kwargs.update(pipeline(*args, **kwargs) or {})
-                    except StopPipeline:
-                        break
+        out = self.pipeline(PIPELINE, backend=self, uid=uid,
+                            social_user=None, details=details,
+                            is_new=False, *args, **kwargs)
+        if not isinstance(out, dict):
+            return out
 
-        social_user = kwargs.get('social_user')
+        social_user = out.get('social_user')
         if social_user:
             # define user.social_user attribute to track current social
             # account
@@ -145,6 +116,31 @@ class SocialAuthBackend(ModelBackend):
             user.social_user = social_user
             user.is_new = kwargs.get('is_new')
             return user
+
+    def pipeline(self, pipeline, request, *args, **kwargs):
+        """Pipeline"""
+        out = kwargs.copy()
+
+        for name in pipeline:
+            mod_name, func_name = name.rsplit('.', 1)
+            try:
+                mod = import_module(mod_name)
+            except ImportError:
+                logger.exception('Error importing pipeline %s', name)
+            else:
+                func = getattr(mod, func_name, None)
+
+                if callable(func):
+                    try:
+                        result = func(*args, **out) or {}
+                    except StopPipeline:
+                        break
+
+                    if isinstance(result, dict):
+                        out.update(result)
+                    else:
+                        return result
+        return out
 
     def extra_data(self, user, uid, response, details):
         """Return default blank user extra data"""
@@ -170,6 +166,7 @@ class SocialAuthBackend(ModelBackend):
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
+
 
 class OAuthBackend(SocialAuthBackend):
     """OAuth authentication backend base class.
@@ -286,6 +283,7 @@ class BaseAuth(object):
 
         @AUTH_BACKEND   Authorization backend related with this service
     """
+
     AUTH_BACKEND = None
 
     def __init__(self, request, redirect):
@@ -311,7 +309,7 @@ class BaseAuth(object):
         """Return extra argumens needed on auth process, setting is per bancked
         and defined by <backend name in uppercase>_AUTH_EXTRA_ARGUMENTS.
         """
-        name = self.AUTH_BACKEND.name.upper() + '_AUTH_EXTRA_ARGUMENTS'
+        name = self.AUTH_BACKEND.name.upper().replace('-','_') + '_AUTH_EXTRA_ARGUMENTS'
         return getattr(settings, name, {})
 
     @property
@@ -456,8 +454,7 @@ class ConsumerBasedOAuth(BaseOAuth):
         token = self.unauthorized_token()
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
         self.request.session[name] = token.to_string()
-        return self.oauth_request(token, self.AUTHORIZATION_URL,
-                                  self.auth_extra_arguments()).to_url()
+        return self.oauth_authorization_request(token).to_url()
 
     def auth_complete(self, *args, **kwargs):
         """Return user, might be logged in"""
@@ -483,6 +480,11 @@ class ConsumerBasedOAuth(BaseOAuth):
         request = self.oauth_request(token=None, url=self.REQUEST_TOKEN_URL)
         response = self.fetch_response(request)
         return Token.from_string(response)
+
+    def oauth_authorization_request(self, token):
+        """Generate OAuth request to authorize token."""
+        return self.oauth_request(token, self.AUTHORIZATION_URL,
+                                  self.auth_extra_arguments())
 
     def oauth_request(self, token, url, extra_params=None):
         """Generate OAuth request, setups callback url"""
@@ -602,49 +604,60 @@ class BaseOAuth2(BaseOAuth):
                setting(self.SETTINGS_SECRET_NAME)
 
 
-# import sources from where check for auth backends
-SOCIAL_AUTH_IMPORT_SOURCES = (
-    'social_auth.backends',
-    'social_auth.backends.contrib',
-) + setting('SOCIAL_AUTH_IMPORT_BACKENDS', ())
+# Backend loading was previously performed via the
+# SOCIAL_AUTH_IMPORT_BACKENDS setting - as it's no longer used,
+# provide a deprecation warning.
+if setting('SOCIAL_AUTH_IMPORT_BACKENDS'):
+    from warnings import warn
+    warn("SOCIAL_AUTH_IMPORT_SOURCES is deprecated")
 
-def get_backends():
-    enabled = setting('SOCIAL_AUTH_ENABLED_BACKENDS')
-    if enabled:
-        enabled = defaultdict(lambda: False, ((bak, True) for bak in enabled))
-    else:
-        enabled = defaultdict(lambda: True)
+# Cache for discovered backends.
+BACKENDS = {}
 
-    backends = {}
-    for mod_name in SOCIAL_AUTH_IMPORT_SOURCES:
-        try:
-            mod = import_module(mod_name)
-        except ImportError:
-            logger.exception('Error importing %s', mod_name)
-            continue
+def get_backends(force_load=False):
+    """
+    Entry point to the BACKENDS cache. If BACKENDS hasn't been
+    populated, each of the modules referenced in
+    AUTHENTICATION_BACKENDS is imported and checked for a BACKENDS
+    definition and if enabled, added to the cache.
 
-        for directory, subdir, files in walk(mod.__path__[0]):
-            for name in filter(lambda name: name.endswith('.py'), files):
-                try:
-                    name = basename(name).replace('.py', '')
-                    sub = import_module(mod_name + '.' + name)
+    Previously all backends were attempted to be loaded at
+    import time of this module, which meant that backends that subclass
+    bases found in this module would not have the chance to be loaded
+    by the time they were added to this module's BACKENDS dict. See:
+    https://github.com/omab/django-social-auth/issues/204
 
-                    # register only enabled backends
-                    new = ((key, val) for key, val in sub.BACKENDS.items()
-                                if val.enabled() and enabled[key])
-                    backends.update(new)
-                except (ImportError, AttributeError):
-                    pass
+    This new approach ensures that backends are allowed to subclass from
+    bases in this module and still be picked up.
 
-    if enabled[OpenIdAuth.AUTH_BACKEND.name]:
-        backends[OpenIdAuth.AUTH_BACKEND.name] = OpenIdAuth
-    return backends
-
-
-# load backends from defined modules
-BACKENDS = get_backends()
+    A force_load boolean arg is also provided so that get_backend
+    below can retry a requested backend that may not yet be discovered.
+    """
+    if not BACKENDS or force_load:
+        for auth_backend in settings.AUTHENTICATION_BACKENDS:
+            module = import_module(auth_backend.rsplit(".", 1)[0])
+            backends = getattr(module, "BACKENDS", {})
+            for name, backend in backends.items():
+                if backend.enabled():
+                    BACKENDS[name] = backend
+    return BACKENDS
 
 
 def get_backend(name, *args, **kwargs):
-    """Return auth backend instance *if* it's registered, None in other case"""
-    return BACKENDS.get(name, lambda *args, **kwargs: None)(*args, **kwargs)
+    """Returns a backend by name. Backends are stored in the BACKENDS
+    cache dict. If not found, each of the modules referenced in
+    AUTHENTICATION_BACKENDS is imported and checked for a BACKENDS
+    definition. If the named backend is found in the module's BACKENDS
+    definition, it's then stored in the cache for future access.
+    """
+    try:
+        # Cached backend which has previously been discovered.
+        return BACKENDS[name](*args, **kwargs)
+    except KeyError:
+        # Force a reload of BACKENDS to ensure a missing
+        # backend hasn't been missed.
+        get_backends(force_load=True)
+        try:
+            return BACKENDS[name](*args, **kwargs)
+        except KeyError:
+            return None

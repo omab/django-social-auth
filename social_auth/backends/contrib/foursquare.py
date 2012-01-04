@@ -1,7 +1,6 @@
+import urllib
 import logging
 logger = logging.getLogger(__name__)
-
-import urllib
 
 from django.utils import simplejson
 
@@ -23,7 +22,7 @@ class FoursquareBackend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Foursquare account"""
         firstName = response['response']['user']['firstName']
-        lastName = response['response']['user']['lastName']
+        lastName = response['response']['user'].get('lastName', '')
         email = response['response']['user']['contact']['email']
 
         return {USERNAME: firstName + ' ' + lastName,

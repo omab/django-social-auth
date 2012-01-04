@@ -5,6 +5,9 @@ from social_auth.tests.base import SocialAuthTestsCase, FormParserByID, \
 
 
 class TwitterTestCase(SocialAuthTestsCase):
+
+    name = 'twitter'
+
     def setUp(self, *args, **kwargs):
         super(TwitterTestCase, self).setUp(*args, **kwargs)
         self.user = getattr(settings, 'TEST_TWITTER_USER', None)

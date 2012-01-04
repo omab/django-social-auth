@@ -19,6 +19,8 @@ logger = logging.getLogger(__name__)
 from urllib import urlencode
 from urllib2 import Request, urlopen
 
+from oauth2 import Request as OAuthRequest
+
 from django.conf import settings
 from django.utils import simplejson
 
@@ -116,6 +118,12 @@ class GoogleOAuth(BaseGoogleOAuth):
         url, params = request.to_url().split('?', 1)
         return googleapis_email(url, params)
 
+    def oauth_authorization_request(self, token):
+        """Generate OAuth request to authorize token."""
+        return OAuthRequest.from_consumer_and_token(self.consumer,
+                    token=token,
+                    http_url=self.AUTHORIZATION_URL)
+
     def oauth_request(self, token, url, extra_params=None):
         extra_params = extra_params or {}
         scope = GOOGLE_OAUTH_SCOPE + \
@@ -147,8 +155,7 @@ class GoogleOAuth(BaseGoogleOAuth):
 
     def registered(self):
         """Check if Google OAuth Consumer Key and Consumer Secret are set"""
-        key, secret = self.get_key_and_secret()
-        return key != 'anonymous' and secret != 'anonymous'
+        return self.get_key_and_secret() != ('anonymous', 'anonymous')
 
 
 # TODO: Remove this setting name check, keep for backward compatibility

@@ -29,6 +29,18 @@ class SocialAuthTestsCase(unittest.TestCase):
         self.client = Client(**client_kwargs)
         super(SocialAuthTestsCase, self).__init__(*args, **kwargs)
 
+    def test_backend_cache(self):
+        """Ensure that the backend for the testcase gets cached."""
+        try:
+            self.name
+        except AttributeError:
+            pass
+        else:
+            from social_auth import backends
+            backends.BACKENDS = {}
+            self.client.get(self.reverse('socialauth_begin', self.name))
+            self.assertTrue(self.name in backends.BACKENDS)
+
     def get_content(self, url, data=None, use_cookies=False):
         """Return content for given url, if data is not None, then a POST
         request will be issued, otherwise GET will be used"""

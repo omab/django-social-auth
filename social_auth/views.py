@@ -107,12 +107,16 @@ def associate(request, backend):
 @dsa_view()
 def associate_complete(request, backend, *args, **kwargs):
     """Authentication complete process"""
-    if auth_complete(request, backend, request.user, *args, **kwargs):
+    user = auth_complete(request, backend, request.user, *args, **kwargs)
+
+    if not user:
+        url = LOGIN_ERROR_URL
+    elif isinstance(user, HttpResponse):
+        return user
+    else:
         url = NEW_ASSOCIATION_REDIRECT if NEW_ASSOCIATION_REDIRECT else \
               request.session.pop(REDIRECT_FIELD_NAME, '') or \
               DEFAULT_REDIRECT
-    else:
-        url = LOGIN_ERROR_URL
     return HttpResponseRedirect(url)
 
 
@@ -191,5 +195,4 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
     """Complete auth process. Return authenticated user or None."""
     if user and not user.is_authenticated():
         user = None
-    kwargs.update({'user': user, 'request': request})
-    return backend.auth_complete(*args, **kwargs)
+    return backend.auth_complete(user=user, request=request, *args, **kwargs)
