@@ -113,7 +113,7 @@ class SocialAuthBackend(ModelBackend):
             # account
             user = social_user.user
             user.social_user = social_user
-            user.is_new = kwargs.get('is_new')
+            user.is_new = out.get('is_new')
             return user
 
     def pipeline(self, pipeline, *args, **kwargs):
