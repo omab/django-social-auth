@@ -46,6 +46,8 @@ GOOGLE_OPENID_URL = 'https://www.google.com/accounts/o8/id'
 
 EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
+# white-listed domains (else accept all)
+WHITE_LISTED_DOMAINS = getattr(settings, 'WHITE_LISTED_DOMAINS', None)
 
 # Backends
 class GoogleOAuthBackend(OAuthBackend):
@@ -81,7 +83,14 @@ class GoogleBackend(OpenIDBackend):
         """Return user unique id provided by service. For google user email
         is unique enought to flag a single user. Email comes from schema:
         http://axschema.org/contact/email"""
+        # only include white-listed domains
+        import re
+        for domain in WHITE_LISTED_DOMAINS: 
+            if not re.search(domain, details['email']):
+                raise Exception, 'INVALID DOMAIN'
+
         return details['email']
+
 
 # Auth classes
 class GoogleAuth(OpenIdAuth):
