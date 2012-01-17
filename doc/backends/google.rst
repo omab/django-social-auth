@@ -65,6 +65,16 @@ To enable OAuth2 support:
 Check which applications can be included in their `Google Data Protocol Directory`_
 
 
+Google OpenID 
+-------------
+
+Configurable settings:
+
+- Supply a list of domain strings to be checked. The default (empty list) allows all domains.  If a list is provided and a user attempts to sign in with a Google account that is not in the list, then a ValueError will be raised and the user will be redirected to your login error page::
+
+    WHITE_LISTED_DOMAINS = ['mydomain.com']
+
+
 Orkut
 -----
 

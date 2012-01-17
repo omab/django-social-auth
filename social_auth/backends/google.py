@@ -84,10 +84,8 @@ class GoogleBackend(OpenIDBackend):
         is unique enought to flag a single user. Email comes from schema:
         http://axschema.org/contact/email"""
         # only include white-listed domains
-        import re
-        for domain in WHITE_LISTED_DOMAINS: 
-            if not re.search(domain, details['email']):
-                raise ValueError('INVALID DOMAIN')
+        if WHITE_LISTED_DOMAINS and details['email'].split('@')[1] not in WHITE_LISTED_DOMAINS: 
+            raise ValueError('INVALID DOMAIN')
 
         return details['email']
 
