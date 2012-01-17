@@ -47,7 +47,7 @@ GOOGLE_OPENID_URL = 'https://www.google.com/accounts/o8/id'
 EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 # white-listed domains (else accept all)
-WHITE_LISTED_DOMAINS = getattr(settings, 'WHITE_LISTED_DOMAINS', None)
+WHITE_LISTED_DOMAINS = getattr(settings, 'WHITE_LISTED_DOMAINS', [])
 
 # Backends
 class GoogleOAuthBackend(OAuthBackend):
@@ -87,7 +87,7 @@ class GoogleBackend(OpenIDBackend):
         import re
         for domain in WHITE_LISTED_DOMAINS: 
             if not re.search(domain, details['email']):
-                raise Exception, 'INVALID DOMAIN'
+                raise ValueError('INVALID DOMAIN')
 
         return details['email']
 
