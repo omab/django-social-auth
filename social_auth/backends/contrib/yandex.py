@@ -34,9 +34,9 @@ class YandexBackend(OpenIDBackend):
     def get_user_details(self, response):
         """Generate username from identity url"""
         values = super(YandexBackend, self).get_user_details(response)
-        values[USERNAME] = values.get(USERNAME) or \
+        values[USERNAME] = values.get(USERNAME) or\
                            urlparse.urlsplit(response.identity_url)\
-                                   .path.strip('/')
+                           .path.strip('/')
 
         values['email'] = values.get('email') or ''
 
@@ -73,7 +73,7 @@ class YandexOAuth2Backend(OAuthBackend):
 class YandexAuth(OpenIdAuth):
     """Yandex OpenID authentication"""
     AUTH_BACKEND = YandexBackend
-        
+
     def openid_url(self):
         """Returns Yandex authentication URL"""
         if YANDEX_USER_FIELD not in self.data:
@@ -108,7 +108,8 @@ class YandexOAuth2(BaseOAuth2):
         request = Request(settings.YANDEX_OAUTH2_API_URL + '?' + params, headers={'Authorization': "OAuth " + access_token })
 
         try:
-            dom = xml.dom.minidom.parseString(urlopen(request).read())
+            reply = urlopen(request).read()
+            dom = xml.dom.minidom.parseString(reply)
 
             id = getNodeText(dom, "id")
             if "/" in id:
@@ -117,7 +118,10 @@ class YandexOAuth2(BaseOAuth2):
             name = getNodeText(dom, "name")
 
             links = getNodesWithAttribute(dom, "link", {"rel": "userpic"})
-            userpic = links[0].getAttribute("href") if links else ""
+            if not links:
+                userpic = getNodeText(dom, "Portrait")
+            else:
+                userpic = links[0].getAttribute("href") if links else ""
 
             return {"id": id, "name": name, "userpic": userpic, "access_token": access_token}
         except (TypeError, KeyError, IOError, ValueError, IndexError):
@@ -126,7 +130,12 @@ class YandexOAuth2(BaseOAuth2):
 
 
 def getNodeText(dom, nodeName):
-    nodelist = dom.getElementsByTagName(nodeName)[0].childNodes
+    node = dom.getElementsByTagName(nodeName)
+
+    if node:
+        nodelist = node[0].childNodes
+    else:
+        return ''
 
     rc = []
     for node in nodelist:
