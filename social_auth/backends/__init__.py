@@ -101,7 +101,6 @@ class SocialAuthBackend(ModelBackend):
         response = kwargs.get('response')
         details = self.get_user_details(response)
         uid = self.get_user_id(details, response)
-
         out = self.pipeline(PIPELINE, backend=self, uid=uid,
                             social_user=None, details=details,
                             is_new=False, *args, **kwargs)
@@ -114,10 +113,10 @@ class SocialAuthBackend(ModelBackend):
             # account
             user = social_user.user
             user.social_user = social_user
-            user.is_new = kwargs.get('is_new')
+            user.is_new = out.get('is_new')
             return user
 
-    def pipeline(self, pipeline, request, *args, **kwargs):
+    def pipeline(self, pipeline, *args, **kwargs):
         """Pipeline"""
         out = kwargs.copy()
 

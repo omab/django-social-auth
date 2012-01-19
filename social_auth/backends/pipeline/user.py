@@ -92,7 +92,7 @@ def update_user_details(backend, details, response, user, is_new=False, *args,
     if not getattr(settings, 'SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False):
         for name, value in details.iteritems():
             # do not update username, it was already generated
-            if name == USERNAME:
+            if name in (USERNAME, 'id', 'pk'):
                 continue
             if value and value != getattr(user, name, None):
                 setattr(user, name, value)
