@@ -104,8 +104,8 @@ class YandexOAuth2(BaseOAuth2):
 
     def user_data(self, access_token):
         """Return user data from Yandex REST API specified in settings"""
-        params = urlencode({'oauth_token': access_token, 'text': 1, 'format': 'xml'})
-        request = Request(settings.YANDEX_OAUTH2_API_URL + '?' + params)
+        params = urlencode({'text': 1, 'format': 'xml'})
+        request = Request(settings.YANDEX_OAUTH2_API_URL + '?' + params, headers={'Authorization': "OAuth " + access_token })
 
         try:
             dom = xml.dom.minidom.parseString(urlopen(request).read())
@@ -132,6 +132,7 @@ def getNodeText(dom, nodeName):
     for node in nodelist:
         if node.nodeType == node.TEXT_NODE:
             rc.append(node.data)
+
     return ''.join(rc)
 
 def getNodesWithAttribute(dom, nodeName, attrDict):
@@ -140,7 +141,9 @@ def getNodesWithAttribute(dom, nodeName, attrDict):
 
     for node in nodelist:
         for key, value in attrDict.items():
-            if node.hasAttribute(key) and node.getAttribute(key) == value:
+            if node.hasAttribute(key):
+                if value and node.getAttribute(key) != value:
+                    continue
                 found.append(node)
 
     return found
