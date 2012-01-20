@@ -47,7 +47,7 @@ GOOGLE_OPENID_URL = 'https://www.google.com/accounts/o8/id'
 EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 # white-listed domains (else accept all)
-WHITE_LISTED_DOMAINS = getattr(settings, 'WHITE_LISTED_DOMAINS', [])
+GOOGLE_WHITE_LISTED_DOMAINS = getattr(settings, 'GOOGLE_WHITE_LISTED_DOMAINS', [])
 
 # Backends
 class GoogleOAuthBackend(OAuthBackend):
@@ -84,7 +84,7 @@ class GoogleBackend(OpenIDBackend):
         is unique enought to flag a single user. Email comes from schema:
         http://axschema.org/contact/email"""
         # only include white-listed domains
-        if WHITE_LISTED_DOMAINS and details['email'].split('@')[1] not in WHITE_LISTED_DOMAINS: 
+        if GOOGLE_WHITE_LISTED_DOMAINS and details['email'].split('@')[1] not in GOOGLE_WHITE_LISTED_DOMAINS: 
             raise ValueError('INVALID DOMAIN')
 
         return details['email']
