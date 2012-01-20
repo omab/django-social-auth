@@ -107,6 +107,8 @@ def associate(request, backend):
 @dsa_view()
 def associate_complete(request, backend, *args, **kwargs):
     """Authentication complete process"""
+    # pop redirect value before the session is trashed on login()
+    redirect_value = request.session.pop(REDIRECT_FIELD_NAME, '')
     user = auth_complete(request, backend, request.user, *args, **kwargs)
 
     if not user:
@@ -114,9 +116,7 @@ def associate_complete(request, backend, *args, **kwargs):
     elif isinstance(user, HttpResponse):
         return user
     else:
-        url = NEW_ASSOCIATION_REDIRECT if NEW_ASSOCIATION_REDIRECT else \
-              request.session.pop(REDIRECT_FIELD_NAME, '') or \
-              DEFAULT_REDIRECT
+        url = NEW_ASSOCIATION_REDIRECT or redirect_value or DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
 
@@ -153,8 +153,9 @@ def auth_process(request, backend):
 
 def complete_process(request, backend, *args, **kwargs):
     """Authentication complete process"""
-    user = auth_complete(request, backend, *args, **kwargs)
+    # pop redirect value before the session is trashed on login()
     redirect_value = request.session.pop(REDIRECT_FIELD_NAME, '')
+    user = auth_complete(request, backend, *args, **kwargs)
 
     if isinstance(user, HttpResponse):
         return user
@@ -178,10 +179,10 @@ def complete_process(request, backend, *args, **kwargs):
 
             # Remove possible redirect URL from session, if this is a new
             # account, send him to the new-users-page if defined.
-            url = NEW_USER_REDIRECT if NEW_USER_REDIRECT and \
-                                       getattr(user, 'is_new', False) else \
-                  redirect_value or \
-                  DEFAULT_REDIRECT
+            if NEW_USER_REDIRECT and getattr(user, 'is_new', False):
+                url = NEW_USER_REDIRECT
+            else:
+                url = redirect_value or DEFAULT_REDIRECT
         else:
             url = INACTIVE_USER_URL or LOGIN_ERROR_URL
     else:
