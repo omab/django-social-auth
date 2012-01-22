@@ -167,7 +167,7 @@ def complete_process(request, backend, *args, **kwargs):
             # in authenticate process
             social_user = user.social_user
 
-            if SESSION_EXPIRATION :
+            if SESSION_EXPIRATION:
                 # Set session expiration date if present and not disabled by
                 # setting. Use last social-auth instance for current provider,
                 # users can associate several accounts with a same provider.
