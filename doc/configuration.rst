@@ -29,6 +29,9 @@ Configuration
   Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.
 
+  Don't miss ``django.contrib.auth.backends.ModelBackend`` if using ``django.auth``
+  user model or users won't be able to login.
+
 - Define desired backends for your site::
 
     SOCIAL_AUTH_ENABLED_BACKENDS = ('google', 'google-oauth', 'facebook', ...)
