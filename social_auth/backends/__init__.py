@@ -482,8 +482,10 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def oauth_authorization_request(self, token):
         """Generate OAuth request to authorize token."""
-        return self.oauth_request(token, self.AUTHORIZATION_URL,
-                                  self.auth_extra_arguments())
+        return OAuthRequest.from_token_and_callback(token=token,
+                                                    callback=self.redirect_uri,
+                                                    http_url=self.AUTHORIZATION_URL,
+                                                    parameters=self.auth_extra_arguments())
 
     def oauth_request(self, token, url, extra_params=None):
         """Generate OAuth request, setups callback url"""
