@@ -1,7 +1,6 @@
 import re
 
-from django.conf import settings
-
+from social_auth.utils import setting
 from social_auth.tests.base import SocialAuthTestsCase, FormParserByID, \
                                    FormParser, RefreshParser
 
@@ -12,8 +11,8 @@ class GoogleTestCase(SocialAuthTestsCase):
 
     def setUp(self, *args, **kwargs):
         super(GoogleTestCase, self).setUp(*args, **kwargs)
-        self.user = getattr(settings, 'TEST_GOOGLE_USER', None)
-        self.passwd = getattr(settings, 'TEST_GOOGLE_PASSWORD', None)
+        self.user = setting('TEST_GOOGLE_USER')
+        self.passwd = setting('TEST_GOOGLE_PASSWORD')
         # check that user and password are setup properly
         self.assertTrue(self.user)
         self.assertTrue(self.passwd)
@@ -65,4 +64,4 @@ class GoogleOpenIdTestLogin(GoogleTestCase):
             result = self.get_redirect(parser.action, parser.values, use_cookies=True)
 
         response = self.client.get(self.make_relative(result.headers['Location']))
-        self.assertTrue(settings.LOGIN_REDIRECT_URL in self.make_relative(response['Location']))
+        self.assertTrue(setting('LOGIN_REDIRECT_URL') in self.make_relative(response['Location']))

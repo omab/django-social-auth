@@ -1,7 +1,6 @@
 from uuid import uuid4
 
-from django.conf import settings
-
+from social_auth.utils import setting
 from social_auth.models import User
 from social_auth.backends.pipeline import USERNAME, USERNAME_MAX_LENGTH, \
                                           warn_setting
@@ -22,20 +21,19 @@ def get_username(details, user=None, *args, **kwargs):
     warn_setting('SOCIAL_AUTH_UUID_LENGTH', 'get_username')
     warn_setting('SOCIAL_AUTH_USERNAME_FIXER', 'get_username')
 
-    if getattr(settings, 'SOCIAL_AUTH_FORCE_RANDOM_USERNAME', False):
+    if setting('SOCIAL_AUTH_FORCE_RANDOM_USERNAME'):
         username = uuid4().get_hex()
     elif details.get(USERNAME):
         username = details[USERNAME]
-    elif hasattr(settings, 'SOCIAL_AUTH_DEFAULT_USERNAME'):
-        username = settings.SOCIAL_AUTH_DEFAULT_USERNAME
+    elif setting('SOCIAL_AUTH_DEFAULT_USERNAME'):
+        username = setting('SOCIAL_AUTH_DEFAULT_USERNAME')
         if callable(username):
             username = username()
     else:
         username = uuid4().get_hex()
 
-    uuid_lenght = getattr(settings, 'SOCIAL_AUTH_UUID_LENGTH', 16)
-    username_fixer = getattr(settings, 'SOCIAL_AUTH_USERNAME_FIXER',
-                             lambda u: u)
+    uuid_lenght = setting('SOCIAL_AUTH_UUID_LENGTH', 16)
+    username_fixer = setting('SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
 
     short_username = username[:USERNAME_MAX_LENGTH - uuid_lenght]
     final_username = None
@@ -66,7 +64,7 @@ def create_user(backend, details, response, uid, username, user=None, *args,
 
     warn_setting('SOCIAL_AUTH_CREATE_USERS', 'create_user')
 
-    if not getattr(settings, 'SOCIAL_AUTH_CREATE_USERS', True):
+    if not setting('SOCIAL_AUTH_CREATE_USERS', True):
         # Send signal for cases where tracking failed registering is useful.
         socialauth_not_registered.send(sender=backend.__class__,
                                        uid=uid,
@@ -89,7 +87,7 @@ def update_user_details(backend, details, response, user, is_new=False, *args,
     warn_setting('SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', 'update_user_details')
 
     # check if values update should be left to signals handlers only
-    if not getattr(settings, 'SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False):
+    if not setting('SOCIAL_AUTH_CHANGE_SIGNAL_ONLY'):
         for name, value in details.iteritems():
             # do not update username, it was already generated
             if name in (USERNAME, 'id', 'pk'):

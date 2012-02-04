@@ -2,9 +2,9 @@
 from datetime import timedelta
 
 from django.db import models
-from django.conf import settings
 
 from social_auth.fields import JSONField
+from social_auth.utils import setting
 
 
 # If User class is overridden, it *must* provide the following fields
@@ -16,8 +16,8 @@ from social_auth.fields import JSONField
 #   def is_authenticated():
 #       ...
 
-if getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None):
-    User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.rsplit('.', 1))
+if setting('SOCIAL_AUTH_USER_MODEL'):
+    User = models.get_model(*setting('SOCIAL_AUTH_USER_MODEL').rsplit('.', 1))
 else:
     from django.contrib.auth.models import User
 
@@ -43,7 +43,7 @@ class UserSocialAuth(models.Model):
         value stored or it's malformed.
         """
         if self.extra_data:
-            name = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
+            name = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
             try:
                 return timedelta(seconds=int(self.extra_data.get(name)))
             except (ValueError, TypeError):

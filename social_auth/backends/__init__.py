@@ -24,7 +24,6 @@ from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
                    SignatureMethod_HMAC_SHA1
 
 from django.db import models
-from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
@@ -35,8 +34,8 @@ from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline
 
 
-if getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None):
-    User = models.get_model(*settings.SOCIAL_AUTH_USER_MODEL.rsplit('.', 1))
+if setting('SOCIAL_AUTH_USER_MODEL'):
+    User = models.get_model(*setting('SOCIAL_AUTH_USER_MODEL').rsplit('.', 1))
 else:
     from django.contrib.auth.models import User
 
@@ -308,8 +307,8 @@ class BaseAuth(object):
         """Return extra argumens needed on auth process, setting is per bancked
         and defined by <backend name in uppercase>_AUTH_EXTRA_ARGUMENTS.
         """
-        name = self.AUTH_BACKEND.name.upper().replace('-','_') + '_AUTH_EXTRA_ARGUMENTS'
-        return getattr(settings, name, {})
+        backend_name = self.AUTH_BACKEND.name.upper().replace('-','_')
+        return setting(backend_name + '_AUTH_EXTRA_ARGUMENTS', {})
 
     @property
     def uses_redirect(self):
@@ -531,8 +530,8 @@ class ConsumerBasedOAuth(BaseOAuth):
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return all(hasattr(settings, name) for name in
-                        (cls.SETTINGS_KEY_NAME, cls.SETTINGS_SECRET_NAME))
+        return setting(cls.SETTINGS_KEY_NAME) and \
+               setting(cls.SETTINGS_SECRET_NAME)
 
 
 class BaseOAuth2(BaseOAuth):
@@ -635,7 +634,7 @@ def get_backends(force_load=False):
     below can retry a requested backend that may not yet be discovered.
     """
     if not BACKENDS or force_load:
-        for auth_backend in settings.AUTHENTICATION_BACKENDS:
+        for auth_backend in setting('AUTHENTICATION_BACKENDS'):
             module = import_module(auth_backend.rsplit(".", 1)[0])
             backends = getattr(module, "BACKENDS", {})
             for name, backend in backends.items():

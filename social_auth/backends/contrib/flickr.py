@@ -10,14 +10,14 @@ extra_data field, check OAuthBackend class for details on how to extend it.
 """
 try:
     from urlparse import parse_qs
-    parse_qs # placate pyflakes
+    parse_qs  # placate pyflakes
 except ImportError:
     # fall back for Python 2.5
     from cgi import parse_qs
 
-from django.conf import settings
-
 from oauth2 import Token
+
+from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
 
 
@@ -26,16 +26,17 @@ FLICKR_SERVER = 'http://www.flickr.com/services'
 FLICKR_REQUEST_TOKEN_URL = '%s/oauth/request_token' % FLICKR_SERVER
 FLICKR_AUTHORIZATION_URL = '%s/oauth/authorize' % FLICKR_SERVER
 FLICKR_ACCESS_TOKEN_URL = '%s/oauth/access_token' % FLICKR_SERVER
-EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class FlickrBackend(OAuthBackend):
     """Flickr OAuth authentication backend"""
     name = 'flickr'
     # Default extra data to store
-    EXTRA_DATA = [('id', 'id'),
-                  ('username', 'username'),
-                  ('expires', EXPIRES_NAME)]
+    EXTRA_DATA = [
+        ('id', 'id'),
+        ('username', 'username'),
+        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+    ]
 
     def get_user_details(self, response):
         """Return user details from Flickr account"""

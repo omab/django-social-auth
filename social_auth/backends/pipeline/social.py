@@ -1,6 +1,6 @@
-from django.conf import settings
 from django.db.utils import IntegrityError
 
+from social_auth.utils import setting
 from social_auth.models import UserSocialAuth
 from social_auth.backends.pipeline import warn_setting
 
@@ -51,7 +51,7 @@ def load_extra_data(backend, details, response, social_user, uid, user,
     """
     warn_setting('SOCIAL_AUTH_EXTRA_DATA', 'load_extra_data')
 
-    if getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA', True):
+    if setting('SOCIAL_AUTH_EXTRA_DATA', True):
         extra_data = backend.extra_data(user, uid, response, details)
         if extra_data and social_user.extra_data != extra_data:
             social_user.extra_data = extra_data
