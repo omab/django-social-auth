@@ -101,8 +101,8 @@ class SocialAuthBackend(ModelBackend):
         details = self.get_user_details(response)
         uid = self.get_user_id(details, response)
         out = self.pipeline(PIPELINE, backend=self, uid=uid,
-                            social_user=None, details=details,
-                            is_new=False, *args, **kwargs)
+                            details=details, is_new=False,
+                            *args, **kwargs)
         if not isinstance(out, dict):
             return out
 

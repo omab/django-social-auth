@@ -15,6 +15,7 @@ Contents:
    configuration
 
    backends/index
+   pipeline
 
    signals
    contributions
