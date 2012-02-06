@@ -202,6 +202,12 @@ Configuration
 
       <uppercase backend name>_AUTH_EXTRA_ARGUMENTS = {...}
 
+- Also, you can send extra parameters on request token process by defining
+  settings per provider in the same way explained above but with this other
+  suffix::
+
+      <uppercase backend name>_REQUEST_TOKEN_EXTRA_ARGUMENTS = {...}
+
 - By default the application doesn't make redirects to different domains, to
   disable this behavior::
 

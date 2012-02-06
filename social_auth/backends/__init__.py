@@ -319,9 +319,18 @@ class BaseAuth(object):
         kwargs.update({ self.AUTH_BACKEND.name: True })
         return authenticate(*args, **kwargs)
 
+    def request_token_extra_arguments(self):
+        """Return extra arguments needed on request-token process,
+        setting is per backend and defined by:
+            <backend name in uppercase>_REQUEST_TOKEN_EXTRA_ARGUMENTS.
+        """
+        backend_name = self.AUTH_BACKEND.name.upper().replace('-','_')
+        return setting(backend_name + '_REQUEST_TOKEN_EXTRA_ARGUMENTS', {})
+
     def auth_extra_arguments(self):
-        """Return extra argumens needed on auth process, setting is per bancked
-        and defined by <backend name in uppercase>_AUTH_EXTRA_ARGUMENTS.
+        """Return extra arguments needed on auth process, setting is per
+        backend and defined by:
+            <backend name in uppercase>_AUTH_EXTRA_ARGUMENTS.
         """
         backend_name = self.AUTH_BACKEND.name.upper().replace('-','_')
         return setting(backend_name + '_AUTH_EXTRA_ARGUMENTS', {})
@@ -491,7 +500,8 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def unauthorized_token(self):
         """Return request for unauthorized token (first stage)"""
-        request = self.oauth_request(token=None, url=self.REQUEST_TOKEN_URL)
+        request = self.oauth_request(token=None, url=self.REQUEST_TOKEN_URL,
+                             extra_params=self.request_token_extra_arguments())
         response = self.fetch_response(request)
         return Token.from_string(response)
 
