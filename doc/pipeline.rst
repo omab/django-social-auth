@@ -51,3 +51,6 @@ is raised at any point.
 If any function returns something else beside a ``dict`` or ``None``, the
 workflow will be cut and the value returned immediately, this is useful to
 return ``HttpReponse`` instances like ``HttpResponseRedirect``.
+
+
+.. _django-social-auth: https://github.com/omab/django-social-auth
