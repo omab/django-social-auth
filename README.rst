@@ -933,4 +933,4 @@ Base work is copyrighted by:
 .. _Flickr OAuth: http://www.flickr.com/services/api/
 .. _Flickr App Garden: http://www.flickr.com/services/apps/create/
 .. _danielgtaylor: https://github.com/danielgtaylor
-.. _example application: https://github.com/omab/django-social-auth/blob/master/example/local_settings.py.template#L21
+.. _example application: https://github.com/omab/django-social-auth/blob/master/example/local_settings.py.template#L23
