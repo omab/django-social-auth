@@ -45,6 +45,8 @@ GOOGLEAPIS_EMAIL = 'https://www.googleapis.com/userinfo/email'
 GOOGLE_OPENID_URL = 'https://www.google.com/accounts/o8/id'
 
 
+# white-listed domains (else accept all)
+GOOGLE_WHITE_LISTED_DOMAINS = getattr(settings, 'GOOGLE_WHITE_LISTED_DOMAINS', [])
 
 # Backends
 class GoogleOAuthBackend(OAuthBackend):
@@ -82,6 +84,10 @@ class GoogleBackend(OpenIDBackend):
         """Return user unique id provided by service. For google user email
         is unique enought to flag a single user. Email comes from schema:
         http://axschema.org/contact/email"""
+        # only include white-listed domains
+        if GOOGLE_WHITE_LISTED_DOMAINS and details['email'].split('@')[1] not in GOOGLE_WHITE_LISTED_DOMAINS: 
+            raise ValueError('INVALID DOMAIN')
+
         return details['email']
 
 
