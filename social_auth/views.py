@@ -49,6 +49,8 @@ def dsa_view(redirect_name=None):
             try:
                 return func(request, backend, *args, **kwargs)
             except Exception, e:  # some error ocurred
+                if setting('DEBUG'):
+                    raise
                 backend_name = backend.AUTH_BACKEND.name
 
                 logger.error(unicode(e), exc_info=True,
@@ -190,4 +192,18 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
     """Complete auth process. Return authenticated user or None."""
     if user and not user.is_authenticated():
         user = None
-    return backend.auth_complete(user=user, request=request, *args, **kwargs)
+
+    name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
+    if request.session.get(name):
+        data = request.session.pop(name)
+        request.session.modified = True
+        return backend.continue_pipeline(pipeline_index=data['next_index'],
+                                         user=user,
+                                         request=request,
+                                         uid=data['uid'],
+                                         details=data['details'],
+                                         is_new=data['is_new'],
+                                         response=data['response'],
+                                         *args, **kwargs)
+    else:
+        return backend.auth_complete(user=user, request=request, *args, **kwargs)

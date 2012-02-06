@@ -84,6 +84,7 @@ class GoogleBackend(OpenIDBackend):
         http://axschema.org/contact/email"""
         return details['email']
 
+
 # Auth classes
 class GoogleAuth(OpenIdAuth):
     """Google OpenID authentication"""

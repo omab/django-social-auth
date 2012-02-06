@@ -53,4 +53,38 @@ workflow will be cut and the value returned immediately, this is useful to
 return ``HttpReponse`` instances like ``HttpResponseRedirect``.
 
 
+Partial Pipeline
+----------------
+
+It's possible to cut the pipeline process to return to the user asking for more
+data and resume the process later, to accomplish this add the entry
+``social_auth.backends.pipeline.misc.save_status_to_session`` (or a similar
+implementation) to the pipeline setting before any entry that returns an
+``HttpResponse`` instance::
+
+    SOCIAL_AUTH_PIPELINE = (
+        ...
+        social_auth.backends.pipeline.misc.save_status_to_session,
+        app.pipeline.redirect_to_basic_user_data_form
+        ...
+    )
+
+When it's time to resume the process just redirect the user to
+``/complete/<backend>/`` view. By default the pipeline will be resumed in the
+next entry after ``save_status_to_session`` but this can be modified by setting
+the following setting to the import path of the pipeline entry to resume
+processing::
+
+    SOCIAL_AUTH_PIPELINE_RESUME_ENTRY = <a zero based index>
+
+``save_status_to_session`` saves needed data into user session, the key can be
+defined by ``SOCIAL_AUTH_PARTIAL_PIPELINE_KEY`` which default value is
+``partial_pipeline``::
+
+    SOCIAL_AUTH_PARTIAL_PIPELINE_KEY = 'partial_pipeline'
+
+Check the `example application`_ to check a basic usage.
+
+
 .. _django-social-auth: https://github.com/omab/django-social-auth
+.. _example application: https://github.com/omab/django-social-auth/blob/master/example/local_settings.py.template#L21

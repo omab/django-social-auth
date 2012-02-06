@@ -98,11 +98,22 @@ class SocialAuthBackend(ModelBackend):
             return None
 
         response = kwargs.get('response')
-        details = self.get_user_details(response)
-        uid = self.get_user_id(details, response)
-        out = self.pipeline(PIPELINE, backend=self, uid=uid,
-                            details=details, is_new=False,
+
+        if 'pipeline_index' in kwargs:
+            details = kwargs.pop('details')
+            uid = kwargs.pop('uid')
+            is_new = kwargs.pop('is_new')
+            pipeline = PIPELINE[kwargs['pipeline_index']:]
+        else:
+            details = self.get_user_details(response)
+            uid = self.get_user_id(details, response)
+            is_new = False
+            pipeline = PIPELINE
+
+        out = self.pipeline(pipeline, backend=self, uid=uid,
+                            details=details, is_new=is_new,
                             *args, **kwargs)
+
         if not isinstance(out, dict):
             return out
 
@@ -302,6 +313,11 @@ class BaseAuth(object):
     def auth_complete(self, *args, **kwargs):
         """Completes loging process, must return user instance"""
         raise NotImplementedError('Implement in subclass')
+
+    def continue_pipeline(self, *args, **kwargs):
+        """Continue previos halted pipeline"""
+        kwargs.update({ self.AUTH_BACKEND.name: True })
+        return authenticate(*args, **kwargs)
 
     def auth_extra_arguments(self):
         """Return extra argumens needed on auth process, setting is per bancked
