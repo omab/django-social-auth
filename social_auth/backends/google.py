@@ -30,9 +30,9 @@ from social_auth.backends import OpenIdAuth, ConsumerBasedOAuth, BaseOAuth2, \
 
 # Google OAuth base configuration
 GOOGLE_OAUTH_SERVER = 'www.google.com'
-GOOGLE_OAUTH_AUTHORIZATION_URL = 'https://www.google.com/accounts/OAuthAuthorizeToken'
-GOOGLE_OAUTH_REQUEST_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetRequestToken'
-GOOGLE_OAUTH_ACCESS_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetAccessToken'
+AUTHORIZATION_URL = 'https://www.google.com/accounts/OAuthAuthorizeToken'
+REQUEST_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetRequestToken'
+ACCESS_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetAccessToken'
 
 # Google OAuth2 base configuration
 GOOGLE_OAUTH2_SERVER = 'accounts.google.com'
@@ -44,9 +44,6 @@ GOOGLE_OAUTH_SCOPE = ['https://www.googleapis.com/auth/userinfo#email']
 GOOGLEAPIS_EMAIL = 'https://www.googleapis.com/userinfo/email'
 GOOGLE_OPENID_URL = 'https://www.google.com/accounts/o8/id'
 
-
-# white-listed domains (else accept all)
-GOOGLE_WHITE_LISTED_DOMAINS = getattr(settings, 'GOOGLE_WHITE_LISTED_DOMAINS', [])
 
 # Backends
 class GoogleOAuthBackend(OAuthBackend):
@@ -81,12 +78,15 @@ class GoogleBackend(OpenIDBackend):
     name = 'google'
 
     def get_user_id(self, details, response):
-        """Return user unique id provided by service. For google user email
+        """
+        Return user unique id provided by service. For google user email
         is unique enought to flag a single user. Email comes from schema:
-        http://axschema.org/contact/email"""
-        # only include white-listed domains
-        if GOOGLE_WHITE_LISTED_DOMAINS and details['email'].split('@')[1] not in GOOGLE_WHITE_LISTED_DOMAINS: 
-            raise ValueError('INVALID DOMAIN')
+        http://axschema.org/contact/email
+        """
+        # White listed domains (accepts all if list is empty)
+        domains = setting('GOOGLE_WHITE_LISTED_DOMAINS', [])
+        if domains and details['email'].split('@', 1)[1] not in domains:
+            raise ValueError('Domain not allowed')
 
         return details['email']
 
@@ -103,9 +103,9 @@ class GoogleAuth(OpenIdAuth):
 
 class BaseGoogleOAuth(ConsumerBasedOAuth):
     """Base class for Google OAuth mechanism"""
-    AUTHORIZATION_URL = GOOGLE_OAUTH_AUTHORIZATION_URL
-    REQUEST_TOKEN_URL = GOOGLE_OAUTH_REQUEST_TOKEN_URL
-    ACCESS_TOKEN_URL = GOOGLE_OAUTH_ACCESS_TOKEN_URL
+    AUTHORIZATION_URL = AUTHORIZATION_URL
+    REQUEST_TOKEN_URL = REQUEST_TOKEN_URL
+    ACCESS_TOKEN_URL = ACCESS_TOKEN_URL
     SERVER_URL = GOOGLE_OAUTH_SERVER
 
     def user_data(self, access_token):
