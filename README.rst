@@ -712,14 +712,15 @@ GitHub
 ------
 GitHub works similar to Facebook (OAuth).
 
-- Register a new application at `GitHub Developers`_, and
+- Register a new application at `GitHub Developers`_, set your site domain as
+  the callback URL or it might cause some troubles when associating accounts,
 
-- fill ``App Id`` and ``App Secret`` values in the settings::
+- Fill ``App Id`` and ``App Secret`` values in the settings::
 
       GITHUB_APP_ID = ''
       GITHUB_API_SECRET = ''
 
-- also it's possible to define extra permissions with::
+- Also it's possible to define extra permissions with::
 
      GITHUB_EXTENDED_PERMISSIONS = [...]
 
