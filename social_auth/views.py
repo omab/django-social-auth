@@ -124,17 +124,14 @@ def disconnect(request, backend, association_id=None):
 
 def auth_process(request, backend):
     """Authenticate using social backend"""
-    # Save any defined redirect_to value into session
-    if REDIRECT_FIELD_NAME in request.REQUEST:
-        data = request.POST if request.method == 'POST' else request.GET
-        if REDIRECT_FIELD_NAME in data:
-            # Check and sanitize a user-defined GET/POST redirect_to field
-            # value.
-            redirect = data[REDIRECT_FIELD_NAME]
-
-            if setting('SOCIAL_AUTH_SANITIZE_REDIRECTS', True):
-                redirect = sanitize_redirect(request.get_host(), redirect)
-            request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
+    # Save any defined next value into session
+    data = request.POST if request.method == 'POST' else request.GET
+    if REDIRECT_FIELD_NAME in data:
+        # Check and sanitize a user-defined GET/POST next field value
+        redirect = data[REDIRECT_FIELD_NAME]
+        if setting('SOCIAL_AUTH_SANITIZE_REDIRECTS', True):
+            redirect = sanitize_redirect(request.get_host(), redirect)
+        request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
 
     if backend.uses_redirect:
         return HttpResponseRedirect(backend.auth_url())
