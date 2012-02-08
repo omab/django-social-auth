@@ -638,11 +638,11 @@ if setting('SOCIAL_AUTH_IMPORT_BACKENDS'):
     warn("SOCIAL_AUTH_IMPORT_SOURCES is deprecated")
 
 # Cache for discovered backends.
-BACKENDS = {}
+BACKENDSCACHE = {}
 
 def get_backends(force_load=False):
     """
-    Entry point to the BACKENDS cache. If BACKENDS hasn't been
+    Entry point to the BACKENDS cache. If BACKENDSCACHE hasn't been
     populated, each of the modules referenced in
     AUTHENTICATION_BACKENDS is imported and checked for a BACKENDS
     definition and if enabled, added to the cache.
@@ -659,18 +659,18 @@ def get_backends(force_load=False):
     A force_load boolean arg is also provided so that get_backend
     below can retry a requested backend that may not yet be discovered.
     """
-    if not BACKENDS or force_load:
+    if not BACKENDSCACHE or force_load:
         for auth_backend in setting('AUTHENTICATION_BACKENDS'):
             module = import_module(auth_backend.rsplit(".", 1)[0])
             backends = getattr(module, "BACKENDS", {})
             for name, backend in backends.items():
                 if backend.enabled():
-                    BACKENDS[name] = backend
-    return BACKENDS
+                    BACKENDSCACHE[name] = backend
+    return BACKENDSCACHE
 
 
 def get_backend(name, *args, **kwargs):
-    """Returns a backend by name. Backends are stored in the BACKENDS
+    """Returns a backend by name. Backends are stored in the BACKENDSCACHE
     cache dict. If not found, each of the modules referenced in
     AUTHENTICATION_BACKENDS is imported and checked for a BACKENDS
     definition. If the named backend is found in the module's BACKENDS
@@ -678,12 +678,12 @@ def get_backend(name, *args, **kwargs):
     """
     try:
         # Cached backend which has previously been discovered.
-        return BACKENDS[name](*args, **kwargs)
+        return BACKENDSCACHE[name](*args, **kwargs)
     except KeyError:
         # Force a reload of BACKENDS to ensure a missing
         # backend hasn't been missed.
         get_backends(force_load=True)
         try:
-            return BACKENDS[name](*args, **kwargs)
+            return BACKENDSCACHE[name](*args, **kwargs)
         except KeyError:
             return None
