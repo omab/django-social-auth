@@ -687,3 +687,7 @@ def get_backend(name, *args, **kwargs):
             return BACKENDSCACHE[name](*args, **kwargs)
         except KeyError:
             return None
+
+BACKENDS = {
+    'openid': OpenIdAuth
+}
