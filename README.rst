@@ -216,10 +216,10 @@ Configuration
         'social_auth.context_processors.social_auth_by_type_backends',
     )
 
-  * `social_auth_by_name_backends`:
-    Adds a `social_auth` dict where each key is a provider name and its value
+  * ``social_auth_by_name_backends``:
+    Adds a ``social_auth`` dict where each key is a provider name and its value
     is a UserSocialAuth instance if user has associated an account with that
-    provider, otherwise `None`.
+    provider, otherwise ``None``.
 
   * ``social_auth_backends``:
     Adds a ``social_auth`` dict with keys are ``associated``, ``not_associated`` and
