@@ -64,6 +64,13 @@ class TwitterAuth(ConsumerBasedOAuth):
         except ValueError:
             return None
 
+    def auth_complete(self, *args, **kwargs):
+        """Completes loging process, must return user instance"""
+        if 'denied' in self.data:
+            raise ValueError('Authentication denied')
+        else:
+            return super(TwitterAuth, self).auth_complete(*args, **kwargs)
+
 
 # Backend definition
 BACKENDS = {
