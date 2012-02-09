@@ -22,6 +22,7 @@ Contents:
    signals
    contributions
    testing
+   use_cases
    miscellaneous
    bugs
 
