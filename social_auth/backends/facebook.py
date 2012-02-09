@@ -39,7 +39,7 @@ class FacebookBackend(OAuthBackend):
         """Return user details from Facebook account"""
         return {USERNAME: response.get('username'),
                 'email': response.get('email', ''),
-                'fullname': response['name'],
+                'fullname': response.get('name', ''),
                 'first_name': response.get('first_name', ''),
                 'last_name': response.get('last_name', '')}
 
