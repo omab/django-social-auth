@@ -11,8 +11,6 @@ OAuth settings ORKUT_CONSUMER_KEY and ORKUT_CONSUMER_SECRET are needed
 to enable this service support.
 """
 import urllib
-import logging
-logger = logging.getLogger(__name__)
 
 from django.utils import simplejson
 

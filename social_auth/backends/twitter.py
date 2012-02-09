@@ -11,9 +11,6 @@ User screen name is used to generate username.
 By default account id is stored in extra_data field, check OAuthBackend
 class for details on how to extend it.
 """
-import logging
-logger = logging.getLogger(__name__)
-
 from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME

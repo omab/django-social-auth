@@ -3,9 +3,6 @@ Yahoo OpenID support
 
 No extra configurations are needed to make this work.
 """
-import logging
-logger = logging.getLogger(__name__)
-
 from social_auth.backends import OpenIDBackend, OpenIdAuth
 
 

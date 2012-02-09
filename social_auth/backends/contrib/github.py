@@ -13,9 +13,6 @@ field, check OAuthBackend class for details on how to extend it.
 """
 import cgi
 import urllib
-import logging
-logger = logging.getLogger(__name__)
-
 
 from django.utils import simplejson
 from django.contrib.auth import authenticate

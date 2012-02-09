@@ -5,9 +5,6 @@ Notes:
       on third party providers that (if using POST) won't be sending crfs
       token back.
 """
-import logging
-logger = logging.getLogger(__name__)
-
 from functools import wraps
 
 from django.http import HttpResponseRedirect, HttpResponse, \
@@ -19,7 +16,7 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
-from social_auth.utils import sanitize_redirect, setting
+from social_auth.utils import sanitize_redirect, setting, log
 
 
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
@@ -53,14 +50,14 @@ def dsa_view(redirect_name=None):
                     raise
                 backend_name = backend.AUTH_BACKEND.name
 
-                logger.error(unicode(e), exc_info=True,
-                             extra=dict(request=request))
+                log('error', unicode(e), exc_info=True,
+                    extra=dict(request=request))
 
                 if 'django.contrib.messages' in setting('INSTALLED_APPS'):
                     from django.contrib.messages.api import error
                     error(request, unicode(e), extra_tags=backend_name)
                 else:
-                    logger.warn('Messages framework not in place, some '+
+                    log('warn', 'Messages framework not in place, some '+
                                 'errors have not been shown to the user.')
 
                 url = setting('SOCIAL_AUTH_BACKEND_ERROR_URL', LOGIN_ERROR_URL)

@@ -9,9 +9,6 @@ Also the modules *must* define a BACKENDS dictionary with the backend name
 (which is used for URLs matching) and Auth class, otherwise it won't be
 enabled.
 """
-import logging
-logger = logging.getLogger(__name__)
-
 from urllib2 import Request, urlopen
 from urllib import urlencode
 from urlparse import urlsplit
@@ -29,7 +26,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
-from social_auth.utils import setting
+from social_auth.utils import setting, log
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline
 
@@ -135,7 +132,7 @@ class SocialAuthBackend(ModelBackend):
             try:
                 mod = import_module(mod_name)
             except ImportError:
-                logger.exception('Error importing pipeline %s', name)
+                log('exception', 'Error importing pipeline %s', name)
             else:
                 func = getattr(mod, func_name, None)
 
