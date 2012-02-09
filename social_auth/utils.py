@@ -69,9 +69,10 @@ def group_backend_by_type(items, key=lambda x: x):
         get_backends, OpenIdAuth, BaseOAuth, BaseOAuth2
 
     result = defaultdict(list)
+    backends = get_backends()
 
     for item in items:
-        backend = get_backends()[key(item)]
+        backend = backends[key(item)]
         if issubclass(backend, OpenIdAuth):
             result['openid'].append(item)
         elif issubclass(backend, BaseOAuth2):
