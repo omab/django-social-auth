@@ -118,21 +118,22 @@ Configuration
     is a UserSocialAuth instance if user has associated an account with that
     provider, otherwise `None`.
 
-  * `social_auth_backends`:
-    Adds a `social_auth` dict with keys are `associated, `not_associated` and
-    `backends`. `associated` key is a list of `UserSocialAuth` instances
-    associated with current user. `not_associated` is a list of providers names
-    that the current user doesn't have any association yet. `backends` holds
+  * ``social_auth_backends``:
+    Adds a ``social_auth`` dict with keys are ``associated``, ``not_associated`` and
+    ``backends``. ``associated`` key is a list of ``UserSocialAuth`` instances
+    associated with current user. ``not_associated`` is a list of providers names
+    that the current user doesn't have any association yet. ``backends`` holds
     the list of backend names supported.
 
-  * `social_auth_by_type_backends`:
-    Simiar to `social_auth_backends` but each value is grouped by backend type
-    `openid`, `oauth2` and `oauth`.
+  * ``social_auth_by_type_backends``:
+    Simiar to ``social_auth_backends`` but each value is grouped by backend type
+    ``openid``, ``oauth2`` and ``oauth``.
 
-  Check `social_auth.context_processors` for details.
+  Check ``social_auth.context_processors`` for details.
 
-  **Note**: `social_auth_backends` and `social_auth_by_type_backends` don't
-            play nice together.
+  **Note**:
+  ``social_auth_backends`` and ``social_auth_by_type_backends`` don't play nice
+  together.
 
 - Sync database to create needed models::
 
