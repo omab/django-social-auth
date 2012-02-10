@@ -16,7 +16,6 @@ Contents:
 
    backends/index
    pipeline
-   pipeline
    deprecated
 
    signals
