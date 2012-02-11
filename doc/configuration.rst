@@ -17,6 +17,7 @@ Configuration
         'social_auth.backends.google.GoogleOAuth2Backend',
         'social_auth.backends.google.GoogleBackend',
         'social_auth.backends.yahoo.YahooBackend',
+        'social_auth.backends.browserid.BrowserIDBackend',
         'social_auth.backends.contrib.linkedin.LinkedinBackend',
         'social_auth.backends.contrib.livejournal.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',

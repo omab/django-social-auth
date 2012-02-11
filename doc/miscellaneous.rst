@@ -26,6 +26,7 @@ package and link it there.
 
 
 .. _South: http://south.aeracode.org/
-.. _django-social-auth: https://convore.com/django-social-auth/
+.. _django-social-auth: https://github.com/omab/django-social-auth
 .. _Convore: https://convore.com/
 .. _djangopackages.com: http://djangopackages.com/grids/g/social-auth-backends/
+

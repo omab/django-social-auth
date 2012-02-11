@@ -112,6 +112,7 @@ Configuration
         'social_auth.backends.google.GoogleOAuth2Backend',
         'social_auth.backends.google.GoogleBackend',
         'social_auth.backends.yahoo.YahooBackend',
+        'social_auth.backends.browserid.BrowserIDBackend',
         'social_auth.backends.contrib.linkedin.LinkedinBackend',
         'social_auth.backends.contrib.livejournal.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
@@ -773,6 +774,19 @@ Flickr uses OAuth v1.0 for authentication.
       FLICKR_API_SECRET = ''
 
 
+---------
+BrowserID
+---------
+Support for BrowserID_ is possible by posting the ``assertion`` code to
+``/complete/browserid/`` URL.
+
+The setup doesn't need any setting, just the usual BrowserID_ javascript
+include in your document and the needed mechanism to trigger the POST to
+`django-social-auth`_.
+
+Check the second "Use Case" for an implementation example.
+
+
 -------
 Testing
 -------
@@ -827,6 +841,40 @@ Some particular use cases are listed below.
         url(r'^disconnect/(?P<backend>[^/]+)/(?P<association_id>[^/]+)/$',
             disconnect, name='socialauth_disconnect_individual'),
     )
+
+2. Include a similar snippet in your page to make BrowserID_ work::
+    <!-- Include BrowserID JavaScript -->
+    <script src="https://browserid.org/include.js" type="text/javascript"></script>
+
+    <!-- Define a form to send the POST data -->
+    <form method="post" action="{% url socialauth_complete "browserid" %}">
+        <input type="hidden" name="assertion" value="" />
+        <a rel="nofollow" id="browserid" href="#">BrowserID</a>
+    </form>
+
+    <!-- Setup click handler that retieves BrowserID assertion code and sends
+         POST data -->
+    <script type="text/javascript">
+        $(function () {
+            $('#browserid').click(function (e) {
+                e.preventDefault();
+                var self = $(this);
+
+                navigator.id.get(function (assertion) {
+                    if (assertion) {
+                        self.parent('form')
+                                .find('input[type=hidden]')
+                                    .attr('value', assertion)
+                                    .end()
+                                .submit();
+                    } else {
+                        alert('Some error occurred');
+                    }
+                });
+            });
+        });
+    </script>
+
 
 -------------
 Miscellaneous
@@ -964,7 +1012,7 @@ Base work is copyrighted by:
 .. _micrypt: https://github.com/micrypt
 .. _South: http://south.aeracode.org/
 .. _bedspax: https://github.com/bedspax
-.. _django-social-auth: https://convore.com/django-social-auth/
+.. _django-social-auth: https://github.com/omab/django-social-auth
 .. _Convore: https://convore.com/
 .. _Selenium: http://seleniumhq.org/
 .. _LinkedIn fields selectors: http://developer.linkedin.com/docs/DOC-1014
@@ -979,3 +1027,4 @@ Base work is copyrighted by:
 .. _Flickr App Garden: http://www.flickr.com/services/apps/create/
 .. _danielgtaylor: https://github.com/danielgtaylor
 .. _example application: https://github.com/omab/django-social-auth/blob/master/example/local_settings.py.template#L23
+.. _BrowserID: https://browserid.org

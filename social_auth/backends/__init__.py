@@ -150,7 +150,7 @@ class SocialAuthBackend(ModelBackend):
 
     def extra_data(self, user, uid, response, details):
         """Return default blank user extra data"""
-        return ''
+        return {}
 
     def get_user_id(self, details, response):
         """Must return a unique ID from values returned on details"""
@@ -634,8 +634,10 @@ if setting('SOCIAL_AUTH_IMPORT_BACKENDS'):
     from warnings import warn
     warn("SOCIAL_AUTH_IMPORT_SOURCES is deprecated")
 
+
 # Cache for discovered backends.
 BACKENDSCACHE = {}
+
 
 def get_backends(force_load=False):
     """
@@ -684,6 +686,7 @@ def get_backend(name, *args, **kwargs):
             return BACKENDSCACHE[name](*args, **kwargs)
         except KeyError:
             return None
+
 
 BACKENDS = {
     'openid': OpenIdAuth
