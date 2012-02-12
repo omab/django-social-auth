@@ -790,9 +790,9 @@ include in your document and the needed mechanism to trigger the POST to
 Check the second "Use Case" for an implementation example.
 
 
--------
+---------
 Instagram
--------
+---------
 Instagram uses OAuth v2 for Authentication
 
 - Register a new application at the `Instagram API`_, and
@@ -802,10 +802,11 @@ Instagram uses OAuth v2 for Authentication
       INSTAGRAM_CLIENT_ID = ''
       INSTAGRAM_CLIENT_SECRET = ''
 
-None: Instagram only allows one callback url so you'll have to change your urls.py to
-accomodate both /complete and /associate routes, for example by having a single
-/associate url which takes a ?complete=true parameter for the cases when you want
-to complete rather than associate.
+*Note:*
+Instagram only allows one callback url so you'll have to change your urls.py to
+accomodate both ``/complete`` and ``/associate`` routes, for example by having
+a single ``/associate`` url which takes a ``?complete=true`` parameter for the
+cases when you want to complete rather than associate.
 
 
 -------

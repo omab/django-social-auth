@@ -22,10 +22,10 @@ class InstagramBackend(OAuthBackend):
         username = response['user']['username']
         fullname = response['user'].get('fullname', '')
         email = response['user'].get('email', '')
-
-        return {USERNAME: username,
-                'first_name': fullname,
-                'email': email
+        return {
+            USERNAME: username,
+            'first_name': fullname,
+            'email': email
         }
 
 
