@@ -120,6 +120,7 @@ Configuration
         'social_auth.backends.contrib.github.GithubBackend',
         'social_auth.backends.contrib.dropbox.DropboxBackend',
         'social_auth.backends.contrib.flickr.FlickrBackend',
+        'social_auth.backends.contrib.instagram.InstagramBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -158,6 +159,8 @@ Configuration
     DROPBOX_API_SECRET           = ''
     FLICKR_APP_ID                = ''
     FLICKR_API_SECRET            = ''
+    INSTAGRAM_CLIENT_ID          = ''
+    INSTAGRAM_CLIENT_SECRET      = ''
 
 - Setup login URLs::
 
@@ -788,6 +791,24 @@ Check the second "Use Case" for an implementation example.
 
 
 -------
+Instagram
+-------
+Instagram uses OAuth v2 for Authentication
+
+- Register a new application at the `Instagram API`_, and
+
+- fill ``Client Id`` and ``Client Secret`` values in the settings::
+
+      INSTAGRAM_CLIENT_ID = ''
+      INSTAGRAM_CLIENT_SECRET = ''
+
+None: Instagram only allows one callback url so you'll have to change your urls.py to
+accomodate both /complete and /associate routes, for example by having a single
+/associate url which takes a ?complete=true parameter for the cases when you want
+to complete rather than associate.
+
+
+-------
 Testing
 -------
 To test the app just run::
@@ -948,6 +969,10 @@ Attributions to whom deserves:
   - Flickr support
   - Provider name context processor
 
+- r4vi_ (Ravi Kotecha)
+
+  - Instagram support
+
 ----------
 Copyrights
 ----------
@@ -1010,6 +1035,7 @@ Base work is copyrighted by:
 .. _mattucf: https://github.com/mattucf
 .. _Quard: https://github.com/Quard
 .. _micrypt: https://github.com/micrypt
+.. _r4vi: https://github.com/r4vi
 .. _South: http://south.aeracode.org/
 .. _bedspax: https://github.com/bedspax
 .. _django-social-auth: https://github.com/omab/django-social-auth
@@ -1028,3 +1054,4 @@ Base work is copyrighted by:
 .. _danielgtaylor: https://github.com/danielgtaylor
 .. _example application: https://github.com/omab/django-social-auth/blob/master/example/local_settings.py.template#L23
 .. _BrowserID: https://browserid.org
+.. _Instagram API: http://instagr.am/developer/
