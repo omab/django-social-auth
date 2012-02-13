@@ -429,7 +429,7 @@ next entry after ``save_status_to_session`` but this can be modified by setting
 the following setting to the import path of the pipeline entry to resume
 processing::
 
-    SOCIAL_AUTH_PIPELINE_RESUME_ENTRY = <a zero based index>
+    SOCIAL_AUTH_PIPELINE_RESUME_ENTRY = 'social_auth.backends.pipeline.misc.save_status_to_session'
 
 ``save_status_to_session`` saves needed data into user session, the key can be
 defined by ``SOCIAL_AUTH_PARTIAL_PIPELINE_KEY`` which default value is
