@@ -350,6 +350,15 @@ Configuration
 
   Defaults to ``LOGIN_ERROR_URL``.
 
+- The app catches any exception and logs errors to ``logger`` or
+  ``django.contrib.messagess`` app. Having tracebacks is really useful when
+  debugging, for that purpose this setting was defined::
+
+    SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
+
+  It's default value is ``DEBUG``, so you need to set it to ``False`` to avoid
+  tracebacks when ``DEBUG = True``.
+
 
 -----------------------
 Authentication Pipeline

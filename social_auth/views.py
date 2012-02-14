@@ -22,6 +22,7 @@ from social_auth.utils import sanitize_redirect, setting, log
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                    setting('LOGIN_REDIRECT_URL')
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
+RAISE_EXCEPTIONS = setting('SOCIAL_AUTH_RAISE_EXCEPTIONS', setting('DEBUG'))
 
 
 def dsa_view(redirect_name=None):
@@ -46,7 +47,7 @@ def dsa_view(redirect_name=None):
             try:
                 return func(request, backend, *args, **kwargs)
             except Exception, e:  # some error ocurred
-                if setting('DEBUG'):
+                if RAISE_EXCEPTIONS:
                     raise
                 backend_name = backend.AUTH_BACKEND.name
 
