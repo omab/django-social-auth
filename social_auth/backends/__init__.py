@@ -95,22 +95,18 @@ class SocialAuthBackend(ModelBackend):
             return None
 
         response = kwargs.get('response')
+        pipeline = PIPELINE
+        kwargs = kwargs.copy()
+        kwargs['backend'] = self
 
         if 'pipeline_index' in kwargs:
-            details = kwargs.pop('details')
-            uid = kwargs.pop('uid')
-            is_new = kwargs.pop('is_new')
-            pipeline = PIPELINE[kwargs['pipeline_index']:]
+            pipeline = pipeline[kwargs['pipeline_index']:]
         else:
-            details = self.get_user_details(response)
-            uid = self.get_user_id(details, response)
-            is_new = False
-            pipeline = PIPELINE
+            kwargs['details'] = self.get_user_details(response)
+            kwargs['uid'] = self.get_user_id(kwargs['details'], response)
+            kwargs['is_new'] = False
 
-        out = self.pipeline(pipeline, backend=self, uid=uid,
-                            details=details, is_new=is_new,
-                            *args, **kwargs)
-
+        out = self.pipeline(pipeline, *args, **kwargs)
         if not isinstance(out, dict):
             return out
 
@@ -311,9 +307,32 @@ class BaseAuth(object):
         """Completes loging process, must return user instance"""
         raise NotImplementedError('Implement in subclass')
 
+    def to_session_dict(self, next_idx, *args, **kwargs):
+        """Returns dict to store on session for partial pipeline."""
+        return {
+            'next': next_idx,
+            'backend': self.AUTH_BACKEND.name,
+            'args': args,
+            'kwargs': kwargs
+        }
+
+    def from_session_dict(self, entry, *args, **kwargs):
+        """Takes session saved entry to continue pipeline and merges with
+        any new extra argument needed. Returns tuple with next pipeline
+        index entry, arguments and keyword arguments to continue the
+        process."""
+        session_kwargs = entry['kwargs']
+        session_kwargs.update(kwargs)
+        return ( entry['next'],
+                 list(entry['args']) + list(args),
+                 session_kwargs )
+
     def continue_pipeline(self, *args, **kwargs):
-        """Continue previos halted pipeline"""
-        kwargs.update({ self.AUTH_BACKEND.name: True })
+        """Continue previous halted pipeline"""
+        kwargs.update({
+            'auth': self,
+            self.AUTH_BACKEND.name: True
+        })
         return authenticate(*args, **kwargs)
 
     def request_token_extra_arguments(self):
@@ -377,6 +396,17 @@ class OpenIdAuth(BaseAuth):
         return setting('OPENID_TRUST_ROOT') or \
                self.request.build_absolute_uri('/')
 
+    def continue_pipeline(self, *args, **kwargs):
+        """Continue previous halted pipeline"""
+        response = self.consumer().complete(dict(self.data.items()),
+                                            self.request.build_absolute_uri())
+        kwargs.update({
+            'auth': self,
+            'response': response,
+            self.AUTH_BACKEND.name: True
+        })
+        return authenticate(*args, **kwargs)
+
     def auth_complete(self, *args, **kwargs):
         """Complete auth process"""
         response = self.consumer().complete(dict(self.data.items()),
@@ -384,7 +414,11 @@ class OpenIdAuth(BaseAuth):
         if not response:
             raise ValueError('This is an OpenID relying party endpoint')
         elif response.status == SUCCESS:
-            kwargs.update({'response': response, self.AUTH_BACKEND.name: True})
+            kwargs.update({
+                'auth': self,
+                'response': response,
+                self.AUTH_BACKEND.name: True
+            })
             return authenticate(*args, **kwargs)
         elif response.status == FAILURE:
             raise ValueError('OpenID authentication failed: %s' % \
@@ -492,7 +526,11 @@ class ConsumerBasedOAuth(BaseOAuth):
         if data is not None:
             data['access_token'] = access_token.to_string()
 
-        kwargs.update({'response': data, self.AUTH_BACKEND.name: True})
+        kwargs.update({
+            'auth': self,
+            'response': data,
+            self.AUTH_BACKEND.name: True
+        })
         return authenticate(*args, **kwargs)
 
     def unauthorized_token(self):
@@ -612,7 +650,11 @@ class BaseOAuth2(BaseOAuth):
             raise ValueError('OAuth2 authentication failed: %s' % error)
         else:
             response.update(self.user_data(response['access_token']) or {})
-            kwargs.update({'response': response, self.AUTH_BACKEND.name: True})
+            kwargs.update({
+                'auth': self,
+                'response': response,
+                self.AUTH_BACKEND.name: True
+            })
             return authenticate(*args, **kwargs)
 
     def get_scope(self):

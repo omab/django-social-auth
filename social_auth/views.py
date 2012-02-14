@@ -192,13 +192,9 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
     if request.session.get(name):
         data = request.session.pop(name)
         request.session.modified = True
-        return backend.continue_pipeline(pipeline_index=data['next_index'],
-                                         user=user,
-                                         request=request,
-                                         uid=data['uid'],
-                                         details=data['details'],
-                                         is_new=data['is_new'],
-                                         response=data['response'],
-                                         *args, **kwargs)
+        idx, args, kwargs = backend.from_session_dict(data, user=user,
+                                                      request=request,
+                                                      *args, **kwargs)
+        return backend.continue_pipeline(pipeline_index=idx, *args, **kwargs)
     else:
         return backend.auth_complete(user=user, request=request, *args, **kwargs)
