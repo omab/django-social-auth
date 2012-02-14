@@ -1,4 +1,3 @@
-==================
 Django Social Auth
 ==================
 
@@ -11,16 +10,17 @@ third parties.
 
 You can check this documentation on `Read the Docs`_ too.
 
-----
+.. contents:: Table of Contents
+
 Demo
 ----
+
 There's a demo at http://social.matiasaguirre.net/.
 Note: It lacks some backends support at the moment.
 
-
---------
 Features
 --------
+
 This application provides user registration and login using social sites
 credentials, some features are:
 
@@ -54,9 +54,9 @@ credentials, some features are:
 
 - Extensible pipeline to handle authentication/association mechanism
 
-------------
 Dependencies
 ------------
+
 Dependencies that **must** be meet to use the application:
 
 - OpenId_ support depends on python-openid_
@@ -66,8 +66,6 @@ Dependencies that **must** be meet to use the application:
 - Several backends demands application registration on their corresponding
   sites.
 
-
-------------
 Installation
 ------------
 
@@ -92,10 +90,9 @@ or::
     $ cd django-social-auth
     $ sudo python setup.py install
 
-
--------------
 Configuration
 -------------
+
 - Add social_auth to ``PYTHONPATH`` and installed applications::
 
     INSTALLED_APPS = (
@@ -359,8 +356,6 @@ Configuration
   It's default value is ``DEBUG``, so you need to set it to ``False`` to avoid
   tracebacks when ``DEBUG = True``.
 
-
------------------------
 Authentication Pipeline
 -----------------------
 
@@ -402,8 +397,9 @@ Each pipeline function will receive the following parameters:
     * ``is_new`` flag (initialized in ``False``)
     * Any arguments passed to ``auth_complete`` backend method, default views
       pass this arguments:
-        - current logged in user (if it's logged in, otherwise ``None``)
-        - current request
+
+      - current logged in user (if it's logged in, otherwise ``None``)
+      - current request
 
 Each pipeline entry must return a ``dict`` or ``None``, any value in the
 ``dict`` will be used in the ``kwargs`` argument for the next pipeline entry.
@@ -415,7 +411,6 @@ If any function returns something else beside a ``dict`` or ``None``, the
 workflow will be cut and the value returned immediately, this is useful to
 return ``HttpReponse`` instances like ``HttpResponseRedirect``.
 
-----------------
 Partial Pipeline
 ----------------
 
@@ -448,8 +443,6 @@ defined by ``SOCIAL_AUTH_PARTIAL_PIPELINE_KEY`` which default value is
 
 Check the `example application`_ to check a basic usage.
 
-
----------------
 Deprecated bits
 ---------------
 
@@ -483,7 +476,6 @@ The following settings are deprecated in favor of pipeline functions.
 
     SOCIAL_AUTH_ASSOCIATE_BY_MAIL
 
--------------
 Usage example
 -------------
 
@@ -507,9 +499,9 @@ In the example above we assume that Twitter and Facebook authentication backends
     FACEBOOK_APP_ID = 'real id here'
     FACEBOOK_API_SECRET = 'real secret here'
 
--------
 Signals
 -------
+
 A ``pre_update`` signal is sent when user data is about to be updated with new
 values from authorization service provider, this apply to new users and already
 existent ones. This is useful to update custom user fields or `User Profiles`_,
@@ -545,10 +537,12 @@ created::
 
     socialauth_registered.connect(new_users_handler, sender=None)
 
+Backends
+--------
 
-------
 OpenId
-------
+^^^^^^
+
 OpenId_ support is simpler to implement than OAuth_. Google and Yahoo
 providers are supported by default, others are supported by POST method
 providing endpoint URL.
@@ -572,10 +566,9 @@ Example::
 Settings must be a list of tuples mapping value name in response and value
 alias used to store.
 
-
------
 OAuth
------
+^^^^^
+
 OAuth_ communication demands a set of keys exchange to validate the client
 authenticity prior to user approbation. Twitter, Facebook and Orkut
 facilitates these keys by application registration, Google works the same,
@@ -598,10 +591,9 @@ Example::
 Settings must be a list of tuples mapping value name in response and value
 alias used to store.
 
-
--------
 Twitter
--------
+^^^^^^^
+
 Twitter offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
 To enable Twitter these two keys are needed. Further documentation at
 `Twitter development resources`_:
@@ -619,10 +611,9 @@ To enable Twitter these two keys are needed. Further documentation at
   Client type instead of the Browser. Almost any dummy value will work if
   you plan some test.
 
-
---------
 Facebook
---------
+^^^^^^^^
+
 Facebook works similar to Twitter but it's simpler to setup and redirect URL
 is passed as a parameter when issuing an authorization. Further documentation
 at `Facebook development resources`_:
@@ -643,10 +634,9 @@ http://127.0.0.1:8000 or http://localhost:8000 because it won't work when
 testing. Instead I define http://myapp.com and setup a mapping on /etc/hosts
 or use dnsmasq_.
 
-
------
 Orkut
------
+^^^^^
+
 Orkut offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
 To enable Orkut these two keys are needed.
 
@@ -666,10 +656,9 @@ your consumer_key and consumer_secret keys.
 
       ORKUT_EXTRA_SCOPES = [...]
 
-
-------------
 Google OAuth
-------------
+^^^^^^^^^^^^
+
 Google provides ``Consumer Key`` and ``Consumer Secret`` keys to registered
 applications, but also allows unregistered application to use their authorization
 system with, but beware that this method will display a security banner to the
@@ -698,10 +687,9 @@ anonymous values will be used if not configured as described in their
 
 Check which applications can be included in their `Google Data Protocol Directory`_
 
-
--------------
 Google OAuth2
--------------
+^^^^^^^^^^^^^
+
 Recently Google launched OAuth2 support following the definition at `OAuth2 draft`.
 It works in a similar way to plain OAuth mechanism, but developers **must** register
 an application and apply for a set of keys. Check `Google OAuth2`_ document for details.
@@ -727,10 +715,9 @@ To enable OAuth2 support:
 
 Check which applications can be included in their `Google Data Protocol Directory`_
 
-
---------
 LinkedIn
---------
+^^^^^^^^
+
 LinkedIn setup is similar to any other OAuth service. To request extra fields
 using `LinkedIn fields selectors`_ just define the setting::
 
@@ -741,10 +728,9 @@ way the values will be stored in ``UserSocialAuth.extra_data`` field.
 
 By default ``id``, ``first-name`` and ``last-name`` are requested and stored.
 
-
-------
 GitHub
-------
+^^^^^^
+
 GitHub works similar to Facebook (OAuth).
 
 - Register a new application at `GitHub Developers`_, set your site domain as
@@ -759,10 +745,9 @@ GitHub works similar to Facebook (OAuth).
 
      GITHUB_EXTENDED_PERMISSIONS = [...]
 
-
--------
 Dropbox
--------
+^^^^^^^
+
 Dropbox uses OAuth v1.0 for authentication.
 
 - Register a new application at `Dropbox Developers`_, and
@@ -772,10 +757,9 @@ Dropbox uses OAuth v1.0 for authentication.
       DROPBOX_APP_ID = ''
       DROPBOX_API_SECRET = ''
 
-
-------
 Flickr
-------
+^^^^^^
+
 Flickr uses OAuth v1.0 for authentication.
 
 - Register a new application at the `Flickr App Garden`_, and
@@ -785,10 +769,9 @@ Flickr uses OAuth v1.0 for authentication.
       FLICKR_APP_ID = ''
       FLICKR_API_SECRET = ''
 
-
----------
 BrowserID
----------
+^^^^^^^^^
+
 Support for BrowserID_ is possible by posting the ``assertion`` code to
 ``/complete/browserid/`` URL.
 
@@ -798,10 +781,9 @@ include in your document and the needed mechanism to trigger the POST to
 
 Check the second "Use Case" for an implementation example.
 
-
----------
 Instagram
----------
+^^^^^^^^^
+
 Instagram uses OAuth v2 for Authentication
 
 - Register a new application at the `Instagram API`_, and
@@ -811,16 +793,16 @@ Instagram uses OAuth v2 for Authentication
       INSTAGRAM_CLIENT_ID = ''
       INSTAGRAM_CLIENT_SECRET = ''
 
-*Note:*
-Instagram only allows one callback url so you'll have to change your urls.py to
-accomodate both ``/complete`` and ``/associate`` routes, for example by having
-a single ``/associate`` url which takes a ``?complete=true`` parameter for the
-cases when you want to complete rather than associate.
+.. note::
 
+    Instagram only allows one callback url so you'll have to change your urls.py to
+    accomodate both ``/complete`` and ``/associate`` routes, for example by having
+    a single ``/associate`` url which takes a ``?complete=true`` parameter for the
+    cases when you want to complete rather than associate.
 
--------
 Testing
 -------
+
 To test the app just run::
 
     ./manage.py test social_auth
@@ -855,7 +837,6 @@ fill the needed account information. Then run::
     cd contrib/tests
     ./runtests.py
 
----------
 Use Cases
 ---------
 Some particular use cases are listed below.
@@ -874,6 +855,7 @@ Some particular use cases are listed below.
     )
 
 2. Include a similar snippet in your page to make BrowserID_ work::
+
     <!-- Include BrowserID JavaScript -->
     <script src="https://browserid.org/include.js" type="text/javascript"></script>
 
@@ -906,35 +888,30 @@ Some particular use cases are listed below.
         });
     </script>
 
-
--------------
 Miscellaneous
 -------------
+
 Join to django-social-auth_ community on Convore_ and bring any questions or
 suggestions that will improve this app.
-
 
 If defining a custom user model, do not import social_auth from any models.py
 that would finally import from the models.py that defines your User class or it
 will make your project fail with a recursive import because social_auth uses
 get_model() to retrieve your User.
 
-
 There's an ongoing movement to create a list of third party backends on
 djangopackages.com_, so, if somebody doesn't want it's backend in the
 ``contrib`` directory but still wants to share, just split it in a separated
 package and link it there.
 
-
-----
 Bugs
 ----
+
 Maybe several, please create `issues in github`_
 
-
-------------
 Contributors
 ------------
+
 Attributions to whom deserves:
 
 - caioariede_ (Caio Ariede):
@@ -983,9 +960,9 @@ Attributions to whom deserves:
 
   - Instagram support
 
-----------
 Copyrights
 ----------
+
 Base work is copyrighted by:
 
 - django-twitter-oauth::
