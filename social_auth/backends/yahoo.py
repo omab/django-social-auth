@@ -6,7 +6,7 @@ No extra configurations are needed to make this work.
 from social_auth.backends import OpenIDBackend, OpenIdAuth
 
 
-YAHOO_OPENID_URL = 'http://yahoo.com'
+YAHOO_OPENID_URL = 'http://me.yahoo.com'
 
 
 class YahooBackend(OpenIDBackend):
