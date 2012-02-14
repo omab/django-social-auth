@@ -36,7 +36,7 @@ Each pipeline function will receive the following parameters:
     * Current social authentication backend
     * User ID given by authentication provider
     * User details given by authentication provider
-    * ``is_new`` flag (initialized in False)
+    * ``is_new`` flag (initialized in ``False``)
     * Any arguments passed to ``auth_complete`` backend method, default views
       pass this arguments:
         - current logged in user (if it's logged in, otherwise ``None``)
