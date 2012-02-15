@@ -3,6 +3,8 @@ import logging
 from collections import defaultdict
 
 from django.conf import settings
+from django.db.models import Model
+from django.contrib.contenttypes.models import ContentType
 
 
 def sanitize_log_data(secret, data=None, leave_characters=4):
@@ -100,6 +102,26 @@ def log(level, *args, **kwargs):
       'error': logger.error,
       'exception': logger.exception,
       'warn': logger.warn }[level](*args, **kwargs)
+
+
+def model_to_ctype(val):
+    """Converts values that are instance of Model to a dictionary
+    with enough information to retrieve the instance back later."""
+    if isinstance(val, Model):
+        val = {
+            'pk': val.pk,
+            'ctype': ContentType.objects.get_for_model(val).pk
+        }
+    return val
+
+
+def ctype_to_model(val):
+    """Converts back the instance saved by model_to_ctype function."""
+    if isinstance(val, dict) and 'pk' in val and 'ctype' in val:
+        ctype = ContentType.objects.get_for_id(val['ctype'])
+        ModelClass = ctype.model_class()
+        val = ModelClass.objects.get(pk=val['pk'])
+    return val
 
 
 if __name__ == '__main__':

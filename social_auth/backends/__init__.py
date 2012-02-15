@@ -26,7 +26,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
-from social_auth.utils import setting, log
+from social_auth.utils import setting, log, model_to_ctype, ctype_to_model
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline
 
@@ -312,8 +312,9 @@ class BaseAuth(object):
         return {
             'next': next_idx,
             'backend': self.AUTH_BACKEND.name,
-            'args': args,
-            'kwargs': kwargs
+            'args': tuple(map(model_to_ctype, args)),
+            'kwargs': dict((key, model_to_ctype(val))
+                                for key, val in kwargs.iteritems())
         }
 
     def from_session_dict(self, entry, *args, **kwargs):
@@ -321,11 +322,12 @@ class BaseAuth(object):
         any new extra argument needed. Returns tuple with next pipeline
         index entry, arguments and keyword arguments to continue the
         process."""
-        session_kwargs = entry['kwargs']
-        session_kwargs.update(kwargs)
-        return ( entry['next'],
-                 list(entry['args']) + list(args),
-                 session_kwargs )
+        args = args[:] + tuple(map(ctype_to_model, entry['args']))
+
+        kwargs = kwargs.copy()
+        kwargs.update((key, ctype_to_model(val))
+                            for key, val in entry['kwargs'].iteritems())
+        return (entry['next'], args, kwargs)
 
     def continue_pipeline(self, *args, **kwargs):
         """Continue previous halted pipeline"""
