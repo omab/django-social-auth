@@ -9,7 +9,14 @@ from social_auth.signals import socialauth_not_registered, \
                                 pre_update
 
 
-def get_username(details, user=None, *args, **kwargs):
+def simple_user_exists(*args, **kwargs):
+    """Return True/False if a User instance exists with the given arguments.
+    Arguments are directly passed to filter() manager method."""
+    return User.objects.filter(*args, **kwargs).exists()
+
+
+def get_username(details, user=None, user_exists=simple_user_exists,
+                 *args, **kwargs):
     """Return an username for new user. Return current user username
     if user was given.
     """
@@ -36,21 +43,15 @@ def get_username(details, user=None, *args, **kwargs):
     username_fixer = setting('SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
 
     short_username = username[:USERNAME_MAX_LENGTH - uuid_lenght]
-    final_username = None
+    final_username = username_fixer(username)[:USERNAME_MAX_LENGTH]
 
-    while True:
+    # Generate a unique username for current user using username
+    # as base but adding a unique hash at the end. Original
+    # username is cut to avoid any field max_length.
+    while user_exists(username=final_username):
+        username = short_username + uuid4().get_hex()[:uuid_lenght]
         final_username = username_fixer(username)[:USERNAME_MAX_LENGTH]
 
-        try:
-            User.objects.get(username=final_username)
-        except User.DoesNotExist:
-            break
-        else:
-            # User with same username already exists, generate a unique
-            # username for current user using username as base but adding
-            # a unique hash at the end. Original username is cut to avoid
-            # the field max_length.
-            username = short_username + uuid4().get_hex()[:uuid_lenght]
     return {'username': final_username}
 
 
