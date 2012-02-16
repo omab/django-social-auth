@@ -13,10 +13,11 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils.translation import ugettext
 from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
-from social_auth.utils import sanitize_redirect, setting, log
+from social_auth.utils import sanitize_redirect, setting, log, DSAException
 
 
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
@@ -46,6 +47,16 @@ def dsa_view(redirect_name=None):
 
             try:
                 return func(request, backend, *args, **kwargs)
+            except DSAException, e:
+                backend_name = backend.AUTH_BACKEND.name
+                if 'django.contrib.messages' in setting('INSTALLED_APPS'):
+                    from django.contrib.messages.api import error
+                    error(request, unicode(e), extra_tags=backend_name)
+                else:
+                    log('warn', 'Messages framework not in place, some '+
+                                'errors have not been shown to the user.')
+                url = setting('SOCIAL_AUTH_BACKEND_ERROR_URL', LOGIN_ERROR_URL)
+                return HttpResponseRedirect(url)
             except Exception, e:  # some error ocurred
                 if RAISE_EXCEPTIONS:
                     raise
@@ -56,7 +67,7 @@ def dsa_view(redirect_name=None):
 
                 if 'django.contrib.messages' in setting('INSTALLED_APPS'):
                     from django.contrib.messages.api import error
-                    error(request, unicode(e), extra_tags=backend_name)
+                    error(request, ugettext(u'Unknown authentication error. Try again later.'), extra_tags=backend_name)
                 else:
                     log('warn', 'Messages framework not in place, some '+
                                 'errors have not been shown to the user.')
