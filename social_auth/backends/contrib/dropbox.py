@@ -8,9 +8,9 @@ given by Dropbox application registration process.
 By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
-from django.conf import settings
 from django.utils import simplejson
 
+from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
 
 
@@ -20,14 +20,16 @@ DROPBOX_API = 'api.%s' % DROPBOX_SERVER
 DROPBOX_REQUEST_TOKEN_URL = 'https://%s/1/oauth/request_token' % DROPBOX_API
 DROPBOX_AUTHORIZATION_URL = 'https://www.%s/1/oauth/authorize' % DROPBOX_SERVER
 DROPBOX_ACCESS_TOKEN_URL = 'https://%s/1/oauth/access_token' % DROPBOX_API
-EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class DropboxBackend(OAuthBackend):
     """Dropbox OAuth authentication backend"""
     name = 'dropbox'
     # Default extra data to store
-    EXTRA_DATA = [('id', 'id'), ('expires', EXPIRES_NAME)]
+    EXTRA_DATA = [
+        ('id', 'id'),
+        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+    ]
 
     def get_user_details(self, response):
         """Return user details from Dropbox account"""
@@ -64,9 +66,7 @@ class DropboxAuth(ConsumerBasedOAuth):
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return all(hasattr(settings, name) for name in
-                        ('DROPBOX_APP_ID',
-                         'DROPBOX_API_SECRET'))
+        return setting('DROPBOX_APP_ID') and setting('DROPBOX_API_SECRET')
 
 
 # Backend definition

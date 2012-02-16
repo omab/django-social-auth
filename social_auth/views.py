@@ -5,12 +5,8 @@ Notes:
       on third party providers that (if using POST) won't be sending crfs
       token back.
 """
-import logging
-logger = logging.getLogger(__name__)
-
 from functools import wraps
 
-from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse, \
                         HttpResponseServerError
 from django.core.urlresolvers import reverse
@@ -20,27 +16,13 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
-from social_auth.utils import sanitize_redirect, setting
+from social_auth.utils import sanitize_redirect, setting, log
 
 
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                    setting('LOGIN_REDIRECT_URL')
-NEW_USER_REDIRECT = setting('SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
-NEW_ASSOCIATION_REDIRECT = setting('SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL')
-DISCONNECT_REDIRECT_URL = setting('SOCIAL_AUTH_DISCONNECT_REDIRECT_URL')
-LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', settings.LOGIN_URL)
-INACTIVE_USER_URL = setting('SOCIAL_AUTH_INACTIVE_USER_URL', LOGIN_ERROR_URL)
-COMPLETE_URL_NAME = setting('SOCIAL_AUTH_COMPLETE_URL_NAME',
-                            'socialauth_complete')
-ASSOCIATE_URL_NAME = setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
-                              'socialauth_associate_complete')
-SOCIAL_AUTH_LAST_LOGIN = setting('SOCIAL_AUTH_LAST_LOGIN',
-                                  'social_auth_last_login_backend')
-SESSION_EXPIRATION = setting('SOCIAL_AUTH_SESSION_EXPIRATION', True)
-BACKEND_ERROR_REDIRECT = setting('SOCIAL_AUTH_BACKEND_ERROR_URL',
-                                 LOGIN_ERROR_URL)
-SANITIZE_REDIRECTS = setting('SOCIAL_AUTH_SANITIZE_REDIRECTS', True)
-ERROR_MESSAGE = setting('LOGIN_ERROR_MESSAGE', None)
+LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
+RAISE_EXCEPTIONS = setting('SOCIAL_AUTH_RAISE_EXCEPTIONS', setting('DEBUG'))
 
 
 def dsa_view(redirect_name=None):
@@ -65,23 +47,27 @@ def dsa_view(redirect_name=None):
             try:
                 return func(request, backend, *args, **kwargs)
             except Exception, e:  # some error ocurred
+                if RAISE_EXCEPTIONS:
+                    raise
                 backend_name = backend.AUTH_BACKEND.name
 
-                logger.error(unicode(e), exc_info=True,
-                             extra=dict(request=request))
+                log('error', unicode(e), exc_info=True,
+                    extra=dict(request=request))
 
-                if 'django.contrib.messages' in settings.INSTALLED_APPS:
+                if 'django.contrib.messages' in setting('INSTALLED_APPS'):
                     from django.contrib.messages.api import error
                     error(request, unicode(e), extra_tags=backend_name)
                 else:
-                    logger.warn('Messages framework not in place, some '+
+                    log('warn', 'Messages framework not in place, some '+
                                 'errors have not been shown to the user.')
-                return HttpResponseRedirect(BACKEND_ERROR_REDIRECT)
+
+                url = setting('SOCIAL_AUTH_BACKEND_ERROR_URL', LOGIN_ERROR_URL)
+                return HttpResponseRedirect(url)
         return wrapper
     return dec
 
 
-@dsa_view(COMPLETE_URL_NAME)
+@dsa_view(setting('SOCIAL_AUTH_COMPLETE_URL_NAME', 'socialauth_complete'))
 def auth(request, backend):
     """Start authentication process"""
     return auth_process(request, backend)
@@ -96,7 +82,8 @@ def complete(request, backend, *args, **kwargs):
 
 
 @login_required
-@dsa_view(ASSOCIATE_URL_NAME)
+@dsa_view(setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
+                  'socialauth_associate_complete'))
 def associate(request, backend):
     """Authentication starting process"""
     return auth_process(request, backend)
@@ -116,7 +103,9 @@ def associate_complete(request, backend, *args, **kwargs):
     elif isinstance(user, HttpResponse):
         return user
     else:
-        url = NEW_ASSOCIATION_REDIRECT or redirect_value or DEFAULT_REDIRECT
+        url = setting('SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL') or \
+              redirect_value or \
+              DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
 
@@ -126,23 +115,21 @@ def disconnect(request, backend, association_id=None):
     """Disconnects given backend from current logged in user."""
     backend.disconnect(request.user, association_id)
     url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or \
-          DISCONNECT_REDIRECT_URL or \
+          setting('SOCIAL_AUTH_DISCONNECT_REDIRECT_URL') or \
           DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
 
 def auth_process(request, backend):
     """Authenticate using social backend"""
-    # Save any defined redirect_to value into session
-    if REDIRECT_FIELD_NAME in request.REQUEST:
-        data = request.POST if request.method == 'POST' else request.GET
-        if REDIRECT_FIELD_NAME in data:
-            # Check and sanitize a user-defined GET/POST redirect_to field value.
-            redirect = data[REDIRECT_FIELD_NAME]
-
-            if SANITIZE_REDIRECTS:
-                redirect = sanitize_redirect(request.get_host(), redirect)
-            request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
+    # Save any defined next value into session
+    data = request.POST if request.method == 'POST' else request.GET
+    if REDIRECT_FIELD_NAME in data:
+        # Check and sanitize a user-defined GET/POST next field value
+        redirect = data[REDIRECT_FIELD_NAME]
+        if setting('SOCIAL_AUTH_SANITIZE_REDIRECTS', True):
+            redirect = sanitize_redirect(request.get_host(), redirect)
+        request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
 
     if backend.uses_redirect:
         return HttpResponseRedirect(backend.auth_url())
@@ -167,7 +154,7 @@ def complete_process(request, backend, *args, **kwargs):
             # in authenticate process
             social_user = user.social_user
 
-            if SESSION_EXPIRATION:
+            if setting('SOCIAL_AUTH_SESSION_EXPIRATION', True):
                 # Set session expiration date if present and not disabled by
                 # setting. Use last social-auth instance for current provider,
                 # users can associate several accounts with a same provider.
@@ -175,19 +162,23 @@ def complete_process(request, backend, *args, **kwargs):
                     request.session.set_expiry(social_user.expiration_delta())
 
             # store last login backend name in session
-            request.session[SOCIAL_AUTH_LAST_LOGIN] = social_user.provider
+            key = setting('SOCIAL_AUTH_LAST_LOGIN',
+                          'social_auth_last_login_backend')
+            request.session[key] = social_user.provider
 
             # Remove possible redirect URL from session, if this is a new
             # account, send him to the new-users-page if defined.
-            if NEW_USER_REDIRECT and getattr(user, 'is_new', False):
-                url = NEW_USER_REDIRECT
+            new_user_redirect = setting('SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
+            if new_user_redirect and getattr(user, 'is_new', False):
+                url = new_user_redirect
             else:
                 url = redirect_value or DEFAULT_REDIRECT
         else:
-            url = INACTIVE_USER_URL or LOGIN_ERROR_URL
+            url = setting('SOCIAL_AUTH_INACTIVE_USER_URL', LOGIN_ERROR_URL)
     else:
-        if ERROR_MESSAGE:
-            messages.error(request, ERROR_MESSAGE)
+        msg = setting('LOGIN_ERROR_MESSAGE', None)
+        if msg:
+            messages.error(request, msg)
         url = LOGIN_ERROR_URL
     return HttpResponseRedirect(url)
 
@@ -196,4 +187,14 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
     """Complete auth process. Return authenticated user or None."""
     if user and not user.is_authenticated():
         user = None
-    return backend.auth_complete(user=user, request=request, *args, **kwargs)
+
+    name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
+    if request.session.get(name):
+        data = request.session.pop(name)
+        request.session.modified = True
+        idx, args, kwargs = backend.from_session_dict(data, user=user,
+                                                      request=request,
+                                                      *args, **kwargs)
+        return backend.continue_pipeline(pipeline_index=idx, *args, **kwargs)
+    else:
+        return backend.auth_complete(user=user, request=request, *args, **kwargs)

@@ -39,6 +39,8 @@ credentials, some features are:
 
 - Custom User model override if needed (`auth.User`_ by default)
 
+- Extensible pipeline to handle authentication/association mechanism
+
 .. _auth.User: http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/models.py#L186
 .. _OpenId: http://openid.net/
 .. _OAuth: http://oauth.net/

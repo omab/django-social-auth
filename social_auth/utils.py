@@ -1,7 +1,10 @@
 import urlparse
+import logging
 from collections import defaultdict
 
 from django.conf import settings
+from django.db.models import Model
+from django.contrib.contenttypes.models import ContentType
 
 
 def sanitize_log_data(secret, data=None, leave_characters=4):
@@ -68,9 +71,10 @@ def group_backend_by_type(items, key=lambda x: x):
         get_backends, OpenIdAuth, BaseOAuth, BaseOAuth2
 
     result = defaultdict(list)
+    backends = get_backends()
 
     for item in items:
-        backend = get_backends()[key(item)]
+        backend = backends[key(item)]
         if issubclass(backend, OpenIdAuth):
             result['openid'].append(item)
         elif issubclass(backend, BaseOAuth2):
@@ -83,6 +87,41 @@ def group_backend_by_type(items, key=lambda x: x):
 def setting(name, default=None):
     """Return setting value for given name or default value."""
     return getattr(settings, name, default)
+
+
+logger = None
+if not logger:
+    logging.basicConfig()
+    logger = logging.getLogger('SocialAuth')
+    logger.setLevel(logging.DEBUG)
+
+
+def log(level, *args, **kwargs):
+    """Small wrapper around logger functions."""
+    { 'debug': logger.debug,
+      'error': logger.error,
+      'exception': logger.exception,
+      'warn': logger.warn }[level](*args, **kwargs)
+
+
+def model_to_ctype(val):
+    """Converts values that are instance of Model to a dictionary
+    with enough information to retrieve the instance back later."""
+    if isinstance(val, Model):
+        val = {
+            'pk': val.pk,
+            'ctype': ContentType.objects.get_for_model(val).pk
+        }
+    return val
+
+
+def ctype_to_model(val):
+    """Converts back the instance saved by model_to_ctype function."""
+    if isinstance(val, dict) and 'pk' in val and 'ctype' in val:
+        ctype = ContentType.objects.get_for_id(val['ctype'])
+        ModelClass = ctype.model_class()
+        val = ModelClass.objects.get(pk=val['pk'])
+    return val
 
 
 if __name__ == '__main__':

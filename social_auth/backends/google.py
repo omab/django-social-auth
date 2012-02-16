@@ -13,26 +13,23 @@ APIs console https://code.google.com/apis/console/ Identity option.
 
 OpenID also works straightforward, it doesn't need further configurations.
 """
-import logging
-logger = logging.getLogger(__name__)
-
 from urllib import urlencode
 from urllib2 import Request, urlopen
 
 from oauth2 import Request as OAuthRequest
 
-from django.conf import settings
 from django.utils import simplejson
 
+from social_auth.utils import setting
 from social_auth.backends import OpenIdAuth, ConsumerBasedOAuth, BaseOAuth2, \
                                  OAuthBackend, OpenIDBackend, USERNAME
 
 
 # Google OAuth base configuration
 GOOGLE_OAUTH_SERVER = 'www.google.com'
-GOOGLE_OAUTH_AUTHORIZATION_URL = 'https://www.google.com/accounts/OAuthAuthorizeToken'
-GOOGLE_OAUTH_REQUEST_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetRequestToken'
-GOOGLE_OAUTH_ACCESS_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetAccessToken'
+AUTHORIZATION_URL = 'https://www.google.com/accounts/OAuthAuthorizeToken'
+REQUEST_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetRequestToken'
+ACCESS_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetAccessToken'
 
 # Google OAuth2 base configuration
 GOOGLE_OAUTH2_SERVER = 'accounts.google.com'
@@ -43,8 +40,6 @@ GOOGLE_OATUH2_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth'
 GOOGLE_OAUTH_SCOPE = ['https://www.googleapis.com/auth/userinfo#email']
 GOOGLEAPIS_EMAIL = 'https://www.googleapis.com/userinfo/email'
 GOOGLE_OPENID_URL = 'https://www.google.com/accounts/o8/id'
-
-EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 # Backends
@@ -69,8 +64,10 @@ class GoogleOAuthBackend(OAuthBackend):
 class GoogleOAuth2Backend(GoogleOAuthBackend):
     """Google OAuth2 authentication backend"""
     name = 'google-oauth2'
-    EXTRA_DATA = [('refresh_token', 'refresh_token'),
-                  ('expires_in', EXPIRES_NAME)]
+    EXTRA_DATA = [
+        ('refresh_token', 'refresh_token'),
+        ('expires_in', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+    ]
 
 
 class GoogleBackend(OpenIDBackend):
@@ -78,10 +75,18 @@ class GoogleBackend(OpenIDBackend):
     name = 'google'
 
     def get_user_id(self, details, response):
-        """Return user unique id provided by service. For google user email
+        """
+        Return user unique id provided by service. For google user email
         is unique enought to flag a single user. Email comes from schema:
-        http://axschema.org/contact/email"""
+        http://axschema.org/contact/email
+        """
+        # White listed domains (accepts all if list is empty)
+        domains = setting('GOOGLE_WHITE_LISTED_DOMAINS', [])
+        if domains and details['email'].split('@', 1)[1] not in domains:
+            raise ValueError('Domain not allowed')
+
         return details['email']
+
 
 # Auth classes
 class GoogleAuth(OpenIdAuth):
@@ -95,9 +100,9 @@ class GoogleAuth(OpenIdAuth):
 
 class BaseGoogleOAuth(ConsumerBasedOAuth):
     """Base class for Google OAuth mechanism"""
-    AUTHORIZATION_URL = GOOGLE_OAUTH_AUTHORIZATION_URL
-    REQUEST_TOKEN_URL = GOOGLE_OAUTH_REQUEST_TOKEN_URL
-    ACCESS_TOKEN_URL = GOOGLE_OAUTH_ACCESS_TOKEN_URL
+    AUTHORIZATION_URL = AUTHORIZATION_URL
+    REQUEST_TOKEN_URL = REQUEST_TOKEN_URL
+    ACCESS_TOKEN_URL = ACCESS_TOKEN_URL
     SERVER_URL = GOOGLE_OAUTH_SERVER
 
     def user_data(self, access_token):
@@ -126,14 +131,12 @@ class GoogleOAuth(BaseGoogleOAuth):
 
     def oauth_request(self, token, url, extra_params=None):
         extra_params = extra_params or {}
-        scope = GOOGLE_OAUTH_SCOPE + \
-                getattr(settings, 'GOOGLE_OAUTH_EXTRA_SCOPE', [])
+        scope = GOOGLE_OAUTH_SCOPE + setting('GOOGLE_OAUTH_EXTRA_SCOPE', [])
         extra_params.update({
             'scope': ' '.join(scope),
         })
         if not self.registered():
-            xoauth_displayname = getattr(settings, 'GOOGLE_DISPLAY_NAME',
-                                         'Social Auth')
+            xoauth_displayname = setting('GOOGLE_DISPLAY_NAME', 'Social Auth')
             extra_params['xoauth_displayname'] = xoauth_displayname
         return super(GoogleOAuth, self).oauth_request(token, url, extra_params)
 
@@ -159,7 +162,7 @@ class GoogleOAuth(BaseGoogleOAuth):
 
 
 # TODO: Remove this setting name check, keep for backward compatibility
-_OAUTH2_KEY_NAME = hasattr(settings, 'GOOGLE_OAUTH2_CLIENT_ID') and \
+_OAUTH2_KEY_NAME = setting('GOOGLE_OAUTH2_CLIENT_ID') and \
                    'GOOGLE_OAUTH2_CLIENT_ID' or \
                    'GOOGLE_OAUTH2_CLIENT_KEY'
 
@@ -173,8 +176,7 @@ class GoogleOAuth2(BaseOAuth2):
     SETTINGS_SECRET_NAME = 'GOOGLE_OAUTH2_CLIENT_SECRET'
 
     def get_scope(self):
-        return GOOGLE_OAUTH_SCOPE + \
-               getattr(settings, 'GOOGLE_OAUTH_EXTRA_SCOPE', [])
+        return GOOGLE_OAUTH_SCOPE + setting('GOOGLE_OAUTH_EXTRA_SCOPE', [])
 
     def user_data(self, access_token):
         """Return user data from Google API"""

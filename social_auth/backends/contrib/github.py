@@ -13,14 +13,11 @@ field, check OAuthBackend class for details on how to extend it.
 """
 import cgi
 import urllib
-import logging
-logger = logging.getLogger(__name__)
 
-
-from django.conf import settings
 from django.utils import simplejson
 from django.contrib.auth import authenticate
 
+from social_auth.utils import setting
 from social_auth.backends import BaseOAuth, OAuthBackend, USERNAME
 
 
@@ -29,14 +26,16 @@ GITHUB_SERVER = 'github.com'
 GITHUB_AUTHORIZATION_URL = 'https://%s/login/oauth/authorize' % GITHUB_SERVER
 GITHUB_ACCESS_TOKEN_URL = 'https://%s/login/oauth/access_token' % GITHUB_SERVER
 GITHUB_API_URL = 'https://api.%s' % GITHUB_SERVER
-EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class GithubBackend(OAuthBackend):
     """Github OAuth authentication backend"""
     name = 'github'
     # Default extra data to store
-    EXTRA_DATA = [('id', 'id'), ('expires', EXPIRES_NAME)]
+    EXTRA_DATA = [
+        ('id', 'id'),
+        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+    ]
 
     def get_user_details(self, response):
         """Return user details from Github account"""
@@ -50,21 +49,22 @@ class GithubAuth(BaseOAuth):
 
     def auth_url(self):
         """Returns redirect url"""
-        args = {'client_id': settings.GITHUB_APP_ID,
+        args = {'client_id': setting('GITHUB_APP_ID'),
                 'redirect_uri': self.redirect_uri}
-        if hasattr(settings, 'GITHUB_EXTENDED_PERMISSIONS'):
-            args['scope'] = ','.join(settings.GITHUB_EXTENDED_PERMISSIONS)
+        if setting('GITHUB_EXTENDED_PERMISSIONS'):
+            args['scope'] = ','.join(setting('GITHUB_EXTENDED_PERMISSIONS'))
         args.update(self.auth_extra_arguments())
         return GITHUB_AUTHORIZATION_URL + '?' + urllib.urlencode(args)
 
     def auth_complete(self, *args, **kwargs):
         """Returns user, might be logged in"""
         if 'code' in self.data:
-            url = GITHUB_ACCESS_TOKEN_URL + '?' + \
-                  urllib.urlencode({'client_id': settings.GITHUB_APP_ID,
-                                'redirect_uri': self.redirect_uri,
-                                'client_secret': settings.GITHUB_API_SECRET,
-                                'code': self.data['code']})
+            url = GITHUB_ACCESS_TOKEN_URL + '?' + urllib.urlencode({
+                  'client_id': setting('GITHUB_APP_ID'),
+                  'redirect_uri': self.redirect_uri,
+                  'client_secret': setting('GITHUB_API_SECRET'),
+                  'code': self.data['code']
+            })
             response = cgi.parse_qs(urllib.urlopen(url).read())
             if response.get('error'):
                 error = self.data.get('error') or 'unknown error'
@@ -94,9 +94,7 @@ class GithubAuth(BaseOAuth):
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return all(hasattr(settings, name) for name in
-                        ('GITHUB_APP_ID',
-                         'GITHUB_API_SECRET'))
+        return setting('GITHUB_APP_ID') and setting('GITHUB_API_SECRET')
 
 
 # Backend definition

@@ -11,9 +11,6 @@ User screen name is used to generate username.
 By default account id is stored in extra_data field, check OAuthBackend
 class for details on how to extend it.
 """
-import logging
-logger = logging.getLogger(__name__)
-
 from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
@@ -66,6 +63,13 @@ class TwitterAuth(ConsumerBasedOAuth):
             return simplejson.loads(json)
         except ValueError:
             return None
+
+    def auth_complete(self, *args, **kwargs):
+        """Completes loging process, must return user instance"""
+        if 'denied' in self.data:
+            raise ValueError('Authentication denied')
+        else:
+            return super(TwitterAuth, self).auth_complete(*args, **kwargs)
 
 
 # Backend definition

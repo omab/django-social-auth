@@ -1,5 +1,4 @@
-from django.conf import settings
-
+from social_auth.utils import setting
 from social_auth.tests.base import SocialAuthTestsCase, FormParserByID, \
                                    RefreshParser
 
@@ -10,8 +9,8 @@ class TwitterTestCase(SocialAuthTestsCase):
 
     def setUp(self, *args, **kwargs):
         super(TwitterTestCase, self).setUp(*args, **kwargs)
-        self.user = getattr(settings, 'TEST_TWITTER_USER', None)
-        self.passwd = getattr(settings, 'TEST_TWITTER_PASSWORD', None)
+        self.user = setting('TEST_TWITTER_USER')
+        self.passwd = setting('TEST_TWITTER_PASSWORD')
         # check that user and password are setup properly
         self.assertTrue(self.user)
         self.assertTrue(self.passwd)
@@ -60,5 +59,5 @@ class TwitterTestLogin(TwitterTestCase):
         response = self.client.get(self.make_relative(parser.value))
         self.assertEqual(response.status_code, 302)
         location = self.make_relative(response['Location'])
-        login_redirect = getattr(settings, 'LOGIN_REDIRECT_URL', '')
+        login_redirect = setting('LOGIN_REDIRECT_URL')
         self.assertTrue(location == login_redirect)

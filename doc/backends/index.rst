@@ -13,3 +13,5 @@ Contents:
    facebook
    linkedin
    github
+   browserid
+   instagram

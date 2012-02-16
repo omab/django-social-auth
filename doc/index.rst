@@ -15,10 +15,13 @@ Contents:
    configuration
 
    backends/index
+   pipeline
+   deprecated
 
    signals
    contributions
    testing
+   use_cases
    miscellaneous
    bugs
 

@@ -36,10 +36,11 @@ def social_auth_by_name_backends(request):
     """
     keys = get_backends().keys()
     accounts = dict(zip(keys, [None] * len(keys)))
+    user = request.user
 
-    if isinstance(request.user, User) and request.user.is_authenticated():
-        for associated in request.user.social_auth.all():
-            accounts[associated.provider.replace('-', '_')] = associated
+    if isinstance(user, User) and user.is_authenticated():
+        accounts.update((assoc.provider.replace('-', '_'), assoc)
+                            for assoc in user.social_auth.all())
 
     return {'social_auth': accounts}
 

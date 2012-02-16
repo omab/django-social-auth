@@ -1,8 +1,11 @@
-from django.conf import settings
+from social_auth.utils import setting
 
-if getattr(settings,'SOCIAL_AUTH_TEST_TWITTER', True):
+
+if setting('SOCIAL_AUTH_TEST_TWITTER', True):
     from social_auth.tests.twitter import *
-if getattr(settings,'SOCIAL_AUTH_TEST_FACEBOOK', True):
+
+if setting('SOCIAL_AUTH_TEST_FACEBOOK', True):
     from social_auth.tests.facebook import *
-if getattr(settings,'SOCIAL_AUTH_TEST_GOOGLE', True):
+
+if setting('SOCIAL_AUTH_TEST_GOOGLE', True):
     from social_auth.tests.google import *
