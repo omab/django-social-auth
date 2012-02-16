@@ -141,7 +141,7 @@ def load_signed_request(signed_request):
         data = simplejson.loads(base64_url_decode(payload))
 
         expected_sig = hmac.new(
-            settings.FACEBOOK_API_SECRET, msg=payload, digestmod=hashlib.sha256).digest()
+            setting('FACEBOOK_API_SECRET'), msg=payload, digestmod=hashlib.sha256).digest()
 
         # allow the signed_request to function for upto 1 day
         if sig == expected_sig and \
