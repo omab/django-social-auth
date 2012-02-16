@@ -33,12 +33,6 @@ Configuration
   Don't miss ``django.contrib.auth.backends.ModelBackend`` if using ``django.auth``
   user model or users won't be able to login.
 
-- Define desired backends for your site::
-
-    SOCIAL_AUTH_ENABLED_BACKENDS = ('google', 'google-oauth', 'facebook', ...)
-
-  All backends are enabled by default.
-
 - Setup needed OAuth keys (see OAuth_ section for details)::
 
     TWITTER_CONSUMER_KEY         = ''
