@@ -78,6 +78,7 @@ class BrowserIDAuth(BaseAuth):
                 raise ValueError('Authentication failed')
 
             kwargs.update({
+                'auth': self,
                 'response': response,
                 self.AUTH_BACKEND.name: True
             })

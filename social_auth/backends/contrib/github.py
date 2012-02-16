@@ -76,7 +76,11 @@ class GithubAuth(BaseOAuth):
                     error = self.data.get('error') or 'unknown error'
                     raise ValueError('Authentication error: %s' % error)
                 data['access_token'] = access_token
-            kwargs.update({'response': data, GithubBackend.name: True})
+            kwargs.update({
+                'auth': self,
+                'response': data,
+                GithubBackend.name: True
+            })
             return authenticate(*args, **kwargs)
         else:
             error = self.data.get('error') or 'unknown error'

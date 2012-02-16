@@ -93,7 +93,11 @@ class FacebookAuth(BaseOAuth2):
                 # premission was requested
                 if 'expires' in response:
                     data['expires'] = response['expires'][0]
-            kwargs.update({'response': data, self.AUTH_BACKEND.name: True})
+            kwargs.update({
+                'auth': self,
+                'response': data,
+                self.AUTH_BACKEND.name: True
+            })
             return authenticate(*args, **kwargs)
         else:
             error = self.data.get('error') or 'unknown error'
