@@ -1,8 +1,10 @@
 from django.db.utils import IntegrityError
+from django.utils.translation import ugettext
 
 from social_auth.utils import setting
 from social_auth.models import UserSocialAuth
 from social_auth.backends.pipeline import warn_setting
+from social_auth.backends.exceptions import DSAException
 
 
 def social_auth_user(backend, uid, user=None, *args, **kwargs):
@@ -20,7 +22,9 @@ def social_auth_user(backend, uid, user=None, *args, **kwargs):
 
     if social_user:
         if user and social_user.user != user:
-            raise ValueError('Account already in use.', social_user)
+            raise DSAException(ugettext('This %(provider)s account already in use.') % {
+                'provider':backend.name,
+            })
         elif not user:
             user = social_user.user
     return {'social_user': social_user, 'user': user}

@@ -7,13 +7,6 @@ from django.conf import settings
 from django.db.models import Model
 from django.contrib.contenttypes.models import ContentType
 
-class DSAException(ValueError):
-    """
-    django-social-auth exception. This exception can be showed to user. It is thrown in normal situations – user declined
-    access, access token expired, etc.
-    """
-    pass
-
 
 def sanitize_log_data(secret, data=None, leave_characters=4):
     """

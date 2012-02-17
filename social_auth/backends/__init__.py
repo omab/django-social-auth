@@ -27,7 +27,8 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
-from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, DSAException
+from social_auth.utils import setting, log, model_to_ctype, ctype_to_model
+from social_auth.backends.exceptions import DSAException
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline
 

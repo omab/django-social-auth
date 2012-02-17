@@ -58,6 +58,7 @@ class FacebookTestLogin(FacebookTestCase):
             redirect_page = content
 
         url = REDIRECT_RE.findall(redirect_page)
+        print redirect_page
         self.assertTrue(url)
         # URL comes on JS scaped, needs to be clean first, any better way?
         url = url[0].replace('\u0025', '%').replace('\\', '')

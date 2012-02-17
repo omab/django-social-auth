@@ -17,7 +17,8 @@ from django.utils.translation import ugettext
 from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
-from social_auth.utils import sanitize_redirect, setting, log, DSAException
+from social_auth.utils import sanitize_redirect, setting, log
+from social_auth.backends.exceptions import DSAException
 
 
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
