@@ -28,7 +28,7 @@ class GAEBackend(SocialAuthBackend):
         #  'issuer': 'browserid.org'}
         user = users.get_current_user()
         return {USERNAME: user.user_id(),
-                'email': user.email,
+                'email': user.email(),
                 'fullname': '',
                 'first_name': '',
                 'last_name': ''}
@@ -39,12 +39,18 @@ class GAEAuth(BaseAuth):
     AUTH_BACKEND = GAEBackend
 
     def auth_url(self):
-        return users.create_login_url()
+        return users.create_login_url('/complete/gae')
 
     def auth_complete(self, *args, **kwargs):
-        """Completes loging process, must return user instance"""
+        """Completes login process, must return user instance"""
         if not users.get_current_user():
             raise ValueError('Authentication error')
+
+        """ Setting these two are necessary for BaseAuth.authenticate to work """
+        kwargs.update({
+            'response' : '',
+            self.AUTH_BACKEND.name: True
+        })
 
         return authenticate(*args, **kwargs)
 
