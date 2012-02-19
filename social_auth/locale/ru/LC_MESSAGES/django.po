@@ -21,16 +21,16 @@ msgstr ""
 
 #: views.py:71
 msgid "Unknown authentication error. Try again later."
-msgstr "Непредвиденная ошибка аутентификации. Попробуйте позже."
+msgstr "Непредвиденная ошибка авторизации. Попробуйте позже."
 
 #: backends/__init__.py:635 backends/__init__.py:656
 msgid "Authentication process was cancelled"
-msgstr "Процесс аутентификации был прерван"
+msgstr "Процесс авторизации был прерван"
 
 #: backends/__init__.py:637 backends/__init__.py:658
 #, python-format
 msgid "Authentication failed: %s"
-msgstr "Ошибка аутентификации: %s"
+msgstr "Ошибка автиризации: %s"
 
 #: backends/pipeline/social.py:25
 #, python-format
