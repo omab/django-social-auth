@@ -147,6 +147,9 @@ def complete_process(request, backend, *args, **kwargs):
     if isinstance(user, HttpResponse):
         return user
 
+    if not user and request.user.is_authenticated():
+        return HttpResponseRedirect(redirect_value)
+
     if user:
         if getattr(user, 'is_active', True):
             login(request, user)
