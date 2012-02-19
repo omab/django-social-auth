@@ -11,7 +11,7 @@ from google.appengine.api import users
 
 class GAEBackend(SocialAuthBackend):
     """BrowserID authentication backend"""
-    name = 'GAE'
+    name = 'google-appengine'
 
     def get_user_id(self, details, response):
         """Use BrowserID email as ID"""
@@ -39,10 +39,11 @@ class GAEAuth(BaseAuth):
     AUTH_BACKEND = GAEBackend
 
     def auth_url(self):
-        return users.create_login_url('/complete/gae')
+        return users.create_login_url('/complete/gae/')
 
     def auth_complete(self, *args, **kwargs):
         """Completes login process, must return user instance"""
+        
         if not users.get_current_user():
             raise ValueError('Authentication error')
 
