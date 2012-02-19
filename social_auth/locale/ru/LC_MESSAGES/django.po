@@ -30,7 +30,7 @@ msgstr "Процесс авторизации был прерван"
 #: backends/__init__.py:637 backends/__init__.py:658
 #, python-format
 msgid "Authentication failed: %s"
-msgstr "Ошибка автиризации: %s"
+msgstr "Ошибка авторизации: %s"
 
 #: backends/pipeline/social.py:25
 #, python-format
