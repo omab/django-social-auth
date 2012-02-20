@@ -9,7 +9,7 @@ Also the modules *must* define a BACKENDS dictionary with the backend name
 (which is used for URLs matching) and Auth class, otherwise it won't be
 enabled.
 """
-from urllib2 import Request, urlopen
+from urllib2 import Request, urlopen, HTTPError
 from urllib import urlencode
 from urlparse import urlsplit
 
@@ -523,7 +523,14 @@ class ConsumerBasedOAuth(BaseOAuth):
         if token.key != self.data.get('oauth_token', 'no-token'):
             raise ValueError('Incorrect tokens')
 
-        access_token = self.access_token(token)
+        try:
+            access_token = self.access_token(token)
+        except HTTPError, e:
+            if e.code == 400:
+                raise ValueError('User denied access')
+            else:
+                raise
+
         data = self.user_data(access_token)
         if data is not None:
             data['access_token'] = access_token.to_string()
