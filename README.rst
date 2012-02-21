@@ -885,8 +885,9 @@ Some particular use cases are listed below.
 Miscellaneous
 -------------
 
-Join to django-social-auth_ community on Convore_ and bring any questions or
-suggestions that will improve this app.
+Join to `django-social-auth discussion list`_ and bring any questions or suggestions
+that would improve this app. Convore_ discussion group is deprecated since the
+service is going to be shut down on April 1st.
 
 If defining a custom user model, do not import social_auth from any models.py
 that would finally import from the models.py that defines your User class or it
@@ -1036,3 +1037,4 @@ Base work is copyrighted by:
 .. _example application: https://github.com/omab/django-social-auth/blob/master/example/local_settings.py.template#L23
 .. _BrowserID: https://browserid.org
 .. _Instagram API: http://instagr.am/developer/
+.. _django-social-auth discussion list: https://groups.google.com/group/django-social-auth

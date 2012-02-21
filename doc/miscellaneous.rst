@@ -1,9 +1,9 @@
 Miscellaneous
 =============
 
-Join to django-social-auth_ community on Convore_ and bring any questions or
-suggestions that will improve this app.
-
+Join to `django-social-auth discussion list`_ and bring any questions or suggestions
+that would improve this app. Convore_ discussion group is deprecated since the
+service is going to be shut down on April 1st.
 
 South_ users should add this rule to enable migrations::
 
@@ -29,4 +29,4 @@ package and link it there.
 .. _django-social-auth: https://github.com/omab/django-social-auth
 .. _Convore: https://convore.com/
 .. _djangopackages.com: http://djangopackages.com/grids/g/social-auth-backends/
-
+.. _django-social-auth discussion list: https://groups.google.com/group/django-social-auth
