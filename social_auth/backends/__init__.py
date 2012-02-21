@@ -12,6 +12,7 @@ enabled.
 from urllib2 import Request, urlopen
 from urllib import urlencode
 from urlparse import urlsplit
+from django.utils.translation import ugettext
 
 from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
@@ -27,6 +28,7 @@ from django.utils import simplejson
 from django.utils.importlib import import_module
 
 from social_auth.utils import setting, log, model_to_ctype, ctype_to_model
+from social_auth.backends.exceptions import DSAException
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline
 
@@ -629,8 +631,10 @@ class BaseOAuth2(BaseOAuth):
     def auth_complete(self, *args, **kwargs):
         """Completes loging process, must return user instance"""
         if self.data.get('error'):
-            error = self.data.get('error_description') or self.data['error']
-            raise ValueError('OAuth2 authentication failed: %s' % error)
+            if self.data['error'] == 'access_denied':
+                raise DSAException(ugettext(u'Authentication process was cancelled'))
+            error = self.data.get('error_description') or self.data.get('error')
+            raise DSAException(ugettext(u'Authentication failed: %s') % error)
 
         client_id, client_secret = self.get_key_and_secret()
         params = {'grant_type': 'authorization_code',  # request auth code
@@ -648,8 +652,10 @@ class BaseOAuth2(BaseOAuth):
             raise ValueError('Unknown OAuth2 response type')
 
         if response.get('error'):
+            if response.get('error') == 'access_denied':
+                raise DSAException(ugettext(u'Authentication process was cancelled'))
             error = response.get('error_description') or response.get('error')
-            raise ValueError('OAuth2 authentication failed: %s' % error)
+            raise DSAException(ugettext(u'Authentication failed: %s') % error)
         else:
             response.update(self.user_data(response['access_token']) or {})
             kwargs.update({

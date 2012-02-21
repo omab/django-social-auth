@@ -1,3 +1,4 @@
+# coding=utf-8
 import urlparse
 import logging
 from collections import defaultdict
