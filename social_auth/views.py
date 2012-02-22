@@ -173,11 +173,14 @@ def complete_process(request, backend, *args, **kwargs):
 
             # Remove possible redirect URL from session, if this is a new
             # account, send him to the new-users-page if defined.
-            new_user_redirect = setting('SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
+            new_user_redirect = backend_setting(backend,
+                                           'SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
             if new_user_redirect and getattr(user, 'is_new', False):
                 url = new_user_redirect
             else:
-                url = redirect_value or DEFAULT_REDIRECT
+                url = redirect_value or \
+                      backend_setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
+                      DEFAULT_REDIRECT
         else:
             url = backend_setting(backend, 'SOCIAL_AUTH_INACTIVE_USER_URL',
                                   LOGIN_ERROR_URL)

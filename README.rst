@@ -178,6 +178,11 @@ Configuration
 
     SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
 
+  Users will be redirected to ``LOGIN_ERROR_URL`` in case of error or user
+  cancellation on some backends. This URL can be override by this setting::
+
+    SOCIAL_AUTH_BACKEND_ERROR_URL = '/new-error-url/'
+
   In case of authentication error, the message can be stored in session
   if the following setting is defined::
 
@@ -349,6 +354,19 @@ Configuration
 
   It's default value is ``DEBUG``, so you need to set it to ``False`` to avoid
   tracebacks when ``DEBUG = True``.
+
+
+Some settings can be tweak by backend by adding the backend name prefix (all
+uppercase and replace ``-`` with ``_``), here's the supported settings so far::
+
+        LOGIN_ERROR_URL
+        SOCIAL_AUTH_BACKEND_ERROR_URL
+        SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL
+        SOCIAL_AUTH_DISCONNECT_REDIRECT_URL
+        SOCIAL_AUTH_NEW_USER_REDIRECT_URL
+        SOCIAL_AUTH_LOGIN_REDIRECT_URL
+        SOCIAL_AUTH_INACTIVE_USER_URL
+
 
 Authentication Pipeline
 -----------------------
