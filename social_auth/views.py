@@ -16,7 +16,7 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
-from social_auth.utils import sanitize_redirect, setting, log
+from social_auth.utils import sanitize_redirect, setting, log, backend_setting
 
 
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
@@ -61,7 +61,8 @@ def dsa_view(redirect_name=None):
                     log('warn', 'Messages framework not in place, some '+
                                 'errors have not been shown to the user.')
 
-                url = setting('SOCIAL_AUTH_BACKEND_ERROR_URL', LOGIN_ERROR_URL)
+                url = backend_setting(backend, 'SOCIAL_AUTH_BACKEND_ERROR_URL',
+                                      LOGIN_ERROR_URL)
                 return HttpResponseRedirect(url)
         return wrapper
     return dec
@@ -99,11 +100,12 @@ def associate_complete(request, backend, *args, **kwargs):
     user = auth_complete(request, backend, request.user, *args, **kwargs)
 
     if not user:
-        url = LOGIN_ERROR_URL
+        url = backend_setting(backend, 'LOGIN_ERROR_URL', LOGIN_ERROR_URL)
     elif isinstance(user, HttpResponse):
         return user
     else:
-        url = setting('SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL') or \
+        url = backend_setting(backend,
+                              'SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL') or \
               redirect_value or \
               DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
@@ -115,7 +117,7 @@ def disconnect(request, backend, association_id=None):
     """Disconnects given backend from current logged in user."""
     backend.disconnect(request.user, association_id)
     url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or \
-          setting('SOCIAL_AUTH_DISCONNECT_REDIRECT_URL') or \
+          backend_setting(backend, 'SOCIAL_AUTH_DISCONNECT_REDIRECT_URL') or \
           DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
@@ -177,12 +179,13 @@ def complete_process(request, backend, *args, **kwargs):
             else:
                 url = redirect_value or DEFAULT_REDIRECT
         else:
-            url = setting('SOCIAL_AUTH_INACTIVE_USER_URL', LOGIN_ERROR_URL)
+            url = backend_setting(backend, 'SOCIAL_AUTH_INACTIVE_USER_URL',
+                                  LOGIN_ERROR_URL)
     else:
         msg = setting('LOGIN_ERROR_MESSAGE', None)
         if msg:
             messages.error(request, msg)
-        url = LOGIN_ERROR_URL
+        url = backend_setting(backend, 'LOGIN_ERROR_URL', LOGIN_ERROR_URL)
     return HttpResponseRedirect(url)
 
 
