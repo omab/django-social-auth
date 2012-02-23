@@ -179,7 +179,8 @@ def complete_process(request, backend, *args, **kwargs):
                 url = new_user_redirect
             else:
                 url = redirect_value or \
-                      backend_setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
+                      backend_setting(backend,
+                                      'SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                       DEFAULT_REDIRECT
         else:
             url = backend_setting(backend, 'SOCIAL_AUTH_INACTIVE_USER_URL',
