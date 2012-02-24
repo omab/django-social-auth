@@ -15,18 +15,18 @@ except ImportError:
     # fall back for Python 2.5
     from cgi import parse_qs
 
-from django.conf import settings
-from django.utils import simplejson
-
 from oauth2 import Token
+
+from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+
 
 # Fitbit configuration
 FITBIT_SERVER = 'https://api.fitbit.com'
 FITBIT_REQUEST_TOKEN_URL = '%s/oauth/request_token' % FITBIT_SERVER
 FITBIT_AUTHORIZATION_URL = '%s/oauth/authorize' % FITBIT_SERVER
 FITBIT_ACCESS_TOKEN_URL = '%s/oauth/access_token' % FITBIT_SERVER
-EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
+EXPIRES_NAME = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class FitbitBackend(OAuthBackend):
