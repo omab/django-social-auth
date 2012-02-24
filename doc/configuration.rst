@@ -148,11 +148,6 @@ Configuration
     import random
     SOCIAL_AUTH_DEFAULT_USERNAME = lambda: random.choice(['Darth Vader', 'Obi-Wan Kenobi', 'R2-D2', 'C-3PO', 'Yoda'])
 
-  or::
-
-    from django.template.defaultfilter import slugify
-    SOCIAL_AUTH_USERNAME_FIXER = lambda u: slugify(u)
-
   in case your user layout needs to purify username on some weird way.
 
   Final user name will have a random UUID-generated suffix in case it's already
