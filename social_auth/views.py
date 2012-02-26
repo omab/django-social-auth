@@ -201,7 +201,6 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
     name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
     if request.session.get(name):
         data = request.session.pop(name)
-        request.session.modified = True
         idx, args, kwargs = backend.from_session_dict(data, user=user,
                                                       request=request,
                                                       *args, **kwargs)

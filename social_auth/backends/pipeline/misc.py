@@ -21,4 +21,3 @@ def save_status_to_session(request, auth, *args, **kwargs):
 
     name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
     request.session[name] = data
-    request.session.modified = True

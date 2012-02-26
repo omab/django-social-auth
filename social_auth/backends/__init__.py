@@ -136,6 +136,11 @@ class SocialAuthBackend(ModelBackend):
                     try:
                         result = func(*args, **out) or {}
                     except StopPipeline:
+                        # Clean partial pipeline on stop
+                        if 'request' in kwargs:
+                            name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY',
+                                           'partial_pipeline')
+                            kwargs['request'].session.pop(name, None)
                         break
 
                     if isinstance(result, dict):
