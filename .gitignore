@@ -1,6 +1,6 @@
 *.pyc
 .*.sw[po]
-test.db
+test*.db
 local_settings.py
 build/
 dist/
