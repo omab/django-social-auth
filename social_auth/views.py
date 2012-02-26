@@ -16,7 +16,8 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
-from social_auth.utils import sanitize_redirect, setting, log, backend_setting
+from social_auth.utils import sanitize_redirect, setting, log, \
+                              backend_setting, clean_partial_pipeline
 
 
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
@@ -132,6 +133,9 @@ def auth_process(request, backend):
         if setting('SOCIAL_AUTH_SANITIZE_REDIRECTS', True):
             redirect = sanitize_redirect(request.get_host(), redirect)
         request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
+
+    # Clean any partial pipeline info before starting the process
+    clean_partial_pipeline(request)
 
     if backend.uses_redirect:
         return HttpResponseRedirect(backend.auth_url())

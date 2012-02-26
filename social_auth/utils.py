@@ -137,6 +137,14 @@ def ctype_to_model(val):
     return val
 
 
+def clean_partial_pipeline(request):
+    """Cleans any data for partial pipeline."""
+    name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
+    # Check for key to avoid flagging the session as modified unnecessary
+    if name in request.session:
+        request.session.pop(name, None)
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()

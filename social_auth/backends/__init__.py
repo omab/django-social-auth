@@ -26,7 +26,8 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
-from social_auth.utils import setting, log, model_to_ctype, ctype_to_model
+from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
+                              clean_partial_pipeline
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline
 
@@ -138,9 +139,7 @@ class SocialAuthBackend(ModelBackend):
                     except StopPipeline:
                         # Clean partial pipeline on stop
                         if 'request' in kwargs:
-                            name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY',
-                                           'partial_pipeline')
-                            kwargs['request'].session.pop(name, None)
+                            clean_partial_pipeline(kwargs['request'])
                         break
 
                     if isinstance(result, dict):
