@@ -58,7 +58,7 @@ class FlickrAuth(ConsumerBasedOAuth):
     def access_token(self, token):
         """Return request for access token value"""
         # Flickr is a bit different - it passes user information along with
-        # the access token, so temporarily store it to vie the user_data
+        # the access token, so temporarily store it to view the user_data
         # method easy access later in the flow!
         request = self.oauth_request(token, self.ACCESS_TOKEN_URL)
         response = self.fetch_response(request)
