@@ -229,14 +229,42 @@ Configuration
 
   Defaults to ``LOGIN_ERROR_URL``.
 
-- The app catches any exception and logs errors to ``logger`` or
-  ``django.contrib.messagess`` app. Having tracebacks is really useful when
-  debugging, for that purpose this setting was defined::
+- The application catches any exception and logs errors to ``logger`` or
+  ``django.contrib.messagess`` application by default. But it's possible to
+  override the default behavior by defining a function to process the
+  exceptions using this setting::
+
+    SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.process_exceptions'
+
+  The function parameters will ``request`` holding the current request object,
+  ``backend`` with the current backend and ``err`` which is the exception
+  instance.
+
+  Recently this set of exceptions were introduce to describe the situations
+  a bit more than the old ``ValueError`` usually raised::
+
+    AuthException           - Base exception class
+    AuthFailed              - Authentication failed for some reason
+    AuthCanceled            - Authentication was canceled by the user
+    AuthUnknownError        - An unknown error stoped the authentication
+                              process
+    AuthTokenError          - Unauthorized or access token error, it was
+                              invalid, impossible to authenticate or user
+                              removed permissions to it.
+    AuthMissingParameter    - A needed parameter to continue the process was
+                              missing, usually raised by the services that
+                              need some POST data like myOpenID
+
+  These are a subclass of ``ValueError`` to keep backward compatibility.
+
+  Having tracebacks is really useful when debugging, for that purpose this
+  setting was defined::
 
     SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
 
   It's default value is ``DEBUG``, so you need to set it to ``False`` to avoid
   tracebacks when ``DEBUG = True``.
+
 
 Some settings can be tweak by backend by adding the backend name prefix (all
 uppercase and replace ``-`` with ``_``), here's the supported settings so far::

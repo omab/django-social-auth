@@ -145,6 +145,14 @@ def clean_partial_pipeline(request):
         request.session.pop(name, None)
 
 
+def log_exceptions_to_messages(request, backend, err):
+    """Log exception messages to messages app if it's installed."""
+    if 'django.contrib.messages' in setting('INSTALLED_APPS'):
+        from django.contrib.messages.api import error
+        name = backend.AUTH_BACKEND.name
+        error(request, unicode(err), extra_tags='social-auth %s' % name)
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()

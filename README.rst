@@ -333,9 +333,36 @@ Configuration
 
   Defaults to ``LOGIN_ERROR_URL``.
 
-- The app catches any exception and logs errors to ``logger`` or
-  ``django.contrib.messagess`` app. Having tracebacks is really useful when
-  debugging, for that purpose this setting was defined::
+- The application catches any exception and logs errors to ``logger`` or
+  ``django.contrib.messagess`` application by default. But it's possible to
+  override the default behavior by defining a function to process the
+  exceptions using this setting::
+
+    SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.process_exceptions'
+
+  The function parameters will ``request`` holding the current request object,
+  ``backend`` with the current backend and ``err`` which is the exception
+  instance.
+
+  Recently this set of exceptions were introduce to describe the situations
+  a bit more than the old ``ValueError`` usually raised::
+
+    AuthException           - Base exception class
+    AuthFailed              - Authentication failed for some reason
+    AuthCanceled            - Authentication was canceled by the user
+    AuthUnknownError        - An unknown error stoped the authentication
+                              process
+    AuthTokenError          - Unauthorized or access token error, it was
+                              invalid, impossible to authenticate or user
+                              removed permissions to it.
+    AuthMissingParameter    - A needed parameter to continue the process was
+                              missing, usually raised by the services that
+                              need some POST data like myOpenID
+
+  These are a subclass of ``ValueError`` to keep backward compatibility.
+
+  Having tracebacks is really useful when debugging, for that purpose this
+  setting was defined::
 
     SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
 
@@ -802,7 +829,7 @@ Instagram uses OAuth v2 for Authentication
 Testing
 -------
 
-To test the app just run::
+To test the application just run::
 
     ./manage.py test social_auth
 
@@ -891,8 +918,8 @@ Miscellaneous
 -------------
 
 Join to `django-social-auth discussion list`_ and bring any questions or suggestions
-that would improve this app. Convore_ discussion group is deprecated since the
-service is going to be shut down on April 1st.
+that would improve this application. Convore_ discussion group is deprecated since
+the service is going to be shut down on April 1st.
 
 If defining a custom user model, do not import social_auth from any models.py
 that would finally import from the models.py that defines your User class or it

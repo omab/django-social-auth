@@ -23,6 +23,7 @@ from django.utils import simplejson
 from social_auth.utils import setting
 from social_auth.backends import OpenIdAuth, ConsumerBasedOAuth, BaseOAuth2, \
                                  OAuthBackend, OpenIDBackend, USERNAME
+from social_auth.backends.exceptions import AuthFailed
 
 
 # Google OAuth base configuration
@@ -49,7 +50,7 @@ class GoogleOAuthBackend(OAuthBackend):
 
     def get_user_id(self, details, response):
         "Use google email as unique id"""
-        validate_whitelists(details['email'])
+        validate_whitelists(self, details['email'])
         return details['email']
 
     def get_user_details(self, response):
@@ -81,7 +82,7 @@ class GoogleBackend(OpenIDBackend):
         is unique enought to flag a single user. Email comes from schema:
         http://axschema.org/contact/email
         """
-        validate_whitelists(details['email'])
+        validate_whitelists(self, details['email'])
 
         return details['email']
 
@@ -199,18 +200,20 @@ def googleapis_email(url, params):
         return None
 
 
-def validate_whitelists(email):
-    """Validates allowed domains and emails against the GOOGLE_WHITE_LISTED_DOMAINS 
-    and GOOGLE_WHITE_LISTED_EMAILS settings.
-    Allows all domains or emails if setting is an empty list.
+def validate_whitelists(backend, email):
+    """
+    Validates allowed domains and emails against the following settings:
+        GOOGLE_WHITE_LISTED_DOMAINS
+        GOOGLE_WHITE_LISTED_EMAILS
+
+    All domains and emails are allowed if setting is an empty list.
     """
     emails = setting('GOOGLE_WHITE_LISTED_EMAILS', [])
     domains = setting('GOOGLE_WHITE_LISTED_DOMAINS', [])
     if emails and email in emails:
-        return # you're good
+        return  # you're good
     if domains and email.split('@', 1)[1] not in domains:
-        raise ValueError('Domain not allowed')
-
+        raise AuthFailed(backend, 'Domain not allowed')
 
 
 # Backend definition

@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate
 from django.core.urlresolvers import reverse
 
 from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
+from social_auth.backends.exceptions import AuthException
 
 
 class GAEBackend(SocialAuthBackend):
@@ -44,7 +45,7 @@ class GAEAuth(BaseAuth):
     def auth_complete(self, *args, **kwargs):
         """Completes login process, must return user instance."""
         if not users.get_current_user():
-            raise ValueError('Authentication error')
+            raise AuthException('Authentication error')
 
         # Setting these two are necessary for BaseAuth.authenticate to work
         kwargs.update({

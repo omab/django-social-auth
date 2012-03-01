@@ -13,6 +13,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils.importlib import import_module
 from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
@@ -24,6 +25,8 @@ DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                    setting('LOGIN_REDIRECT_URL')
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
 RAISE_EXCEPTIONS = setting('SOCIAL_AUTH_RAISE_EXCEPTIONS', setting('DEBUG'))
+PROCESS_EXCEPTIONS = setting('SOCIAL_AUTH_PROCESS_EXCEPTIONS',
+                             'social_auth.utils.log_exceptions_to_messages')
 
 
 def dsa_view(redirect_name=None):
@@ -50,17 +53,18 @@ def dsa_view(redirect_name=None):
             except Exception, e:  # some error ocurred
                 if RAISE_EXCEPTIONS:
                     raise
-                backend_name = backend.AUTH_BACKEND.name
+                log('error', unicode(e), exc_info=True, extra={
+                    'request': request
+                })
 
-                log('error', unicode(e), exc_info=True,
-                    extra=dict(request=request))
-
-                if 'django.contrib.messages' in setting('INSTALLED_APPS'):
-                    from django.contrib.messages.api import error
-                    error(request, unicode(e), extra_tags=backend_name)
+                mod, func_name = PROCESS_EXCEPTIONS.rsplit('.', 1)
+                try:
+                    process = getattr(import_module(mod), func_name,
+                                      lambda *args: None)
+                except ImportError:
+                    pass
                 else:
-                    log('warn', 'Messages framework not in place, some '+
-                                'errors have not been shown to the user.')
+                    process(request, backend, e)
 
                 url = backend_setting(backend, 'SOCIAL_AUTH_BACKEND_ERROR_URL',
                                       LOGIN_ERROR_URL)
