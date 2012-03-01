@@ -44,7 +44,8 @@ class GoogleOpenIdTestLogin(GoogleTestCase):
         self.assertTrue(parser.action)
         self.assertTrue(parser.values)
 
-        content = self.get_content(parser.action, parser.values, use_cookies=True)
+        content = self.get_content(parser.action, parser.values,
+                                   use_cookies=True)
         parser = RefreshParser()
         parser.feed(content)
 
@@ -52,9 +53,12 @@ class GoogleOpenIdTestLogin(GoogleTestCase):
         result = self.get_redirect(parser.value, use_cookies=True)
         if result.headers.get('Location', ''):  # approved?
             # damn, google has a hell of redirects :-(
-            result = self.get_redirect(result.headers['Location'], use_cookies=True)
-            result = self.get_redirect(result.headers['Location'], use_cookies=True)
-            result = self.get_redirect(result.headers['Location'], use_cookies=True)
+            result = self.get_redirect(result.headers['Location'],
+                                       use_cookies=True)
+            result = self.get_redirect(result.headers['Location'],
+                                       use_cookies=True)
+            result = self.get_redirect(result.headers['Location'],
+                                       use_cookies=True)
 
         # app was not approved
         if self.SERVER_NAME not in result.headers.get('Location', ''):
@@ -63,7 +67,10 @@ class GoogleOpenIdTestLogin(GoogleTestCase):
             parser.feed(content)
             parser.values['submit_true'] = 'yes'
             parser.values['remember_choices'] = 'yes'
-            result = self.get_redirect(parser.action, parser.values, use_cookies=True)
+            result = self.get_redirect(parser.action, parser.values,
+                                       use_cookies=True)
 
-        response = self.client.get(self.make_relative(result.headers['Location']))
-        self.assertTrue(setting('LOGIN_REDIRECT_URL') in self.make_relative(response['Location']))
+        response = self.client.get(self.make_relative(
+                                            result.headers['Location']))
+        self.assertTrue(setting('LOGIN_REDIRECT_URL') in \
+                            self.make_relative(response['Location']))
