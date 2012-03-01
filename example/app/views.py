@@ -17,6 +17,7 @@ def home(request):
         return render_to_response('home.html', {'version': version},
                                   RequestContext(request))
 
+
 @login_required
 def done(request):
     """Login complete view, displays user data"""
@@ -26,12 +27,14 @@ def done(request):
     }
     return render_to_response('done.html', ctx, RequestContext(request))
 
+
 def error(request):
     """Error view"""
     messages = get_messages(request)
     return render_to_response('error.html', {'version': version,
                                              'messages': messages},
                               RequestContext(request))
+
 
 def logout(request):
     """Logs out user"""

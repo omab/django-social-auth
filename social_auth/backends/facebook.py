@@ -109,9 +109,9 @@ class FacebookAuth(BaseOAuth2):
             if 'expires' in response:
                 data['expires'] = response['expires'][0]
 
-        kwargs.update({ 'auth': self,
-                        'response': data,
-                        self.AUTH_BACKEND.name: True })
+        kwargs.update({'auth': self,
+                       'response': data,
+                       self.AUTH_BACKEND.name: True})
         return authenticate(*args, **kwargs)
 
     @classmethod

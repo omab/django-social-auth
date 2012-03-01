@@ -30,9 +30,8 @@ def sanitize_redirect(host, redirect_to):
     """
     Given the hostname and an untrusted URL to redirect to,
     this method tests it to make sure it isn't garbage/harmful
-    and returns it, else returns None.
-
-    See http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/views.py#L36
+    and returns it, else returns None, similar as how's it done
+    on django.contrib.auth.views.
 
     >>> print sanitize_redirect('myapp.com', None)
     None
@@ -111,10 +110,10 @@ if not logger:
 
 def log(level, *args, **kwargs):
     """Small wrapper around logger functions."""
-    { 'debug': logger.debug,
-      'error': logger.error,
-      'exception': logger.exception,
-      'warn': logger.warn }[level](*args, **kwargs)
+    {'debug': logger.debug,
+     'error': logger.error,
+     'exception': logger.exception,
+     'warn': logger.warn}[level](*args, **kwargs)
 
 
 def model_to_ctype(val):

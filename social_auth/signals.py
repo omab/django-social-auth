@@ -19,4 +19,5 @@ pre_update = Signal(providing_args=['user', 'response', 'details'])
 
 socialauth_registered = Signal(providing_args=['user', 'response', 'details'])
 
-socialauth_not_registered = Signal(providing_args=['uid', 'response', 'details'])
+socialauth_not_registered = Signal(providing_args=['uid', 'response',
+                                                   'details'])

@@ -43,6 +43,7 @@ class GithubBackend(OAuthBackend):
                 'email': response.get('email') or '',
                 'first_name': response.get('name')}
 
+
 class GithubAuth(BaseOAuth):
     """Github OAuth mechanism"""
     AUTH_BACKEND = GithubBackend

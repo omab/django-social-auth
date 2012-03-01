@@ -20,6 +20,7 @@ class CustomUser(models.Model):
 from social_auth.signals import pre_update
 from social_auth.backends.facebook import FacebookBackend
 
+
 def facebook_extra_values(sender, user, response, details, **kwargs):
     return False
 

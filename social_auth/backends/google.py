@@ -189,9 +189,8 @@ def googleapis_email(url, params):
 
     Parameters must be passed in queryset and Authorization header as described
     on Google OAuth documentation at:
-        http://groups.google.com/group/oauth/browse_thread/thread/d15add9beb418ebc
-    and:
-        http://code.google.com/apis/accounts/docs/OAuth2.html#CallingAnAPI
+    http://groups.google.com/group/oauth/browse_thread/thread/d15add9beb418ebc
+    and: http://code.google.com/apis/accounts/docs/OAuth2.html#CallingAnAPI
     """
     request = Request(url + '?' + params, headers={'Authorization': params})
     try:

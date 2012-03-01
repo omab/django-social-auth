@@ -40,7 +40,7 @@ class FoursquareAuth(BaseOAuth2):
 
     def user_data(self, access_token):
         """Loads user data from service"""
-        params = {'oauth_token': access_token,}
+        params = {'oauth_token': access_token}
         url = FOURSQUARE_CHECK_AUTH + '?' + urllib.urlencode(params)
         try:
             return simplejson.load(urllib.urlopen(url))

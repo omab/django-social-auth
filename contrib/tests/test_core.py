@@ -20,7 +20,8 @@ class BackendsTest(TestCase):
     def test_twitter_backend(self):
         # We grab the Twitter testing user details from settings file
         TEST_TWITTER_USER = getattr(settings, 'TEST_TWITTER_USER', None)
-        TEST_TWITTER_PASSWORD = getattr(settings, 'TEST_TWITTER_PASSWORD', None)
+        TEST_TWITTER_PASSWORD = getattr(settings, 'TEST_TWITTER_PASSWORD',
+                                        None)
         self.assertTrue(TEST_TWITTER_USER)
         self.assertTrue(TEST_TWITTER_PASSWORD)
 
@@ -107,7 +108,8 @@ class BackendsTest(TestCase):
 
     def test_facebook_backend(self):
         TEST_FACEBOOK_USER = getattr(settings, 'TEST_FACEBOOK_USER', None)
-        TEST_FACEBOOK_PASSWORD = getattr(settings, 'TEST_FACEBOOK_PASSWORD', None)
+        TEST_FACEBOOK_PASSWORD = getattr(settings, 'TEST_FACEBOOK_PASSWORD',
+                                         None)
         self.assertTrue(TEST_FACEBOOK_USER)
         self.assertTrue(TEST_FACEBOOK_PASSWORD)
 
@@ -135,17 +137,20 @@ class BackendsTest(TestCase):
 
     def test_linkedin_backend(self):
         TEST_LINKEDIN_USER = getattr(settings, 'TEST_LINKEDIN_USER', None)
-        TEST_LINKEDIN_PASSWORD = getattr(settings, 'TEST_LINKEDIN_PASSWORD', None)
+        TEST_LINKEDIN_PASSWORD = getattr(settings, 'TEST_LINKEDIN_PASSWORD',
+                                         None)
         self.assertTrue(TEST_LINKEDIN_USER)
         self.assertTrue(TEST_LINKEDIN_PASSWORD)
 
         self.driver.get(self.url('/login/linkedin/'))
 
         # We log in
-        username_field = self.driver.find_element_by_id('session_key-oauthAuthorizeForm')
+        username_field = self.driver.find_element_by_id(
+                                'session_key-oauthAuthorizeForm')
         username_field.send_keys(TEST_LINKEDIN_USER)
 
-        password_field = self.driver.find_element_by_id('session_password-oauthAuthorizeForm')
+        password_field = self.driver.find_element_by_id(
+                                'session_password-oauthAuthorizeForm')
         password_field.send_keys(TEST_LINKEDIN_PASSWORD)
         password_field.submit()
 

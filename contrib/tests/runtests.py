@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-import os, sys
+import os
+import sys
 from os.path import dirname, abspath
+
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'test_settings'
 

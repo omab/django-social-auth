@@ -20,6 +20,7 @@ class GoogleTestCase(SocialAuthTestsCase):
 
 REDIRECT_RE = re.compile('window.location.replace\("(.*)"\);')
 
+
 class GoogleOpenIdTestLogin(GoogleTestCase):
     SERVER_NAME = 'myapp.com'
     SERVER_PORT = '8000'
@@ -32,7 +33,8 @@ class GoogleOpenIdTestLogin(GoogleTestCase):
         # Check that action and values were loaded properly
         self.assertTrue(parser.action)
         self.assertTrue(parser.values)
-        content = self.get_content(parser.action, parser.values, use_cookies=True)
+        content = self.get_content(parser.action, parser.values,
+                                   use_cookies=True)
 
         parser = FormParserByID('gaia_loginform')
         parser.feed(content)

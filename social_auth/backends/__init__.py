@@ -170,7 +170,9 @@ class SocialAuthBackend(ModelBackend):
         raise NotImplementedError('Implement in subclass')
 
     def get_user(self, user_id):
-        """Return user with given ID from the User model used by this backend"""
+        """
+        Return user with given ID from the User model used by this backend
+        """
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
@@ -349,7 +351,7 @@ class BaseAuth(object):
         setting is per backend and defined by:
             <backend name in uppercase>_REQUEST_TOKEN_EXTRA_ARGUMENTS.
         """
-        backend_name = self.AUTH_BACKEND.name.upper().replace('-','_')
+        backend_name = self.AUTH_BACKEND.name.upper().replace('-', '_')
         return setting(backend_name + '_REQUEST_TOKEN_EXTRA_ARGUMENTS', {})
 
     def auth_extra_arguments(self):
@@ -357,7 +359,7 @@ class BaseAuth(object):
         backend and defined by:
             <backend name in uppercase>_AUTH_EXTRA_ARGUMENTS.
         """
-        backend_name = self.AUTH_BACKEND.name.upper().replace('-','_')
+        backend_name = self.AUTH_BACKEND.name.upper().replace('-', '_')
         return setting(backend_name + '_AUTH_EXTRA_ARGUMENTS', {})
 
     @property

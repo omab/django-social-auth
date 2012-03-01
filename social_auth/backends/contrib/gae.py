@@ -49,7 +49,7 @@ class GAEAuth(BaseAuth):
 
         # Setting these two are necessary for BaseAuth.authenticate to work
         kwargs.update({
-            'response' : '',
+            'response': '',
             self.AUTH_BACKEND.name: True
         })
         return authenticate(*args, **kwargs)

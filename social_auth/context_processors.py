@@ -22,7 +22,7 @@ def social_auth_by_type_backends(request):
     data['backends'] = group_backend_by_type(data['backends'])
     data['not_associated'] = group_backend_by_type(data['not_associated'])
     data['associated'] = group_backend_by_type(data['associated'],
-                                               key=lambda assoc: assoc.provider)
+                                              key=lambda assoc: assoc.provider)
     return {'social_auth': data}
 
 

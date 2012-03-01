@@ -214,4 +214,5 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
                                                       *args, **kwargs)
         return backend.continue_pipeline(pipeline_index=idx, *args, **kwargs)
     else:
-        return backend.auth_complete(user=user, request=request, *args, **kwargs)
+        return backend.auth_complete(user=user, request=request, *args,
+                                     **kwargs)

@@ -50,7 +50,7 @@ class DjangoOpenIDStore(OpenIDStore):
         if expired:  # clear expired associations
             Association.objects.filter(pk__in=expired).delete()
 
-        if associations: # return most recet association
+        if associations:  # return most recet association
             associations.sort(key=lambda x: x.issued, reverse=True)
             return associations[0]
 
