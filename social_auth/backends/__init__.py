@@ -658,6 +658,11 @@ class BaseOAuth2(BaseOAuth):
 
         try:
             response = simplejson.loads(urlopen(request).read())
+        except HTTPError, e:
+            if e.code == 400:
+                raise AuthCanceled(self)
+            else:
+                raise
         except (ValueError, KeyError):
             raise AuthUnknownError(self)
 
