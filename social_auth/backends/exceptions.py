@@ -1,3 +1,5 @@
+from django.utils.translation import ugettext
+
 class SocialAuthBaseException(ValueError):
     """Base class for pipeline exceptions."""
     pass
@@ -21,8 +23,11 @@ class AuthException(SocialAuthBaseException):
 class AuthFailed(AuthException):
     """Auth process failed for some reason."""
     def __unicode__(self):
-        msg = super(AuthFailed, self).__unicode__()
-        return u'Authentication process failed %s' % msg
+
+        if self.message == 'access_denied':
+            return ugettext(u'Authentication process was cancelled')
+        else:
+            return ugettext(u'Authentication failed: %s') % super(AuthFailed, self).__unicode__()
 
 
 class AuthCanceled(AuthException):

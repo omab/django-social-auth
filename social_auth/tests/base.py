@@ -3,7 +3,7 @@ import urllib2
 import cookielib
 import urllib
 import urlparse
-import unittest
+from django.test.simple import TestCase
 from sgmllib import SGMLParser
 
 from django.test.client import Client
@@ -14,7 +14,7 @@ USER_AGENT = 'Mozilla/5.0'
 REFRESH_RE = re.compile(r'\d;\s*url=')
 
 
-class SocialAuthTestsCase(unittest.TestCase):
+class SocialAuthTestsCase(TestCase):
     """Base class for social auth tests"""
     SERVER_NAME = None
     SERVER_PORT = None
@@ -27,7 +27,23 @@ class SocialAuthTestsCase(unittest.TestCase):
             client_kwargs['SERVER_PORT'] = self.SERVER_PORT
         self.jar = None
         self.client = Client(**client_kwargs)
+        from social_auth import backends
+        self.old_PIPELINE = backends.PIPELINE
+        backends.PIPELINE = (
+            'social_auth.backends.pipeline.social.social_auth_user',
+            'social_auth.backends.pipeline.associate.associate_by_email',
+            'social_auth.backends.pipeline.user.get_username',
+            'social_auth.backends.pipeline.user.create_user',
+            'social_auth.backends.pipeline.social.associate_user',
+            'social_auth.backends.pipeline.social.load_extra_data',
+            'social_auth.backends.pipeline.user.update_user_details',
+            )
         super(SocialAuthTestsCase, self).__init__(*args, **kwargs)
+
+    def tearDown(self):
+        from social_auth import backends
+        backends.PIPELINE = self.old_PIPELINE
+        super(SocialAuthTestsCase, self).tearDown()
 
     def test_backend_cache(self):
         """Ensure that the backend for the testcase gets cached."""
@@ -39,7 +55,7 @@ class SocialAuthTestsCase(unittest.TestCase):
             from social_auth import backends
             backends.BACKENDS = {}
             self.client.get(self.reverse('socialauth_begin', self.name))
-            self.assertTrue(self.name in backends.BACKENDS)
+            self.assertTrue(self.name in backends.BACKENDSCACHE)
 
     def get_content(self, url, data=None, use_cookies=False):
         """Return content for given url, if data is not None, then a POST
