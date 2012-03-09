@@ -39,10 +39,10 @@ GOOGLE_OATUH2_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth'
 # scope for user email, specify extra scopes in settings, for example:
 # GOOGLE_OAUTH_EXTRA_SCOPE = ['https://www.google.com/m8/feeds/']
 GOOGLE_OAUTH_SCOPE = ['https://www.googleapis.com/auth/userinfo#email']
-GOOGLE_OAUTH2_SCOPE = ['https://www.googleapis.com/auth/userinfo.email', \
+GOOGLE_OAUTH2_SCOPE = ['https://www.googleapis.com/auth/userinfo.email',
                        'https://www.googleapis.com/auth/userinfo.profile']
 GOOGLEAPIS_EMAIL = 'https://www.googleapis.com/userinfo/email'
-GOOGLEAPIS_PROFILEE = 'https://www.googleapis.com/oauth2/v1/userinfo'
+GOOGLEAPIS_PROFILE = 'https://www.googleapis.com/oauth2/v1/userinfo'
 GOOGLE_OPENID_URL = 'https://www.google.com/accounts/o8/id'
 
 
@@ -190,9 +190,9 @@ class GoogleOAuth2(BaseOAuth2):
 
     def user_data(self, access_token):
         """Return user data from Google API"""
-        return googleapis_profile(GOOGLEAPIS_PROFILEE, access_token)
+        return googleapis_profile(GOOGLEAPIS_PROFILE, access_token)
 
- 
+
 def googleapis_email(url, params):
     """Loads user data from googleapis service, only email so far as it's
     described in http://sites.google.com/site/oauthgoog/Home/emaildisplayscope
@@ -210,7 +210,8 @@ def googleapis_email(url, params):
 
 
 def googleapis_profile(url, access_token):
-    """Loads user data from googleapis service, such as name, given_name,
+    """
+    Loads user data from googleapis service, such as name, given_name,
     family_name, etc. as it's described in:
     https://developers.google.com/accounts/docs/OAuth2Login
     """
