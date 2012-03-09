@@ -39,7 +39,10 @@ GOOGLE_OATUH2_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth'
 # scope for user email, specify extra scopes in settings, for example:
 # GOOGLE_OAUTH_EXTRA_SCOPE = ['https://www.google.com/m8/feeds/']
 GOOGLE_OAUTH_SCOPE = ['https://www.googleapis.com/auth/userinfo#email']
+GOOGLE_OAUTH2_SCOPE = ['https://www.googleapis.com/auth/userinfo.email', \
+                       'https://www.googleapis.com/auth/userinfo.profile']
 GOOGLEAPIS_EMAIL = 'https://www.googleapis.com/userinfo/email'
+GOOGLEAPIS_PROFILEE = 'https://www.googleapis.com/oauth2/v1/userinfo'
 GOOGLE_OPENID_URL = 'https://www.google.com/accounts/o8/id'
 
 
@@ -70,6 +73,14 @@ class GoogleOAuth2Backend(GoogleOAuthBackend):
         ('refresh_token', 'refresh_token'),
         ('expires_in', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
     ]
+
+    def get_user_details(self, response):
+        email = response['email']
+        return {USERNAME: email.split('@', 1)[0],
+                'email': email,
+                'fullname': response.get('name', ''),
+                'first_name': response.get('given_name', ''),
+                'last_name': response.get('family_name', '')}
 
 
 class GoogleBackend(OpenIDBackend):
@@ -175,14 +186,13 @@ class GoogleOAuth2(BaseOAuth2):
     SETTINGS_SECRET_NAME = 'GOOGLE_OAUTH2_CLIENT_SECRET'
 
     def get_scope(self):
-        return GOOGLE_OAUTH_SCOPE + setting('GOOGLE_OAUTH_EXTRA_SCOPE', [])
+        return GOOGLE_OAUTH2_SCOPE + setting('GOOGLE_OAUTH_EXTRA_SCOPE', [])
 
     def user_data(self, access_token):
         """Return user data from Google API"""
-        data = {'oauth_token': access_token, 'alt': 'json'}
-        return googleapis_email(GOOGLEAPIS_EMAIL, urlencode(data))
+        return googleapis_profile(GOOGLEAPIS_PROFILEE, access_token)
 
-
+ 
 def googleapis_email(url, params):
     """Loads user data from googleapis service, only email so far as it's
     described in http://sites.google.com/site/oauthgoog/Home/emaildisplayscope
@@ -195,6 +205,19 @@ def googleapis_email(url, params):
     request = Request(url + '?' + params, headers={'Authorization': params})
     try:
         return simplejson.loads(urlopen(request).read())['data']
+    except (ValueError, KeyError, IOError):
+        return None
+
+
+def googleapis_profile(url, access_token):
+    """Loads user data from googleapis service, such as name, given_name,
+    family_name, etc. as it's described in:
+    https://developers.google.com/accounts/docs/OAuth2Login
+    """
+    data = {'access_token': access_token, 'alt': 'json'}
+    request = Request(url + '?' + urlencode(data))
+    try:
+        return simplejson.loads(urlopen(request).read())
     except (ValueError, KeyError, IOError):
         return None
 
