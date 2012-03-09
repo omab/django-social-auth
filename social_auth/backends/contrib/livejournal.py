@@ -7,6 +7,7 @@ username.livejournal.com. Username is retrieved from the identity url.
 import urlparse
 
 from social_auth.backends import OpenIDBackend, OpenIdAuth, USERNAME
+from social_auth.backends.exceptions import AuthMissingParameter
 
 
 # LiveJournal conf
@@ -38,7 +39,7 @@ class LiveJournalAuth(OpenIdAuth):
     def openid_url(self):
         """Returns LiveJournal authentication URL"""
         if not self.data.get(LIVEJOURNAL_USER_FIELD):
-            raise ValueError('Missing LiveJournal user identifier')
+            raise AuthMissingParameter(self, LIVEJOURNAL_USER_FIELD)
         return LIVEJOURNAL_URL % self.data[LIVEJOURNAL_USER_FIELD]
 
 

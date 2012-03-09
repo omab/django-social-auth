@@ -15,6 +15,7 @@ implements a common interface to define new authentication providers from
 third parties.
 """
 
+
 def long_description():
     """Return long description from README.rst if it's present
     because it doesn't get installed."""

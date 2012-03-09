@@ -6,9 +6,10 @@ def username(request, *args, **kwargs):
         username = kwargs['user'].username
     else:
         username = request.session.get('saved_username')
-    return { 'username': username }
+    return {'username': username}
 
 
 def redirect_to_form(*args, **kwargs):
-    if not kwargs['request'].session.get('saved_username') and kwargs.get('user') is None:
+    if not kwargs['request'].session.get('saved_username') and \
+       kwargs.get('user') is None:
         return HttpResponseRedirect('/form/')

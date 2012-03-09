@@ -3,13 +3,14 @@ from django.db.utils import IntegrityError
 from social_auth.utils import setting
 from social_auth.models import UserSocialAuth
 from social_auth.backends.pipeline import warn_setting
+from social_auth.backends.exceptions import AuthException
 
 
 def social_auth_user(backend, uid, user=None, *args, **kwargs):
     """Return UserSocialAuth account for backend/uid pair or None if it
     doesn't exists.
 
-    Raise ValueError if UserSocialAuth entry belongs to another user.
+    Raise AuthException if UserSocialAuth entry belongs to another user.
     """
     try:
         social_user = UserSocialAuth.objects.select_related('user')\
@@ -20,7 +21,7 @@ def social_auth_user(backend, uid, user=None, *args, **kwargs):
 
     if social_user:
         if user and social_user.user != user:
-            raise ValueError('Account already in use.', social_user)
+            raise AuthException(backend, 'Account already in use.')
         elif not user:
             user = social_user.user
     return {'social_user': social_user, 'user': user}

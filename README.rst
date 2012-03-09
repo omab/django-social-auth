@@ -131,12 +131,6 @@ Configuration
   Don't miss ``django.contrib.auth.backends.ModelBackend`` if using ``django.auth``
   user model or users won't be able to login.
 
-- Define desired backends for your site::
-
-    SOCIAL_AUTH_ENABLED_BACKENDS = ('google', 'google-oauth', 'facebook', ...)
-
-  All backends are enabled by default.
-
 - Setup needed OAuth keys (see OAuth_ section for details)::
 
     TWITTER_CONSUMER_KEY         = ''
@@ -187,13 +181,10 @@ Configuration
 
     SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
 
-  In case of authentication error, the message can be stored in session
-  if the following setting is defined::
+  Users will be redirected to ``LOGIN_ERROR_URL`` in case of error or user
+  cancellation on some backends. This URL can be override by this setting::
 
-    SOCIAL_AUTH_ERROR_KEY = 'social_errors'
-
-  This defines the desired session key where last error message should be
-  stored. It's disabled by default.
+    SOCIAL_AUTH_BACKEND_ERROR_URL = '/new-error-url/'
 
 - Configure authentication and association complete URL names to avoid
   possible clashes::
@@ -254,11 +245,6 @@ Configuration
 
     import random
     SOCIAL_AUTH_DEFAULT_USERNAME = lambda: random.choice(['Darth Vader', 'Obi-Wan Kenobi', 'R2-D2', 'C-3PO', 'Yoda'])
-
-  or::
-
-    from django.template.defaultfilters import slugify
-    SOCIAL_AUTH_USERNAME_FIXER = lambda u: slugify(u)
 
   in case your user layout needs to purify username on some weird way.
 
@@ -350,14 +336,54 @@ Configuration
 
   Defaults to ``LOGIN_ERROR_URL``.
 
-- The app catches any exception and logs errors to ``logger`` or
-  ``django.contrib.messagess`` app. Having tracebacks is really useful when
-  debugging, for that purpose this setting was defined::
+- The application catches any exception and logs errors to ``logger`` or
+  ``django.contrib.messagess`` application by default. But it's possible to
+  override the default behavior by defining a function to process the
+  exceptions using this setting::
+
+    SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.process_exceptions'
+
+  The function parameters will ``request`` holding the current request object,
+  ``backend`` with the current backend and ``err`` which is the exception
+  instance.
+
+  Recently this set of exceptions were introduce to describe the situations
+  a bit more than the old ``ValueError`` usually raised::
+
+    AuthException           - Base exception class
+    AuthFailed              - Authentication failed for some reason
+    AuthCanceled            - Authentication was canceled by the user
+    AuthUnknownError        - An unknown error stoped the authentication
+                              process
+    AuthTokenError          - Unauthorized or access token error, it was
+                              invalid, impossible to authenticate or user
+                              removed permissions to it.
+    AuthMissingParameter    - A needed parameter to continue the process was
+                              missing, usually raised by the services that
+                              need some POST data like myOpenID
+
+  These are a subclass of ``ValueError`` to keep backward compatibility.
+
+  Having tracebacks is really useful when debugging, for that purpose this
+  setting was defined::
 
     SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
 
   It's default value is ``DEBUG``, so you need to set it to ``False`` to avoid
   tracebacks when ``DEBUG = True``.
+
+
+Some settings can be tweak by backend by adding the backend name prefix (all
+uppercase and replace ``-`` with ``_``), here's the supported settings so far::
+
+        LOGIN_ERROR_URL
+        SOCIAL_AUTH_BACKEND_ERROR_URL
+        SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL
+        SOCIAL_AUTH_DISCONNECT_REDIRECT_URL
+        SOCIAL_AUTH_NEW_USER_REDIRECT_URL
+        SOCIAL_AUTH_LOGIN_REDIRECT_URL
+        SOCIAL_AUTH_INACTIVE_USER_URL
+
 
 Authentication Pipeline
 -----------------------
@@ -806,7 +832,7 @@ Instagram uses OAuth v2 for Authentication
 Testing
 -------
 
-To test the app just run::
+To test the application just run::
 
     ./manage.py test social_auth
 
@@ -894,9 +920,9 @@ Some particular use cases are listed below.
 Miscellaneous
 -------------
 
-Join to django-social-auth_ community on Convore_ and bring any questions or
-suggestions that will improve this app.
-
+Join to `django-social-auth discussion list`_ and bring any questions or suggestions
+that would improve this application. Convore_ discussion group is deprecated since
+the service is going to be shut down on April 1st.
 If defining a custom user model, do not import social_auth from any models.py
 that would finally import from the models.py that defines your User class or it
 will make your project fail with a recursive import because social_auth uses
@@ -1045,3 +1071,4 @@ Base work is copyrighted by:
 .. _example application: https://github.com/omab/django-social-auth/blob/master/example/local_settings.py.template#L23
 .. _BrowserID: https://browserid.org
 .. _Instagram API: http://instagr.am/developer/
+.. _django-social-auth discussion list: https://groups.google.com/group/django-social-auth

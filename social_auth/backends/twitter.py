@@ -14,6 +14,7 @@ class for details on how to extend it.
 from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends.exceptions import AuthCanceled
 
 
 # Twitter configuration
@@ -67,7 +68,7 @@ class TwitterAuth(ConsumerBasedOAuth):
     def auth_complete(self, *args, **kwargs):
         """Completes loging process, must return user instance"""
         if 'denied' in self.data:
-            raise ValueError('Authentication denied')
+            raise AuthCanceled(self)
         else:
             return super(TwitterAuth, self).auth_complete(*args, **kwargs)
 

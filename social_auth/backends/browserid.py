@@ -11,6 +11,7 @@ from django.utils import simplejson
 
 from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
 from social_auth.utils import log, setting
+from social_auth.backends.exceptions import AuthFailed, AuthMissingParameter
 
 
 # BrowserID verification server
@@ -60,7 +61,7 @@ class BrowserIDAuth(BaseAuth):
     def auth_complete(self, *args, **kwargs):
         """Completes loging process, must return user instance"""
         if not 'assertion' in self.data:
-            raise ValueError('Missing assertion parameter')
+            raise AuthMissingParameter(self, 'assertion')
 
         data = urlencode({
             'assertion': self.data['assertion'],
@@ -75,9 +76,10 @@ class BrowserIDAuth(BaseAuth):
         else:
             if response.get('status') == 'failure':
                 log('debug', 'Authentication failed.')
-                raise ValueError('Authentication failed')
+                raise AuthFailed(self)
 
             kwargs.update({
+                'auth': self,
                 'response': response,
                 self.AUTH_BACKEND.name: True
             })

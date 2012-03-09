@@ -23,6 +23,7 @@ from django.utils import simplejson
 from social_auth.utils import setting
 from social_auth.backends import OpenIdAuth, ConsumerBasedOAuth, BaseOAuth2, \
                                  OAuthBackend, OpenIDBackend, USERNAME
+from social_auth.backends.exceptions import AuthFailed
 
 
 # Google OAuth base configuration
@@ -49,6 +50,7 @@ class GoogleOAuthBackend(OAuthBackend):
 
     def get_user_id(self, details, response):
         "Use google email as unique id"""
+        validate_whitelists(self, details['email'])
         return details['email']
 
     def get_user_details(self, response):
@@ -80,8 +82,8 @@ class GoogleBackend(OpenIDBackend):
         is unique enought to flag a single user. Email comes from schema:
         http://axschema.org/contact/email
         """
-        # White listed domains (accepts all if list is empty)
-        domains = setting('GOOGLE_WHITE_LISTED_DOMAINS', [])
+        validate_whitelists(self, details['email'])
+
         if domains and details['email'].split('@', 1)[1] not in domains:
             raise ValueError('Domain not allowed')
 
@@ -190,15 +192,30 @@ def googleapis_email(url, params):
 
     Parameters must be passed in queryset and Authorization header as described
     on Google OAuth documentation at:
-        http://groups.google.com/group/oauth/browse_thread/thread/d15add9beb418ebc
-    and:
-        http://code.google.com/apis/accounts/docs/OAuth2.html#CallingAnAPI
+    http://groups.google.com/group/oauth/browse_thread/thread/d15add9beb418ebc
+    and: http://code.google.com/apis/accounts/docs/OAuth2.html#CallingAnAPI
     """
     request = Request(url + '?' + params, headers={'Authorization': params})
     try:
         return simplejson.loads(urlopen(request).read())['data']
     except (ValueError, KeyError, IOError):
         return None
+
+
+def validate_whitelists(backend, email):
+    """
+    Validates allowed domains and emails against the following settings:
+        GOOGLE_WHITE_LISTED_DOMAINS
+        GOOGLE_WHITE_LISTED_EMAILS
+
+    All domains and emails are allowed if setting is an empty list.
+    """
+    emails = setting('GOOGLE_WHITE_LISTED_EMAILS', [])
+    domains = setting('GOOGLE_WHITE_LISTED_DOMAINS', [])
+    if emails and email in emails:
+        return  # you're good
+    if domains and email.split('@', 1)[1] not in domains:
+        raise AuthFailed(backend, 'Domain not allowed')
 
 
 # Backend definition

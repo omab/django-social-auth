@@ -9,7 +9,7 @@ Also the modules *must* define a BACKENDS dictionary with the backend name
 (which is used for URLs matching) and Auth class, otherwise it won't be
 enabled.
 """
-from urllib2 import Request, urlopen
+from urllib2 import Request, urlopen, HTTPError
 from urllib import urlencode
 from urlparse import urlsplit
 
@@ -26,9 +26,13 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
-from social_auth.utils import setting, log, model_to_ctype, ctype_to_model
+from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
+                              clean_partial_pipeline
 from social_auth.store import DjangoOpenIDStore
-from social_auth.backends.exceptions import StopPipeline
+from social_auth.backends.exceptions import StopPipeline, AuthException, \
+                                            AuthFailed, AuthCanceled, \
+                                            AuthUnknownError, AuthTokenError, \
+                                            AuthMissingParameter
 
 
 if setting('SOCIAL_AUTH_USER_MODEL'):
@@ -136,6 +140,9 @@ class SocialAuthBackend(ModelBackend):
                     try:
                         result = func(*args, **out) or {}
                     except StopPipeline:
+                        # Clean partial pipeline on stop
+                        if 'request' in kwargs:
+                            clean_partial_pipeline(kwargs['request'])
                         break
 
                     if isinstance(result, dict):
@@ -163,7 +170,9 @@ class SocialAuthBackend(ModelBackend):
         raise NotImplementedError('Implement in subclass')
 
     def get_user(self, user_id):
-        """Return user with given ID from the User model used by this backend"""
+        """
+        Return user with given ID from the User model used by this backend
+        """
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
@@ -342,7 +351,7 @@ class BaseAuth(object):
         setting is per backend and defined by:
             <backend name in uppercase>_REQUEST_TOKEN_EXTRA_ARGUMENTS.
         """
-        backend_name = self.AUTH_BACKEND.name.upper().replace('-','_')
+        backend_name = self.AUTH_BACKEND.name.upper().replace('-', '_')
         return setting(backend_name + '_REQUEST_TOKEN_EXTRA_ARGUMENTS', {})
 
     def auth_extra_arguments(self):
@@ -350,7 +359,7 @@ class BaseAuth(object):
         backend and defined by:
             <backend name in uppercase>_AUTH_EXTRA_ARGUMENTS.
         """
-        backend_name = self.AUTH_BACKEND.name.upper().replace('-','_')
+        backend_name = self.AUTH_BACKEND.name.upper().replace('-', '_')
         return setting(backend_name + '_AUTH_EXTRA_ARGUMENTS', {})
 
     @property
@@ -414,7 +423,7 @@ class OpenIdAuth(BaseAuth):
         response = self.consumer().complete(dict(self.data.items()),
                                             self.request.build_absolute_uri())
         if not response:
-            raise ValueError('This is an OpenID relying party endpoint')
+            raise AuthException(self, 'OpenID relying party endpoint')
         elif response.status == SUCCESS:
             kwargs.update({
                 'auth': self,
@@ -423,13 +432,11 @@ class OpenIdAuth(BaseAuth):
             })
             return authenticate(*args, **kwargs)
         elif response.status == FAILURE:
-            raise ValueError('OpenID authentication failed: %s' % \
-                             response.message)
+            raise AuthFailed(self, response.message)
         elif response.status == CANCEL:
-            raise ValueError('Authentication cancelled')
+            raise AuthCanceled(self)
         else:
-            raise ValueError('Unknown OpenID response type: %r' % \
-                             response.status)
+            raise AuthUnknownError(self, response.status)
 
     def setup_request(self, extra_params=None):
         """Setup request"""
@@ -470,14 +477,14 @@ class OpenIdAuth(BaseAuth):
         try:
             return self.consumer().begin(openid_url)
         except DiscoveryFailure, err:
-            raise ValueError('OpenID discovery error: %s' % err)
+            raise AuthException(self, 'OpenID discovery error: %s' % err)
 
     def openid_url(self):
         """Return service provider URL.
         This base class is generic accepting a POST parameter that specifies
         provider URL."""
         if OPENID_ID_FIELD not in self.data:
-            raise ValueError('Missing openid identifier')
+            raise AuthMissingParameter(self, OPENID_ID_FIELD)
         return self.data[OPENID_ID_FIELD]
 
 
@@ -517,13 +524,20 @@ class ConsumerBasedOAuth(BaseOAuth):
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
         unauthed_token = self.request.session.get(name)
         if not unauthed_token:
-            raise ValueError('Missing unauthorized token')
+            raise AuthTokenError('Missing unauthorized token')
 
         token = Token.from_string(unauthed_token)
         if token.key != self.data.get('oauth_token', 'no-token'):
-            raise ValueError('Incorrect tokens')
+            raise AuthTokenError('Incorrect tokens')
 
-        access_token = self.access_token(token)
+        try:
+            access_token = self.access_token(token)
+        except HTTPError, e:
+            if e.code == 400:
+                raise AuthCanceled(self)
+            else:
+                raise
+
         data = self.user_data(access_token)
         if data is not None:
             data['access_token'] = access_token.to_string()
@@ -630,7 +644,7 @@ class BaseOAuth2(BaseOAuth):
         """Completes loging process, must return user instance"""
         if self.data.get('error'):
             error = self.data.get('error_description') or self.data['error']
-            raise ValueError('OAuth2 authentication failed: %s' % error)
+            raise AuthFailed(self, error)
 
         client_id, client_secret = self.get_key_and_secret()
         params = {'grant_type': 'authorization_code',  # request auth code
@@ -644,12 +658,17 @@ class BaseOAuth2(BaseOAuth):
 
         try:
             response = simplejson.loads(urlopen(request).read())
+        except HTTPError, e:
+            if e.code == 400:
+                raise AuthCanceled(self)
+            else:
+                raise
         except (ValueError, KeyError):
-            raise ValueError('Unknown OAuth2 response type')
+            raise AuthUnknownError(self)
 
         if response.get('error'):
             error = response.get('error_description') or response.get('error')
-            raise ValueError('OAuth2 authentication failed: %s' % error)
+            raise AuthFailed(self, error)
         else:
             response.update(self.user_data(response['access_token']) or {})
             kwargs.update({
@@ -704,11 +723,15 @@ def get_backends(force_load=False):
     """
     if not BACKENDSCACHE or force_load:
         for auth_backend in setting('AUTHENTICATION_BACKENDS'):
-            module = import_module(auth_backend.rsplit(".", 1)[0])
-            backends = getattr(module, "BACKENDS", {})
-            for name, backend in backends.items():
-                if backend.enabled():
-                    BACKENDSCACHE[name] = backend
+            mod, cls_name = auth_backend.rsplit('.', 1)
+            module = import_module(mod)
+            backend = getattr(module, cls_name)
+
+            if issubclass(backend, SocialAuthBackend):
+                name = backend.name
+                backends = getattr(module, 'BACKENDS', {})
+                if name in backends and backends[name].enabled():
+                    BACKENDSCACHE[name] = backends[name]
     return BACKENDSCACHE
 
 

@@ -40,7 +40,7 @@ class InstagramAuth(BaseOAuth2):
 
     def user_data(self, access_token):
         """Loads user data from service"""
-        params = {'access_token': access_token,}
+        params = {'access_token': access_token}
         url = INSTAGRAM_CHECK_AUTH + '?' + urllib.urlencode(params)
         try:
             return simplejson.load(urllib.urlopen(url))

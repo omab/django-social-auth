@@ -1,9 +1,9 @@
 """
-Flickr OAuth support.
+Fitbit OAuth support.
 
-This contribution adds support for Flickr OAuth service. The settings
-FLICKR_APP_ID and FLICKR_API_SECRET must be defined with the values
-given by Flickr application registration process.
+This contribution adds support for Fitbit OAuth service. The settings
+FITBIT_CONSUMER_KEY and FITBIT_CONSUMER_SECRET must be defined with the values
+given by Fitbit application registration process.
 
 By default account id, username and token expiration time are stored in
 extra_data field, check OAuthBackend class for details on how to extend it.
@@ -21,44 +21,43 @@ from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
 
 
-# Flickr configuration
-FLICKR_SERVER = 'http://www.flickr.com/services'
-FLICKR_REQUEST_TOKEN_URL = '%s/oauth/request_token' % FLICKR_SERVER
-FLICKR_AUTHORIZATION_URL = '%s/oauth/authorize' % FLICKR_SERVER
-FLICKR_ACCESS_TOKEN_URL = '%s/oauth/access_token' % FLICKR_SERVER
+# Fitbit configuration
+FITBIT_SERVER = 'https://api.fitbit.com'
+FITBIT_REQUEST_TOKEN_URL = '%s/oauth/request_token' % FITBIT_SERVER
+FITBIT_AUTHORIZATION_URL = '%s/oauth/authorize' % FITBIT_SERVER
+FITBIT_ACCESS_TOKEN_URL = '%s/oauth/access_token' % FITBIT_SERVER
+EXPIRES_NAME = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
-class FlickrBackend(OAuthBackend):
-    """Flickr OAuth authentication backend"""
-    name = 'flickr'
+class FitbitBackend(OAuthBackend):
+    """Fitbit OAuth authentication backend"""
+    name = 'fitbit'
     # Default extra data to store
-    EXTRA_DATA = [
-        ('id', 'id'),
-        ('username', 'username'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
-    ]
+    EXTRA_DATA = [('id', 'id'),
+                  ('username', 'username'),
+                  ('expires', EXPIRES_NAME)]
 
     def get_user_details(self, response):
-        """Return user details from Flickr account"""
+        """Return user details from Fitbit account"""
         return {USERNAME: response.get('id'),
                 'email': '',
                 'first_name': response.get('fullname')}
 
 
-class FlickrAuth(ConsumerBasedOAuth):
-    """Flickr OAuth authentication mechanism"""
-    AUTHORIZATION_URL = FLICKR_AUTHORIZATION_URL
-    REQUEST_TOKEN_URL = FLICKR_REQUEST_TOKEN_URL
-    ACCESS_TOKEN_URL = FLICKR_ACCESS_TOKEN_URL
-    SERVER_URL = FLICKR_SERVER
-    AUTH_BACKEND = FlickrBackend
-    SETTINGS_KEY_NAME = 'FLICKR_APP_ID'
-    SETTINGS_SECRET_NAME = 'FLICKR_API_SECRET'
+class FitbitAuth(ConsumerBasedOAuth):
+    """Fitbit OAuth authentication mechanism"""
+    AUTHORIZATION_URL = FITBIT_AUTHORIZATION_URL
+    REQUEST_TOKEN_URL = FITBIT_REQUEST_TOKEN_URL
+    ACCESS_TOKEN_URL = FITBIT_ACCESS_TOKEN_URL
+    SERVER_URL = FITBIT_SERVER
+    AUTH_BACKEND = FitbitBackend
+    SETTINGS_KEY_NAME = 'FITBIT_CONSUMER_KEY'
+    SETTINGS_SECRET_NAME = 'FITBIT_CONSUMER_SECRET'
 
     def access_token(self, token):
         """Return request for access token value"""
-        # Flickr is a bit different - it passes user information along with
-        # the access token, so temporarily store it to view the user_data
+        # Fitbit is a bit different - it passes user information along with
+        # the access token, so temporarily store it to vie the user_data
         # method easy access later in the flow!
         request = self.oauth_request(token, self.ACCESS_TOKEN_URL)
         response = self.fetch_response(request)
@@ -84,5 +83,5 @@ class FlickrAuth(ConsumerBasedOAuth):
 
 # Backend definition
 BACKENDS = {
-    'flickr': FlickrAuth,
+    'fitbit': FitbitAuth,
 }

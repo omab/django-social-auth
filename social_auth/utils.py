@@ -30,9 +30,8 @@ def sanitize_redirect(host, redirect_to):
     """
     Given the hostname and an untrusted URL to redirect to,
     this method tests it to make sure it isn't garbage/harmful
-    and returns it, else returns None.
-
-    See http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/views.py#L36
+    and returns it, else returns None, similar as how's it done
+    on django.contrib.auth.views.
 
     >>> print sanitize_redirect('myapp.com', None)
     None
@@ -89,6 +88,19 @@ def setting(name, default=None):
     return getattr(settings, name, default)
 
 
+def backend_setting(backend, name, default=None):
+    """
+    Looks for setting value following these rules:
+        1. Search for <backend_name> prefixed setting
+        2. Search for setting given by name
+        3. Return default
+    """
+    backend_name = backend.AUTH_BACKEND.name.upper().replace('-', '_')
+    return setting('%s_%s' % (backend_name, name)) or \
+           setting(name) or \
+           default
+
+
 logger = None
 if not logger:
     logging.basicConfig()
@@ -98,10 +110,10 @@ if not logger:
 
 def log(level, *args, **kwargs):
     """Small wrapper around logger functions."""
-    { 'debug': logger.debug,
-      'error': logger.error,
-      'exception': logger.exception,
-      'warn': logger.warn }[level](*args, **kwargs)
+    {'debug': logger.debug,
+     'error': logger.error,
+     'exception': logger.exception,
+     'warn': logger.warn}[level](*args, **kwargs)
 
 
 def model_to_ctype(val):
@@ -122,6 +134,22 @@ def ctype_to_model(val):
         ModelClass = ctype.model_class()
         val = ModelClass.objects.get(pk=val['pk'])
     return val
+
+
+def clean_partial_pipeline(request):
+    """Cleans any data for partial pipeline."""
+    name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
+    # Check for key to avoid flagging the session as modified unnecessary
+    if name in request.session:
+        request.session.pop(name, None)
+
+
+def log_exceptions_to_messages(request, backend, err):
+    """Log exception messages to messages app if it's installed."""
+    if 'django.contrib.messages' in setting('INSTALLED_APPS'):
+        from django.contrib.messages.api import error
+        name = backend.AUTH_BACKEND.name
+        error(request, unicode(err), extra_tags='social-auth %s' % name)
 
 
 if __name__ == '__main__':

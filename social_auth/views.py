@@ -13,16 +13,20 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils.importlib import import_module
 from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.backends import get_backend
-from social_auth.utils import sanitize_redirect, setting, log
+from social_auth.utils import sanitize_redirect, setting, log, \
+                              backend_setting, clean_partial_pipeline
 
 
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                    setting('LOGIN_REDIRECT_URL')
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
 RAISE_EXCEPTIONS = setting('SOCIAL_AUTH_RAISE_EXCEPTIONS', setting('DEBUG'))
+PROCESS_EXCEPTIONS = setting('SOCIAL_AUTH_PROCESS_EXCEPTIONS',
+                             'social_auth.utils.log_exceptions_to_messages')
 
 
 def dsa_view(redirect_name=None):
@@ -49,19 +53,21 @@ def dsa_view(redirect_name=None):
             except Exception, e:  # some error ocurred
                 if RAISE_EXCEPTIONS:
                     raise
-                backend_name = backend.AUTH_BACKEND.name
+                log('error', unicode(e), exc_info=True, extra={
+                    'request': request
+                })
 
-                log('error', unicode(e), exc_info=True,
-                    extra=dict(request=request))
-
-                if 'django.contrib.messages' in setting('INSTALLED_APPS'):
-                    from django.contrib.messages.api import error
-                    error(request, unicode(e), extra_tags=backend_name)
+                mod, func_name = PROCESS_EXCEPTIONS.rsplit('.', 1)
+                try:
+                    process = getattr(import_module(mod), func_name,
+                                      lambda *args: None)
+                except ImportError:
+                    pass
                 else:
-                    log('warn', 'Messages framework not in place, some '+
-                                'errors have not been shown to the user.')
+                    process(request, backend, e)
 
-                url = setting('SOCIAL_AUTH_BACKEND_ERROR_URL', LOGIN_ERROR_URL)
+                url = backend_setting(backend, 'SOCIAL_AUTH_BACKEND_ERROR_URL',
+                                      LOGIN_ERROR_URL)
                 return HttpResponseRedirect(url)
         return wrapper
     return dec
@@ -99,11 +105,12 @@ def associate_complete(request, backend, *args, **kwargs):
     user = auth_complete(request, backend, request.user, *args, **kwargs)
 
     if not user:
-        url = LOGIN_ERROR_URL
+        url = backend_setting(backend, 'LOGIN_ERROR_URL', LOGIN_ERROR_URL)
     elif isinstance(user, HttpResponse):
         return user
     else:
-        url = setting('SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL') or \
+        url = backend_setting(backend,
+                              'SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL') or \
               redirect_value or \
               DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
@@ -115,7 +122,7 @@ def disconnect(request, backend, association_id=None):
     """Disconnects given backend from current logged in user."""
     backend.disconnect(request.user, association_id)
     url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or \
-          setting('SOCIAL_AUTH_DISCONNECT_REDIRECT_URL') or \
+          backend_setting(backend, 'SOCIAL_AUTH_DISCONNECT_REDIRECT_URL') or \
           DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
@@ -130,6 +137,9 @@ def auth_process(request, backend):
         if setting('SOCIAL_AUTH_SANITIZE_REDIRECTS', True):
             redirect = sanitize_redirect(request.get_host(), redirect)
         request.session[REDIRECT_FIELD_NAME] = redirect or DEFAULT_REDIRECT
+
+    # Clean any partial pipeline info before starting the process
+    clean_partial_pipeline(request)
 
     if backend.uses_redirect:
         return HttpResponseRedirect(backend.auth_url())
@@ -146,6 +156,9 @@ def complete_process(request, backend, *args, **kwargs):
 
     if isinstance(user, HttpResponse):
         return user
+
+    if not user and request.user.is_authenticated():
+        return HttpResponseRedirect(redirect_value)
 
     if user:
         if getattr(user, 'is_active', True):
@@ -168,18 +181,23 @@ def complete_process(request, backend, *args, **kwargs):
 
             # Remove possible redirect URL from session, if this is a new
             # account, send him to the new-users-page if defined.
-            new_user_redirect = setting('SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
+            new_user_redirect = backend_setting(backend,
+                                           'SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
             if new_user_redirect and getattr(user, 'is_new', False):
                 url = new_user_redirect
             else:
-                url = redirect_value or DEFAULT_REDIRECT
+                url = redirect_value or \
+                      backend_setting(backend,
+                                      'SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
+                      DEFAULT_REDIRECT
         else:
-            url = setting('SOCIAL_AUTH_INACTIVE_USER_URL', LOGIN_ERROR_URL)
+            url = backend_setting(backend, 'SOCIAL_AUTH_INACTIVE_USER_URL',
+                                  LOGIN_ERROR_URL)
     else:
         msg = setting('LOGIN_ERROR_MESSAGE', None)
         if msg:
             messages.error(request, msg)
-        url = LOGIN_ERROR_URL
+        url = backend_setting(backend, 'LOGIN_ERROR_URL', LOGIN_ERROR_URL)
     return HttpResponseRedirect(url)
 
 
@@ -191,10 +209,10 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
     name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
     if request.session.get(name):
         data = request.session.pop(name)
-        request.session.modified = True
         idx, args, kwargs = backend.from_session_dict(data, user=user,
                                                       request=request,
                                                       *args, **kwargs)
         return backend.continue_pipeline(pipeline_index=idx, *args, **kwargs)
     else:
-        return backend.auth_complete(user=user, request=request, *args, **kwargs)
+        return backend.auth_complete(user=user, request=request, *args,
+                                     **kwargs)

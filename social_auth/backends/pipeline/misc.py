@@ -11,9 +11,9 @@ def save_status_to_session(request, auth, *args, **kwargs):
 
     try:
         if next_entry:
-            idx = PIPELINE.index(next_entry)
+            idx = list(PIPELINE).index(next_entry)
         else:
-            idx = PIPELINE.index(PIPELINE_ENTRY) + 1
+            idx = list(PIPELINE).index(PIPELINE_ENTRY) + 1
     except ValueError:
         idx = None
 
@@ -21,4 +21,3 @@ def save_status_to_session(request, auth, *args, **kwargs):
 
     name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
     request.session[name] = data
-    request.session.modified = True

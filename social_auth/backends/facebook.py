@@ -13,7 +13,7 @@ field, check OAuthBackend class for details on how to extend it.
 """
 import cgi
 from urllib import urlencode
-from urllib2 import urlopen
+from urllib2 import urlopen, HTTPError
 import base64
 import hmac
 import hashlib
@@ -24,10 +24,13 @@ from django.contrib.auth import authenticate
 
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.utils import sanitize_log_data, setting, log
+from social_auth.backends.exceptions import AuthException, AuthCanceled, \
+                                            AuthFailed, AuthTokenError
 
 
 # Facebook configuration
 FACEBOOK_ME = 'https://graph.facebook.com/me?'
+ACCESS_TOKEN = 'https://graph.facebook.com/oauth/access_token?'
 
 
 class FacebookBackend(OAuthBackend):
@@ -71,10 +74,14 @@ class FacebookAuth(BaseOAuth2):
             extra = {'access_token': sanitize_log_data(access_token)}
             log('error', 'Could not load user data from Facebook.',
                 exc_info=True, extra=extra)
+        except HTTPError:
+            extra = {'access_token': sanitize_log_data(access_token)}
+            log('error', 'Error validating access token.',
+                exc_info=True, extra=extra)
+            raise AuthTokenError(self)
         else:
             log('debug', 'Found user data for token %s',
-                sanitize_log_data(access_token),
-                extra=dict(data=data))
+                sanitize_log_data(access_token), extra={'data': data})
         return data
 
     def auth_complete(self, *args, **kwargs):
@@ -83,12 +90,17 @@ class FacebookAuth(BaseOAuth2):
         expires = None
 
         if 'code' in self.data:
-            url = 'https://graph.facebook.com/oauth/access_token?' + \
-                  urlencode({'client_id': setting('FACEBOOK_APP_ID'),
-                             'redirect_uri': self.redirect_uri,
-                             'client_secret': setting('FACEBOOK_API_SECRET'),
-                             'code': self.data['code']})
-            response = cgi.parse_qs(urlopen(url).read())
+            url = ACCESS_TOKEN + urlencode({
+                'client_id': setting('FACEBOOK_APP_ID'),
+                'redirect_uri': self.redirect_uri,
+                'client_secret': setting('FACEBOOK_API_SECRET'),
+                'code': self.data['code']
+            })
+            try:
+                response = cgi.parse_qs(urlopen(url).read())
+            except HTTPError:
+                raise AuthFailed(self, 'There was an error authenticating the app')
+
             access_token = response['access_token'][0]
             if 'expires' in response:
                     expires = response['expires'][0]
@@ -105,20 +117,24 @@ class FacebookAuth(BaseOAuth2):
 
         if access_token:
             data = self.user_data(access_token)
+
             if data is not None:
-                if 'error' in data:
-                    error = self.data.get('error') or 'unknown error'
-                    raise ValueError('Authentication error: %s' % error)
                 data['access_token'] = access_token
                 # expires will not be part of response if offline access
-                # premission was requested                
+                # premission was requested
                 if expires:
-                    data['expires'] = expires
-            kwargs.update({'response': data, self.AUTH_BACKEND.name: True})
+                    data['expires'] = response['expires'][0]
+
+            kwargs.update({'auth': self,
+                           'response': data,
+                           self.AUTH_BACKEND.name: True})
+
             return authenticate(*args, **kwargs)
         else:
-            error = self.data.get('error') or 'unknown error'
-            raise ValueError('Authentication error: %s' % error)
+            if self.data.get('error') == 'access_denied':
+                raise AuthCanceled(self)
+            else:
+                raise AuthException(self)
 
     @classmethod
     def enabled(cls):
