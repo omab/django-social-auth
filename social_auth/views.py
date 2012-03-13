@@ -166,6 +166,8 @@ def complete_process(request, backend, *args, **kwargs):
             # user.social_user is the used UserSocialAuth instance defined
             # in authenticate process
             social_user = user.social_user
+            if redirect_value:
+                request.session[REDIRECT_FIELD_NAME] = redirect_value or DEFAULT_REDIRECT
 
             if setting('SOCIAL_AUTH_SESSION_EXPIRATION', True):
                 # Set session expiration date if present and not disabled by
