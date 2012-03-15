@@ -1,4 +1,13 @@
+2012-03-14  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * README.rst, doc/index.rst, doc/tokens.rst,
+  social_auth/backends/__init__.py, social_auth/backends/twitter.py,
+  social_auth/models.py: Add tokens property to easilly access tokens per
+  backend. Closes #290
+
 2012-03-13  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * ChangeLog: ChangeLog update
 
   * social_auth/backends/pipeline/associate.py: Check setting with default
   value that makes sense. Closes #289
