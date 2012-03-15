@@ -33,7 +33,7 @@ class DropboxBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Dropbox account"""
-        return {USERNAME: response.get('uid'),
+        return {USERNAME: str(response.get('uid')),
                 'email': response.get('email'),
                 'first_name': response.get('display_name')}
 
