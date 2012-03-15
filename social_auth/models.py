@@ -37,6 +37,17 @@ class UserSocialAuth(models.Model):
         """Return associated user unicode representation"""
         return unicode(self.user)
 
+    @property
+    def tokens(self):
+        """Return access_token stored in extra_data or None"""
+        # Make import here to avoid recursive imports :-/
+        from social_auth.backends import get_backends
+        backend = get_backends().get(self.provider)
+        if backend:
+            return backend.AUTH_BACKEND.tokens(self)
+        else:
+            return {}
+
     def expiration_delta(self):
         """Return saved session expiration seconds if any. Is retuned in
         the form of a timedelta data type. None is returned if there's no

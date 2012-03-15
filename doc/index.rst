@@ -19,6 +19,7 @@ Contents:
    deprecated
 
    signals
+   tokens
    contributions
    testing
    use_cases
