@@ -3,7 +3,7 @@ Twitter OAuth support.
 
 This adds support for Twitter OAuth service. An application must
 be registered first on twitter and the settings TWITTER_CONSUMER_KEY
-and TWITTER_CONSUMER_SECRET must be defined with they corresponding
+and TWITTER_CONSUMER_SECRET must be defined with the corresponding
 values.
 
 User screen name is used to generate username.
@@ -48,8 +48,8 @@ class TwitterBackend(OAuthBackend):
     @classmethod
     def tokens(cls, instance):
         """Return the tokens needed to authenticate the access to any API the
-        service might provide. Twitter uses a pair of OAuthToken consisting on
-        a oauth_token and oauth_token_secret.
+        service might provide. Twitter uses a pair of OAuthToken consisting of
+        an oauth_token and oauth_token_secret.
 
         instance must be a UserSocialAuth instance.
         """
@@ -80,7 +80,7 @@ class TwitterAuth(ConsumerBasedOAuth):
             return None
 
     def auth_complete(self, *args, **kwargs):
-        """Completes loging process, must return user instance"""
+        """Completes login process, must return user instance"""
         if 'denied' in self.data:
             raise AuthCanceled(self)
         else:
