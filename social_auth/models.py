@@ -49,7 +49,7 @@ class UserSocialAuth(models.Model):
             return {}
 
     def expiration_delta(self):
-        """Return saved session expiration seconds if any. Is retuned in
+        """Return saved session expiration seconds if any. Is returned in
         the form of a timedelta data type. None is returned if there's no
         value stored or it's malformed.
         """
