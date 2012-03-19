@@ -44,6 +44,7 @@ credentials, some features are:
     * `GitHub OAuth`_
     * `Dropbox OAuth`_
     * `Flickr OAuth`_
+    * `Skyrock OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -118,6 +119,7 @@ Configuration
         'social_auth.backends.contrib.dropbox.DropboxBackend',
         'social_auth.backends.contrib.flickr.FlickrBackend',
         'social_auth.backends.contrib.instagram.InstagramBackend',
+        'social_auth.backends.contrib.skyrock.SkyrockBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -152,6 +154,8 @@ Configuration
     FLICKR_API_SECRET            = ''
     INSTAGRAM_CLIENT_ID          = ''
     INSTAGRAM_CLIENT_SECRET      = ''
+    SKYROCK_CONSUMER_KEY         = ''
+    SKYROCK_CONSUMER_SECRET      = ''
 
 - Setup login URLs::
 
@@ -807,6 +811,20 @@ Instagram uses OAuth v2 for Authentication
     a single ``/associate`` url which takes a ``?complete=true`` parameter for the
     cases when you want to complete rather than associate.
 
+Skyrock
+^^^^^^^
+
+Skyrock offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
+To enable Skyrock these two keys are needed. Further documentation at
+`Skyrock API Documentation`_:
+
+- Register a new application at `Skyrock App Creation`_,
+
+- fill ``Consumer Key`` and ``Consumer Secret`` values::
+
+      SKYROCK_CONSUMER_KEY
+      SKYROCK_CONSUMER_SECRET
+
 Testing
 -------
 
@@ -968,6 +986,10 @@ Attributions to whom deserves:
 
   - Instagram support
 
+- niQo (Nicolas Quiénot)
+
+  - Skyrock.com support
+
 Copyrights
 ----------
 
@@ -1051,3 +1073,6 @@ Base work is copyrighted by:
 .. _BrowserID: https://browserid.org
 .. _Instagram API: http://instagr.am/developer/
 .. _django-social-auth discussion list: https://groups.google.com/group/django-social-auth
+.. _Skyrock OAuth: http://www.skyrock.com/developer/
+.. _Skyrock App Creation: https://www.skyrock.com/developer/application/
+.. _Skyrock API Documentation: http://www.skyrock.com/developer/documentation/
