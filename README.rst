@@ -679,6 +679,11 @@ at `Facebook development resources`_:
 
      FACEBOOK_EXTENDED_PERMISSIONS = [...]
 
+- Define ``FACEBOOK_PROFILE_EXTRA_PARAMS`` to pass extra parameters to
+  https://graph.facebook.com/me when gathering the user profile data, like::
+
+    FACEBOOK_PROFILE_EXTRA_PARAMS = {'locale': 'ru_RU'}
+
 If you define a redirect URL in Facebook setup page, be sure to not define
 http://127.0.0.1:8000 or http://localhost:8000 because it won't work when
 testing. Instead I define http://myapp.com and setup a mapping on /etc/hosts
