@@ -219,7 +219,20 @@ class OAuthBackend(SocialAuthBackend):
         data = {'access_token': response.get('access_token', '')}
         name = self.name.replace('-', '_').upper()
         names = (self.EXTRA_DATA or []) + setting(name + '_EXTRA_DATA', [])
-        data.update((alias, response.get(name)) for name, alias in names)
+        for entry in names:
+            if len(entry) == 2:
+                (name, alias), discard = entry, False
+            elif len(entry) == 3:
+                name, alias, discard = entry
+            elif len(entry) == 1:
+                name = alias = entry
+            else:  # ???
+                continue
+
+            value = response.get(name)
+            if discard and not value:
+                continue
+            data[alias] = value
         return data
 
 

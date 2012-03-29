@@ -70,7 +70,7 @@ class GoogleOAuth2Backend(GoogleOAuthBackend):
     """Google OAuth2 authentication backend"""
     name = 'google-oauth2'
     EXTRA_DATA = [
-        ('refresh_token', 'refresh_token'),
+        ('refresh_token', 'refresh_token', True),
         ('expires_in', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
     ]
 

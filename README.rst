@@ -614,7 +614,11 @@ Example::
     GOOGLE_AX_EXTRA_DATA = [(..., ...)]
 
 Settings must be a list of tuples mapping value name in response and value
-alias used to store.
+alias used to store. A third value (boolean) is supported to, it's purpose is
+to signal if the value should be discarded if it evaluates to ``False``, this
+is to avoid replacing old (needed) values when they don't form part of current
+response. If not present, then this check is avoided and the value will replace
+any data.
 
 OAuth
 ^^^^^
@@ -639,7 +643,12 @@ Example::
     FACEBOOK_EXTRA_DATA = [(..., ...)]
 
 Settings must be a list of tuples mapping value name in response and value
-alias used to store.
+alias used to store. A third value (boolean) is supported to, it's purpose is
+to signal if the value should be discarded if it evaluates to ``False``, this
+is to avoid replacing old (needed) values when they don't form part of current
+response. If not present, then this check is avoided and the value will replace
+any data.
+
 
 Twitter
 ^^^^^^^
