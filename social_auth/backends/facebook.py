@@ -66,7 +66,9 @@ class FacebookAuth(BaseOAuth2):
     def user_data(self, access_token):
         """Loads user data from service"""
         data = None
-        url = FACEBOOK_ME + urlencode({'access_token': access_token})
+        params = setting('FACEBOOK_PROFILE_EXTRA_PARAMS', {})
+        params['access_token'] = access_token
+        url = FACEBOOK_ME + urlencode(params)
 
         try:
             data = simplejson.load(urlopen(url))

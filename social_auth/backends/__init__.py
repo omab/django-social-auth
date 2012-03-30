@@ -169,6 +169,21 @@ class SocialAuthBackend(ModelBackend):
         """
         raise NotImplementedError('Implement in subclass')
 
+    @classmethod
+    def tokens(cls, instance):
+        """Return the tokens needed to authenticate the access to any API the
+        service might provide. The return value will be a dictionary with the
+        token type name as key and the token value.
+
+        instance must be a UserSocialAuth instance.
+        """
+        if instance.extra_data and 'access_token' in instance.extra_data:
+            return {
+                'access_token': instance.extra_data['access_token']
+            }
+        else:
+            return {}
+
     def get_user(self, user_id):
         """
         Return user with given ID from the User model used by this backend
@@ -204,7 +219,20 @@ class OAuthBackend(SocialAuthBackend):
         data = {'access_token': response.get('access_token', '')}
         name = self.name.replace('-', '_').upper()
         names = (self.EXTRA_DATA or []) + setting(name + '_EXTRA_DATA', [])
-        data.update((alias, response.get(name)) for name, alias in names)
+        for entry in names:
+            if len(entry) == 2:
+                (name, alias), discard = entry, False
+            elif len(entry) == 3:
+                name, alias, discard = entry
+            elif len(entry) == 1:
+                name = alias = entry
+            else:  # ???
+                continue
+
+            value = response.get(name)
+            if discard and not value:
+                continue
+            data[alias] = value
         return data
 
 

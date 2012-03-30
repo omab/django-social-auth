@@ -103,7 +103,6 @@ def backend_setting(backend, name, default=None):
 
 logger = None
 if not logger:
-    logging.basicConfig()
     logger = logging.getLogger('SocialAuth')
     logger.setLevel(logging.DEBUG)
 

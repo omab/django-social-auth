@@ -566,6 +566,30 @@ created::
 
     socialauth_registered.connect(new_users_handler, sender=None)
 
+
+Tokens
+------
+
+Almost every service covered provide some kind of API that is protected with
+``access_token`` or token pairs (like `Twitter OAuth keys`_). These tokens are
+gathered by the authentication mechanism and stored in
+``UserSocialAuth.extra_data``.
+
+``UserSocialAuth`` has a property named ``tokens`` to easilly access this
+useful values, it will return a dictionary containing the tokens values.
+A simple usage example::
+
+    >>> from pprint import pprint
+    >>> from social_auth.models import UserSocialAuth
+    >>> instance = UserSocialAuth.objects.filter(provider='twitter').get(...)
+    >>> pprint(instance.tokens)
+    {u'oauth_token': u'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+     u'oauth_token_secret': u'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy'}
+    >>> instance = UserSocialAuth.objects.filter(provider='facebook').get(...)
+    >>> pprint(instance.tokens)
+    {u'access_token': u'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}
+
+
 Backends
 --------
 
@@ -593,7 +617,11 @@ Example::
     GOOGLE_AX_EXTRA_DATA = [(..., ...)]
 
 Settings must be a list of tuples mapping value name in response and value
-alias used to store.
+alias used to store. A third value (boolean) is supported to, it's purpose is
+to signal if the value should be discarded if it evaluates to ``False``, this
+is to avoid replacing old (needed) values when they don't form part of current
+response. If not present, then this check is avoided and the value will replace
+any data.
 
 OAuth
 ^^^^^
@@ -618,7 +646,12 @@ Example::
     FACEBOOK_EXTRA_DATA = [(..., ...)]
 
 Settings must be a list of tuples mapping value name in response and value
-alias used to store.
+alias used to store. A third value (boolean) is supported to, it's purpose is
+to signal if the value should be discarded if it evaluates to ``False``, this
+is to avoid replacing old (needed) values when they don't form part of current
+response. If not present, then this check is avoided and the value will replace
+any data.
+
 
 Twitter
 ^^^^^^^
@@ -657,6 +690,11 @@ at `Facebook development resources`_:
 - also it's possible to define extra permissions with::
 
      FACEBOOK_EXTENDED_PERMISSIONS = [...]
+
+- Define ``FACEBOOK_PROFILE_EXTRA_PARAMS`` to pass extra parameters to
+  https://graph.facebook.com/me when gathering the user profile data, like::
+
+    FACEBOOK_PROFILE_EXTRA_PARAMS = {'locale': 'ru_RU'}
 
 If you define a redirect URL in Facebook setup page, be sure to not define
 http://127.0.0.1:8000 or http://localhost:8000 because it won't work when
@@ -1072,3 +1110,4 @@ Base work is copyrighted by:
 .. _BrowserID: https://browserid.org
 .. _Instagram API: http://instagr.am/developer/
 .. _django-social-auth discussion list: https://groups.google.com/group/django-social-auth
+.. _Twitter OAuth keys: https://dev.twitter.com/docs/auth/authorizing-request

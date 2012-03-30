@@ -1,4 +1,43 @@
+2012-03-14  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * README.rst, doc/index.rst, doc/tokens.rst,
+  social_auth/backends/__init__.py, social_auth/backends/twitter.py,
+  social_auth/models.py: Add tokens property to easilly access tokens per
+  backend. Closes #290
+
+2012-03-13  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * ChangeLog: ChangeLog update
+
+  * social_auth/backends/pipeline/associate.py: Check setting with default
+  value that makes sense. Closes #289
+
+  * social_auth/__init__.py: v0.6.7
+
+2012-03-12  Janez Stupar <janez.stupar@gmail.com>
+
+  * social_auth/views.py: Transfer redirect parameter (?next=) into new
+  session. May come handy in our next view.
+
+2012-03-09  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * social_auth/backends/google.py: Rename var. Refs #284
+
+2012-03-09  Keiko Oda <keiko713@gmail.com>
+
+  * social_auth/backends/google.py: add a function that gets name, given_name,
+  family_name and add to user_details from google OAuth2
+
+2012-03-05  Michael Armida <me@marmida.org>
+
+  * social_auth/backends/__init__.py: make BaseOAuth2 behave like
+  ConsumerBasedOAuth when requesting an access token leads to a HTTP 400;
+  previously it lead to an unhandled exception, although I don't know that
+  "Authentication process canceled" is much better
+
 2012-03-03  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * ChangeLog: Added changelog generated from git log
 
   * social_auth/backends/__init__.py: Only load defined (and enabled) backends.
   Closes #277.

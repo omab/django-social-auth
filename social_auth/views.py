@@ -1,8 +1,8 @@
 """Views
 
 Notes:
-    * Some views are marked to avoid csrf tocken check becuase they relay
-      on third party providers that (if using POST) won't be sending crfs
+    * Some views are marked to avoid csrf tocken check because they rely
+      on third party providers that (if using POST) won't be sending csrf
       token back.
 """
 from functools import wraps
@@ -177,6 +177,9 @@ def complete_process(request, backend, *args, **kwargs):
             # user.social_user is the used UserSocialAuth instance defined
             # in authenticate process
             social_user = user.social_user
+            if redirect_value:
+                request.session[REDIRECT_FIELD_NAME] = redirect_value or \
+                                                       DEFAULT_REDIRECT
 
             if setting('SOCIAL_AUTH_SESSION_EXPIRATION', True):
                 # Set session expiration date if present and not disabled by
