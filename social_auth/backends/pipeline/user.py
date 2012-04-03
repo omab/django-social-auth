@@ -39,17 +39,17 @@ def get_username(details, user=None, user_exists=simple_user_exists,
     else:
         username = uuid4().get_hex()
 
-    uuid_lenght = setting('SOCIAL_AUTH_UUID_LENGTH', 16)
+    uuid_length = setting('SOCIAL_AUTH_UUID_LENGTH', 16)
     username_fixer = setting('SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
 
-    short_username = username[:USERNAME_MAX_LENGTH - uuid_lenght]
+    short_username = username[:USERNAME_MAX_LENGTH - uuid_length]
     final_username = username_fixer(username)[:USERNAME_MAX_LENGTH]
 
     # Generate a unique username for current user using username
     # as base but adding a unique hash at the end. Original
     # username is cut to avoid any field max_length.
     while user_exists(username=final_username):
-        username = short_username + uuid4().get_hex()[:uuid_lenght]
+        username = short_username + uuid4().get_hex()[:uuid_length]
         final_username = username_fixer(username)[:USERNAME_MAX_LENGTH]
 
     return {'username': final_username}
