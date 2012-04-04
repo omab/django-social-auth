@@ -20,7 +20,7 @@ from social_auth.backends import get_backend
 from social_auth.utils import sanitize_redirect, setting, log, \
                               backend_setting, clean_partial_pipeline
 
-from social_auth.backends.exceptions import AuthFailed
+from social_auth.backends.exceptions import AuthFailed, AuthException
 
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                    setting('LOGIN_REDIRECT_URL')
@@ -51,7 +51,7 @@ def dsa_view(redirect_name=None):
 
             try:
                 return func(request, backend, *args, **kwargs)
-            except AuthFailed, e:
+            except AuthException, e:
                 backend_name = backend.AUTH_BACKEND.name
                 if 'django.contrib.messages' in setting('INSTALLED_APPS'):
                     from django.contrib.messages.api import error
