@@ -31,7 +31,7 @@ def get_username(details, user=None, user_exists=simple_user_exists,
     if setting('SOCIAL_AUTH_FORCE_RANDOM_USERNAME'):
         username = uuid4().get_hex()
     elif details.get(USERNAME):
-        username = details[USERNAME]
+        username = unicode(details[USERNAME])
     elif setting('SOCIAL_AUTH_DEFAULT_USERNAME'):
         username = setting('SOCIAL_AUTH_DEFAULT_USERNAME')
         if callable(username):
