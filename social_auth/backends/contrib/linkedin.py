@@ -62,10 +62,6 @@ class LinkedinAuth(ConsumerBasedOAuth):
         except (ExpatError, KeyError, IndexError):
             return None
 
-    @classmethod
-    def enabled(cls):
-        """Return backend enabled status by checking basic settings"""
-        return setting(cls.SETTINGS_KEY_NAME) and setting(cls.SETTINGS_SECRET_NAME)
 
 def to_dict(xml):
     """Convert XML structure to dict recursively, repeated keys entries
