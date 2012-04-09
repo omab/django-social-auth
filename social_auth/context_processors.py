@@ -3,8 +3,8 @@ from social_auth.utils import group_backend_by_type
 from social_auth.models import User
 
 
-# Note: social_auth_backends and social_auth_by_type_backends don't play nice
-#       together
+# Note: social_auth_backends, social_auth_by_type_backends and
+#       social_auth_by_name_backends don't play nice together.
 
 def social_auth_backends(request):
     """Load Social Auth current user data to context.
