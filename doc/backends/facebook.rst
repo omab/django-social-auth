@@ -16,6 +16,11 @@ at `Facebook development resources`_:
 
      FACEBOOK_EXTENDED_PERMISSIONS = [...]
 
+  Take into account that Facebook doesn't return user email by default, this
+  setting is needed if email is required::
+
+     FACEBOOK_EXTENDED_PERMISSIONS = ['email']
+
 - Define ``FACEBOOK_PROFILE_EXTRA_PARAMS`` to pass extra parameters to
   https://graph.facebook.com/me when gathering the user profile data, like::
 

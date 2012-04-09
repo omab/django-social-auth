@@ -299,8 +299,7 @@ Configuration
       SOCIAL_AUTH_CREATE_USERS = False
 
   It is also possible to associate multiple user accounts with a single email
-  address as long as the rest of the user data is unique. Set value as True
-  to enable, otherwise set as False to disable.
+  address, set value as True to enable, otherwise set as False to disable.
   This behavior is disabled by default (false) unless specifically set::
 
       SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
@@ -687,6 +686,11 @@ at `Facebook development resources`_:
 - also it's possible to define extra permissions with::
 
      FACEBOOK_EXTENDED_PERMISSIONS = [...]
+
+  Take into account that Facebook doesn't return user email by default, this
+  setting is needed if email is required::
+
+     FACEBOOK_EXTENDED_PERMISSIONS = ['email']
 
 - Define ``FACEBOOK_PROFILE_EXTRA_PARAMS`` to pass extra parameters to
   https://graph.facebook.com/me when gathering the user profile data, like::
