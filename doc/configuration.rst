@@ -197,9 +197,9 @@ Configuration
 
   It is also possible to associate multiple user accounts with a single email
   address, set value as True to enable, otherwise set as False to disable.
-  This behavior is disabled by default (false) unless specifically set::
+  This behavior is enabled by default (True) unless specifically set::
 
-      SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
+      SOCIAL_AUTH_ASSOCIATE_BY_MAIL = False
 
 - You can send extra parameters on auth process by defining settings per
   provider, example to request Facebook to show Mobile authorization page,
