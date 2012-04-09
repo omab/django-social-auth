@@ -3,7 +3,7 @@ import re
 from social_auth.utils import setting
 from social_auth.tests.base import SocialAuthTestsCase, FormParserByID, \
                                    FormParser, RefreshParser
-
+from django.conf import settings
 
 class GoogleTestCase(SocialAuthTestsCase):
 
@@ -26,6 +26,8 @@ class GoogleOpenIdTestLogin(GoogleTestCase):
     SERVER_PORT = '8000'
 
     def test_login_succeful(self):
+        if self.name not in settings.SOCIAL_AUTH_ENABLED_BACKENDS:
+            self.skipTest('Google OpenID is not enabled')
         response = self.client.get(self.reverse('socialauth_begin', 'google'))
 
         parser = FormParserByID('openid_message')
