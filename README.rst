@@ -684,9 +684,11 @@ at `Facebook development resources`_:
       FACEBOOK_APP_ID
       FACEBOOK_API_SECRET
 
-- also it's possible to define extra permissions with::
+- Define ``FACEBOOK_EXTENDED_PERMISSIONS`` to get extra permissions from facebook.
+  NOTE: to get users' email addresses, you must request the 'email' permission::
 
-     FACEBOOK_EXTENDED_PERMISSIONS = [...]
+     FACEBOOK_EXTENDED_PERMISSIONS = ['email']
+
 
 - Define ``FACEBOOK_PROFILE_EXTRA_PARAMS`` to pass extra parameters to
   https://graph.facebook.com/me when gathering the user profile data, like::
