@@ -25,7 +25,7 @@ class TwitterTestLogin(TwitterTestCase):
         # Open first redirect page, it contains user login form because
         # we don't have cookie to send to twitter
         login_content = self.get_content(response['Location'])
-        parser = FormParserByID('login_form')
+        parser = FormParserByID('oauth_form')
         parser.feed(login_content)
         auth = {'session[username_or_email]': self.user,
                 'session[password]': self.passwd}
