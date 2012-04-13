@@ -698,7 +698,16 @@ class BaseOAuth2(BaseOAuth):
             error = response.get('error_description') or response.get('error')
             raise AuthFailed(self, error)
         else:
-            response.update(self.user_data(response['access_token']) or {})
+            try:
+                argnum = self.user_data.im_func.func_code.co_argcount
+            except AttributeError:
+                argnum = 2
+            finally:
+                user_data_args = [response['access_token']]
+                if argnum == 3:
+                    user_data_args.append(response)
+            
+            response.update(self.user_data(*user_data_args) or {})
             kwargs.update({
                 'auth': self,
                 'response': response,
