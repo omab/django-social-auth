@@ -302,11 +302,10 @@ Configuration
       SOCIAL_AUTH_CREATE_USERS = False
 
   It is also possible to associate multiple user accounts with a single email
-  address as long as the rest of the user data is unique. Set value as True
-  to enable, otherwise set as False to disable.
-  This behavior is disabled by default (false) unless specifically set::
+  address, set value as True to enable, otherwise set as False to disable.
+  This behavior is enabled by default (True) unless specifically set::
 
-      SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
+      SOCIAL_AUTH_ASSOCIATE_BY_MAIL = False
 
 - You can send extra parameters on auth process by defining settings per
   provider, example to request Facebook to show Mobile authorization page,
@@ -687,9 +686,16 @@ at `Facebook development resources`_:
       FACEBOOK_APP_ID
       FACEBOOK_API_SECRET
 
-- also it's possible to define extra permissions with::
+- Define ``FACEBOOK_EXTENDED_PERMISSIONS`` to get extra permissions from facebook.
+  NOTE: to get users' email addresses, you must request the 'email' permission::
 
-     FACEBOOK_EXTENDED_PERMISSIONS = [...]
+     FACEBOOK_EXTENDED_PERMISSIONS = ['email']
+
+
+  Take into account that Facebook doesn't return user email by default, this
+  setting is needed if email is required::
+
+     FACEBOOK_EXTENDED_PERMISSIONS = ['email']
 
 - Define ``FACEBOOK_PROFILE_EXTRA_PARAMS`` to pass extra parameters to
   https://graph.facebook.com/me when gathering the user profile data, like::

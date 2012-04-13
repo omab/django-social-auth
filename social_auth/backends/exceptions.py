@@ -39,14 +39,14 @@ class AuthCanceled(AuthException):
 class AuthUnknownError(AuthException):
     """Unknown auth process error."""
     def __unicode__(self):
-        msg = super(AuthFailed, self).__unicode__()
+        msg = super(AuthUnknownError, self).__unicode__()
         return u'An unknown error happened while authenticating %s' % msg
 
 
 class AuthTokenError(AuthException):
     """Auth token error."""
     def __unicode__(self):
-        msg = super(AuthFailed, self).__unicode__()
+        msg = super(AuthTokenError, self).__unicode__()
         return u'Token error: %s' % msg
 
 
