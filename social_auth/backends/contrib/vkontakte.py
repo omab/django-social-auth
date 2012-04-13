@@ -49,7 +49,7 @@ class VkontakteAuth(BaseOAuth2):
     SETTINGS_KEY_NAME = 'VK_APP_ID'
     SETTINGS_SECRET_NAME = 'VK_API_SECRET'
     
-    def user_data(self, access_token, response = None):
+    def user_data(self, access_token, response):
         """Loads user data from service"""
         params = {'access_token': access_token,
                   'fields': 'first_name,last_name,screen_name,nickname',
