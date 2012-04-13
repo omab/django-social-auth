@@ -19,6 +19,8 @@ GITHUB_APP_ID                     = ''
 GITHUB_API_SECRET                 = ''
 FOURSQUARE_CONSUMER_KEY           = ''
 FOURSQUARE_CONSUMER_SECRET        = ''
+VK_APP_ID                         = ''
+VK_API_SECRET                     = ''
 
 SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.social_auth_user',
