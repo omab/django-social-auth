@@ -53,7 +53,7 @@ class DropboxAuth(ConsumerBasedOAuth):
     SETTINGS_KEY_NAME = 'DROPBOX_APP_ID'
     SETTINGS_SECRET_NAME = 'DROPBOX_API_SECRET'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         url = 'https://' + DROPBOX_API + '/1/account/info'
         request = self.oauth_request(access_token, url)

@@ -59,7 +59,7 @@ class FacebookAuth(BaseOAuth2):
     def get_scope(self):
         return setting('FACEBOOK_EXTENDED_PERMISSIONS', [])
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         data = None
         params = setting('FACEBOOK_PROFILE_EXTRA_PARAMS', {})

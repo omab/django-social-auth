@@ -50,7 +50,7 @@ class LinkedinAuth(ConsumerBasedOAuth):
     SETTINGS_KEY_NAME = 'LINKEDIN_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'LINKEDIN_CONSUMER_SECRET'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
         fields_selectors = LINKEDIN_FIELD_SELECTORS + \
                            setting('LINKEDIN_EXTRA_FIELD_SELECTORS', [])

@@ -38,7 +38,7 @@ class InstagramAuth(BaseOAuth2):
     SETTINGS_KEY_NAME = 'INSTAGRAM_CLIENT_ID'
     SETTINGS_SECRET_NAME = 'INSTAGRAM_CLIENT_SECRET'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         params = {'access_token': access_token}
         url = INSTAGRAM_CHECK_AUTH + '?' + urllib.urlencode(params)

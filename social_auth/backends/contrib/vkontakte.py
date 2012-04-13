@@ -5,11 +5,9 @@ Vkontakte OAuth support.
 from urllib import urlencode, urlopen
 
 from django.utils import simplejson
-from django.contrib.auth import authenticate
 
 from social_auth.utils import setting
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthFailed
 
 
 # Vkontakte configuration
@@ -26,7 +24,7 @@ class VkontakteBackend(OAuthBackend):
         ('id', 'id'),
         ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
     ]
-    
+
     def get_user_id(self, details, response):
         "OAuth providers return an unique user id in response"""
         return response['user_id']
@@ -34,7 +32,8 @@ class VkontakteBackend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Vkontakte account"""
         print response
-        return {USERNAME: response.get('nickname') or response.get('screen_name') ,
+        return {USERNAME: response.get('nickname') or \
+                          response.get('screen_name'),
                 'email':  '',
                 'first_name': response.get('first_name'),
                 'last_name': response.get('last_name')}
@@ -48,8 +47,8 @@ class VkontakteAuth(BaseOAuth2):
     AUTH_BACKEND = VkontakteBackend
     SETTINGS_KEY_NAME = 'VK_APP_ID'
     SETTINGS_SECRET_NAME = 'VK_API_SECRET'
-    
-    def user_data(self, access_token, response):
+
+    def user_data(self, access_token, response, *args, **kwargs):
         """Loads user data from service"""
         params = {'access_token': access_token,
                   'fields': 'first_name,last_name,screen_name,nickname',
@@ -65,7 +64,6 @@ class VkontakteAuth(BaseOAuth2):
         """Return list with needed access scope"""
         # Look at http://vk.com/developers.php?oid=-1&p=%D0%9F%D1%80%D0%B0%D0%B2%D0%B0_%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9
         return setting('VK_EXTRA_SCOPE', [])
-
 
 
 # Backend definition

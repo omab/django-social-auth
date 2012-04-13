@@ -91,7 +91,7 @@ class GithubAuth(BaseOAuth):
         })
         return authenticate(*args, **kwargs)
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         url = GITHUB_USER_DATA_URL + urlencode({
             'access_token': access_token

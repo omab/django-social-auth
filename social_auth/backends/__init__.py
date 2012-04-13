@@ -616,7 +616,7 @@ class ConsumerBasedOAuth(BaseOAuth):
         request = self.oauth_request(token, self.ACCESS_TOKEN_URL)
         return Token.from_string(self.fetch_response(request))
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         raise NotImplementedError('Implement in subclass')
 
@@ -698,16 +698,8 @@ class BaseOAuth2(BaseOAuth):
             error = response.get('error_description') or response.get('error')
             raise AuthFailed(self, error)
         else:
-            try:
-                argnum = self.user_data.im_func.func_code.co_argcount
-            except AttributeError:
-                argnum = 2
-            finally:
-                user_data_args = [response['access_token']]
-                if argnum == 3:
-                    user_data_args.append(response)
-            
-            response.update(self.user_data(*user_data_args) or {})
+            data = self.user_data(response['access_token'], response)
+            response.update(data or {})
             kwargs.update({
                 'auth': self,
                 'response': response,
