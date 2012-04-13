@@ -95,9 +95,6 @@ class GoogleBackend(OpenIDBackend):
         """
         validate_whitelists(self, details['email'])
 
-        if domains and details['email'].split('@', 1)[1] not in domains:
-            raise ValueError('Domain not allowed')
-
         return details['email']
 
 
