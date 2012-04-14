@@ -44,6 +44,7 @@ credentials, some features are:
     * `GitHub OAuth`_
     * `Dropbox OAuth`_
     * `Flickr OAuth`_
+    * `Vkontakte OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -118,6 +119,7 @@ Configuration
         'social_auth.backends.contrib.dropbox.DropboxBackend',
         'social_auth.backends.contrib.flickr.FlickrBackend',
         'social_auth.backends.contrib.instagram.InstagramBackend',
+        'social_auth.backends.contrib.vkontakte.VkontakteBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -152,6 +154,8 @@ Configuration
     FLICKR_API_SECRET            = ''
     INSTAGRAM_CLIENT_ID          = ''
     INSTAGRAM_CLIENT_SECRET      = ''
+    VK_APP_ID                    = ''
+    VK_API_SECRET                = ''
 
 - Setup login URLs::
 
@@ -870,6 +874,24 @@ Instagram uses OAuth v2 for Authentication
     a single ``/associate`` url which takes a ``?complete=true`` parameter for the
     cases when you want to complete rather than associate.
 
+Vkontakte
+^^^^^^^^^
+
+Vkontakte uses OAuth v2 for Authentication
+
+- Register a new application at the `Vkontakte API`_, and
+
+- fill ``App Id`` and ``Api Secret`` values in the settings::
+
+      VK_APP_ID = ''
+      VK_API_SECRET = ''
+
+- Also it's possible to define extra permissions with::
+
+     VK_EXTRA_SCOPE = [...]
+
+  See the `names of the privileges VKontakte`_.
+
 Testing
 -------
 
@@ -1115,3 +1137,6 @@ Base work is copyrighted by:
 .. _Instagram API: http://instagr.am/developer/
 .. _django-social-auth discussion list: https://groups.google.com/group/django-social-auth
 .. _Twitter OAuth keys: https://dev.twitter.com/docs/auth/authorizing-request
+.. _Vkontakte OAuth: http://vk.com/developers.php?oid=-1&p=%D0%90%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F_%D1%81%D0%B0%D0%B9%D1%82%D0%BE%D0%B2
+.. _names of the privileges VKontakte: http://vk.com/developers.php?oid=-1&p=%D0%9F%D1%80%D0%B0%D0%B2%D0%B0_%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9
+.. _Vkontakte API: http://vk.com/developers.php
