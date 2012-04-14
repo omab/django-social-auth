@@ -23,6 +23,7 @@ Configuration
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.contrib.foursquare.FoursquareBackend',
         'social_auth.backends.contrib.github.GithubBackend',
+        'social_auth.backends.contrib.vkontakte.VkontakteBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -49,6 +50,8 @@ Configuration
     GOOGLE_OAUTH2_CLIENT_SECRET  = ''
     FOURSQUARE_CONSUMER_KEY      = ''
     FOURSQUARE_CONSUMER_SECRET   = ''
+    VK_APP_ID                    = ''
+    VK_API_SECRET                = ''
 
 - Setup login URLs::
 

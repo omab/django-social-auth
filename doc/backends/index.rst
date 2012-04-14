@@ -15,3 +15,4 @@ Contents:
    github
    browserid
    instagram
+   vkontakte
