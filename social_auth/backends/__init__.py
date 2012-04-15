@@ -210,7 +210,7 @@ class OAuthBackend(SocialAuthBackend):
     EXTRA_DATA = None
 
     def get_user_id(self, details, response):
-        "OAuth providers return an unique user id in response"""
+        """OAuth providers return an unique user id in response"""
         return response['id']
 
     def extra_data(self, user, uid, response, details):
