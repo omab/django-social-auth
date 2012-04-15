@@ -680,10 +680,11 @@ class BaseOAuth2(BaseOAuth):
                   'client_id': client_id,
                   'client_secret': client_secret,
                   'redirect_uri': self.redirect_uri}
-        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        headers = {'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'}
         request = Request(self.ACCESS_TOKEN_URL, data=urlencode(params),
                           headers=headers)
-
+        
         try:
             response = simplejson.loads(urlopen(request).read())
         except HTTPError, e:
