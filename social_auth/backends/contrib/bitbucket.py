@@ -6,8 +6,9 @@ be registered first on Bitbucket and the settings BITBUCKET_CONSUMER_KEY
 and BITBUCKET_CONSUMER_SECRET must be defined with the corresponding
 values.
 
-By default username, email, token expiration time, first name and last name are stored in extra_data 
-field, check OAuthBackend class for details on how to extend it.
+By default username, email, token expiration time, first name and last name are
+stored in extra_data field, check OAuthBackend class for details on how to
+extend it.
 """
 from django.utils import simplejson
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
@@ -16,11 +17,14 @@ from social_auth.utils import setting
 
 # Bitbucket configuration
 BITBUCKET_SERVER = 'bitbucket.org/api/1.0'
-BITBUCKET_REQUEST_TOKEN_URL = 'https://%s/oauth/request_token' % BITBUCKET_SERVER
+BITBUCKET_REQUEST_TOKEN_URL = 'https://%s/oauth/request_token' % \
+                                    BITBUCKET_SERVER
 BITBUCKET_ACCESS_TOKEN_URL = 'https://%s/oauth/access_token' % BITBUCKET_SERVER
-BITBUCKET_AUTHORIZATION_URL = 'https://%s/oauth/authenticate' % BITBUCKET_SERVER
+BITBUCKET_AUTHORIZATION_URL = 'https://%s/oauth/authenticate' % \
+                                    BITBUCKET_SERVER
 BITBUCKET_EMAIL_DATA_URL = 'https://%s/emails/' % BITBUCKET_SERVER
 BITBUCKET_USER_DATA_URL = 'https://%s/users/' % BITBUCKET_SERVER
+
 
 class BitbucketBackend(OAuthBackend):
     """Bitbucket OAuth authentication backend"""
@@ -37,19 +41,21 @@ class BitbucketBackend(OAuthBackend):
         """Return user details from Bitbucket account"""
         return {USERNAME: response.get('username'),
                 'email': response.get('email'),
-                'fullname': ' '.join((response.get('first_name'), response.get('last_name'))),
+                'fullname': ' '.join((response.get('first_name'),
+                                      response.get('last_name'))),
                 'first_name': response.get('first_name'),
-                'last_name': response.get('last_name')}    
-        
+                'last_name': response.get('last_name')}
+
     def get_user_id(self, details, response):
-        """Return the user id, Bitbucket only provides username as a unique identifier"""
+        """Return the user id, Bitbucket only provides username as a unique
+        identifier"""
         return response['username']
 
     @classmethod
     def tokens(cls, instance):
         """Return the tokens needed to authenticate the access to any API the
-        service might provide. Bitbucket uses a pair of OAuthToken consisting on
-        a oauth_token and oauth_token_secret.
+        service might provide. Bitbucket uses a pair of OAuthToken consisting
+        on a oauth_token and oauth_token_secret.
 
         instance must be a UserSocialAuth instance.
         """
@@ -72,26 +78,30 @@ class BitbucketAuth(ConsumerBasedOAuth):
 
     def user_data(self, access_token):
         """Return user data provided"""
-        # Bitbucket has a bit of an indirect route to obtain user data from an authenticated query:
-        # First obtain the user's email via an authenticated GET
+        # Bitbucket has a bit of an indirect route to obtain user data from an
+        # authenticated query: First obtain the user's email via an
+        # authenticated GET
         url = BITBUCKET_EMAIL_DATA_URL
         request = self.oauth_request(access_token, url)
         response = self.fetch_response(request)
         try:
             email = simplejson.loads(response)[0]['email']
-            # Then return the user data using a normal GET with the BITBUCKET_USER_DATA_URL and the user's email
-            response = urlopen(BITBUCKET_USER_DATA_URL+email)
+            # Then return the user data using a normal GET with the
+            # BITBUCKET_USER_DATA_URL and the user's email
+            response = urlopen(BITBUCKET_USER_DATA_URL + email)
             user_details = simplejson.load(response)['user']
-            user_details['email']=email
+            user_details['email'] = email
             return user_details
         except ValueError:
             return None
         return None
-    
+
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return setting('BITBUCKET_CONSUMER_KEY') and setting('BITBUCKET_CONSUMER_SECRET')
+        return setting('BITBUCKET_CONSUMER_KEY') and \
+               setting('BITBUCKET_CONSUMER_SECRET')
+
 
 # Backend definition
 BACKENDS = {
