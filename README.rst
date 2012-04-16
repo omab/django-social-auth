@@ -119,6 +119,7 @@ Configuration
         'social_auth.backends.contrib.flickr.FlickrBackend',
         'social_auth.backends.contrib.instagram.InstagramBackend',
         'social_auth.backends.OpenIDBackend',
+        'social_auth.backends.contrib.bitbucket.BitbucketBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
 
@@ -152,6 +153,8 @@ Configuration
     FLICKR_API_SECRET            = ''
     INSTAGRAM_CLIENT_ID          = ''
     INSTAGRAM_CLIENT_SECRET      = ''
+    BITBUCKET_CONSUMER_KEY       = ''
+    BITBUCKET_CONSUMER_SECRET    = ''
 
 - Setup login URLs::
 
@@ -821,6 +824,17 @@ GitHub works similar to Facebook (OAuth).
 - Also it's possible to define extra permissions with::
 
      GITHUB_EXTENDED_PERMISSIONS = [...]
+     
+Bitbucket
+^^^^^^^^^
+Bitbucket works similar to Twitter (OAuth).
+
+- Register a new application by emailing support@bitbucket.org with an application name and a bit of a description,
+
+- Fill ``Consumer Key`` and ``Consumer Secret`` values in the settings::
+
+      BITBUCKET_CONSUMER_KEY = ''
+      BITBUCKET_CONSUMER_SECRET = ''
 
 Dropbox
 ^^^^^^^
