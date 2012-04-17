@@ -990,8 +990,8 @@ Join to `django-social-auth discussion list`_ and bring any questions or suggest
 that would improve this application. Convore_ discussion group is deprecated since
 the service is going to be shut down on April 1st.
 
-Sout users
-^^^^^^^^^^
+South users
+^^^^^^^^^^^
 South_ users should add this rule to enable migrations::
 
     try:
