@@ -268,6 +268,12 @@ Configuration
   It's default value is ``DEBUG``, so you need to set it to ``False`` to avoid
   tracebacks when ``DEBUG = True``.
 
+- When your project is behind a reverse proxy that uses HTTPS the redirect URIs
+  can became with the wrong schema (``http://`` instead of ``https://``), and
+  might cause errors with the auth process, to force HTTPS in the final URIs
+  define this setting::
+
+    SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
 
 Some settings can be tweak by backend by adding the backend name prefix (all
 uppercase and replace ``-`` with ``_``), here's the supported settings so far::

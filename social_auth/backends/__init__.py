@@ -210,7 +210,7 @@ class OAuthBackend(SocialAuthBackend):
     EXTRA_DATA = None
 
     def get_user_id(self, details, response):
-        "OAuth providers return an unique user id in response"""
+        """OAuth providers return an unique user id in response"""
         return response['id']
 
     def extra_data(self, user, uid, response, details):
@@ -410,6 +410,15 @@ class BaseAuth(object):
         else:
             user.social_auth.filter(provider=self.AUTH_BACKEND.name).delete()
 
+    def build_absolute_uri(self, path=None):
+        """Build absolute URI for given path. Replace http:// schema with
+        https:// if SOCIAL_AUTH_REDIRECT_IS_HTTPS is defined.
+        """
+        uri = self.request.build_absolute_uri(path)
+        if setting('SOCIAL_AUTH_REDIRECT_IS_HTTPS'):
+            uri = uri.replace('http://', 'https://')
+        return uri
+
 
 class OpenIdAuth(BaseAuth):
     """OpenId process handling"""
@@ -419,26 +428,25 @@ class OpenIdAuth(BaseAuth):
         """Return auth URL returned by service"""
         openid_request = self.setup_request(self.auth_extra_arguments())
         # Construct completion URL, including page we should redirect to
-        return_to = self.request.build_absolute_uri(self.redirect)
+        return_to = self.build_absolute_uri(self.redirect)
         return openid_request.redirectURL(self.trust_root(), return_to)
 
     def auth_html(self):
         """Return auth HTML returned by service"""
         openid_request = self.setup_request(self.auth_extra_arguments())
-        return_to = self.request.build_absolute_uri(self.redirect)
+        return_to = self.build_absolute_uri(self.redirect)
         form_tag = {'id': 'openid_message'}
         return openid_request.htmlMarkup(self.trust_root(), return_to,
                                          form_tag_attrs=form_tag)
 
     def trust_root(self):
         """Return trust-root option"""
-        return setting('OPENID_TRUST_ROOT') or \
-               self.request.build_absolute_uri('/')
+        return setting('OPENID_TRUST_ROOT') or self.build_absolute_uri('/')
 
     def continue_pipeline(self, *args, **kwargs):
         """Continue previous halted pipeline"""
         response = self.consumer().complete(dict(self.data.items()),
-                                            self.request.build_absolute_uri())
+                                            self.build_absolute_uri())
         kwargs.update({
             'auth': self,
             'response': response,
@@ -449,7 +457,7 @@ class OpenIdAuth(BaseAuth):
     def auth_complete(self, *args, **kwargs):
         """Complete auth process"""
         response = self.consumer().complete(dict(self.data.items()),
-                                            self.request.build_absolute_uri())
+                                            self.build_absolute_uri())
         if not response:
             raise AuthException(self, 'OpenID relying party endpoint')
         elif response.status == SUCCESS:
@@ -521,7 +529,7 @@ class BaseOAuth(BaseAuth):
     def __init__(self, request, redirect):
         """Init method"""
         super(BaseOAuth, self).__init__(request, redirect)
-        self.redirect_uri = self.request.build_absolute_uri(self.redirect)
+        self.redirect_uri = self.build_absolute_uri(self.redirect)
 
 
 class ConsumerBasedOAuth(BaseOAuth):
