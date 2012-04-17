@@ -9,8 +9,8 @@ that would improve this application. Convore_ discussion group is deprecated sin
 the service is going to be shut down on April 1st.
 
 
-Sout users
-----------
+South users
+-----------
 
 South_ users should add this rule to enable migrations::
 

@@ -30,11 +30,11 @@ class BitbucketBackend(OAuthBackend):
     """Bitbucket OAuth authentication backend"""
     name = 'bitbucket'
     EXTRA_DATA = [
-    ('username', 'username'),
-    ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
-    ('email', 'email'),
-    ('first_name', 'first_name'),
-    ('last_name', 'last_name')
+        ('username', 'username'),
+        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
+        ('email', 'email'),
+        ('first_name', 'first_name'),
+        ('last_name', 'last_name')
     ]
 
     def get_user_details(self, response):
@@ -95,12 +95,6 @@ class BitbucketAuth(ConsumerBasedOAuth):
         except ValueError:
             return None
         return None
-
-    @classmethod
-    def enabled(cls):
-        """Return backend enabled status by checking basic settings"""
-        return setting('BITBUCKET_CONSUMER_KEY') and \
-               setting('BITBUCKET_CONSUMER_SECRET')
 
 
 # Backend definition
