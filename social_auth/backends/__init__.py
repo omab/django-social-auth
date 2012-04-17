@@ -526,10 +526,26 @@ class OpenIdAuth(BaseAuth):
 
 class BaseOAuth(BaseAuth):
     """OAuth base class"""
+    SETTINGS_KEY_NAME = ''
+    SETTINGS_SECRET_NAME = ''
+
     def __init__(self, request, redirect):
         """Init method"""
         super(BaseOAuth, self).__init__(request, redirect)
         self.redirect_uri = self.build_absolute_uri(self.redirect)
+
+    def get_key_and_secret(self):
+        """Return tuple with Consumer Key and Consumer Secret for current
+        service provider. Must return (key, secret), order *must* be respected.
+        """
+        return setting(self.SETTINGS_KEY_NAME), \
+               setting(self.SETTINGS_SECRET_NAME)
+
+    @classmethod
+    def enabled(cls):
+        """Return backend enabled status by checking basic settings"""
+        return setting(cls.SETTINGS_KEY_NAME) and \
+               setting(cls.SETTINGS_SECRET_NAME)
 
 
 class ConsumerBasedOAuth(BaseOAuth):
@@ -545,8 +561,6 @@ class ConsumerBasedOAuth(BaseOAuth):
     REQUEST_TOKEN_URL = ''
     ACCESS_TOKEN_URL = ''
     SERVER_URL = ''
-    SETTINGS_KEY_NAME = ''
-    SETTINGS_SECRET_NAME = ''
 
     def auth_url(self):
         """Return redirect url"""
@@ -633,19 +647,6 @@ class ConsumerBasedOAuth(BaseOAuth):
         """Setups consumer"""
         return OAuthConsumer(*self.get_key_and_secret())
 
-    def get_key_and_secret(self):
-        """Return tuple with Consumer Key and Consumer Secret for current
-        service provider. Must return (key, secret), order *must* be respected.
-        """
-        return setting(self.SETTINGS_KEY_NAME), \
-               setting(self.SETTINGS_SECRET_NAME)
-
-    @classmethod
-    def enabled(cls):
-        """Return backend enabled status by checking basic settings"""
-        return setting(cls.SETTINGS_KEY_NAME) and \
-               setting(cls.SETTINGS_SECRET_NAME)
-
 
 class BaseOAuth2(BaseOAuth):
     """Base class for OAuth2 providers.
@@ -692,7 +693,7 @@ class BaseOAuth2(BaseOAuth):
                     'Accept': 'application/json'}
         request = Request(self.ACCESS_TOKEN_URL, data=urlencode(params),
                           headers=headers)
-        
+
         try:
             response = simplejson.loads(urlopen(request).read())
         except HTTPError, e:
@@ -719,13 +720,6 @@ class BaseOAuth2(BaseOAuth):
     def get_scope(self):
         """Return list with needed access scope"""
         return []
-
-    def get_key_and_secret(self):
-        """Return tuple with Consumer Key and Consumer Secret for current
-        service provider. Must return (key, secret), order *must* be respected.
-        """
-        return setting(self.SETTINGS_KEY_NAME), \
-               setting(self.SETTINGS_SECRET_NAME)
 
 
 # Backend loading was previously performed via the

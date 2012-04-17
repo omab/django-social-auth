@@ -11,11 +11,9 @@ setting, it must be a list of values to request.
 By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
-import cgi
 from urllib import urlencode, urlopen
 
 from django.utils import simplejson
-from django.contrib.auth import authenticate
 
 from social_auth.utils import setting
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
@@ -58,7 +56,7 @@ class GithubAuth(BaseOAuth2):
         """Return list with needed access scope"""
         # Look at http://developer.github.com/v3/oauth/
         return setting('GITHUB_EXTENDED_PERMISSIONS', [])
-    
+
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         url = GITHUB_USER_DATA_URL + '?' + urlencode({
