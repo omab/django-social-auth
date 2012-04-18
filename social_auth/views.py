@@ -5,72 +5,20 @@ Notes:
       on third party providers that (if using POST) won't be sending csrf
       token back.
 """
-from functools import wraps
-
-from django.http import HttpResponseRedirect, HttpResponse, \
-                        HttpResponseServerError
-from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.utils.importlib import import_module
 from django.views.decorators.csrf import csrf_exempt
 
-from social_auth.backends import get_backend
-from social_auth.utils import sanitize_redirect, setting, log, \
+from social_auth.utils import sanitize_redirect, setting, \
                               backend_setting, clean_partial_pipeline
+from social_auth.decorators import dsa_view
 
 
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                    setting('LOGIN_REDIRECT_URL')
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
-RAISE_EXCEPTIONS = setting('SOCIAL_AUTH_RAISE_EXCEPTIONS', setting('DEBUG'))
-PROCESS_EXCEPTIONS = setting('SOCIAL_AUTH_PROCESS_EXCEPTIONS',
-                             'social_auth.utils.log_exceptions_to_messages')
-
-
-def dsa_view(redirect_name=None):
-    """Decorate djangos-social-auth views. Will check and retrieve backend
-    or return HttpResponseServerError if backend is not found.
-
-        redirect_name parameter is used to build redirect URL used by backend.
-    """
-    def dec(func):
-        @wraps(func)
-        def wrapper(request, backend, *args, **kwargs):
-            if redirect_name:
-                redirect = reverse(redirect_name, args=(backend,))
-            else:
-                redirect = request.path
-            backend = get_backend(backend, request, redirect)
-
-            if not backend:
-                return HttpResponseServerError('Incorrect authentication ' + \
-                                               'service')
-
-            try:
-                return func(request, backend, *args, **kwargs)
-            except Exception, e:  # some error ocurred
-                if RAISE_EXCEPTIONS:
-                    raise
-                log('error', unicode(e), exc_info=True, extra={
-                    'request': request
-                })
-
-                mod, func_name = PROCESS_EXCEPTIONS.rsplit('.', 1)
-                try:
-                    process = getattr(import_module(mod), func_name,
-                                      lambda *args: None)
-                except ImportError:
-                    pass
-                else:
-                    process(request, backend, e)
-
-                url = backend_setting(backend, 'SOCIAL_AUTH_BACKEND_ERROR_URL',
-                                      LOGIN_ERROR_URL)
-                return HttpResponseRedirect(url)
-        return wrapper
-    return dec
 
 
 @dsa_view(setting('SOCIAL_AUTH_COMPLETE_URL_NAME', 'socialauth_complete'))
@@ -84,20 +32,13 @@ def auth(request, backend):
 def complete(request, backend, *args, **kwargs):
     """Authentication complete view, override this view if transaction
     management doesn't suit your needs."""
-    return complete_process(request, backend, *args, **kwargs)
+    if request.user.is_authenticated():
+        return associate_complete(request, backend, *args, **kwargs)
+    else:
+        return complete_process(request, backend, *args, **kwargs)
 
 
 @login_required
-@dsa_view(setting('SOCIAL_AUTH_ASSOCIATE_URL_NAME',
-                  'socialauth_associate_complete'))
-def associate(request, backend):
-    """Authentication starting process"""
-    return auth_process(request, backend)
-
-
-@csrf_exempt
-@login_required
-@dsa_view()
 def associate_complete(request, backend, *args, **kwargs):
     """Authentication complete process"""
     # pop redirect value before the session is trashed on login()

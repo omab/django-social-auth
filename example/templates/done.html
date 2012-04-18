@@ -37,14 +37,14 @@
   <h3>Associate new <a href="http://oauth.net/" title="OAuth">OAuth</a> credentials:</h3>
   <ul>
   {% for name in social_auth.backends.oauth %}
-    <li><a rel="nofollow" href="{% url socialauth_associate_begin name %}">{{ name|title }}</a></li>
+    <li><a rel="nofollow" href="{% url socialauth_begin name %}">{{ name|title }}</a></li>
   {% endfor %}
   </ul>
 
   <h3>Associate new <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-10" title="OAuth2">OAuth2</a> credentials:</h3>
   <ul>
   {% for name in social_auth.backends.oauth2 %}
-    <li><a rel="nofollow" href="{% url socialauth_associate_begin name %}">{{ name|title }}</a></li>
+    <li><a rel="nofollow" href="{% url socialauth_begin name %}">{{ name|title }}</a></li>
   {% endfor %}
   </ul>
 
@@ -53,10 +53,10 @@
   {% for name in social_auth.backends.openid %}
     <li>
     {% if name != "livejournal" and name != "openid" %}
-      <a rel="nofollow" href="{% url socialauth_associate_begin name %}">{{ name|title }}</a>
+      <a rel="nofollow" href="{% url socialauth_begin name %}">{{ name|title }}</a>
     {% else %}
       {% if name == "livejournal" %}
-      <form action="{% url socialauth_associate_begin "livejournal" %}" method="post">{% csrf_token %}
+      <form action="{% url socialauth_begin "livejournal" %}" method="post">{% csrf_token %}
         <div>
           <label for="openid_lj_user">LiveJournal user:</label>
           <input id="openid_lj_user" type="text" value="" name="openid_lj_user" />
@@ -65,7 +65,7 @@
       </form>
       {% else %}
         {% if name == "openid" %}
-        <form action="{% url socialauth_associate_begin "openid" %}" method="post">{% csrf_token %}
+        <form action="{% url socialauth_begin "openid" %}" method="post">{% csrf_token %}
           <div>
             <label for="openid_identifier">Other provider</label>
             <input id="openid_identifier" type="text" value="" name="openid_identifier" />
