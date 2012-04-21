@@ -104,7 +104,7 @@ class FacebookAuth(BaseOAuth2):
         access_token = response['access_token'][0]
         data = self.user_data(access_token)
 
-        if data is not None:
+        if isinstance(data, dict):
             data['access_token'] = access_token
             # expires will not be part of response if offline access
             # premission was requested
