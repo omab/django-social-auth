@@ -21,7 +21,8 @@ from django.contrib.auth import authenticate
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.utils import sanitize_log_data, setting, log
 from social_auth.backends.exceptions import AuthException, AuthCanceled, \
-                                            AuthFailed, AuthTokenError
+                                            AuthFailed, AuthTokenError, \
+                                            AuthUnknownError
 
 
 # Facebook configuration
@@ -104,12 +105,20 @@ class FacebookAuth(BaseOAuth2):
         access_token = response['access_token'][0]
         data = self.user_data(access_token)
 
-        if isinstance(data, dict):
-            data['access_token'] = access_token
-            # expires will not be part of response if offline access
-            # premission was requested
-            if 'expires' in response:
-                data['expires'] = response['expires'][0]
+        if not isinstance(data, dict):
+            # From time to time Facebook responds back a JSON with just False
+            # as value, the reason is still unknown, but since the data is
+            # needed (it contains the user ID used to identify the account on
+            # further logins), this app cannot allow it to continue with the
+            # auth process.
+            raise AuthUnknownError(self, 'An error ocurred while retrieving '\
+                                         'users Facebook data')
+
+        data['access_token'] = access_token
+        # expires will not be part of response if offline access premission was
+        # requested
+        if 'expires' in response:
+            data['expires'] = response['expires'][0]
 
         kwargs.update({'auth': self,
                        'response': data,
