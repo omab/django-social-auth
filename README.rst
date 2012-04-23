@@ -841,7 +841,7 @@ GitHub works similar to Facebook (OAuth).
 - Also it's possible to define extra permissions with::
 
     GITHUB_EXTENDED_PERMISSIONS = [...]
-     
+
 Bitbucket
 ^^^^^^^^^
 
@@ -876,8 +876,14 @@ Flickr uses OAuth v1.0 for authentication.
 
 - fill ``Key`` and ``Secret`` values in the settings::
 
-      FLICKR_APP_ID = ''
-      FLICKR_API_SECRET = ''
+    FLICKR_APP_ID = ''
+    FLICKR_API_SECRET = ''
+
+- Flickr might show a messages saying "Oops! Flickr doesn't recognise the
+  permission set.", if encountered with this error, just define this setting::
+
+    FLICKR_AUTH_EXTRA_ARGUMENTS = {'perms':'read'}
+
 
 BrowserID
 ^^^^^^^^^
