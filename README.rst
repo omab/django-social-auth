@@ -835,12 +835,12 @@ GitHub works similar to Facebook (OAuth).
 
 - Fill ``App Id`` and ``App Secret`` values in the settings::
 
-      GITHUB_APP_ID = ''
-      GITHUB_API_SECRET = ''
+    GITHUB_APP_ID = ''
+    GITHUB_API_SECRET = ''
 
 - Also it's possible to define extra permissions with::
 
-     GITHUB_EXTENDED_PERMISSIONS = [...]
+    GITHUB_EXTENDED_PERMISSIONS = [...]
      
 Bitbucket
 ^^^^^^^^^
@@ -852,8 +852,8 @@ Bitbucket works similar to Twitter (OAuth).
 
 - Fill ``Consumer Key`` and ``Consumer Secret`` values in the settings::
 
-      BITBUCKET_CONSUMER_KEY = ''
-      BITBUCKET_CONSUMER_SECRET = ''
+    BITBUCKET_CONSUMER_KEY = ''
+    BITBUCKET_CONSUMER_SECRET = ''
 
 Dropbox
 ^^^^^^^
@@ -864,8 +864,8 @@ Dropbox uses OAuth v1.0 for authentication.
 
 - fill ``App Key`` and ``App Secret`` values in the settings::
 
-      DROPBOX_APP_ID = ''
-      DROPBOX_API_SECRET = ''
+    DROPBOX_APP_ID = ''
+    DROPBOX_API_SECRET = ''
 
 Flickr
 ^^^^^^
