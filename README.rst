@@ -1192,7 +1192,7 @@ Base work is copyrighted by:
 .. _Read the Docs: http://django-social-auth.readthedocs.org/
 .. _revolunet: https://github.com/revolunet
 .. _GitHub OAuth: http://developer.github.com/v3/oauth/
-.. _GitHub Developers: https://github.com/account/applications/new
+.. _GitHub Developers: https://github.com/settings/applications/new
 .. _djangopackages.com: http://djangopackages.com/grids/g/social-auth-backends/
 .. _Dropbox OAuth: https://www.dropbox.com/developers_beta/reference/api
 .. _Dropbox Developers: https://www.dropbox.com/developers/apps
