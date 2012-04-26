@@ -15,6 +15,7 @@ VK_AUTHORIZATION_URL = 'http://oauth.vk.com/authorize'
 VK_ACCESS_TOKEN_URL = 'https://oauth.vk.com/access_token'
 VK_USER_DATA_URL = 'https://api.vk.com/method/users.get'
 VK_SERVER = 'vk.com'
+VK_DEFAULT_DATA = 'first_name,last_name,screen_name,nickname'
 
 
 class VkontakteBackend(OAuthBackend):
@@ -49,11 +50,16 @@ class VkontakteAuth(BaseOAuth2):
 
     def user_data(self, access_token, response, *args, **kwargs):
         """Loads user data from service"""
+        fields = VK_DEFAULT_DATA
+        if setting('VK_EXTRA_DATA'):
+            fields += ',' + setting('VK_EXTRA_DATA')
+
         params = {'access_token': access_token,
-                  'fields': 'first_name,last_name,screen_name,nickname',
-                  'uids': response.get('user_id')
-                 }
+                  'fields': fields,
+                  'uids': response.get('user_id')}
+
         url = VK_USER_DATA_URL + '?' + urlencode(params)
+
         try:
             return simplejson.load(urlopen(url)).get('response')[0]
         except (ValueError, IndexError):

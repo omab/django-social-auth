@@ -922,6 +922,10 @@ Vkontakte uses OAuth v2 for Authentication
       VK_APP_ID = ''
       VK_API_SECRET = ''
 
+- Define VK_EXTRA_DATA to pass extra fields when gathering the user profile data, like::
+
+      VK_EXTRA_DATA = 'photo,country'
+
 - Also it's possible to define extra permissions with::
 
      VK_EXTRA_SCOPE = [...]
