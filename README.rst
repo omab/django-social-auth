@@ -986,7 +986,7 @@ Attributions to whom deserves:
 
   - Instagram support
 
-- niQo (Nicolas Quiénot)
+- niQo_ (Nicolas Quiénot)
 
   - Skyrock.com support
 
@@ -1053,6 +1053,7 @@ Base work is copyrighted by:
 .. _Quard: https://github.com/Quard
 .. _micrypt: https://github.com/micrypt
 .. _r4vi: https://github.com/r4vi
+.. _niQo: https://github.com/niQo
 .. _South: http://south.aeracode.org/
 .. _bedspax: https://github.com/bedspax
 .. _django-social-auth: https://github.com/omab/django-social-auth

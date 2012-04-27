@@ -31,6 +31,7 @@ credentials, some features are:
     * `LiveJournal OpenID`_
     * `Orkut OAuth`_
     * `Linkedin OAuth`_
+    * `Skyrock OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -56,3 +57,4 @@ credentials, some features are:
 .. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _myOpenID: https://www.myopenid.com/
 .. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
+.. _Skyrock OAuth: http://www.skyrock.com/developer/
