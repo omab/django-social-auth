@@ -1148,6 +1148,10 @@ Attributions to whom deserves:
 
   - Instagram support
 
+- andrusha_ (Andrew Korzhuev)
+
+  - MSN Live Connect support
+
 Copyrights
 ----------
 
@@ -1211,6 +1215,7 @@ Base work is copyrighted by:
 .. _Quard: https://github.com/Quard
 .. _micrypt: https://github.com/micrypt
 .. _r4vi: https://github.com/r4vi
+.. _andrusha: https://github.com/andrusha
 .. _South: http://south.aeracode.org/
 .. _bedspax: https://github.com/bedspax
 .. _django-social-auth: https://github.com/omab/django-social-auth
