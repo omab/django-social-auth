@@ -6,8 +6,6 @@ be registered first on skyrock and the settings SKYROCK_CONSUMER_KEY
 and SKYROCK_CONSUMER_SECRET must be defined with they corresponding
 values.
 
-User screen name is used to generate username.
-
 By default account id is stored in extra_data field, check OAuthBackend
 class for details on how to extend it.
 """
@@ -17,13 +15,13 @@ from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
 
 
 # Skyrock configuration
-SKYROCK_SERVER = 'api.skyrock.com/v2'
-SKYROCK_REQUEST_TOKEN_URL = 'https://%s/oauth/initiate' % SKYROCK_SERVER
-SKYROCK_ACCESS_TOKEN_URL = 'https://%s/oauth/token' % SKYROCK_SERVER
+SKYROCK_SERVER = 'api.skyrock.com'
+SKYROCK_REQUEST_TOKEN_URL = 'https://%s/v2/oauth/initiate' % SKYROCK_SERVER
+SKYROCK_ACCESS_TOKEN_URL = 'https://%s/v2/oauth/token' % SKYROCK_SERVER
 # Note: oauth/authorize forces the user to authorize every time.
 #       oauth/authenticate uses their previous selection, barring revocation.
-SKYROCK_AUTHORIZATION_URL = 'http://%s/oauth/authenticate' % SKYROCK_SERVER
-SKYROCK_CHECK_AUTH = 'https://%s/user/get.json' % SKYROCK_SERVER
+SKYROCK_AUTHORIZATION_URL = 'http://%s/v2/oauth/authenticate' % SKYROCK_SERVER
+SKYROCK_CHECK_AUTH = 'https://%s/v2/user/get.json' % SKYROCK_SERVER
 
 
 class SkyrockBackend(OAuthBackend):
