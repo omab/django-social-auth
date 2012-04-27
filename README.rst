@@ -45,6 +45,7 @@ credentials, some features are:
     * `Dropbox OAuth`_
     * `Flickr OAuth`_
     * `Vkontakte OAuth`_
+    * `MSN Live Connect OAuth2`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -122,6 +123,7 @@ Configuration
         'social_auth.backends.contrib.vkontakte.VkontakteBackend',
         'social_auth.backends.OpenIDBackend',
         'social_auth.backends.contrib.bitbucket.BitbucketBackend',
+        'social_auth.backends.contrib.live.LiveBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
 
@@ -159,6 +161,8 @@ Configuration
     VK_API_SECRET                = ''
     BITBUCKET_CONSUMER_KEY       = ''
     BITBUCKET_CONSUMER_SECRET    = ''
+    LIVE_CLIENT_ID               = ''
+    LIVE_CLIENT_SECRET           = ''
 
 - Setup login URLs::
 
@@ -939,6 +943,26 @@ Vkontakte uses OAuth v2 for Authentication
 
   See the `names of the privileges VKontakte`_.
 
+MSN Live Connect
+^^^^^^^^^^^^^^^^
+
+OAuth2 based Live Connect workflow, notice that it isn't OAuth WRAP.
+
+- Register a new application at `Live Connect Developer Center`_, set your site domain as
+  redirect domain,
+
+- Fill ``Client Id`` and ``Client Secret`` values in the settings::
+
+      LIVE_CLIENT_ID = ''
+      LIVE_CLIENT_SECRET = ''
+
+- Also it's possible to define extra permissions with::
+
+     LIVE_EXTENDED_PERMISSIONS = [...]
+
+  Defaults are "wl.basic" and "wl.emails". Latter one is necessary to retrieve user email.
+
+
 Testing
 -------
 
@@ -1124,6 +1148,10 @@ Attributions to whom deserves:
 
   - Instagram support
 
+- andrusha_ (Andrew Korzhuev)
+
+  - MSN Live Connect support
+
 Copyrights
 ----------
 
@@ -1187,6 +1215,7 @@ Base work is copyrighted by:
 .. _Quard: https://github.com/Quard
 .. _micrypt: https://github.com/micrypt
 .. _r4vi: https://github.com/r4vi
+.. _andrusha: https://github.com/andrusha
 .. _South: http://south.aeracode.org/
 .. _bedspax: https://github.com/bedspax
 .. _django-social-auth: https://github.com/omab/django-social-auth
@@ -1211,5 +1240,7 @@ Base work is copyrighted by:
 .. _Vkontakte OAuth: http://vk.com/developers.php?oid=-1&p=%D0%90%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F_%D1%81%D0%B0%D0%B9%D1%82%D0%BE%D0%B2
 .. _names of the privileges VKontakte: http://vk.com/developers.php?oid=-1&p=%D0%9F%D1%80%D0%B0%D0%B2%D0%B0_%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9
 .. _Vkontakte API: http://vk.com/developers.php
+.. _MSN Live Connect OAuth2: http://msdn.microsoft.com/en-us/library/live/hh243647.aspx
+.. _Live Connect Developer Center: https://manage.dev.live.com/Applications/Index
 .. _StackOverflow: http://stackoverflow.com/questions/9835506/urllib-urlopen-works-on-sslv3-urls-with-python-2-6-6-on-1-machine-but-not-wit
 .. _#315: https://github.com/omab/django-social-auth/issues/315

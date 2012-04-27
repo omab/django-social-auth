@@ -24,6 +24,7 @@ Configuration
         'social_auth.backends.contrib.foursquare.FoursquareBackend',
         'social_auth.backends.contrib.github.GithubBackend',
         'social_auth.backends.contrib.vkontakte.VkontakteBackend',
+        'social_auth.backends.contrib.live.LiveBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -52,6 +53,8 @@ Configuration
     FOURSQUARE_CONSUMER_SECRET   = ''
     VK_APP_ID                    = ''
     VK_API_SECRET                = ''
+    LIVE_CLIENT_ID = ''
+    LIVE_CLIENT_SECRET = ''
 
 - Setup login URLs::
 
