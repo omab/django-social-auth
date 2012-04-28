@@ -20,3 +20,4 @@ Contents:
    instagram
    vkontakte
    live
+   skyrock

@@ -25,6 +25,7 @@ Configuration
         'social_auth.backends.contrib.github.GithubBackend',
         'social_auth.backends.contrib.vkontakte.VkontakteBackend',
         'social_auth.backends.contrib.live.LiveBackend',
+        'social_auth.backends.contrib.skyrock.SkyrockBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -55,6 +56,8 @@ Configuration
     VK_API_SECRET                = ''
     LIVE_CLIENT_ID = ''
     LIVE_CLIENT_SECRET = ''
+    SKYROCK_CONSUMER_KEY      = ''
+    SKYROCK_CONSUMER_SECRET   = ''
 
 - Setup login URLs::
 
