@@ -243,7 +243,7 @@ Configuration
   override the default behavior by defining a function to process the
   exceptions using this setting::
 
-    SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.process_exceptions'
+    SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.log_exceptions_to_messages'
 
   The function parameters will ``request`` holding the current request object,
   ``backend`` with the current backend and ``err`` which is the exception
