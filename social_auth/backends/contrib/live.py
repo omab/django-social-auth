@@ -32,6 +32,8 @@ class LiveBackend(OAuthBackend):
 
     EXTRA_DATA = [
         ('id', 'id'),
+        ('access_token', 'access_token'),
+        ('reset_token', 'reset_token'),
         ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
         ('email', 'email'),
         ('first_name', 'first_name'),
@@ -42,7 +44,7 @@ class LiveBackend(OAuthBackend):
         return response['id']
 
     def get_user_details(self, response):
-        """Return user details from Github account"""
+        """Return user details from Live Connect account"""
         try:
             email = response['emails']['account']
         except KeyError:
