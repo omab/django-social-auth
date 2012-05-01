@@ -33,6 +33,7 @@ credentials, some features are:
     * `Linkedin OAuth`_
     * `Vkontakte OAuth`_
     * `MSN Live Connect OAuth2`_
+    * `Skyrock OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -60,3 +61,4 @@ credentials, some features are:
 .. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
 .. _Vkontakte OAuth: http://vk.com/developers.php?oid=-1&p=%D0%90%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F_%D1%81%D0%B0%D0%B9%D1%82%D0%BE%D0%B2
 .. _MSN Live Connect OAuth2: http://msdn.microsoft.com/en-us/library/live/hh243647.aspx
+.. _Skyrock OAuth: http://www.skyrock.com/developer/

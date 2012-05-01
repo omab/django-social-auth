@@ -19,3 +19,5 @@ Contents:
    browserid
    instagram
    vkontakte
+   live
+   skyrock

@@ -25,6 +25,7 @@ Configuration
         'social_auth.backends.contrib.github.GithubBackend',
         'social_auth.backends.contrib.vkontakte.VkontakteBackend',
         'social_auth.backends.contrib.live.LiveBackend',
+        'social_auth.backends.contrib.skyrock.SkyrockBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -55,6 +56,8 @@ Configuration
     VK_API_SECRET                = ''
     LIVE_CLIENT_ID = ''
     LIVE_CLIENT_SECRET = ''
+    SKYROCK_CONSUMER_KEY      = ''
+    SKYROCK_CONSUMER_SECRET   = ''
 
 - Setup login URLs::
 
@@ -240,7 +243,7 @@ Configuration
   override the default behavior by defining a function to process the
   exceptions using this setting::
 
-    SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.process_exceptions'
+    SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.log_exceptions_to_messages'
 
   The function parameters will ``request`` holding the current request object,
   ``backend`` with the current backend and ``err`` which is the exception

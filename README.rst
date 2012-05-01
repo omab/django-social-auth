@@ -46,6 +46,7 @@ credentials, some features are:
     * `Flickr OAuth`_
     * `Vkontakte OAuth`_
     * `MSN Live Connect OAuth2`_
+    * `Skyrock OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -121,6 +122,7 @@ Configuration
         'social_auth.backends.contrib.flickr.FlickrBackend',
         'social_auth.backends.contrib.instagram.InstagramBackend',
         'social_auth.backends.contrib.vkontakte.VkontakteBackend',
+        'social_auth.backends.contrib.skyrock.SkyrockBackend',
         'social_auth.backends.OpenIDBackend',
         'social_auth.backends.contrib.bitbucket.BitbucketBackend',
         'social_auth.backends.contrib.live.LiveBackend',
@@ -163,6 +165,8 @@ Configuration
     BITBUCKET_CONSUMER_SECRET    = ''
     LIVE_CLIENT_ID               = ''
     LIVE_CLIENT_SECRET           = ''
+    SKYROCK_CONSUMER_KEY         = ''
+    SKYROCK_CONSUMER_SECRET      = ''
 
 - Setup login URLs::
 
@@ -962,6 +966,19 @@ OAuth2 based Live Connect workflow, notice that it isn't OAuth WRAP.
 
   Defaults are "wl.basic" and "wl.emails". Latter one is necessary to retrieve user email.
 
+Skyrock
+^^^^^^^
+
+Skyrock offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
+To enable Skyrock these two keys are needed. Further documentation at
+`Skyrock API Documentation`_:
+
+- Register a new application at `Skyrock App Creation`_,
+
+- fill ``Consumer Key`` and ``Consumer Secret`` values::
+
+      SKYROCK_CONSUMER_KEY
+      SKYROCK_CONSUMER_SECRET
 
 Testing
 -------
@@ -1152,6 +1169,10 @@ Attributions to whom deserves:
 
   - MSN Live Connect support
 
+- niQo_ (Nicolas Quiénot)
+
+  - Skyrock.com support
+
 Copyrights
 ----------
 
@@ -1216,6 +1237,7 @@ Base work is copyrighted by:
 .. _micrypt: https://github.com/micrypt
 .. _r4vi: https://github.com/r4vi
 .. _andrusha: https://github.com/andrusha
+.. _niQo: https://github.com/niQo
 .. _South: http://south.aeracode.org/
 .. _bedspax: https://github.com/bedspax
 .. _django-social-auth: https://github.com/omab/django-social-auth
@@ -1244,3 +1266,6 @@ Base work is copyrighted by:
 .. _Live Connect Developer Center: https://manage.dev.live.com/Applications/Index
 .. _StackOverflow: http://stackoverflow.com/questions/9835506/urllib-urlopen-works-on-sslv3-urls-with-python-2-6-6-on-1-machine-but-not-wit
 .. _#315: https://github.com/omab/django-social-auth/issues/315
+.. _Skyrock OAuth: http://www.skyrock.com/developer/
+.. _Skyrock App Creation: https://www.skyrock.com/developer/application/
+.. _Skyrock API Documentation: http://www.skyrock.com/developer/documentation/
