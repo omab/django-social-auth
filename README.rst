@@ -47,6 +47,7 @@ credentials, some features are:
     * `Vkontakte OAuth`_
     * `MSN Live Connect OAuth2`_
     * `Skyrock OAuth`_
+    * `Yahoo OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -123,6 +124,7 @@ Configuration
         'social_auth.backends.contrib.instagram.InstagramBackend',
         'social_auth.backends.contrib.vkontakte.VkontakteBackend',
         'social_auth.backends.contrib.skyrock.SkyrockBackend',
+        'social_auth.backends.contrib.yahoo.YahooOAuthBackend',        
         'social_auth.backends.OpenIDBackend',
         'social_auth.backends.contrib.bitbucket.BitbucketBackend',
         'social_auth.backends.contrib.live.LiveBackend',
@@ -167,6 +169,8 @@ Configuration
     LIVE_CLIENT_SECRET           = ''
     SKYROCK_CONSUMER_KEY         = ''
     SKYROCK_CONSUMER_SECRET      = ''
+    YAHOO_CONSUMER_KEY           = ''
+    YAHOO_CONSUMER_SECRET        = ''
 
 - Setup login URLs::
 
@@ -980,6 +984,18 @@ To enable Skyrock these two keys are needed. Further documentation at
       SKYROCK_CONSUMER_KEY
       SKYROCK_CONSUMER_SECRET
 
+Yahoo OAuth
+^^^^^^^^^^^
+
+OAuth 1.0 workflow, useful if you are planning to use Yahoo's API.
+
+- Register a new application at `Yahoo Developer Center`_, set your app domain and configure scopes (they can't be overriden by application).
+
+- Fill ``Consumer Key`` and ``Consumer Secret`` values in the settings::
+
+      YAHOO_CONSUMER_KEY = ''
+      YAHOO_CONSUMER_SECRET = ''
+
 Testing
 -------
 
@@ -1168,6 +1184,7 @@ Attributions to whom deserves:
 - andrusha_ (Andrew Korzhuev)
 
   - MSN Live Connect support
+  - Yahoo OAuth 1.0 support
 
 - niQo_ (Nicolas Quiénot)
 
@@ -1269,3 +1286,5 @@ Base work is copyrighted by:
 .. _Skyrock OAuth: http://www.skyrock.com/developer/
 .. _Skyrock App Creation: https://www.skyrock.com/developer/application/
 .. _Skyrock API Documentation: http://www.skyrock.com/developer/documentation/
+.. _Yahoo OAuth: http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html
+.. _Yahoo Developer Center: https://developer.apps.yahoo.com/projects/
