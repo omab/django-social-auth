@@ -21,3 +21,4 @@ Contents:
    vkontakte
    live
    skyrock
+   yahoo

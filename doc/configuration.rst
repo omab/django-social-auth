@@ -26,6 +26,7 @@ Configuration
         'social_auth.backends.contrib.vkontakte.VkontakteBackend',
         'social_auth.backends.contrib.live.LiveBackend',
         'social_auth.backends.contrib.skyrock.SkyrockBackend',
+        'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -58,6 +59,9 @@ Configuration
     LIVE_CLIENT_SECRET = ''
     SKYROCK_CONSUMER_KEY      = ''
     SKYROCK_CONSUMER_SECRET   = ''
+    YAHOO_CONSUMER_KEY        = ''
+    YAHOO_CONSUMER_SECRET     = ''
+
 
 - Setup login URLs::
 
