@@ -8,6 +8,7 @@ from xml.parsers.expat import ExpatError
 
 from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends.exceptions import AuthCanceled, AuthUnknownError
 
 
 LINKEDIN_SERVER = 'linkedin.com'
@@ -50,7 +51,7 @@ class LinkedinAuth(ConsumerBasedOAuth):
     SETTINGS_KEY_NAME = 'LINKEDIN_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'LINKEDIN_CONSUMER_SECRET'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
         fields_selectors = LINKEDIN_FIELD_SELECTORS + \
                            setting('LINKEDIN_EXTRA_FIELD_SELECTORS', [])
@@ -61,6 +62,17 @@ class LinkedinAuth(ConsumerBasedOAuth):
             return to_dict(ElementTree.fromstring(raw_xml))
         except (ExpatError, KeyError, IndexError):
             return None
+
+    def auth_complete(self, *args, **kwargs):
+        """Complete auth process. Check LinkedIn error response."""
+        oauth_problem = self.request.GET.get('oauth_problem')
+        if oauth_problem:
+            if oauth_problem == 'user_refused':
+                raise AuthCanceled(self, '')
+            else:
+                raise AuthUnknownError(self, 'LinkedIn error was %s' % \
+                                                    oauth_problem)
+        return super(LinkedinAuth, self).auth_complete(*args, **kwargs)
 
 
 def to_dict(xml):

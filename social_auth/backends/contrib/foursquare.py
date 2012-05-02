@@ -38,7 +38,7 @@ class FoursquareAuth(BaseOAuth2):
     SETTINGS_KEY_NAME = 'FOURSQUARE_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'FOURSQUARE_CONSUMER_SECRET'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         params = {'oauth_token': access_token}
         url = FOURSQUARE_CHECK_AUTH + '?' + urllib.urlencode(params)

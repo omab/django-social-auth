@@ -23,6 +23,10 @@ Configuration
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.contrib.foursquare.FoursquareBackend',
         'social_auth.backends.contrib.github.GithubBackend',
+        'social_auth.backends.contrib.vkontakte.VkontakteBackend',
+        'social_auth.backends.contrib.live.LiveBackend',
+        'social_auth.backends.contrib.skyrock.SkyrockBackend',
+        'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -49,6 +53,15 @@ Configuration
     GOOGLE_OAUTH2_CLIENT_SECRET  = ''
     FOURSQUARE_CONSUMER_KEY      = ''
     FOURSQUARE_CONSUMER_SECRET   = ''
+    VK_APP_ID                    = ''
+    VK_API_SECRET                = ''
+    LIVE_CLIENT_ID = ''
+    LIVE_CLIENT_SECRET = ''
+    SKYROCK_CONSUMER_KEY      = ''
+    SKYROCK_CONSUMER_SECRET   = ''
+    YAHOO_CONSUMER_KEY        = ''
+    YAHOO_CONSUMER_SECRET     = ''
+
 
 - Setup login URLs::
 
@@ -234,7 +247,7 @@ Configuration
   override the default behavior by defining a function to process the
   exceptions using this setting::
 
-    SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.process_exceptions'
+    SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.log_exceptions_to_messages'
 
   The function parameters will ``request`` holding the current request object,
   ``backend`` with the current backend and ``err`` which is the exception
@@ -265,6 +278,12 @@ Configuration
   It's default value is ``DEBUG``, so you need to set it to ``False`` to avoid
   tracebacks when ``DEBUG = True``.
 
+- When your project is behind a reverse proxy that uses HTTPS the redirect URIs
+  can became with the wrong schema (``http://`` instead of ``https://``), and
+  might cause errors with the auth process, to force HTTPS in the final URIs
+  define this setting::
+
+    SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
 
 Some settings can be tweak by backend by adding the backend name prefix (all
 uppercase and replace ``-`` with ``_``), here's the supported settings so far::

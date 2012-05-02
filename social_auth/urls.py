@@ -1,8 +1,7 @@
 """URLs module"""
 from django.conf.urls.defaults import patterns, url
 
-from social_auth.views import auth, complete, associate, associate_complete, \
-                              disconnect
+from social_auth.views import auth, complete, disconnect
 
 
 urlpatterns = patterns('',
@@ -12,10 +11,12 @@ urlpatterns = patterns('',
     url(r'^complete/(?P<backend>[^/]+)/$', complete,
         name='socialauth_complete'),
 
-    # association
-    url(r'^associate/(?P<backend>[^/]+)/$', associate,
+    # XXX: Deprecated, this URLs are deprecated, instead use the login and
+    #      complete ones directly, they will differentiate the user intention
+    #      by checking it's authenticated status association.
+    url(r'^associate/(?P<backend>[^/]+)/$', auth,
         name='socialauth_associate_begin'),
-    url(r'^associate/complete/(?P<backend>[^/]+)/$', associate_complete,
+    url(r'^associate/complete/(?P<backend>[^/]+)/$', complete,
         name='socialauth_associate_complete'),
 
     # disconnection

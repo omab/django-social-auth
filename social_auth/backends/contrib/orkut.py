@@ -51,7 +51,7 @@ class OrkutAuth(BaseGoogleOAuth):
     SETTINGS_KEY_NAME = 'ORKUT_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'ORKUT_CONSUMER_SECRET'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from Orkut service"""
         fields = ORKUT_DEFAULT_DATA
         if setting('ORKUT_EXTRA_DATA'):

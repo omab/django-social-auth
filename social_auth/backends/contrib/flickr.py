@@ -73,13 +73,18 @@ class FlickrAuth(ConsumerBasedOAuth):
                                                else None
         return token
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         return {
             'id': access_token.user_nsid,
             'username': access_token.username,
             'fullname': access_token.fullname,
         }
+
+    def auth_extra_arguments(self):
+        params = super(FlickrAuth, self).auth_extra_arguments() or {}
+        params['perms'] = 'read'
+        return params
 
 
 # Backend definition

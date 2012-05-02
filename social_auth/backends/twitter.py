@@ -70,7 +70,7 @@ class TwitterAuth(ConsumerBasedOAuth):
     SETTINGS_KEY_NAME = 'TWITTER_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'TWITTER_CONSUMER_SECRET'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
         request = self.oauth_request(access_token, TWITTER_CHECK_AUTH)
         json = self.fetch_response(request)

@@ -66,7 +66,7 @@ class MailruOAuth2(BaseOAuth2):
 
         return auth_result
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Return user data from Mail.ru REST API"""
         data = {'method': 'users.getInfo', 'session_key': access_token}
         return mailru_api(data)[0]

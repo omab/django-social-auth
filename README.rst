@@ -47,6 +47,10 @@ credentials, some features are:
     * `GitHub OAuth`_
     * `Dropbox OAuth`_
     * `Flickr OAuth`_
+    * `Vkontakte OAuth`_
+    * `MSN Live Connect OAuth2`_
+    * `Skyrock OAuth`_
+    * `Yahoo OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -121,7 +125,12 @@ Configuration
         'social_auth.backends.contrib.dropbox.DropboxBackend',
         'social_auth.backends.contrib.flickr.FlickrBackend',
         'social_auth.backends.contrib.instagram.InstagramBackend',
+        'social_auth.backends.contrib.vkontakte.VkontakteBackend',
+        'social_auth.backends.contrib.skyrock.SkyrockBackend',
+        'social_auth.backends.contrib.yahoo.YahooOAuthBackend',        
         'social_auth.backends.OpenIDBackend',
+        'social_auth.backends.contrib.bitbucket.BitbucketBackend',
+        'social_auth.backends.contrib.live.LiveBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
 
@@ -155,6 +164,16 @@ Configuration
     FLICKR_API_SECRET            = ''
     INSTAGRAM_CLIENT_ID          = ''
     INSTAGRAM_CLIENT_SECRET      = ''
+    VK_APP_ID                    = ''
+    VK_API_SECRET                = ''
+    BITBUCKET_CONSUMER_KEY       = ''
+    BITBUCKET_CONSUMER_SECRET    = ''
+    LIVE_CLIENT_ID               = ''
+    LIVE_CLIENT_SECRET           = ''
+    SKYROCK_CONSUMER_KEY         = ''
+    SKYROCK_CONSUMER_SECRET      = ''
+    YAHOO_CONSUMER_KEY           = ''
+    YAHOO_CONSUMER_SECRET        = ''
 
 - Setup login URLs::
 
@@ -371,6 +390,13 @@ Configuration
   It's default value is ``DEBUG``, so you need to set it to ``False`` to avoid
   tracebacks when ``DEBUG = True``.
 
+- When your project is behind a reverse proxy that uses HTTPS the redirect URIs
+  can became with the wrong schema (``http://`` instead of ``https://``), and
+  might cause errors with the auth process, to force HTTPS in the final URIs
+  define this setting::
+
+    SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
+
 
 Some settings can be tweak by backend by adding the backend name prefix (all
 uppercase and replace ``-`` with ``_``), here's the supported settings so far::
@@ -414,6 +440,7 @@ accept already registered ones would look like this::
 
     SOCIAL_AUTH_PIPELINE = (
         'social_auth.backends.pipeline.social.social_auth_user',
+        'social_auth.backends.pipeline.social.associate_user',
         'social_auth.backends.pipeline.social.load_extra_data',
         'social_auth.backends.pipeline.user.update_user_details'
     )
@@ -483,6 +510,7 @@ The following settings are deprecated in favor of pipeline functions.
     SOCIAL_AUTH_DEFAULT_USERNAME
     SOCIAL_AUTH_UUID_LENGTH
     SOCIAL_AUTH_USERNAME_FIXER
+    SOCIAL_AUTH_ASSOCIATE_URL_NAME
 
 - User creation setting should be avoided and remove the entry ``create_user``
   from pipeline instead::
@@ -503,6 +531,18 @@ The following settings are deprecated in favor of pipeline functions.
   ``associate_by_email`` pipeline entry instead of using this setting::
 
     SOCIAL_AUTH_ASSOCIATE_BY_MAIL
+
+- Associate URLs are deprecated since the login ones can handle the case, this
+  avoids issues where providers check the redirect URI and redirects to the
+  configured value in the application. So, from now on a single entry point is
+  recommended being::
+
+        /<social auth path>/login/<backend>/
+
+  And to complete the process::
+
+        /<social auth path>/complete/<backend>/
+
 
 Usage example
 -------------
@@ -811,12 +851,25 @@ GitHub works similar to Facebook (OAuth).
 
 - Fill ``App Id`` and ``App Secret`` values in the settings::
 
-      GITHUB_APP_ID = ''
-      GITHUB_API_SECRET = ''
+    GITHUB_APP_ID = ''
+    GITHUB_API_SECRET = ''
 
 - Also it's possible to define extra permissions with::
 
-     GITHUB_EXTENDED_PERMISSIONS = [...]
+    GITHUB_EXTENDED_PERMISSIONS = [...]
+
+Bitbucket
+^^^^^^^^^
+
+Bitbucket works similar to Twitter (OAuth).
+
+- Register a new application by emailing ``support@bitbucket.org`` with an
+  application name and a bit of a description,
+
+- Fill ``Consumer Key`` and ``Consumer Secret`` values in the settings::
+
+    BITBUCKET_CONSUMER_KEY = ''
+    BITBUCKET_CONSUMER_SECRET = ''
 
 Dropbox
 ^^^^^^^
@@ -827,8 +880,8 @@ Dropbox uses OAuth v1.0 for authentication.
 
 - fill ``App Key`` and ``App Secret`` values in the settings::
 
-      DROPBOX_APP_ID = ''
-      DROPBOX_API_SECRET = ''
+    DROPBOX_APP_ID = ''
+    DROPBOX_API_SECRET = ''
 
 Flickr
 ^^^^^^
@@ -839,8 +892,14 @@ Flickr uses OAuth v1.0 for authentication.
 
 - fill ``Key`` and ``Secret`` values in the settings::
 
-      FLICKR_APP_ID = ''
-      FLICKR_API_SECRET = ''
+    FLICKR_APP_ID = ''
+    FLICKR_API_SECRET = ''
+
+- Flickr might show a messages saying "Oops! Flickr doesn't recognise the
+  permission set.", if encountered with this error, just define this setting::
+
+    FLICKR_AUTH_EXTRA_ARGUMENTS = {'perms':'read'}
+
 
 BrowserID
 ^^^^^^^^^
@@ -872,6 +931,73 @@ Instagram uses OAuth v2 for Authentication
     accomodate both ``/complete`` and ``/associate`` routes, for example by having
     a single ``/associate`` url which takes a ``?complete=true`` parameter for the
     cases when you want to complete rather than associate.
+
+Vkontakte
+^^^^^^^^^
+
+Vkontakte uses OAuth v2 for Authentication
+
+- Register a new application at the `Vkontakte API`_, and
+
+- fill ``App Id`` and ``Api Secret`` values in the settings::
+
+      VK_APP_ID = ''
+      VK_API_SECRET = ''
+
+- Define VK_EXTRA_DATA to pass extra fields when gathering the user profile data, like::
+
+      VK_EXTRA_DATA = 'photo,country'
+
+- Also it's possible to define extra permissions with::
+
+     VK_EXTRA_SCOPE = [...]
+
+  See the `names of the privileges VKontakte`_.
+
+MSN Live Connect
+^^^^^^^^^^^^^^^^
+
+OAuth2 based Live Connect workflow, notice that it isn't OAuth WRAP.
+
+- Register a new application at `Live Connect Developer Center`_, set your site domain as
+  redirect domain,
+
+- Fill ``Client Id`` and ``Client Secret`` values in the settings::
+
+      LIVE_CLIENT_ID = ''
+      LIVE_CLIENT_SECRET = ''
+
+- Also it's possible to define extra permissions with::
+
+     LIVE_EXTENDED_PERMISSIONS = [...]
+
+  Defaults are "wl.basic" and "wl.emails". Latter one is necessary to retrieve user email.
+
+Skyrock
+^^^^^^^
+
+Skyrock offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
+To enable Skyrock these two keys are needed. Further documentation at
+`Skyrock API Documentation`_:
+
+- Register a new application at `Skyrock App Creation`_,
+
+- fill ``Consumer Key`` and ``Consumer Secret`` values::
+
+      SKYROCK_CONSUMER_KEY
+      SKYROCK_CONSUMER_SECRET
+
+Yahoo OAuth
+^^^^^^^^^^^
+
+OAuth 1.0 workflow, useful if you are planning to use Yahoo's API.
+
+- Register a new application at `Yahoo Developer Center`_, set your app domain and configure scopes (they can't be overriden by application).
+
+- Fill ``Consumer Key`` and ``Consumer Secret`` values in the settings::
+
+      YAHOO_CONSUMER_KEY = ''
+      YAHOO_CONSUMER_SECRET = ''
 
 Testing
 -------
@@ -964,18 +1090,42 @@ Some particular use cases are listed below.
 Miscellaneous
 -------------
 
+Mailing list
+^^^^^^^^^^^^
 Join to `django-social-auth discussion list`_ and bring any questions or suggestions
 that would improve this application. Convore_ discussion group is deprecated since
 the service is going to be shut down on April 1st.
-If defining a custom user model, do not import social_auth from any models.py
-that would finally import from the models.py that defines your User class or it
-will make your project fail with a recursive import because social_auth uses
-get_model() to retrieve your User.
+South users
+^^^^^^^^^^^
+South_ users should add this rule to enable migrations::
 
+    try:
+        import south
+        from south.modelsinspector import add_introspection_rules
+        add_introspection_rules([], ["^social_auth\.fields\.JSONField"])
+    except:
+        pass
+
+Custom User model
+^^^^^^^^^^^^^^^^^
+If defining a custom user model, do not import ``social_auth`` from any
+``models.py`` that would finally import from the ``models.py`` that defines
+your ``User`` class or it will make your project fail with a recursive import
+because ``social_auth`` uses ``get_model()`` to retrieve your User.
+
+Third party backends
+^^^^^^^^^^^^^^^^^^^^
 There's an ongoing movement to create a list of third party backends on
 djangopackages.com_, so, if somebody doesn't want it's backend in the
 ``contrib`` directory but still wants to share, just split it in a separated
 package and link it there.
+
+Python 2.7.2rev4, 2.7.3 and Facebook backend
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Seems that this bug described in StackOverflow_ hits users using
+django-social-auth_ with Python versions 2.7.2rev4 and 2.7.3 (so far) and
+Facebook backend. The bug report `#315`_ explains it a bit more and shows
+a workaround fit avoid it.
 
 Bugs
 ----
@@ -1032,6 +1182,15 @@ Attributions to whom deserves:
 - r4vi_ (Ravi Kotecha)
 
   - Instagram support
+
+- andrusha_ (Andrew Korzhuev)
+
+  - MSN Live Connect support
+  - Yahoo OAuth 1.0 support
+
+- niQo_ (Nicolas Quiénot)
+
+  - Skyrock.com support
 
 Copyrights
 ----------
@@ -1096,6 +1255,8 @@ Base work is copyrighted by:
 .. _Quard: https://github.com/Quard
 .. _micrypt: https://github.com/micrypt
 .. _r4vi: https://github.com/r4vi
+.. _andrusha: https://github.com/andrusha
+.. _niQo: https://github.com/niQo
 .. _South: http://south.aeracode.org/
 .. _bedspax: https://github.com/bedspax
 .. _django-social-auth: https://github.com/omab/django-social-auth
@@ -1105,7 +1266,7 @@ Base work is copyrighted by:
 .. _Read the Docs: http://django-social-auth.readthedocs.org/
 .. _revolunet: https://github.com/revolunet
 .. _GitHub OAuth: http://developer.github.com/v3/oauth/
-.. _GitHub Developers: https://github.com/account/applications/new
+.. _GitHub Developers: https://github.com/settings/applications/new
 .. _djangopackages.com: http://djangopackages.com/grids/g/social-auth-backends/
 .. _Dropbox OAuth: https://www.dropbox.com/developers_beta/reference/api
 .. _Dropbox Developers: https://www.dropbox.com/developers/apps
@@ -1117,3 +1278,15 @@ Base work is copyrighted by:
 .. _Instagram API: http://instagr.am/developer/
 .. _django-social-auth discussion list: https://groups.google.com/group/django-social-auth
 .. _Twitter OAuth keys: https://dev.twitter.com/docs/auth/authorizing-request
+.. _Vkontakte OAuth: http://vk.com/developers.php?oid=-1&p=%D0%90%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F_%D1%81%D0%B0%D0%B9%D1%82%D0%BE%D0%B2
+.. _names of the privileges VKontakte: http://vk.com/developers.php?oid=-1&p=%D0%9F%D1%80%D0%B0%D0%B2%D0%B0_%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9
+.. _Vkontakte API: http://vk.com/developers.php
+.. _MSN Live Connect OAuth2: http://msdn.microsoft.com/en-us/library/live/hh243647.aspx
+.. _Live Connect Developer Center: https://manage.dev.live.com/Applications/Index
+.. _StackOverflow: http://stackoverflow.com/questions/9835506/urllib-urlopen-works-on-sslv3-urls-with-python-2-6-6-on-1-machine-but-not-wit
+.. _#315: https://github.com/omab/django-social-auth/issues/315
+.. _Skyrock OAuth: http://www.skyrock.com/developer/
+.. _Skyrock App Creation: https://www.skyrock.com/developer/application/
+.. _Skyrock API Documentation: http://www.skyrock.com/developer/documentation/
+.. _Yahoo OAuth: http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html
+.. _Yahoo Developer Center: https://developer.apps.yahoo.com/projects/

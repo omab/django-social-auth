@@ -36,6 +36,10 @@ maraujop_ (Miguel Araujo)
 bedspax_
   * Foursquare support
 
+andrusha_ (Andrew Korzhuev)
+  * MSN Live Connect support
+  * Yahoo OAuth 1.0 support
+
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
@@ -45,6 +49,7 @@ bedspax_
 .. _micrypt: https://github.com/micrypt
 .. _djm: https://github.com/djm
 .. _bernardokyotoku: https://github.com/bernardokyotoku
+.. _andrusha: https://github.com/andrusha
 .. _maraujop: https://github.com/maraujop
 .. _bedspax: https://github.com/bedspax
 .. _python-oauth2: https://github.com/simplegeo/python-oauth2

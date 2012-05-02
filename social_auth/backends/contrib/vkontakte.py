@@ -150,7 +150,7 @@ class VKontakteOAuth2(BaseOAuth2):
 
         return auth_result
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Return user data from VKontakte API"""
         data = {'access_token': access_token }
 

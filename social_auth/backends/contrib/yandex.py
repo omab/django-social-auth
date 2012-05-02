@@ -102,7 +102,7 @@ class YandexOAuth2(BaseOAuth2):
 
         return auth_result
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Return user data from Yandex REST API specified in settings"""
         params = urlencode({'text': 1, 'format': 'xml'})
         request = Request(settings.YANDEX_OAUTH2_API_URL + '?' + params, headers={'Authorization': "OAuth " + access_token })

@@ -118,7 +118,7 @@ class BaseGoogleOAuth(ConsumerBasedOAuth):
     ACCESS_TOKEN_URL = ACCESS_TOKEN_URL
     SERVER_URL = GOOGLE_OAUTH_SERVER
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from G service"""
         raise NotImplementedError('Implement in subclass')
 
@@ -129,7 +129,7 @@ class GoogleOAuth(BaseGoogleOAuth):
     SETTINGS_KEY_NAME = 'GOOGLE_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'GOOGLE_CONSUMER_SECRET'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Return user data from Google API"""
         request = self.oauth_request(access_token, GOOGLEAPIS_EMAIL,
                                      {'alt': 'json'})
@@ -191,7 +191,7 @@ class GoogleOAuth2(BaseOAuth2):
     def get_scope(self):
         return GOOGLE_OAUTH2_SCOPE + setting('GOOGLE_OAUTH_EXTRA_SCOPE', [])
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Return user data from Google API"""
         return googleapis_profile(GOOGLEAPIS_PROFILE, access_token)
 

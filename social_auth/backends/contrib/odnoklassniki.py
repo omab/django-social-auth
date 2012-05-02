@@ -40,6 +40,7 @@ class OdnoklassnikiBackend(OAuthBackend):
     
     def get_user_details(self, response):
         """Return user details from Odnoklassniki request"""
+        import pdb; pdb.set_trace()
         values = { USERNAME: response['uid'], 'email': '', 'fullname': unquote(response['name']),
                   'first_name': unquote(response['first_name']), 'last_name': unquote(response['last_name'])}
         return values
@@ -56,7 +57,7 @@ class OdnoklassnikiOAuth2(BaseOAuth2):
     def get_scope(self):
         return ODNOKLASSNIKI_OAUTH2_SCOPE + getattr(settings, 'ODNOKLASSNIKI_OAUTH2_EXTRA_SCOPE', [])
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Return user data from Odnoklassniki REST API"""
         data = {'access_token': access_token, 'method': 'users.getCurrentUser'}
         return odnoklassniki_api(data)
