@@ -47,6 +47,8 @@ class VkontakteAuth(BaseOAuth2):
     AUTH_BACKEND = VkontakteBackend
     SETTINGS_KEY_NAME = 'VK_APP_ID'
     SETTINGS_SECRET_NAME = 'VK_API_SECRET'
+    # Look at http://vk.com/developers.php?oid=-1&p=%D0%9F%D1%80%D0%B0%D0%B2%D0%B0_%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9
+    SCOPE_VAR_NAME = 'VK_EXTRA_SCOPE'
 
     def user_data(self, access_token, response, *args, **kwargs):
         """Loads user data from service"""
@@ -62,10 +64,6 @@ class VkontakteAuth(BaseOAuth2):
         except (ValueError, IndexError):
             return None
 
-    def get_scope(self):
-        """Return list with needed access scope"""
-        # Look at http://vk.com/developers.php?oid=-1&p=%D0%9F%D1%80%D0%B0%D0%B2%D0%B0_%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9
-        return setting('VK_EXTRA_SCOPE', [])
 
 
 # Backend definition
