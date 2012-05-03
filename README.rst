@@ -943,7 +943,7 @@ Vkontakte uses OAuth v2 for Authentication
 
 - Define VK_EXTRA_DATA to pass extra fields when gathering the user profile data, like::
 
-      VK_EXTRA_DATA = 'photo,country'
+      VK_EXTRA_DATA = ['photo','country']
 
 - Also it's possible to define extra permissions with::
 

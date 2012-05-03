@@ -51,12 +51,9 @@ class GithubAuth(BaseOAuth2):
     SETTINGS_KEY_NAME = 'GITHUB_APP_ID'
     SETTINGS_SECRET_NAME = 'GITHUB_API_SECRET'
     SCOPE_SEPARATOR = ','
-
-    def get_scope(self):
-        """Return list with needed access scope"""
-        # Look at http://developer.github.com/v3/oauth/
-        return setting('GITHUB_EXTENDED_PERMISSIONS', [])
-
+    # Look at http://developer.github.com/v3/oauth/
+    SCOPE_VAR_NAME = 'GITHUB_EXTENDED_PERMISSIONS'
+    
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         url = GITHUB_USER_DATA_URL + '?' + urlencode({
