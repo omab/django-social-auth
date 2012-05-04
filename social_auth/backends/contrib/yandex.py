@@ -58,7 +58,7 @@ class YaruBackend(OAuthBackend):
         return { USERNAME: get_username_from_url(response.get('links')),
                  'email':  response.get('email'),
                  'first_name': response.get('name'),
-               } 
+               }
 
 
 class YaruAuth(BaseOAuth2):
@@ -66,7 +66,7 @@ class YaruAuth(BaseOAuth2):
     AUTHORIZATION_URL = YANDEX_AUTHORIZATION_URL
     ACCESS_TOKEN_URL = YANDEX_ACCESS_TOKEN_URL
     SERVER_URL = YANDEX_SERVER
-    AUTH_BACKEND = YaruBackend 
+    AUTH_BACKEND = YaruBackend
     SETTINGS_KEY_NAME = 'YANDEX_APP_ID'
     SETTINGS_SECRET_NAME = 'YANDEX_API_SECRET'
 

@@ -57,7 +57,7 @@ class FacebookAuth(BaseOAuth2):
     SETTINGS_KEY_NAME = 'FACEBOOK_APP_ID'
     SETTINGS_SECRET_NAME = 'FACEBOOK_API_SECRET'
     SCOPE_VAR_NAME = 'FACEBOOK_EXTENDED_PERMISSIONS'
-    
+
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         data = None
