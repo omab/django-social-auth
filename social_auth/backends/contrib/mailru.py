@@ -21,6 +21,7 @@ from urllib2 import Request, urlopen, HTTPError
 from hashlib import md5
 
 from social_auth.backends import OAuthBackend, BaseOAuth2, USERNAME
+from social_auth.utils import setting
 
 MAILRU_API_URL       = 'http://www.appsmail.ru/platform/api'
 MAILRU_OAUTH2_SCOPE  = ['']
@@ -35,7 +36,7 @@ class MailruBackend(OAuthBackend):
 
     def get_user_id(self, details, response):
         """Return user unique id provided by Mail.ru"""
-        return int(response['uid'])
+        return response['uid']
     
     def get_user_details(self, response):
         """Return user details from Mail.ru request"""
@@ -56,7 +57,7 @@ class MailruOAuth2(BaseOAuth2):
     SETTINGS_SECRET_NAME = 'MAILRU_OAUTH2_CLIENT_SECRET'
 
     def get_scope(self):
-        return MAILRU_OAUTH2_SCOPE + getattr(settings, 'MAILRU_OAUTH2_EXTRA_SCOPE', [])
+        return setting('MAILRU_OAUTH2_EXTRA_SCOPE', [])
 
     def auth_complete(self, *args, **kwargs):
         try:

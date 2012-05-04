@@ -18,6 +18,7 @@ from hashlib import md5
 from time import time
 
 from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, BaseOAuth2, USERNAME
+from social_auth.utils import setting
 
 VKONTAKTE_API_URL        = 'https://api.vkontakte.ru/method/'
 VKONTAKTE_SERVER_API_URL = 'http://api.vkontakte.ru/api.php'
@@ -35,7 +36,7 @@ class VKontakteBackend(SocialAuthBackend):
 
     def get_user_id(self, details, response):
         """Return user unique id provided by VKontakte"""
-        return int(response.GET['id'])
+        return response.GET['id']
 
     def get_user_details(self, response):
         """Return user details from VKontakte request"""
@@ -131,7 +132,7 @@ class VKontakteOAuth2(BaseOAuth2):
     SETTINGS_SECRET_NAME = 'VKONTAKTE_APP_SECRET'
 
     def get_scope(self):
-        return VKONTAKTE_OAUTH2_SCOPE + getattr(settings, 'VKONTAKTE_OAUTH2_EXTRA_SCOPE', [])
+        return setting('VKONTAKTE_OAUTH2_EXTRA_SCOPE', [])
 
     def auth_complete(self, *args, **kwargs):
         if USE_APP_AUTH:
