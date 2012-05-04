@@ -68,10 +68,8 @@ class LiveAuth(BaseOAuth2):
     SETTINGS_KEY_NAME    = 'LIVE_CLIENT_ID'
     SETTINGS_SECRET_NAME = 'LIVE_CLIENT_SECRET'
     SCOPE_SEPARATOR      = ','
-
-    def get_scope(self):
-        """Return list with needed access scope"""
-        return LIVE_DEFAULT_PERMISSIONS + setting('LIVE_EXTENDED_PERMISSIONS', [])
+    SCOPE_VAR_NAME       = 'LIVE_EXTENDED_PERMISSIONS'
+    DEFAULT_SCOPE        = LIVE_DEFAULT_PERMISSIONS
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""

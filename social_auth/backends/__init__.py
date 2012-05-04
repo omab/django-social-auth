@@ -662,9 +662,8 @@ class BaseOAuth2(BaseOAuth):
     ACCESS_TOKEN_URL = None
     SCOPE_SEPARATOR = ' '
     RESPONSE_TYPE = 'code'
-    
     SCOPE_VAR_NAME = None
-    DEFAULT_SCOPE = []
+    DEFAULT_SCOPE = None
 
     def auth_url(self):
         """Return redirect url"""
@@ -722,11 +721,9 @@ class BaseOAuth2(BaseOAuth):
 
     def get_scope(self):
         """Return list with needed access scope"""
-        scope_var_name = getattr(self, 'SCOPE_VAR_NAME', None)
-        scope = getattr(self, 'DEFAULT_SCOPE', [])
-        # scope_var_name should not be empty string
-        if scope_var_name:
-            scope = scope + setting(scope_var_name, [])
+        scope = self.DEFAULT_SCOPE or []
+        if self.SCOPE_VAR_NAME:
+            scope += setting(self.SCOPE_VAR_NAME, [])
         return scope
 
 
