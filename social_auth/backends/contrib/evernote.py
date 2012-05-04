@@ -28,9 +28,25 @@ EVERNOTE_AUTHORIZATION_URL = 'https://%s/OAuth.action' % \
                                     EVERNOTE_SERVER
 
 
+# TODO handle expired token
 class EvernoteBackend(OAuthBackend):
-    """Evernote OAuth authentication backend"""
+    """Evernote OAuth authentication backend
+       Possible Values:
+       {'edam_expires': ['1367525289541'],
+        'edam_noteStoreUrl': ['https://sandbox.evernote.com/shard/s1/notestore'],
+        'edam_shard': ['s1'],
+        'edam_userId': ['123841'],
+        'edam_webApiUrlPrefix': ['https://sandbox.evernote.com/shard/s1/'],
+        'oauth_token': ['S=s1:U=1e3c1:E=13e66dbee45:C=1370f2ac245:P=185:A=my_user:H=411443c5e8b20f8718ed382a19d4ae38']}
+    """
+
     name = 'evernote'
+
+    EXTRA_DATA = [
+        ('access_token', 'access_token'),
+        ('oauth_token', 'oauth_token'),
+        ('edam_noteStoreUrl', 'store_url')
+    ]
 
     def get_user_details(self, response):
         """Return user details from Evernote account"""
@@ -39,7 +55,7 @@ class EvernoteBackend(OAuthBackend):
                 }
 
     def get_user_id(self, details, response):
-        return response['edam_userId']
+        return response['edam_userId'][0]
 
 
 class EvernoteAuth(ConsumerBasedOAuth):
@@ -66,14 +82,7 @@ class EvernoteAuth(ConsumerBasedOAuth):
         return token
 
     def user_data(self, access_token, *args, **kwargs):
-        """Return user data provided
-        {'edam_expires': ['1367525289541'],
-         'edam_noteStoreUrl': ['https://sandbox.evernote.com/shard/s1/notestore'],
-         'edam_shard': ['s1'],
-         'edam_userId': ['123841'],
-         'edam_webApiUrlPrefix': ['https://sandbox.evernote.com/shard/s1/'],
-         'oauth_token': ['S=s1:U=1e3c1:E=13e66dbee45:C=1370f2ac245:P=185:A=my_user:H=411443c5e8b20f8718ed382a19d4ae38']}
-        """
+        """Return user data provided """
         return access_token.user_info
 
 # Backend definition
