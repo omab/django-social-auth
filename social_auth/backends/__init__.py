@@ -723,7 +723,7 @@ class BaseOAuth2(BaseOAuth):
         """Return list with needed access scope"""
         scope = self.DEFAULT_SCOPE or []
         if self.SCOPE_VAR_NAME:
-            scope += setting(self.SCOPE_VAR_NAME, [])
+            scope = scope + setting(self.SCOPE_VAR_NAME, [])
         return scope
 
 
