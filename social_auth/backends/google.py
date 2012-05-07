@@ -150,14 +150,15 @@ class GoogleOAuth(BaseGoogleOAuth):
             extra_params['xoauth_displayname'] = xoauth_displayname
         return super(GoogleOAuth, self).oauth_request(token, url, extra_params)
 
-    def get_key_and_secret(self):
+    @classmethod
+    def get_key_and_secret(cls):
         """Return Google OAuth Consumer Key and Consumer Secret pair, uses
         anonymous by default, beware that this marks the application as not
         registered and a security badge is displayed on authorization page.
         http://code.google.com/apis/accounts/docs/OAuth_ref.html#SigningOAuth
         """
         try:
-            return super(GoogleOAuth, self).get_key_and_secret()
+            return super(GoogleOAuth, cls).get_key_and_secret()
         except AttributeError:
             return 'anonymous', 'anonymous'
 

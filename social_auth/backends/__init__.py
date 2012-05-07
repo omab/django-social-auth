@@ -33,6 +33,7 @@ from social_auth.backends.exceptions import StopPipeline, AuthException, \
                                             AuthFailed, AuthCanceled, \
                                             AuthUnknownError, AuthTokenError, \
                                             AuthMissingParameter
+from social_auth.backends.utils import build_consumer_oauth_request
 
 
 if setting('SOCIAL_AUTH_USER_MODEL'):
@@ -534,12 +535,13 @@ class BaseOAuth(BaseAuth):
         super(BaseOAuth, self).__init__(request, redirect)
         self.redirect_uri = self.build_absolute_uri(self.redirect)
 
-    def get_key_and_secret(self):
+    @classmethod
+    def get_key_and_secret(cls):
         """Return tuple with Consumer Key and Consumer Secret for current
         service provider. Must return (key, secret), order *must* be respected.
         """
-        return setting(self.SETTINGS_KEY_NAME), \
-               setting(self.SETTINGS_SECRET_NAME)
+        return setting(cls.SETTINGS_KEY_NAME), \
+               setting(cls.SETTINGS_SECRET_NAME)
 
     @classmethod
     def enabled(cls):
@@ -615,18 +617,10 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def oauth_request(self, token, url, extra_params=None):
         """Generate OAuth request, setups callback url"""
-        params = {'oauth_callback': self.redirect_uri}
-        if extra_params:
-            params.update(extra_params)
-
-        if 'oauth_verifier' in self.data:
-            params['oauth_verifier'] = self.data['oauth_verifier']
-        request = OAuthRequest.from_consumer_and_token(self.consumer,
-                                                       token=token,
-                                                       http_url=url,
-                                                       parameters=params)
-        request.sign_request(SignatureMethod_HMAC_SHA1(), self.consumer, token)
-        return request
+        return build_consumer_oauth_request(self, token, url,
+                                            self.redirect_uri,
+                                            self.data.get('oauth_verifier'),
+                                            extra_params)
 
     def fetch_response(self, request):
         """Executes request and fetchs service response"""
