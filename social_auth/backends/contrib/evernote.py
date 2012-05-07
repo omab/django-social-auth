@@ -28,7 +28,6 @@ EVERNOTE_AUTHORIZATION_URL = 'https://%s/OAuth.action' % \
                                     EVERNOTE_SERVER
 
 
-# TODO handle expired token
 class EvernoteBackend(OAuthBackend):
     """Evernote OAuth authentication backend
        Possible Values:
@@ -45,7 +44,8 @@ class EvernoteBackend(OAuthBackend):
     EXTRA_DATA = [
         ('access_token', 'access_token'),
         ('oauth_token', 'oauth_token'),
-        ('edam_noteStoreUrl', 'store_url')
+        ('edam_noteStoreUrl', 'store_url'),
+        ('edam_expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
     ]
 
     def get_user_details(self, response):
@@ -83,7 +83,10 @@ class EvernoteAuth(ConsumerBasedOAuth):
 
     def user_data(self, access_token, *args, **kwargs):
         """Return user data provided """
-        return access_token.user_info
+
+        # drop lists
+        return dict([(key, val[0]) for key, val in
+            access_token.user_info.items()])
 
 # Backend definition
 BACKENDS = {
