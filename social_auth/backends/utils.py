@@ -7,7 +7,8 @@ from django.utils import simplejson
 from social_auth.models import User
 
 
-def consumer_oauth_url_request(backend, url, user_or_id, json=True):
+def consumer_oauth_url_request(backend, url, user_or_id, redirect_uri='/',
+                               json=True):
     """Builds and retrieves an OAuth signed response."""
     if isinstance(user_or_id, User):
         user = user_or_id
@@ -21,7 +22,7 @@ def consumer_oauth_url_request(backend, url, user_or_id, json=True):
         oauth_info = oauth_info[0]
 
     token = Token.from_string(oauth_info.tokens['access_token'])
-    request = build_consumer_oauth_request(backend, token, url)
+    request = build_consumer_oauth_request(backend, token, url, redirect_uri)
     response = '\n'.join(urlopen(request.to_url()).readlines())
 
     if json:
