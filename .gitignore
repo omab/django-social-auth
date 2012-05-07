@@ -13,3 +13,4 @@ contrib/tests/test_settings.py
 *.ipr
 *.iws
 Django-social-auth.iml
+tags
