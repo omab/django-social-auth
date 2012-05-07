@@ -36,8 +36,13 @@ FOURSQUARE_CONSUMER_SECRET        = ''
 YANDEX_OAUTH2_CLIENT_KEY          = ''
 YANDEX_OAUTH2_CLIENT_SECRET       = ''
 YANDEX_OAUTH2_API_URL             = 'https://api-yaru.yandex.ru/me/' # http://api.moikrug.ru/v1/my/ for Moi Krug
-VK_APP_ID                         = ''
-VK_API_SECRET                     = ''
+
+# Backward compatibility
+YANDEX_APP_ID = YANDEX_OAUTH2_CLIENT_KEY
+YANDEX_API_SECRET = YANDEX_OAUTH2_CLIENT_SECRET
+
+VK_APP_ID = VKONTAKTE_APP_ID
+VK_API_SECRET = VKONTAKTE_APP_SECRET
 
 SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.social_auth_user',

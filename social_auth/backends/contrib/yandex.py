@@ -1,5 +1,5 @@
 """
-Yandex OpenID support.
+Yandex OpenID and OAuth2 support.
 
 This contribution adds support for Yandex.ru OpenID service in the form
 openid.yandex.ru/user. Username is retrieved from the identity url.
@@ -7,65 +7,50 @@ openid.yandex.ru/user. Username is retrieved from the identity url.
 If username is not specified, OpenID 2.0 url used for authentication.
 """
 import logging
+from django.utils import simplejson
+
 logger = logging.getLogger(__name__)
 
-import urlparse
-
 from urllib import urlencode, unquote
-from urllib2 import Request, urlopen, HTTPError
+from urllib2 import urlopen
+from urlparse import urlparse, urlsplit
 
-from django.conf import settings
-import xml.dom.minidom
+from social_auth.backends import OpenIDBackend, OpenIdAuth, USERNAME,\
+    OAuthBackend, BaseOAuth2
 
-from social_auth.backends import OpenIDBackend, OpenIdAuth, USERNAME, OAuthBackend, BaseOAuth2
+from social_auth.utils import setting
+
+# Yandex configuration
+YANDEX_AUTHORIZATION_URL = 'https://oauth.yandex.ru/authorize'
+YANDEX_ACCESS_TOKEN_URL = 'https://oauth.yandex.ru/token'
+YANDEX_SERVER = 'oauth.yandex.ru'
+
+YANDEX_OPENID_URL = 'http://openid.yandex.ru'
 
 
-# Yandex conf
-YANDEX_URL = 'http://openid.yandex.ru/%s'
-YANDEX_USER_FIELD = 'openid_ya_user'
-YANDEX_OID_2_URL = 'http://yandex.ru'
+def get_username_from_url(links):
+    try:
+        host = urlparse(links.get('www')).hostname
+        return host.split('.')[0]
+    except (IndexError, AttributeError):
+        return None
 
-EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 class YandexBackend(OpenIDBackend):
     """Yandex OpenID authentication backend"""
     name = 'yandex'
 
+    def get_user_id(self, details, response):
+        return details['email'] or response.identity_url
+
     def get_user_details(self, response):
         """Generate username from identity url"""
         values = super(YandexBackend, self).get_user_details(response)
         values[USERNAME] = values.get(USERNAME) or\
-                           urlparse.urlsplit(response.identity_url)\
+                           urlsplit(response.identity_url)\
                            .path.strip('/')
 
-        values['email'] = values.get('email') or ''
-
-        return values
-
-
-class YandexOAuth2Backend(OAuthBackend):
-    """Yandex OAuth2 authentication backend"""
-    name = 'yandex-oauth2'
-
-    def get_user_id(self, details, response):
-        """Return user unique id provided by Yandex"""
-        return int(response['id'])
-
-    def get_user_details(self, response):
-        """Return user details from Yandex request"""
-
-        name = unquote(response['name'])
-        first_name = ''
-        last_name = ''
-
-        if ' ' in name:
-            last_name, first_name = name.split(' ')
-            name = first_name
-        else:
-            first_name = name
-
-        values = { USERNAME: name, 'email': '',
-                   'first_name': first_name, 'last_name': last_name}
+        values['email'] = values.get('email', '')
 
         return values
 
@@ -76,89 +61,93 @@ class YandexAuth(OpenIdAuth):
 
     def openid_url(self):
         """Returns Yandex authentication URL"""
-        if YANDEX_USER_FIELD not in self.data:
-            return YANDEX_OID_2_URL
+        return YANDEX_OPENID_URL
+
+
+class YaruBackend(OAuthBackend):
+    """Yandex OAuth authentication backend"""
+    name = 'yaru'
+    EXTRA_DATA = [
+        ('id', 'id'),
+        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+    ]
+
+    def get_user_details(self, response):
+        name = response['name']
+        last_name = ''
+
+        if ' ' in name:
+            names = name.split(' ')
+            last_name = names[0]
+            first_name = names[1]
         else:
-            return YANDEX_URL % self.data[YANDEX_USER_FIELD]
+            first_name = name
+
+        """Return user details from Yandex account"""
+        return { USERNAME: get_username_from_url(response.get('links')),
+                 'email':  response.get('email', ''),
+                 'first_name': first_name, 'last_name': last_name,
+                 }
 
 
-class YandexOAuth2(BaseOAuth2):
-    """Yandex OAuth2 support
-       See http://api.yandex.ru/oauth/doc/dg/concepts/About.xml for details"""
-    AUTH_BACKEND = YandexOAuth2Backend
-    AUTHORIZATION_URL = 'https://oauth.yandex.ru/authorize'
-    ACCESS_TOKEN_URL = 'https://oauth.yandex.ru/token'
-    SETTINGS_KEY_NAME = 'YANDEX_OAUTH2_CLIENT_KEY'
-    SETTINGS_SECRET_NAME = 'YANDEX_OAUTH2_CLIENT_SECRET'
+class YaruAuth(BaseOAuth2):
+    """Yandex Ya.ru OAuth mechanism"""
+    AUTHORIZATION_URL = YANDEX_AUTHORIZATION_URL
+    ACCESS_TOKEN_URL = YANDEX_ACCESS_TOKEN_URL
+    AUTH_BACKEND = YaruBackend
+    SERVER_URL = YANDEX_SERVER
+    SETTINGS_KEY_NAME = 'YANDEX_APP_ID'
+    SETTINGS_SECRET_NAME = 'YANDEX_API_SECRET'
 
-    def get_scope(self):
-        return [] # Yandex does not allow custom scope
+    def get_api_url(self):
+        return 'https://api-yaru.yandex.ru/me/'
 
-    def auth_complete(self, *args, **kwargs):
+    def user_data(self, access_token, response, *args, **kwargs):
+        """Loads user data from service"""
+        params = {'oauth_token': access_token,
+                  'format': 'json',
+                  'text': 1,
+                  }
+
+        url = self.get_api_url() + '?' + urlencode(params)
         try:
-            auth_result = super(YandexOAuth2, self).auth_complete(*args, **kwargs)
-        except HTTPError: # Returns HTTPError 400 if cancelled
-            raise ValueError('Authentication cancelled')
-
-        return auth_result
-
-    def user_data(self, access_token, *args, **kwargs):
-        """Return user data from Yandex REST API specified in settings"""
-        params = urlencode({'text': 1, 'format': 'xml'})
-        request = Request(settings.YANDEX_OAUTH2_API_URL + '?' + params, headers={'Authorization': "OAuth " + access_token })
-
-        try:
-            reply = urlopen(request).read()
-            dom = xml.dom.minidom.parseString(reply)
-
-            id = getNodeText(dom, "id")
-            if "/" in id:
-                id = id.split("/")[-1]
-
-            name = getNodeText(dom, "name")
-
-            links = getNodesWithAttribute(dom, "link", {"rel": "userpic"})
-            if not links:
-                userpic = getNodeText(dom, "Portrait")
-            else:
-                userpic = links[0].getAttribute("href") if links else ""
-
-            return {"id": id, "name": name, "userpic": userpic, "access_token": access_token}
-        except (TypeError, KeyError, IOError, ValueError, IndexError):
+            return simplejson.load(urlopen(url))
+        except (ValueError, IndexError):
             logger.error('Could not load data from Yandex.', exc_info=True, extra=dict(data=params))
             return None
 
 
-def getNodeText(dom, nodeName):
-    node = dom.getElementsByTagName(nodeName)
+class YandexOAuth2Backend(YaruBackend):
+    """Legacy Yandex OAuth2 authentication backend"""
+    name = 'yandex-oauth2'
 
-    if node:
-        nodelist = node[0].childNodes
-    else:
-        return ''
 
-    rc = []
-    for node in nodelist:
-        if node.nodeType == node.TEXT_NODE:
-            rc.append(node.data)
+class YandexOAuth2(YaruAuth):
+    """Yandex Ya.ru/Moi Krug OAuth mechanism"""
+    AUTH_BACKEND = YandexOAuth2Backend
 
-    return ''.join(rc)
+    def get_api_url(self):
+        return setting('YANDEX_OAUTH2_API_URL')
 
-def getNodesWithAttribute(dom, nodeName, attrDict):
-    nodelist = dom.getElementsByTagName(nodeName)
-    found = []
+    def user_data(self, access_token, response, *args, **kwargs):
+        reply = super(YandexOAuth2, self).user_data(access_token, response, args, kwargs)
 
-    for node in nodelist:
-        for key, value in attrDict.items():
-            if node.hasAttribute(key):
-                if value and node.getAttribute(key) != value:
-                    continue
-                found.append(node)
+        if reply:
+            if isinstance(reply, list) and len(reply) >= 1:
+                reply = reply[0]
 
-    return found
+            if 'links' in reply:
+                userpic = reply['links'].get('avatar')
+            elif 'avatar' in reply:
+                userpic = reply['avatar'].get('Portrait')
+
+            reply.update({"id":reply["id"].split("/")[-1], "access_token": access_token, "userpic": userpic or ''})
+
+        return reply
 
 # Backend definition
 BACKENDS = {
     'yandex': YandexAuth,
+    'yaru': YaruAuth,
     'yandex-oauth2': YandexOAuth2
 }
