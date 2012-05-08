@@ -15,9 +15,7 @@ def consumer_oauth_url_request(backend, url, user_or_id, redirect_uri='/',
     else:
         user = User.objects.get(pk=user_or_id)
 
-    oauth_info = user.social_auth.objects.filter(
-        provider=backend.AUTH_BACKEND.name
-    )
+    oauth_info = user.social_auth.filter(provider=backend.AUTH_BACKEND.name)
     if len(oauth_info) > 1:
         oauth_info = oauth_info[0]
 
