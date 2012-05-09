@@ -8,7 +8,7 @@ If username is not specified, OpenID 2.0 url used for authentication.
 """
 from django.utils import simplejson
 
-from urllib import urlencode, unquote
+from urllib import urlencode
 from urllib2 import urlopen
 from urlparse import urlparse, urlsplit
 
@@ -70,6 +70,7 @@ class YaruBackend(OAuthBackend):
     ]
 
     def get_user_details(self, response):
+        """Return user details from Yandex account"""
         name = response['name']
         last_name = ''
 
@@ -80,11 +81,12 @@ class YaruBackend(OAuthBackend):
         else:
             first_name = name
 
-        """Return user details from Yandex account"""
-        return { USERNAME: get_username_from_url(response.get('links')),
-                 'email':  response.get('email', ''),
-                 'first_name': first_name, 'last_name': last_name,
-                 }
+        return {
+            USERNAME: get_username_from_url(response.get('links')),
+            'email':  response.get('email', ''),
+            'first_name': first_name,
+            'last_name': last_name,
+        }
 
 
 class YaruAuth(BaseOAuth2):
@@ -110,7 +112,8 @@ class YaruAuth(BaseOAuth2):
         try:
             return simplejson.load(urlopen(url))
         except (ValueError, IndexError):
-            log('error', 'Could not load data from Yandex.', exc_info=True, extra=dict(data=params))
+            log('error', 'Could not load data from Yandex.',
+                exc_info=True, extra=dict(data=params))
             return None
 
 
@@ -127,7 +130,8 @@ class YandexOAuth2(YaruAuth):
         return setting('YANDEX_OAUTH2_API_URL')
 
     def user_data(self, access_token, response, *args, **kwargs):
-        reply = super(YandexOAuth2, self).user_data(access_token, response, args, kwargs)
+        reply = super(YandexOAuth2, self).user_data(access_token,
+                                                    response, args, kwargs)
 
         if reply:
             if isinstance(reply, list) and len(reply) >= 1:
@@ -138,9 +142,14 @@ class YandexOAuth2(YaruAuth):
             elif 'avatar' in reply:
                 userpic = reply['avatar'].get('Portrait')
 
-            reply.update({"id":reply["id"].split("/")[-1], "access_token": access_token, "userpic": userpic or ''})
+            reply.update({
+                'id': reply['id'].split("/")[-1],
+                'access_token': access_token,
+                'userpic': userpic or ''
+            })
 
         return reply
+
 
 # Backend definition
 BACKENDS = {

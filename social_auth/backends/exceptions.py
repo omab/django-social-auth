@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext
 
+
 class SocialAuthBaseException(ValueError):
     """Base class for pipeline exceptions."""
     pass
@@ -27,7 +28,8 @@ class AuthFailed(AuthException):
         if self.message == 'access_denied':
             return ugettext(u'Authentication process was cancelled')
         else:
-            return ugettext(u'Authentication failed: %s') % super(AuthFailed, self).__unicode__()
+            return ugettext(u'Authentication failed: %s') % \
+                        super(AuthFailed, self).__unicode__()
 
 
 class AuthCanceled(AuthException):

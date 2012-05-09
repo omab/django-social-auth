@@ -100,7 +100,8 @@ class FacebookAuth(BaseOAuth2):
             try:
                 response = cgi.parse_qs(urlopen(url).read())
             except HTTPError:
-                raise AuthFailed(self, 'There was an error authenticating the app')
+                raise AuthFailed(self, 'There was an error authenticating ' \
+                                       'the app')
 
             access_token = response['access_token'][0]
             if 'expires' in response:
@@ -110,8 +111,9 @@ class FacebookAuth(BaseOAuth2):
             response = load_signed_request(self.data.get('signed_request'))
 
             if response is not None:
-                access_token = response.get('access_token') or response.get('oauth_token') \
-                               or self.data.get('access_token')
+                access_token = response.get('access_token') or \
+                               response.get('oauth_token') or \
+                               self.data.get('access_token')
 
                 if 'expires' in response:
                     expires = response['expires']
@@ -120,13 +122,14 @@ class FacebookAuth(BaseOAuth2):
             data = self.user_data(access_token)
 
             if not isinstance(data, dict):
-                # From time to time Facebook responds back a JSON with just False
-                # as value, the reason is still unknown, but since the data is
-                # needed (it contains the user ID used to identify the account on
-                # further logins), this app cannot allow it to continue with the
-                # auth process.
-                raise AuthUnknownError(self, 'An error ocurred while retrieving '\
-                                         'users Facebook data')
+                # From time to time Facebook responds back a JSON with just
+                # False as value, the reason is still unknown, but since the
+                # data is needed (it contains the user ID used to identify the
+                # account on further logins), this app cannot allow it to
+                # continue with the auth process.
+                raise AuthUnknownError(self, 'An error ocurred while ' \
+                                             'retrieving users Facebook ' \
+                                             'data')
 
             data['access_token'] = access_token
             # expires will not be part of response if offline access
@@ -156,24 +159,28 @@ def base64_url_decode(data):
     data += '=' * (4 - (len(data) % 4))
     return base64.urlsafe_b64decode(data)
 
+
 def base64_url_encode(data):
     return base64.urlsafe_b64encode(data).rstrip('=')
-    
+
+
 def load_signed_request(signed_request):
     try:
         sig, payload = signed_request.split(u'.', 1)
         sig = base64_url_decode(sig)
         data = simplejson.loads(base64_url_decode(payload))
 
-        expected_sig = hmac.new(
-            setting('FACEBOOK_API_SECRET'), msg=payload, digestmod=hashlib.sha256).digest()
+        expected_sig = hmac.new(setting('FACEBOOK_API_SECRET'),
+                                msg=payload,
+                                digestmod=hashlib.sha256).digest()
 
         # allow the signed_request to function for upto 1 day
         if sig == expected_sig and \
                 data[u'issued_at'] > (time.time() - 86400):
-            return data 
-    except ValueError, ex:
-        pass # ignore if can't split on dot
+            return data
+    except ValueError:
+        pass  # ignore if can't split on dot
+
 
 # Backend definition
 BACKENDS = {
