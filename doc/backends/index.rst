@@ -22,3 +22,4 @@ Contents:
    live
    skyrock
    yahoo
+   evernote

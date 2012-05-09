@@ -9,12 +9,20 @@ References:
 * http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html
 * http://developer.yahoo.com/social/rest_api_guide/introspective-guid-resource.html
 * http://developer.yahoo.com/social/rest_api_guide/extended-profile-resource.html
+
+Scopes:
+To make this extension works correctly you have to have at least
+Yahoo Profile scope with Read permission
+
+Throws:
+AuthUnknownError - if user data retrieval fails (guid or profile)
 """
 
 from django.utils import simplejson
 
 from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends.exceptions import AuthUnknownError
 
 
 # Google OAuth base configuration
@@ -38,11 +46,15 @@ class YahooOAuthBackend(OAuthBackend):
         return response['guid']
 
     def get_user_details(self, response):
-        """Return user details from Orkut account"""
+        """Return user details from Yahoo Profile"""
         fname = response.get('givenName')
         lname = response.get('familyName')
+        if 'emails' in response:
+            email = response.get('emails')[0]['handle']
+        else:
+            email = ''
         return {USERNAME:     response.get('nickname'),
-                'email':      response.get('emails')[0]['handle'],
+                'email':      email,
                 'fullname':   '%s %s' % (fname, lname),
                 'first_name': fname,
                 'last_name':  lname}
@@ -66,9 +78,13 @@ class YahooOAuth(ConsumerBasedOAuth):
         try:
             return simplejson.loads(response)['profile']
         except ValueError:
-            return None
+            raise AuthUnknownError("Error during profile retrieval, please, try again later")
 
     def _get_guid(self, access_token):
+        """
+            Beause you have to provide GUID for every API request
+            it's also returned during one of OAuth calls
+        """
         url = 'http://social.yahooapis.com/v1/me/guid?format=json'
         request = self.oauth_request(access_token, url)
         response = self.fetch_response(request)
@@ -76,7 +92,7 @@ class YahooOAuth(ConsumerBasedOAuth):
             json = simplejson.loads(response)
             return json['guid']['value']
         except ValueError:
-            return 'me'
+            raise AuthUnknownError("Error during user id retrieval, please, try again later")
 
 # Backend definition
 BACKENDS = {

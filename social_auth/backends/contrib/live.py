@@ -4,12 +4,15 @@ MSN Live Connect oAuth 2.0
 Settings:
 LIVE_CLIENT_ID
 LIVE_CLIENT_SECRET
-LIVE_EXTENDED_PERMISSIONS (default: wl.basic, wl.emails)
+LIVE_EXTENDED_PERMISSIONS (defaults are: wl.basic, wl.emails)
 
 References:
 * oAuth  http://msdn.microsoft.com/en-us/library/live/hh243649.aspx
 * Scopes http://msdn.microsoft.com/en-us/library/live/hh243646.aspx
 * REST   http://msdn.microsoft.com/en-us/library/live/hh243648.aspx
+
+Throws:
+AuthUnknownError - if user data retrieval fails
 """
 from urllib import urlencode, urlopen
 
@@ -17,6 +20,7 @@ from django.utils import simplejson
 
 from social_auth.utils import setting
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends.exceptions import AuthUnknownError
 
 
 # Live Connect configuration
@@ -24,7 +28,7 @@ LIVE_AUTHORIZATION_URL    = 'https://login.live.com/oauth20_authorize.srf'
 LIVE_ACCESS_TOKEN_URL     = 'https://login.live.com/oauth20_token.srf'
 LIVE_USER_DATA_URL        = 'https://apis.live.net/v5.0/me'
 LIVE_SERVER               = 'live.com'
-LIVE_EXTENDED_PERMISSIONS = ['wl.basic', 'wl.emails']
+LIVE_DEFAULT_PERMISSIONS  = ['wl.basic', 'wl.emails']
 
 
 class LiveBackend(OAuthBackend):
@@ -64,10 +68,8 @@ class LiveAuth(BaseOAuth2):
     SETTINGS_KEY_NAME    = 'LIVE_CLIENT_ID'
     SETTINGS_SECRET_NAME = 'LIVE_CLIENT_SECRET'
     SCOPE_SEPARATOR      = ','
-
-    def get_scope(self):
-        """Return list with needed access scope"""
-        return setting('LIVE_EXTENDED_PERMISSIONS', LIVE_EXTENDED_PERMISSIONS)
+    SCOPE_VAR_NAME       = 'LIVE_EXTENDED_PERMISSIONS'
+    DEFAULT_SCOPE        = LIVE_DEFAULT_PERMISSIONS
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
@@ -76,8 +78,8 @@ class LiveAuth(BaseOAuth2):
         })
         try:
             return simplejson.load(urlopen(url))
-        except ValueError:
-            return None
+        except (ValueError, IOError):
+            raise AuthUnknownError("Error during profile retrieval, please, try again later")
 
 
 # Backend definition

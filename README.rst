@@ -51,6 +51,7 @@ credentials, some features are:
     * `MSN Live Connect OAuth2`_
     * `Skyrock OAuth`_
     * `Yahoo OAuth`_
+    * `Evernote OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -946,7 +947,7 @@ Vkontakte uses OAuth v2 for Authentication
 
 - Define VK_EXTRA_DATA to pass extra fields when gathering the user profile data, like::
 
-      VK_EXTRA_DATA = 'photo,country'
+      VK_EXTRA_DATA = ['photo','country']
 
 - Also it's possible to define extra permissions with::
 
@@ -998,6 +999,19 @@ OAuth 1.0 workflow, useful if you are planning to use Yahoo's API.
 
       YAHOO_CONSUMER_KEY = ''
       YAHOO_CONSUMER_SECRET = ''
+
+Evernote OAuth
+^^^^^^^^^^^^^^
+
+Evernote OAuth 1.0 workflow.
+
+- Register a new application at `Evernote API Key form`_.
+
+- Fill ``Consumer Key`` and ``Consumer Secret`` values in the settings::
+
+      EVERNOTE_CONSUMER_KEY = ''
+      EVERNOTE_CONSUMER_SECRET = ''
+
 
 Testing
 -------
@@ -1192,6 +1206,11 @@ Attributions to whom deserves:
 
   - Skyrock.com support
 
+- hassek_ (Tomas Henriquez)
+
+  - Evernote support
+
+
 Copyrights
 ----------
 
@@ -1290,3 +1309,5 @@ Base work is copyrighted by:
 .. _Skyrock API Documentation: http://www.skyrock.com/developer/documentation/
 .. _Yahoo OAuth: http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html
 .. _Yahoo Developer Center: https://developer.apps.yahoo.com/projects/
+.. _Evernote API Key form: http://dev.evernote.com/support/api_key.php
+.. _hassek: https://github.com/hassek

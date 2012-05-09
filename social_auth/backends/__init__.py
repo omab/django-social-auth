@@ -17,8 +17,8 @@ from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
 from openid.extensions import sreg, ax
 
-from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest,\
-    SignatureMethod_HMAC_SHA1
+from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
+                   SignatureMethod_HMAC_SHA1
 
 from django.db import models
 from django.contrib.auth import authenticate
@@ -26,13 +26,14 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
-from social_auth.utils import setting, log, model_to_ctype, ctype_to_model,\
-    clean_partial_pipeline
+from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
+                              clean_partial_pipeline
 from social_auth.store import DjangoOpenIDStore
-from social_auth.backends.exceptions import StopPipeline, AuthException,\
-    AuthFailed, AuthCanceled,\
-    AuthUnknownError, AuthTokenError,\
-    AuthMissingParameter
+from social_auth.backends.exceptions import StopPipeline, AuthException, \
+                                            AuthFailed, AuthCanceled, \
+                                            AuthUnknownError, AuthTokenError, \
+                                            AuthMissingParameter
+from social_auth.backends.utils import build_consumer_oauth_request
 
 
 if setting('SOCIAL_AUTH_USER_MODEL'):
@@ -55,7 +56,7 @@ AX_SCHEMA_ATTRS = [
     ('http://axschema.org/namePerson/first', 'first_name'),
     ('http://axschema.org/namePerson/last', 'last_name'),
     ('http://axschema.org/namePerson/friendly', 'nickname'),
-    ]
+]
 SREG_ATTR = [
     ('email', 'email'),
     ('fullname', 'fullname'),
@@ -69,14 +70,14 @@ SESSION_NAME = 'openid'
 USERNAME = 'username'
 
 PIPELINE = setting('SOCIAL_AUTH_PIPELINE', (
-    'social_auth.backends.pipeline.social.social_auth_user',
-    'social_auth.backends.pipeline.associate.associate_by_email',
-    'social_auth.backends.pipeline.user.get_username',
-    'social_auth.backends.pipeline.user.create_user',
-    'social_auth.backends.pipeline.social.associate_user',
-    'social_auth.backends.pipeline.social.load_extra_data',
-    'social_auth.backends.pipeline.user.update_user_details',
-    ))
+                'social_auth.backends.pipeline.social.social_auth_user',
+                'social_auth.backends.pipeline.associate.associate_by_email',
+                'social_auth.backends.pipeline.user.get_username',
+                'social_auth.backends.pipeline.user.create_user',
+                'social_auth.backends.pipeline.social.associate_user',
+                'social_auth.backends.pipeline.social.load_extra_data',
+                'social_auth.backends.pipeline.user.update_user_details',
+           ))
 
 
 class SocialAuthBackend(ModelBackend):
@@ -258,7 +259,7 @@ class OpenIDBackend(SocialAuthBackend):
             resp = sreg.SRegResponse.fromSuccessResponse(response)
             if resp:
                 values.update((alias, resp.get(name) or '')
-                    for name, alias in sreg_names)
+                                    for name, alias in sreg_names)
 
         # Use Attribute Exchange attributes if provided
         if ax_names:
@@ -276,9 +277,9 @@ class OpenIDBackend(SocialAuthBackend):
         # update values using SimpleRegistration or AttributeExchange
         # values
         values.update(self.values_from_response(response,
-            SREG_ATTR,
-            OLD_AX_ATTRS +\
-            AX_SCHEMA_ATTRS))
+                                                SREG_ATTR,
+                                                OLD_AX_ATTRS + \
+                                                AX_SCHEMA_ATTRS))
 
         fullname = values.get('fullname') or ''
         first_name = values.get('first_name') or ''
@@ -294,8 +295,8 @@ class OpenIDBackend(SocialAuthBackend):
 
         values.update({'fullname': fullname, 'first_name': first_name,
                        'last_name': last_name,
-                       USERNAME: values.get(USERNAME) or\
-                                 (first_name.title() + last_name.title())})
+                       USERNAME: values.get(USERNAME) or \
+                                   (first_name.title() + last_name.title())})
         return values
 
     def extra_data(self, user, uid, response, details):
@@ -351,7 +352,7 @@ class BaseAuth(object):
             'backend': self.AUTH_BACKEND.name,
             'args': tuple(map(model_to_ctype, args)),
             'kwargs': dict((key, model_to_ctype(val))
-                for key, val in kwargs.iteritems())
+                                for key, val in kwargs.iteritems())
         }
 
     def from_session_dict(self, entry, *args, **kwargs):
@@ -363,7 +364,7 @@ class BaseAuth(object):
 
         kwargs = kwargs.copy()
         kwargs.update((key, ctype_to_model(val))
-            for key, val in entry['kwargs'].iteritems())
+                            for key, val in entry['kwargs'].iteritems())
         return (entry['next'], args, kwargs)
 
     def continue_pipeline(self, *args, **kwargs):
@@ -437,7 +438,7 @@ class OpenIdAuth(BaseAuth):
         return_to = self.build_absolute_uri(self.redirect)
         form_tag = {'id': 'openid_message'}
         return openid_request.htmlMarkup(self.trust_root(), return_to,
-            form_tag_attrs=form_tag)
+                                         form_tag_attrs=form_tag)
 
     def trust_root(self):
         """Return trust-root option"""
@@ -446,7 +447,7 @@ class OpenIdAuth(BaseAuth):
     def continue_pipeline(self, *args, **kwargs):
         """Continue previous halted pipeline"""
         response = self.consumer().complete(dict(self.data.items()),
-            self.build_absolute_uri())
+                                            self.build_absolute_uri())
         kwargs.update({
             'auth': self,
             'response': response,
@@ -457,7 +458,7 @@ class OpenIdAuth(BaseAuth):
     def auth_complete(self, *args, **kwargs):
         """Complete auth process"""
         response = self.consumer().complete(dict(self.data.items()),
-            self.build_absolute_uri())
+                                            self.build_absolute_uri())
         if not response:
             raise AuthException(self, 'OpenID relying party endpoint')
         elif response.status == SUCCESS:
@@ -484,7 +485,7 @@ class OpenIdAuth(BaseAuth):
             # Mark all attributes as required, Google ignores optional ones
             for attr, alias in (AX_SCHEMA_ATTRS + OLD_AX_ATTRS):
                 fetch_request.add(ax.AttrInfo(attr, alias=alias,
-                    required=True))
+                                              required=True))
         else:
             fetch_request = sreg.SRegRequest(optional=dict(SREG_ATTR).keys())
         openid_request.addExtension(fetch_request)
@@ -494,7 +495,7 @@ class OpenIdAuth(BaseAuth):
     def consumer(self):
         """Create an OpenID Consumer object for the given Django request."""
         return Consumer(self.request.session.setdefault(SESSION_NAME, {}),
-            DjangoOpenIDStore())
+                        DjangoOpenIDStore())
 
     @property
     def uses_redirect(self):
@@ -534,17 +535,18 @@ class BaseOAuth(BaseAuth):
         super(BaseOAuth, self).__init__(request, redirect)
         self.redirect_uri = self.build_absolute_uri(self.redirect)
 
-    def get_key_and_secret(self):
+    @classmethod
+    def get_key_and_secret(cls):
         """Return tuple with Consumer Key and Consumer Secret for current
         service provider. Must return (key, secret), order *must* be respected.
         """
-        return setting(self.SETTINGS_KEY_NAME),\
-               setting(self.SETTINGS_SECRET_NAME)
+        return setting(cls.SETTINGS_KEY_NAME), \
+               setting(cls.SETTINGS_SECRET_NAME)
 
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return setting(cls.SETTINGS_KEY_NAME) and\
+        return setting(cls.SETTINGS_KEY_NAME) and \
                setting(cls.SETTINGS_SECRET_NAME)
 
 
@@ -602,31 +604,23 @@ class ConsumerBasedOAuth(BaseOAuth):
     def unauthorized_token(self):
         """Return request for unauthorized token (first stage)"""
         request = self.oauth_request(token=None, url=self.REQUEST_TOKEN_URL,
-            extra_params=self.request_token_extra_arguments())
+                             extra_params=self.request_token_extra_arguments())
         response = self.fetch_response(request)
         return Token.from_string(response)
 
     def oauth_authorization_request(self, token):
         """Generate OAuth request to authorize token."""
         return OAuthRequest.from_token_and_callback(token=token,
-            callback=self.redirect_uri,
-            http_url=self.AUTHORIZATION_URL,
-            parameters=self.auth_extra_arguments())
+                                        callback=self.redirect_uri,
+                                        http_url=self.AUTHORIZATION_URL,
+                                        parameters=self.auth_extra_arguments())
 
     def oauth_request(self, token, url, extra_params=None):
         """Generate OAuth request, setups callback url"""
-        params = {'oauth_callback': self.redirect_uri}
-        if extra_params:
-            params.update(extra_params)
-
-        if 'oauth_verifier' in self.data:
-            params['oauth_verifier'] = self.data['oauth_verifier']
-        request = OAuthRequest.from_consumer_and_token(self.consumer,
-            token=token,
-            http_url=url,
-            parameters=params)
-        request.sign_request(SignatureMethod_HMAC_SHA1(), self.consumer, token)
-        return request
+        return build_consumer_oauth_request(self, token, url,
+                                            self.redirect_uri,
+                                            self.data.get('oauth_verifier'),
+                                            extra_params)
 
     def fetch_response(self, request):
         """Executes request and fetchs service response"""
@@ -662,6 +656,8 @@ class BaseOAuth2(BaseOAuth):
     ACCESS_TOKEN_URL = None
     SCOPE_SEPARATOR = ' '
     RESPONSE_TYPE = 'code'
+    SCOPE_VAR_NAME = None
+    DEFAULT_SCOPE = None
 
     def auth_url(self):
         """Return redirect url"""
@@ -690,9 +686,9 @@ class BaseOAuth2(BaseOAuth):
                   'client_secret': client_secret,
                   'redirect_uri': self.redirect_uri}
         headers = {'Content-Type': 'application/x-www-form-urlencoded',
-                   'Accept': 'application/json'}
+                    'Accept': 'application/json'}
         request = Request(self.ACCESS_TOKEN_URL, data=urlencode(params),
-            headers=headers)
+                          headers=headers)
 
         try:
             response = simplejson.loads(urlopen(request).read())
@@ -719,7 +715,10 @@ class BaseOAuth2(BaseOAuth):
 
     def get_scope(self):
         """Return list with needed access scope"""
-        return []
+        scope = self.DEFAULT_SCOPE or []
+        if self.SCOPE_VAR_NAME:
+            scope = scope + setting(self.SCOPE_VAR_NAME, [])
+        return scope
 
 
 # Backend loading was previously performed via the

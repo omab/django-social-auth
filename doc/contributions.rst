@@ -40,6 +40,12 @@ andrusha_ (Andrew Korzhuev)
   * MSN Live Connect support
   * Yahoo OAuth 1.0 support
 
+niQo_ (Nicolas Quiénot)
+  * Skyrock.com support
+
+hassek_ (Tomas Henriquez)
+  * Evernote support
+
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
@@ -53,3 +59,5 @@ andrusha_ (Andrew Korzhuev)
 .. _maraujop: https://github.com/maraujop
 .. _bedspax: https://github.com/bedspax
 .. _python-oauth2: https://github.com/simplegeo/python-oauth2
+.. _niQo: https://github.com/niQo
+.. _hassek: https://github.com/hassek
