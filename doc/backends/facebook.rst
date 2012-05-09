@@ -32,7 +32,10 @@ http://127.0.0.1:8000 or http://localhost:8000 because it won't work when
 testing. Instead I define http://myapp.com and setup a mapping on /etc/hosts
 or use dnsmasq_.
 
+If you need to perform authentication from Facebook Canvas application, take a
+look to `Facebook Canvas Application Authentication`_.
 
 .. _dnsmasq: http://www.thekelleys.org.uk/dnsmasq/doc.html
 .. _Facebook development resources: http://developers.facebook.com/docs/authentication/
 .. _Facebook App Creation: http://developers.facebook.com/setup/
+.. _Facebook Canvas Application Authentication: http://www.ikrvss.ru/2011/09/22/django-social-auth-and-facebook-canvas-applications/

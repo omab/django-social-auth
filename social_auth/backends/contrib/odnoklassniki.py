@@ -11,9 +11,6 @@ mail to set settings values
 
 """
 
-import logging
-logger = logging.getLogger(__name__)
-
 from django.conf import settings
 from django.utils import simplejson
 
@@ -22,7 +19,7 @@ from urllib2 import Request, urlopen
 from hashlib import md5
 
 from social_auth.backends import OAuthBackend, BaseOAuth2, USERNAME
-from social_auth.utils import setting
+from social_auth.utils import setting, log
 
 ODNOKLASSNIKI_API_URL       = 'http://api.odnoklassniki.ru/fb.do'
 ODNOKLASSNIKI_OAUTH2_SCOPE  = [''] # Enough for authentication
@@ -84,7 +81,7 @@ def odnoklassniki_api(data):
     try:
         return simplejson.loads(urlopen(request).read())
     except (TypeError, KeyError, IOError, ValueError, IndexError):
-        logger.error('Could not load data from Odnoklassniki.', exc_info=True, extra=dict(data=params))
+        log('error', 'Could not load data from Odnoklassniki.', exc_info=True, extra=dict(data=params))
         return None
 
 # Backend definition
