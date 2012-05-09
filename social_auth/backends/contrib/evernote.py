@@ -54,7 +54,7 @@ class EvernoteBackend(OAuthBackend):
         }
 
     def get_user_id(self, details, response):
-        return response['edam_userId'][0]
+        return response['edam_userId']
 
 
 class EvernoteAuth(ConsumerBasedOAuth):
