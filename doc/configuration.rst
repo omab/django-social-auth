@@ -296,14 +296,6 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
         SOCIAL_AUTH_LOGIN_REDIRECT_URL
         SOCIAL_AUTH_INACTIVE_USER_URL
 
-- The app catches any exception and logs errors to ``logger`` or
-  ``django.contrib.messagess`` app. Having tracebacks is really useful when
-  debugging, for that purpose this setting was defined::
-
-    SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
-
-  It's default value is ``DEBUG``, so you need to set it to ``False`` to avoid
-  tracebacks when ``DEBUG = True``.
 
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
 .. _Login URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-url

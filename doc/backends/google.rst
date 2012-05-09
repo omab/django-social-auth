@@ -87,16 +87,6 @@ Configurable settings:
     GOOGLE_WHITE_LISTED_EMAILS = ['me@mygoogleappsdomain.com', 'you@gmail.com']
 
 
-Google OpenID 
--------------
-
-Configurable settings:
-
-- Supply a list of domain strings to be checked. The default (empty list) allows all domains.  If a list is provided and a user attempts to sign in with a Google account that is not in the list, then a ValueError will be raised and the user will be redirected to your login error page::
-
-    GOOGLE_WHITE_LISTED_DOMAINS = ['mydomain.com']
-
-
 Orkut
 -----
 

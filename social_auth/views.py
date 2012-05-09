@@ -11,12 +11,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 
-from social_auth.utils import sanitize_redirect, setting,\
-    backend_setting, clean_partial_pipeline
+from social_auth.utils import sanitize_redirect, setting, \
+                              backend_setting, clean_partial_pipeline
 from social_auth.decorators import dsa_view
 
 
-DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or\
+DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                    setting('LOGIN_REDIRECT_URL')
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
 
@@ -51,8 +51,8 @@ def associate_complete(request, backend, *args, **kwargs):
         return user
     else:
         url = backend_setting(backend,
-            'SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL') or\
-              redirect_value or\
+                              'SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL') or \
+              redirect_value or \
               DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
@@ -62,8 +62,8 @@ def associate_complete(request, backend, *args, **kwargs):
 def disconnect(request, backend, association_id=None):
     """Disconnects given backend from current logged in user."""
     backend.disconnect(request.user, association_id)
-    url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or\
-          backend_setting(backend, 'SOCIAL_AUTH_DISCONNECT_REDIRECT_URL') or\
+    url = request.REQUEST.get(REDIRECT_FIELD_NAME, '') or \
+          backend_setting(backend, 'SOCIAL_AUTH_DISCONNECT_REDIRECT_URL') or \
           DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
@@ -86,7 +86,7 @@ def auth_process(request, backend):
         return HttpResponseRedirect(backend.auth_url())
     else:
         return HttpResponse(backend.auth_html(),
-            content_type='text/html;charset=UTF-8')
+                            content_type='text/html;charset=UTF-8')
 
 
 def complete_process(request, backend, *args, **kwargs):
@@ -108,7 +108,7 @@ def complete_process(request, backend, *args, **kwargs):
             # in authenticate process
             social_user = user.social_user
             if redirect_value:
-                request.session[REDIRECT_FIELD_NAME] = redirect_value or\
+                request.session[REDIRECT_FIELD_NAME] = redirect_value or \
                                                        DEFAULT_REDIRECT
 
             if setting('SOCIAL_AUTH_SESSION_EXPIRATION', True):
@@ -120,23 +120,23 @@ def complete_process(request, backend, *args, **kwargs):
 
             # store last login backend name in session
             key = setting('SOCIAL_AUTH_LAST_LOGIN',
-                'social_auth_last_login_backend')
+                          'social_auth_last_login_backend')
             request.session[key] = social_user.provider
 
             # Remove possible redirect URL from session, if this is a new
             # account, send him to the new-users-page if defined.
             new_user_redirect = backend_setting(backend,
-                'SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
+                                           'SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
             if new_user_redirect and getattr(user, 'is_new', False):
                 url = new_user_redirect
             else:
-                url = redirect_value or\
+                url = redirect_value or \
                       backend_setting(backend,
-                          'SOCIAL_AUTH_LOGIN_REDIRECT_URL') or\
+                                      'SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                       DEFAULT_REDIRECT
         else:
             url = backend_setting(backend, 'SOCIAL_AUTH_INACTIVE_USER_URL',
-                LOGIN_ERROR_URL)
+                                  LOGIN_ERROR_URL)
     else:
         msg = setting('LOGIN_ERROR_MESSAGE', None)
         if msg:
@@ -154,9 +154,9 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
     if request.session.get(name):
         data = request.session.pop(name)
         idx, args, kwargs = backend.from_session_dict(data, user=user,
-            request=request,
-            *args, **kwargs)
+                                                      request=request,
+                                                      *args, **kwargs)
         return backend.continue_pipeline(pipeline_index=idx, *args, **kwargs)
     else:
         return backend.auth_complete(user=user, request=request, *args,
-            **kwargs)
+                                     **kwargs)

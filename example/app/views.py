@@ -8,6 +8,7 @@ from django.contrib.messages.api import get_messages
 from social_auth import __version__ as version
 from social_auth.utils import setting
 
+
 def home(request):
     """Home view, displays login mechanism"""
     if request.user.is_authenticated():
