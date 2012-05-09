@@ -49,8 +49,12 @@ class YahooOAuthBackend(OAuthBackend):
         """Return user details from Yahoo Profile"""
         fname = response.get('givenName')
         lname = response.get('familyName')
+        if 'emails' in response:
+            email = response.get('emails')[0]['handle']
+        else:
+            email = ''
         return {USERNAME:     response.get('nickname'),
-                'email':      response.get('emails')[0]['handle'],
+                'email':      email,
                 'fullname':   '%s %s' % (fname, lname),
                 'first_name': fname,
                 'last_name':  lname}
