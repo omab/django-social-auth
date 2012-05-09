@@ -24,11 +24,11 @@ from social_auth.backends.exceptions import AuthUnknownError
 
 
 # Live Connect configuration
-LIVE_AUTHORIZATION_URL    = 'https://login.live.com/oauth20_authorize.srf'
-LIVE_ACCESS_TOKEN_URL     = 'https://login.live.com/oauth20_token.srf'
-LIVE_USER_DATA_URL        = 'https://apis.live.net/v5.0/me'
-LIVE_SERVER               = 'live.com'
-LIVE_DEFAULT_PERMISSIONS  = ['wl.basic', 'wl.emails']
+LIVE_AUTHORIZATION_URL = 'https://login.live.com/oauth20_authorize.srf'
+LIVE_ACCESS_TOKEN_URL = 'https://login.live.com/oauth20_token.srf'
+LIVE_USER_DATA_URL = 'https://apis.live.net/v5.0/me'
+LIVE_SERVER = 'live.com'
+LIVE_DEFAULT_PERMISSIONS = ['wl.basic', 'wl.emails']
 
 
 class LiveBackend(OAuthBackend):
@@ -61,15 +61,15 @@ class LiveBackend(OAuthBackend):
 
 
 class LiveAuth(BaseOAuth2):
-    AUTHORIZATION_URL    = LIVE_AUTHORIZATION_URL
-    ACCESS_TOKEN_URL     = LIVE_ACCESS_TOKEN_URL
-    SERVER_URL           = LIVE_SERVER
-    AUTH_BACKEND         = LiveBackend
-    SETTINGS_KEY_NAME    = 'LIVE_CLIENT_ID'
+    AUTHORIZATION_URL = LIVE_AUTHORIZATION_URL
+    ACCESS_TOKEN_URL = LIVE_ACCESS_TOKEN_URL
+    SERVER_URL = LIVE_SERVER
+    AUTH_BACKEND = LiveBackend
+    SETTINGS_KEY_NAME = 'LIVE_CLIENT_ID'
     SETTINGS_SECRET_NAME = 'LIVE_CLIENT_SECRET'
-    SCOPE_SEPARATOR      = ','
-    SCOPE_VAR_NAME       = 'LIVE_EXTENDED_PERMISSIONS'
-    DEFAULT_SCOPE        = LIVE_DEFAULT_PERMISSIONS
+    SCOPE_SEPARATOR = ','
+    SCOPE_VAR_NAME = 'LIVE_EXTENDED_PERMISSIONS'
+    DEFAULT_SCOPE = LIVE_DEFAULT_PERMISSIONS
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
@@ -79,7 +79,8 @@ class LiveAuth(BaseOAuth2):
         try:
             return simplejson.load(urlopen(url))
         except (ValueError, IOError):
-            raise AuthUnknownError("Error during profile retrieval, please, try again later")
+            raise AuthUnknownError('Error during profile retrieval, ' \
+                                   'please, try again later')
 
 
 # Backend definition

@@ -49,6 +49,8 @@ credentials, some features are:
     * `Skyrock OAuth`_
     * `Yahoo OAuth`_
     * `Evernote OAuth`_
+    * `Mail.ru OAuth`_
+    * `Odnoklassniki OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -745,6 +747,9 @@ http://127.0.0.1:8000 or http://localhost:8000 because it won't work when
 testing. Instead I define http://myapp.com and setup a mapping on /etc/hosts
 or use dnsmasq_.
 
+If you need to perform authentication from Facebook Canvas application, take a
+look to `Facebook Canvas Application Authentication`_.
+
 Orkut
 ^^^^^
 
@@ -952,6 +957,11 @@ Vkontakte uses OAuth v2 for Authentication
 
   See the `names of the privileges VKontakte`_.
 
+You can also use Vkontakte's own OpenAPI to log in, but you need to provide a HTML template
+with JavaScript code to authenticate. See vkontakte.html in templates folder for details.
+
+To support authentication for VKontakte applications see `authentication for VKontakte applications`_.
+
 MSN Live Connect
 ^^^^^^^^^^^^^^^^
 
@@ -1009,6 +1019,33 @@ Evernote OAuth 1.0 workflow.
       EVERNOTE_CONSUMER_KEY = ''
       EVERNOTE_CONSUMER_SECRET = ''
 
+Yandex OAuth and OpenID
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Yandex uses OAuth 2.0 workflow, fill and YANDEX_APP_ID and YANDEX_API_SECRET settings to log in.
+Currently there are 2 backends for Yandex, one is Yaru to log in using Ya.ru service and another one is
+YandexOAuth that could use service API from settings. Use YANDEX_OAUTH2_API_URL to set up which service to use.
+Tested with 'https://api-yaru.yandex.ru/me/' for Ya.ru and 'http://api.moikrug.ru/v1/my/' for Moi Krug.
+
+Yandex also uses OpenID 2.0. You do not need to provide user's name because Yandex will do it for you.
+
+Mail.ru OAuth
+^^^^^^^^^^^^^
+
+Mail.ru uses OAuth2 workflow, to use it fill in settings
+
+MAILRU_OAUTH2_CLIENT_KEY   		  = ''
+MAILRU_OAUTH2_APP_KEY      		  = ''
+MAILRU_OAUTH2_CLIENT_SECRET       = ''
+
+Odnoklassniki.ru
+^^^^^^^^^^^^^^^^
+
+Odnoklassniki.ru uses OAuth2 workflow, to use it fill in settings
+
+ODNOKLASSNIKI_OAUTH2_CLIENT_KEY    = ''
+ODNOKLASSNIKI_OAUTH2_APP_KEY       = ''
+ODNOKLASSNIKI_OAUTH2_CLIENT_SECRET = ''
 
 Testing
 -------
@@ -1156,6 +1193,10 @@ Attributions to whom deserves:
 - krvss_ (Stas Kravets):
 
   - Initial setup.py configuration
+  - LiveJournal support
+  - Mail.ru, Odnoklassniki support
+  - Yandex OpenID support
+  - VKontakte OpenAPI support
 
 - jezdez_ (Jannis Leidel):
 
@@ -1309,3 +1350,7 @@ Base work is copyrighted by:
 .. _Yahoo Developer Center: https://developer.apps.yahoo.com/projects/
 .. _Evernote API Key form: http://dev.evernote.com/support/api_key.php
 .. _hassek: https://github.com/hassek
+.. _Mail.ru OAuth: http://api.mail.ru/docs/guides/oauth/
+.. _Odnoklassniki OAuth: http://dev.odnoklassniki.ru/wiki/display/ok/The+OAuth+2.0+Protocol
+.. _authentication for VKontakte applications: http://www.ikrvss.ru/2011/11/08/django-social-auh-and-vkontakte-application/
+.. _Facebook Canvas Application Authentication: http://www.ikrvss.ru/2011/09/22/django-social-auth-and-facebook-canvas-applications/

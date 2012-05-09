@@ -14,6 +14,10 @@ field, check OAuthBackend class for details on how to extend it.
 import cgi
 from urllib import urlencode
 from urllib2 import urlopen, HTTPError
+import base64
+import hmac
+import hashlib
+import time
 
 from django.utils import simplejson
 from django.contrib.auth import authenticate
@@ -83,50 +87,99 @@ class FacebookAuth(BaseOAuth2):
 
     def auth_complete(self, *args, **kwargs):
         """Completes loging process, must return user instance"""
-        if 'code' not in self.data:
+        access_token = None
+        expires = None
+
+        if 'code' in self.data:
+            url = ACCESS_TOKEN + urlencode({
+                'client_id': setting('FACEBOOK_APP_ID'),
+                'redirect_uri': self.redirect_uri,
+                'client_secret': setting('FACEBOOK_API_SECRET'),
+                'code': self.data['code']
+            })
+            try:
+                response = cgi.parse_qs(urlopen(url).read())
+            except HTTPError:
+                raise AuthFailed(self, 'There was an error authenticating ' \
+                                       'the app')
+
+            access_token = response['access_token'][0]
+            if 'expires' in response:
+                    expires = response['expires'][0]
+
+        if 'signed_request' in self.data:
+            response = load_signed_request(self.data.get('signed_request'))
+
+            if response is not None:
+                access_token = response.get('access_token') or \
+                               response.get('oauth_token') or \
+                               self.data.get('access_token')
+
+                if 'expires' in response:
+                    expires = response['expires']
+
+        if access_token:
+            data = self.user_data(access_token)
+
+            if not isinstance(data, dict):
+                # From time to time Facebook responds back a JSON with just
+                # False as value, the reason is still unknown, but since the
+                # data is needed (it contains the user ID used to identify the
+                # account on further logins), this app cannot allow it to
+                # continue with the auth process.
+                raise AuthUnknownError(self, 'An error ocurred while ' \
+                                             'retrieving users Facebook ' \
+                                             'data')
+
+            data['access_token'] = access_token
+            # expires will not be part of response if offline access
+            # premission was requested
+            if expires:
+                data['expires'] = response['expires'][0]
+
+            kwargs.update({'auth': self,
+                           'response': data,
+                           self.AUTH_BACKEND.name: True})
+
+            return authenticate(*args, **kwargs)
+        else:
             if self.data.get('error') == 'access_denied':
                 raise AuthCanceled(self)
             else:
                 raise AuthException(self)
 
-        url = ACCESS_TOKEN + urlencode({
-            'client_id': setting('FACEBOOK_APP_ID'),
-            'redirect_uri': self.redirect_uri,
-            'client_secret': setting('FACEBOOK_API_SECRET'),
-            'code': self.data['code']
-        })
-        try:
-            response = cgi.parse_qs(urlopen(url).read())
-        except HTTPError:
-            raise AuthFailed(self, 'There was an error authenticating the app')
-
-        access_token = response['access_token'][0]
-        data = self.user_data(access_token)
-
-        if not isinstance(data, dict):
-            # From time to time Facebook responds back a JSON with just False
-            # as value, the reason is still unknown, but since the data is
-            # needed (it contains the user ID used to identify the account on
-            # further logins), this app cannot allow it to continue with the
-            # auth process.
-            raise AuthUnknownError(self, 'An error ocurred while retrieving '\
-                                         'users Facebook data')
-
-        data['access_token'] = access_token
-        # expires will not be part of response if offline access premission was
-        # requested
-        if 'expires' in response:
-            data['expires'] = response['expires'][0]
-
-        kwargs.update({'auth': self,
-                       'response': data,
-                       self.AUTH_BACKEND.name: True})
-        return authenticate(*args, **kwargs)
-
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
         return setting('FACEBOOK_APP_ID') and setting('FACEBOOK_API_SECRET')
+
+
+def base64_url_decode(data):
+    data = data.encode(u'ascii')
+    data += '=' * (4 - (len(data) % 4))
+    return base64.urlsafe_b64decode(data)
+
+
+def base64_url_encode(data):
+    return base64.urlsafe_b64encode(data).rstrip('=')
+
+
+def load_signed_request(signed_request):
+    try:
+        sig, payload = signed_request.split(u'.', 1)
+        sig = base64_url_decode(sig)
+        data = simplejson.loads(base64_url_decode(payload))
+
+        expected_sig = hmac.new(setting('FACEBOOK_API_SECRET'),
+                                msg=payload,
+                                digestmod=hashlib.sha256).digest()
+
+        # allow the signed_request to function for upto 1 day
+        if sig == expected_sig and \
+                data[u'issued_at'] > (time.time() - 86400):
+            return data
+    except ValueError:
+        pass  # ignore if can't split on dot
 
 
 # Backend definition

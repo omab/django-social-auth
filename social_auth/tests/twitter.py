@@ -1,6 +1,7 @@
 from social_auth.utils import setting
 from social_auth.tests.base import SocialAuthTestsCase, FormParserByID, \
                                    RefreshParser
+from django.test.utils import override_settings
 
 
 class TwitterTestCase(SocialAuthTestsCase):
@@ -17,6 +18,15 @@ class TwitterTestCase(SocialAuthTestsCase):
 
 
 class TwitterTestLogin(TwitterTestCase):
+    @override_settings(SOCIAL_AUTH_PIPELINE = (
+        'social_auth.backends.pipeline.social.social_auth_user',
+        'social_auth.backends.pipeline.associate.associate_by_email',
+        'social_auth.backends.pipeline.user.get_username',
+        'social_auth.backends.pipeline.misc.save_status_to_session',
+        'social_auth.backends.pipeline.social.associate_user',
+        'social_auth.backends.pipeline.social.load_extra_data',
+        'social_auth.backends.pipeline.user.update_user_details',
+        ))
     def test_login_succeful(self):
         response = self.client.get(self.reverse('socialauth_begin', 'twitter'))
         # social_auth must redirect to service page
