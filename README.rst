@@ -747,6 +747,9 @@ http://127.0.0.1:8000 or http://localhost:8000 because it won't work when
 testing. Instead I define http://myapp.com and setup a mapping on /etc/hosts
 or use dnsmasq_.
 
+If you need to perform authentication from Facebook Canvas application, take a
+look to `Facebook Canvas Application Authentication`_.
+
 Orkut
 ^^^^^
 
@@ -1140,6 +1143,7 @@ Mailing list
 Join to `django-social-auth discussion list`_ and bring any questions or suggestions
 that would improve this application. Convore_ discussion group is deprecated since
 the service is going to be shut down on April 1st.
+
 South users
 ^^^^^^^^^^^
 South_ users should add this rule to enable migrations::
@@ -1349,3 +1353,4 @@ Base work is copyrighted by:
 .. _Mail.ru OAuth: http://api.mail.ru/docs/guides/oauth/
 .. _Odnoklassniki OAuth: http://dev.odnoklassniki.ru/wiki/display/ok/The+OAuth+2.0+Protocol
 .. _authentication for VKontakte applications: http://www.ikrvss.ru/2011/11/08/django-social-auh-and-vkontakte-application/
+.. _Facebook Canvas Application Authentication: http://www.ikrvss.ru/2011/09/22/django-social-auth-and-facebook-canvas-applications/
