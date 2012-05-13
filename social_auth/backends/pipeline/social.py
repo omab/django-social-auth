@@ -58,5 +58,5 @@ def load_extra_data(backend, details, response, social_user, uid, user,
     if setting('SOCIAL_AUTH_EXTRA_DATA', True):
         extra_data = backend.extra_data(user, uid, response, details)
         if extra_data and social_user.extra_data != extra_data:
-            social_user.extra_data = extra_data
+            social_user.extra_data.update(extra_data)
             social_user.save()
