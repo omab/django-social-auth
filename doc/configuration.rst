@@ -285,6 +285,12 @@ Configuration
 
     SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
 
+- The name of the last backend used to login is stored as a string in the
+  session under the key ``social_auth_last_login_backend``, the key can be
+  customized by defining this setting::
+
+    SOCIAL_AUTH_LAST_LOGIN = 'social_auth_last_login_backend'
+
 Some settings can be tweak by backend by adding the backend name prefix (all
 uppercase and replace ``-`` with ``_``), here's the supported settings so far::
 
