@@ -14,3 +14,6 @@ contrib/tests/test_settings.py
 *.iws
 Django-social-auth.iml
 tags
+Vagrantfile
+.vagrant
+
