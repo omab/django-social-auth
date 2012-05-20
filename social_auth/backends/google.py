@@ -52,7 +52,7 @@ class GoogleOAuthBackend(OAuthBackend):
     name = 'google-oauth'
 
     def get_user_id(self, details, response):
-        "Use google email as unique id"""
+        """Use google email as unique id"""
         validate_whitelists(self, details['email'])
         return details['email']
 
@@ -73,6 +73,13 @@ class GoogleOAuth2Backend(GoogleOAuthBackend):
         ('refresh_token', 'refresh_token', True),
         ('expires_in', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
     ]
+
+    def get_user_id(self, details, response):
+        """Use google email or id as unique id"""
+        user_id = super(GoogleOAuth2Backend, self).get_user_id(details, response)
+        if setting('GOOGLE_OAUTH2_USE_UNIQUE_USER_ID', False):
+            return response['id']
+        return user_id
 
     def get_user_details(self, response):
         email = response['email']
