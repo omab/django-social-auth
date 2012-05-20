@@ -52,7 +52,7 @@ class GoogleOAuthBackend(OAuthBackend):
     name = 'google-oauth'
 
     def get_user_id(self, details, response):
-        "Use google email as unique id"""
+        """Use google email as unique id"""
         validate_whitelists(self, details['email'])
         return details['email']
 
