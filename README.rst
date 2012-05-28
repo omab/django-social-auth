@@ -934,6 +934,10 @@ Instagram uses OAuth v2 for Authentication
       INSTAGRAM_CLIENT_ID = ''
       INSTAGRAM_CLIENT_SECRET = ''
 
+- extra scopes can be defined by using::
+
+    INSTAGRAM_AUTH_EXTRA_ARGUMENTS = {'scope': 'likes comments relationships'}
+
 .. note::
 
     Instagram only allows one callback url so you'll have to change your urls.py to
