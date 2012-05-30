@@ -103,6 +103,7 @@ def complete_process(request, backend, *args, **kwargs):
 
     if user:
         if getattr(user, 'is_active', True):
+            # catch is_new flag before login() might reset the instance
             is_new = getattr(user, 'is_new', False)
             login(request, user)
             # user.social_user is the used UserSocialAuth instance defined
