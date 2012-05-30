@@ -103,6 +103,7 @@ def complete_process(request, backend, *args, **kwargs):
 
     if user:
         if getattr(user, 'is_active', True):
+            is_new = getattr(user, 'is_new', False)
             login(request, user)
             # user.social_user is the used UserSocialAuth instance defined
             # in authenticate process
@@ -127,7 +128,7 @@ def complete_process(request, backend, *args, **kwargs):
             # account, send him to the new-users-page if defined.
             new_user_redirect = backend_setting(backend,
                                            'SOCIAL_AUTH_NEW_USER_REDIRECT_URL')
-            if new_user_redirect and getattr(user, 'is_new', False):
+            if new_user_redirect and is_new:
                 url = new_user_redirect
             else:
                 url = redirect_value or \
