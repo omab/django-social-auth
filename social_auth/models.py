@@ -35,7 +35,7 @@ class UserSocialAuth(models.Model):
 
     def __unicode__(self):
         """Return associated user unicode representation"""
-        return unicode(self.user)
+        return u'%s - %s' % (unicode(self.user), self.provider.title())
 
     @property
     def tokens(self):
