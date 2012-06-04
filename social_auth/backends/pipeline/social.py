@@ -22,9 +22,10 @@ def social_auth_user(backend, uid, user=None, *args, **kwargs):
 
     if social_user:
         if user and social_user.user != user:
-            raise AuthException(backend, ugettext('This %(provider)s account is already in use.') % {
-                'provider':backend.name,
-            })
+            raise AuthException(backend,
+                ugettext('This %(provider)s account is already in use.') % {
+                    'provider': backend.name
+                })
         elif not user:
             user = social_user.user
     return {'social_user': social_user, 'user': user}
