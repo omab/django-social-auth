@@ -3,6 +3,7 @@ EverNote OAuth support
 
 No extra configurations are needed to make this work.
 """
+from urllib2 import HTTPError
 try:
     from urlparse import parse_qs
     parse_qs  # placate pyflakes
@@ -12,7 +13,8 @@ except ImportError:
 
 from oauth2 import Token
 from social_auth.utils import setting
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME,\
+        exceptions
 
 
 if setting('EVERNOTE_DEBUG', False):
@@ -75,7 +77,16 @@ class EvernoteAuth(ConsumerBasedOAuth):
     def access_token(self, token):
         """Return request for access token value"""
         request = self.oauth_request(token, self.ACCESS_TOKEN_URL)
-        response = self.fetch_response(request)
+
+        try:
+            response = self.fetch_response(request)
+        except HTTPError, e:
+            # Evernote returns a 401 error when AuthCanceled
+            if e.code == 401:
+                raise exceptions.AuthCanceled(self)
+            else:
+                raise
+
         params = parse_qs(response)
 
         # evernote sents a empty secret token, this way it doesn't fires up the
