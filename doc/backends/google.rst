@@ -70,6 +70,11 @@ To enable OAuth2 support:
 
       GOOGLE_OAUTH_EXTRA_SCOPE = [...]
 
+- optional support for static and unique Google Profile ID identifiers instead of
+  using the e-mail address for account association can be enabled with::
+
+      GOOGLE_OAUTH2_USE_UNIQUE_USER_ID = True
+
 Check which applications can be included in their `Google Data Protocol Directory`_
 
 
