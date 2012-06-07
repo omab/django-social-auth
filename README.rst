@@ -265,6 +265,12 @@ Configuration
   Also more extra values will be stored if defined, details about this setting
   are listed below on OpenId and OAuth sections.
 
+- The update_user_details pipeline processor will set certain fields on user
+  objects, such as ``email``. Set this to a list of fields you only want to 
+  set for newly created users:
+
+    SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email',]
+
   Session expiration time is an special value, it's recommended to define::
 
     SOCIAL_AUTH_EXPIRATION = 'expires'
