@@ -23,3 +23,4 @@ Contents:
    skyrock
    yahoo
    evernote
+   douban
