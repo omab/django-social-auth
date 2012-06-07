@@ -83,6 +83,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     'social_auth.backends.OpenIDBackend',
     'social_auth.backends.contrib.livejournal.LiveJournalBackend',
+    'social_auth.backends.contrib.douban.DoubanBackend',
     'social_auth.backends.browserid.BrowserIDBackend',
     'social_auth.backends.contrib.vkontakte.VKontakteBackend',
     'social_auth.backends.contrib.yandex.YandexOAuth2Backend',
