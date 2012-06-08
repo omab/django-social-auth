@@ -85,7 +85,13 @@ class BitbucketAuth(ConsumerBasedOAuth):
         request = self.oauth_request(access_token, url)
         response = self.fetch_response(request)
         try:
-            email = simplejson.loads(response)[0]['email']
+            # Then retrieve the user's primary email address or the top email
+            email_addresses = simplejson.loads(response)
+            for email_address in reversed(email_addresses):
+                if email_address['active']:
+                    email = email_address['email']
+                    if email_address['primary']:
+                        break
             # Then return the user data using a normal GET with the
             # BITBUCKET_USER_DATA_URL and the user's email
             response = urlopen(BITBUCKET_USER_DATA_URL + email)
