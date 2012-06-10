@@ -141,11 +141,13 @@ class YandexOAuth2(YaruAuth):
                 userpic = reply['links'].get('avatar')
             elif 'avatar' in reply:
                 userpic = reply['avatar'].get('Portrait')
+            else:
+                userpic = ''
 
             reply.update({
                 'id': reply['id'].split("/")[-1],
                 'access_token': access_token,
-                'userpic': userpic or ''
+                'userpic': userpic
             })
 
         return reply
