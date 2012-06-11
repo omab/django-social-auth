@@ -105,7 +105,7 @@ class FacebookAuth(BaseOAuth2):
 
             access_token = response['access_token'][0]
             if 'expires' in response:
-                    expires = response['expires'][0]
+                expires = response['expires'][0]
 
         if 'signed_request' in self.data:
             response = load_signed_request(self.data.get('signed_request'))
