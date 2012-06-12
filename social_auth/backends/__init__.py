@@ -127,7 +127,13 @@ class SocialAuthBackend(ModelBackend):
         """Pipeline"""
         out = kwargs.copy()
 
-        for name in pipeline:
+        if 'pipeline_index' in kwargs:
+            base_index = int(kwargs['pipeline_index'])
+        else:
+            base_index = 0
+
+        for idx, name in enumerate(pipeline):
+            out['pipeline_index'] = base_index + idx
             mod_name, func_name = name.rsplit('.', 1)
             try:
                 mod = import_module(mod_name)
