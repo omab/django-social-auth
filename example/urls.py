@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns, url, include
 from django.contrib import admin
 
-from app.views import home, done, logout, error, form
+from app.views import home, done, logout, error, form, form2
 
 
 admin.autodiscover()
@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^error/$', error, name='error'),
     url(r'^logout/$', logout, name='logout'),
     url(r'^form/$', form, name='form'),
+    url(r'^form2/$', form2, name='form2'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'', include('social_auth.urls')),
 )

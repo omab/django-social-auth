@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block heading %}User basic form2{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    <p>
+        <label for="id_first_name">First Name</label>
+        <input type="text" name="first_name" id="id_first_name" value="" />
+    </p>
+
+    <input type="submit" value="Send" />
+</form>
+{% endblock %}

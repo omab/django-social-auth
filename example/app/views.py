@@ -49,3 +49,12 @@ def form(request):
         backend = request.session[name]['backend']
         return redirect('socialauth_complete', backend=backend)
     return render_to_response('form.html', {}, RequestContext(request))
+
+
+def form2(request):
+    if request.method == 'POST' and request.POST.get('first_name'):
+        request.session['saved_first_name'] = request.POST['first_name']
+        name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
+        backend = request.session[name]['backend']
+        return redirect('socialauth_complete', backend=backend)
+    return render_to_response('form2.html', {}, RequestContext(request))
