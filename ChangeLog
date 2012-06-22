@@ -1,3 +1,250 @@
+2012-06-16  Kulbir <ksinghsandhu@gmail.com>
+
+  * doc/backends/twilio.md, social_auth/backends/contrib/twilio.py: added
+  twilio backend
+
+2012-06-12  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * example/app/pipeline.py, example/app/views.py, example/settings.py,
+  example/templates/form2.html, example/urls.py: Example for multiple partial
+  pipeline usage. Closes #369
+
+  * social_auth/backends/__init__.py, social_auth/backends/pipeline/misc.py:
+  Allow multiple pipeline breaks. Refs #369
+
+2012-06-07  Sean Lee <iseansay@gmail.com>
+
+  * doc/backends/douban.rst, doc/backends/index.rst,
+  example/local_settings.py.template, example/settings.py: added docs & setting
+  example for douban support
+
+2012-06-04  Hassek <nullwriter@gmail.com>
+
+  * doc/backends/evernote.rst, social_auth/backends/contrib/evernote.py:
+  updated docs and better exception handling when a user declines the Auth
+  connection
+
+2012-05-28  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * README.rst, doc/backends/instagram.rst: Add instagram scope doc to avoid
+  confusions. Refs #345
+
+2012-05-15  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * README.rst, doc/configuration.rst: Mention SOCIAL_AUTH_LAST_LOGIN setting.
+  Refs #348
+
+2012-05-15  Cihan Okyay <okyaycihan@gmail.com>
+
+  * social_auth/locale/tr/LC_MESSAGES/django.mo,
+  social_auth/locale/tr/LC_MESSAGES/django.po: turkish locale
+
+2012-05-09  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * social_auth/backends/__init__.py, social_auth/backends/contrib/evernote.py,
+  social_auth/backends/contrib/live.py, social_auth/backends/contrib/mailru.py,
+  social_auth/backends/contrib/odnoklassniki.py,
+  social_auth/backends/contrib/vkontakte.py,
+  social_auth/backends/contrib/yahoo.py,
+  social_auth/backends/contrib/yandex.py, social_auth/backends/exceptions.py,
+  social_auth/backends/facebook.py: PEP8
+
+2012-05-09  Stas Kravets <krvss@mail.ru>
+
+  * doc/backends/facebook.rst, social_auth/backends/contrib/mailru.py,
+  social_auth/backends/contrib/odnoklassniki.py,
+  social_auth/backends/contrib/vkontakte.py,
+  social_auth/backends/contrib/yandex.py: Logging update to use log function
+  from utils, Facebook documentation update for merge
+
+  * README.rst, example/local_settings.py.template,
+  example/templates/done.html, setup.py: Preparing for merge with main branch -
+  more clean-ups and documents update
+
+  * README.rst, doc/backends/google.rst, doc/backends/vkontakte.rst,
+  doc/configuration.rst, example/app/views.py, requirements.txt, setup.py,
+  social_auth/views.py: Preparing for merge with main branch - cleaning up old
+  merge differences
+
+2012-05-07  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * social_auth/backends/__init__.py, social_auth/backends/google.py,
+  social_auth/backends/utils.py: Move oauth request for consumer-based-oauth to
+  snippet in utils. Refs #338
+
+  * README.rst, doc/backends/evernote.rst, doc/backends/index.rst,
+  doc/contributions.rst, social_auth/backends/contrib/evernote.py: Small code
+  styles changes and docs about evernote backend. Refs #341
+
+2012-05-07  Stas Kravets <krvss@mail.ru>
+
+  * example/local_settings.py.template, example/settings.py,
+  social_auth/backends/contrib/vkontakte.py,
+  social_auth/backends/contrib/yandex.py: Merging of vkontakte and yandex
+  backends with bacher09 versions. Preparations for merge with omab master.
+
+2012-05-04  Stas Kravets <krvss@mail.ru>
+
+  * social_auth/backends/contrib/mailru.py,
+  social_auth/backends/contrib/odnoklassniki.py,
+  social_auth/backends/contrib/vkontakte.py: Minor optimization and fixes
+
+2012-05-03  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * social_auth/backends/contrib/github.py,
+  social_auth/backends/contrib/yandex.py, social_auth/backends/facebook.py:
+  Clean empty spaces
+
+  * social_auth/backends/__init__.py, social_auth/backends/contrib/live.py,
+  social_auth/backends/google.py: Simplify get_scope() code. Apply scope vars
+  changes to live backend. Refs #340
+
+2012-05-04  Slava Bacherikov <slava@bacher09.org>
+
+  * social_auth/backends/__init__.py, social_auth/backends/contrib/github.py,
+  social_auth/backends/contrib/vkontakte.py, social_auth/backends/facebook.py,
+  social_auth/backends/google.py: Change get_scope method in BaseOAuth2 class.
+
+2012-05-03  Slava Bacherikov <slava@bacher09.org>
+
+  * README.rst, social_auth/backends/contrib/vkontakte.py: Change in
+  VK_EXTRA_DATA
+
+2012-05-02  Hassek <nullwriter@gmail.com>
+
+  * .gitignore, social_auth/backends/contrib/evernote.py: first attempt to
+  support evernote
+
+2012-05-03  Andrew Korzhuev <wolfon@gmail.com>
+
+  * social_auth/backends/contrib/live.py,
+  social_auth/backends/contrib/yahoo.py: Throw exceptions if data-retrieval
+  fails. Better comments
+
+2012-05-02  Andrew Korzhuev <wolfon@gmail.com>
+
+  * README.rst, doc/backends/index.rst, doc/backends/yahoo.rst,
+  doc/configuration.rst, doc/contributions.rst, doc/intro.rst: Yahoo OAuth docs
+
+2012-04-27  niQo <niqo AT nospam>
+
+  * doc/backends/skyrock.rst, example/local_settings.py.template,
+  example/settings.py: Tests for Skyrock provider
+
+  * README.rst, doc/configuration.rst, doc/intro.rst: documentation update for
+  Skyrock provider
+
+2012-04-27  Andrew Korzhuev <wolfon@gmail.com>
+
+  * README.rst, doc/backends/live.rst, doc/configuration.rst, doc/intro.rst:
+  MSN Live Connect README files
+
+2012-04-26  slon7 <ilya.suslonov@mail.ru>
+
+  * README.rst, social_auth/backends/contrib/vkontakte.py: Added VK_EXTRA_DATA
+  to pass extra fields when gathering the user profile data
+
+2012-04-23  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * README.rst, doc/pipeline.rst: Fix example pipeline doc.
+
+  * README.rst, doc/backends/flickr.rst: Update flickr doc mentioning
+  permissions error case.
+
+2012-04-18  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * README.rst, doc/deprecated.rst, example/templates/done.html,
+  social_auth/decorators.py, social_auth/urls.py, social_auth/views.py:
+  Deprecate /associate/ URLs in favor of /login/ and /complete/ with
+  user.is_authenticated() check. Closes #319
+
+2012-04-17  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * social_auth/backends/__init__.py, social_auth/backends/contrib/github.py:
+  Code cleanup, move methods to superclass
+
+  * README.rst, doc/miscellaneous.rst: Typo
+
+2012-04-17  Slava Bacherikov <slava@bacher09.org>
+
+  * example/settings.py, social_auth/backends/contrib/yandex.py: Add yandex.
+
+2012-04-16  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * README.rst, doc/backends/bitbucket.rst, doc/backends/dropbox.rst,
+  doc/backends/flickr.rst, doc/backends/index.rst: Added sphinx doc for missing
+  backends.
+
+  * social_auth/backends/contrib/bitbucket.py,
+  social_auth/backends/contrib/flickr.py: PEP8 applied to bitbucket backend.
+  Refs #317
+
+2012-04-16  Thomas Whitton <oracal@oracal-EP45-UD3LR.(none)>
+
+  * README.rst, social_auth/backends/contrib/bitbucket.py: Added Bitbucket
+  backend
+
+2012-04-15  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * README.rst, doc/configuration.rst, social_auth/backends/__init__.py: Force
+  https:// in redirect URIs if setting is defined. Closes #281
+
+  * README.rst, doc/miscellaneous.rst: Update misc section. Refs #315
+
+2012-04-15  Slava Bacherikov <slava@bacher09.org>
+
+  * example/settings.py, social_auth/backends/__init__.py,
+  social_auth/backends/contrib/github.py: Rewrited Github auth backend to new
+  api.
+
+  * doc/backends/vkontakte.rst, doc/intro.rst: Add more info about vkontakte.
+
+  * doc/backends/index.rst, doc/configuration.rst: Update docs, add info about
+  vkontakte.
+
+2012-04-13  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * social_auth/backends/__init__.py, social_auth/backends/contrib/dropbox.py,
+  social_auth/backends/contrib/fitbit.py,
+  social_auth/backends/contrib/flickr.py,
+  social_auth/backends/contrib/foursquare.py,
+  social_auth/backends/contrib/github.py,
+  social_auth/backends/contrib/instagram.py,
+  social_auth/backends/contrib/linkedin.py,
+  social_auth/backends/contrib/orkut.py,
+  social_auth/backends/contrib/vkontakte.py, social_auth/backends/facebook.py,
+  social_auth/backends/google.py, social_auth/backends/twitter.py: Flexible
+  arguments on user_data() method. Refs #313.
+
+2012-04-13  Slava Bacherikov <slava@bacher09.org>
+
+  * example/local_settings.py.template, example/settings.py,
+  social_auth/backends/contrib/vkontakte.py: Add support Vkontakte.
+
+2012-04-09  Andrii Kostenko <andrey@kostenko.name>
+
+  * social_auth/tests/base.py, social_auth/tests/facebook.py,
+  social_auth/tests/google.py, social_auth/tests/twitter.py: fixed tests:
+  default pipelines, fixed twitter&facebook, respect for
+  SOCIAL_AUTH_ENABLED_BACKEND in google test
+
+2012-04-08  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * README.rst, doc/configuration.rst: Change default value in doc to reflect
+  code
+
+  * README.rst, doc/backends/facebook.rst, doc/configuration.rst: Drop
+  meaningless text
+
+2012-03-29  Matías Aguirre <matiasaguirre@gmail.com>
+
+  * README.rst, doc/backends/oauth.rst, doc/backends/openid.rst,
+  social_auth/backends/__init__.py, social_auth/backends/google.py: Avoid
+  refresh_token overwrite on further logins. Closes #299
+
+  * README.rst, doc/backends/facebook.rst, social_auth/backends/facebook.py:
+  Define setting to pass extra arguments to facebook.com/me. Closes #301
+
 2012-03-14  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, doc/index.rst, doc/tokens.rst,
@@ -5,46 +252,7 @@
   social_auth/models.py: Add tokens property to easilly access tokens per
   backend. Closes #290
 
-2012-03-13  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * ChangeLog: ChangeLog update
-
-  * social_auth/backends/pipeline/associate.py: Check setting with default
-  value that makes sense. Closes #289
-
-  * social_auth/__init__.py: v0.6.7
-
-2012-03-12  Janez Stupar <janez.stupar@gmail.com>
-
-  * social_auth/views.py: Transfer redirect parameter (?next=) into new
-  session. May come handy in our next view.
-
-2012-03-09  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/google.py: Rename var. Refs #284
-
-2012-03-09  Keiko Oda <keiko713@gmail.com>
-
-  * social_auth/backends/google.py: add a function that gets name, given_name,
-  family_name and add to user_details from google OAuth2
-
-2012-03-05  Michael Armida <me@marmida.org>
-
-  * social_auth/backends/__init__.py: make BaseOAuth2 behave like
-  ConsumerBasedOAuth when requesting an access token leads to a HTTP 400;
-  previously it lead to an unhandled exception, although I don't know that
-  "Authentication process canceled" is much better
-
-2012-03-03  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * ChangeLog: Added changelog generated from git log
-
-  * social_auth/backends/__init__.py: Only load defined (and enabled) backends.
-  Closes #277.
-
 2012-03-01  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/tests/google.py: PEP8
 
   * contrib/tests/runtests.py, contrib/tests/test_core.py, doc/conf.py,
   example/app/models.py, example/app/pipeline.py, example/app/views.py,
@@ -72,17 +280,11 @@
   * README.rst, doc/configuration.rst: Remove deprecated setting from docs.
   Refs #175.
 
-2012-02-29  Adam McKerlie <adammckerlie@gmail.com>
-
-  * social_auth/backends/contrib/flickr.py: Typo
-
 2012-02-26  Matías Aguirre <matiasaguirre@gmail.com>
 
   * social_auth/backends/__init__.py, social_auth/utils.py,
   social_auth/views.py: Clean partial pipeline before auth process begins. Refs
   #271
-
-  * .gitignore: Ignore test databases
 
   * social_auth/backends/__init__.py, social_auth/backends/pipeline/misc.py,
   social_auth/views.py: Clean partial pipeline on Stop exception. Closes #271
@@ -92,27 +294,17 @@
   * social_auth/backends/contrib/gae.py, social_auth/backends/gae.py: Move
   GoogleAppEngine backend to contrib and apply pep8. Refs #258.
 
-  * social_auth/backends/contrib/fitbit.py: PEP8 and use dsa setting util
-
-2012-02-24  Larry Price <laprice@gmail.com>
-
-  * social_auth/backends/contrib/fitbit.py: replaced with a version based on
-  the flickr backend. Works for basic functionality.
-
-2012-02-24  Seyi Ogunyemi <micrypt@gmail.com>
-
-  * doc/configuration.rst: Update doc/configuration.rst
-
-  * README.rst: Remove reference to deprecated SOCIAL_AUTH_USERNAME_FIXER.
-
 2012-02-23  tschmidt <tschmidt@sacfoodcoop.com>
 
   * doc/backends/google.rst, social_auth/backends/google.py: added
   GOOGLE_WHITE_LISTED_EMAILS setting and updated docs
 
-2012-02-22  Matías Aguirre <matiasaguirre@gmail.com>
+2012-02-23  Andrii Kostenko <andrey@kostenko.name>
 
-  * social_auth/views.py: Add missing argument.
+  * social_auth/tests/base.py, social_auth/tests/twitter.py: fixed twitter
+  tests
+
+2012-02-22  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, doc/configuration.rst, social_auth/views.py: Inicial per
   backend settings, just URLs so far.
@@ -123,44 +315,27 @@
 
   * README.rst, doc/miscellaneous.rst: Google group. Closes #263
 
-2012-02-20  Larry Price <laprice@aigle.local>
-
-  * social_auth/backends/contrib/fitbit.py: Added the fitbit.py which started
-  off as a clone of the github interface.  current status: NOT FUNCTIONAL YET 
-  Trying to debug.
-
 2012-02-20  tschmidt <tschmidt@sacfoodcoop.com>
 
   * doc/backends/google.rst, social_auth/backends/google.py: added
   GOOGLE_WHITE_LISTED_DOMAINS setting to Google OAuth, updated documentation
 
-2012-02-20  Matías Aguirre <matiasaguirre@gmail.com>
+2012-02-19  Andrii Kostenko <andrey@kostenko.name>
 
-  * social_auth/backends/__init__.py: Catch OAuth 400 response when user denies
-  access. Closes #260
+  * social_auth/locale/ru/LC_MESSAGES/django.mo,
+  social_auth/locale/ru/LC_MESSAGES/django.po: changed "authentication" to
+  "authorization"
 
-2012-02-19  User <user@goku.localdomain>
+2012-02-17  Andrii Kostenko <andrey@kostenko.name>
 
-  * social_auth/backends/gae.py: change name to google-appengine to match some
-  of the other backends. make sure we don't get redirected from our auth_url.
-
-2012-02-18  Derrick Petzold <contact@derrickpetzold.com>
-
-  * social_auth/views.py: If the user was already logged in they would not be
-  redirected to the corrent url if it was overriden in the session.
-
-2012-02-18  User <user@goku.localdomain>
-
-  * social_auth/backends/gae.py: Get GAE backend working properly.
-
-2012-02-17  User <user@goku.localdomain>
-
-  * social_auth/backends/gae.py: Add a social_auth wrapper backend around the
-  Google App Engine User API.
+  * social_auth/backends/__init__.py, social_auth/backends/exceptions.py,
+  social_auth/backends/pipeline/social.py,
+  social_auth/locale/ru/LC_MESSAGES/django.mo,
+  social_auth/locale/ru/LC_MESSAGES/django.po, social_auth/tests/facebook.py,
+  social_auth/utils.py, social_auth/views.py: Account already in use exception
+  Moved exception class to exceptions.py module
 
 2012-02-16  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.6.6
 
   * social_auth/backends/browserid.py, social_auth/backends/contrib/github.py,
   social_auth/backends/facebook.py: Add missing 'auth' arguments before
@@ -168,45 +343,58 @@
 
   * README.rst, doc/configuration.rst: Remove old doc
 
-2012-02-16  Johannes Holmberg <johannes@update.uu.se>
+2012-02-16  Andrii Kostenko <andrey@kostenko.name>
 
-  * social_auth/backends/pipeline/misc.py: Use list.index instead of
-  tuple.index to regain compatibility with Python 2.5
+  * setup.py, social_auth/backends/__init__.py,
+  social_auth/locale/ru/LC_MESSAGES/django.mo,
+  social_auth/locale/ru/LC_MESSAGES/django.po, social_auth/utils.py,
+  social_auth/views.py: User-friendly errors, russian translation
 
-  * social_auth/backends/pipeline/misc.py: Add own tuple_index function to stay
-  compatible with python 2.5
+2012-02-16  Stas Kravets <krvss@mail.ru>
+
+  * .gitignore, README.rst, doc/backends/browserid.rst,
+  doc/backends/github.rst, doc/backends/google.rst, doc/backends/index.rst,
+  doc/backends/instagram.rst, doc/configuration.rst, doc/deprecated.rst,
+  doc/index.rst, doc/intro.rst, doc/miscellaneous.rst, doc/pipeline.rst,
+  doc/use_cases.rst, example/app/pipeline.py, example/app/views.py,
+  example/local_settings.py.template, example/settings.py,
+  example/templates/base.html, example/templates/done.html,
+  example/templates/form.html, example/templates/home.html, example/urls.py,
+  social_auth/__init__.py, social_auth/backends/__init__.py,
+  social_auth/backends/browserid.py, social_auth/backends/contrib/dropbox.py,
+  social_auth/backends/contrib/flickr.py,
+  social_auth/backends/contrib/foursquare.py,
+  social_auth/backends/contrib/github.py,
+  social_auth/backends/contrib/instagram.py,
+  social_auth/backends/contrib/linkedin.py,
+  social_auth/backends/contrib/livejournal.py,
+  social_auth/backends/contrib/orkut.py, social_auth/backends/facebook.py,
+  social_auth/backends/google.py, social_auth/backends/pipeline/__init__.py,
+  social_auth/backends/pipeline/associate.py,
+  social_auth/backends/pipeline/misc.py,
+  social_auth/backends/pipeline/social.py,
+  social_auth/backends/pipeline/user.py, social_auth/backends/twitter.py,
+  social_auth/backends/yahoo.py, social_auth/context_processors.py,
+  social_auth/models.py, social_auth/tests/__init__.py,
+  social_auth/tests/facebook.py, social_auth/tests/google.py,
+  social_auth/tests/twitter.py, social_auth/urls.py, social_auth/utils.py,
+  social_auth/views.py: Merging latest changes from omab
 
 2012-02-15  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/pipeline/user.py: Overrideable user check for
-  get_username pipeline. Refs #253
 
   * social_auth/backends/__init__.py, social_auth/utils.py: Save model
   instances into session in a easy format to retrieve it later. Refs #251
 
 2012-02-14  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/__init__.py: v0.6.5
-
   * social_auth/backends/__init__.py, social_auth/backends/pipeline/misc.py,
   social_auth/views.py: Improve and fix partial pipeline arguments management.
   Closes #251
-
-2012-02-14  Jannis Leidel <jannis@leidel.info>
-
-  * README.rst: Fixed formatting of README file to correctly render as rST on
-  PyPI.
-
-2012-02-14  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, doc/pipeline.rst: Styling
 
   * README.rst, doc/configuration.rst, social_auth/views.py: Raise exceptions
   setting. Closes #248.
-
-  * social_auth/__init__.py: v0.6.4
-
-  * social_auth/backends/yahoo.py: Change Yahoo OpenID URL. Closes #249
 
 2012-02-13  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -225,21 +413,13 @@
 
 2012-02-11  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/__init__.py: v0.6.3
-
   * README.rst, doc/backends/browserid.rst, doc/configuration.rst,
   doc/miscellaneous.rst, doc/use_cases.rst, example/settings.py,
   example/templates/base.html, example/templates/done.html,
   example/templates/home.html, social_auth/backends/__init__.py,
   social_auth/backends/browserid.py: BrowserID support. Closes #228
 
-2012-02-10  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * doc/index.rst: Remove repeated section
-
 2012-02-09  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/facebook.py: Protect dict access. Closes #246
 
   * README.rst, doc/index.rst, doc/use_cases.rst: Use cases doc section. Closes
   #239
@@ -252,9 +432,6 @@
   social_auth/utils.py: Context processor improvements on code and doc. Closes
   #245
 
-  * social_auth/backends/twitter.py: Check for denied access on twitter
-  backend.
-
   * social_auth/backends/__init__.py,
   social_auth/backends/contrib/foursquare.py,
   social_auth/backends/contrib/github.py,
@@ -265,14 +442,6 @@
   social_auth/backends/yahoo.py, social_auth/utils.py, social_auth/views.py:
   Improve logging. Closes #244
 
-2012-02-08  Johannes Holmberg <johannes@update.uu.se>
-
-  * social_auth/backends/__init__.py: Add a BACKENDS dictionary for the basic
-  OpenID backend, allowing it to be discovered by get_backends.
-
-  * social_auth/backends/__init__.py: Rename the BACKENDS cache to keep
-  get_backends from discovering it.
-
 2012-02-07  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, doc/backends/github.rst: Small clarification about github conf.
@@ -280,12 +449,8 @@
 
 2012-02-06  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/views.py: Simplfy code
-
   * README.rst, doc/configuration.rst, social_auth/backends/__init__.py: Extra
   arguments for request-token process. Closes #235
-
-  * social_auth/backends/google.py: PEP8
 
   * README.rst, doc/pipeline.rst: Line number
 
@@ -301,8 +466,6 @@
 
   * README.rst, doc/deprecated.rst, doc/index.rst, doc/pipeline.rst: Deprecated
   settings doc
-
-  * social_auth/__init__.py: v0.6.2
 
   * README.rst, doc/index.rst, doc/intro.rst, doc/pipeline.rst,
   social_auth/backends/__init__.py: Pipeline doc
@@ -321,23 +484,6 @@
   social_auth/tests/google.py, social_auth/tests/twitter.py,
   social_auth/views.py: Improve settings values gathering
 
-2012-02-01  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/__init__.py: PEP8
-
-2012-02-01  Andjelko Horvat <comel@knopso.com>
-
-  * social_auth/backends/__init__.py: Do not sign OAuth authorization request
-  (see http://tools.ietf.org/html/rfc5849#page-10).
-
-2012-01-22  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/views.py: Remove space
-
-2012-01-21  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * LICENSE: Update license
-
 2012-01-20  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, doc/configuration.rst: Doc about django auth backend. Refs #154
@@ -347,24 +493,10 @@
   * Makefile, django-social-auth.spec: add .spec file and Makefile to build RPM
   package
 
-2012-01-20  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/views.py: Use get instead of pop to get redirect value from
-  session. Refs #192
-
-  * social_auth/views.py: Get '?next=' value before the session is trashed.
-  Refs #221
-
 2012-01-20  yekibud <tony@yekibud.com>
 
   * doc/backends/google.rst, social_auth/backends/google.py: added GOOGLE_
   prefix to WHITE_LISTED_DOMAINS setting
-
-2012-01-18  Riccardo Magliocchetti <riccardo.magliocchetti@gmail.com>
-
-  * README.rst: README.rst: Remove reference to south introspection for
-  JSONField  Since https://github.com/omab/django-social-auth/pull/57 the code
-  has been added to fields.py so no need to mention it in the README.
 
 2012-01-17  tschmidt <tschmidt@sacfoodcoop.com>
 
@@ -372,39 +504,11 @@
   OpenID WHITE_LISTED_DOMAINS setting to only check strings and added
   documentation
 
-2012-01-16  tschmidt <tschmidt@sacfoodcoop.com>
+2012-01-04  Stas Kravets <krvss@mail.ru>
 
-  * social_auth/backends/google.py: fixed WHITE_LISTED_DOMAINS default setting
-  and exception handling
-
-2012-01-16  tschmidt <none@none>
-
-  * social_auth/backends/google.py: restrict google login by white-listed
-  domains
-
-2012-01-10  Sid Mitra <sidmitra.del@gmail.com>
-
-  * social_auth/backends/__init__.py: Passing request instance to pipeline
-  methods.
-
-2012-01-09  Andres Villavicencio <andres@unholster.com>
-
-  * social_auth/backends/__init__.py: Using dict.get to avoid KeyError
-
-2012-01-09  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/pipeline/user.py: Avoid override of id/pk attributes
-  with service provided data. Closes #217
-
-2012-01-09  Andres Villavicencio <andres@unholster.com>
-
-  * social_auth/backends/__init__.py: Fix to make
-  SOCIAL_AUTH_NEW_USER_REDIRECT_URL work
-
-2012-01-02  Ravi Kotecha <kotecha.ravi+github@gmail.com>
-
-  * social_auth/backends/contrib/foursquare.py: Fix for backend breaking with
-  "KeyError('lastName')" if foursquare user doesn't have a lastName set.
+  * example/local_settings.py.template, example/settings.py,
+  social_auth/backends/contrib/yandex.py: Yandex OAuth2 support for Ya.ru and
+  Moi Krug added
 
 2011-12-30  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -427,16 +531,6 @@
   entry point (get_backends) responsible for populating BACKENDS where
   required.
 
-  * social_auth/context_processors.py: Cleaned up whitespace.
-
-2011-12-28  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/tests/twitter.py: Remove pdb line
-
-2011-12-27  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * doc/configuration.rst: Doc fixes
-
 2011-12-25  Alexey Kinyov <rudy@05bit.com>
 
   * LICENCE, LICENCE.django-openid-auth, LICENSE, LICENSE.django-openid-auth,
@@ -457,133 +551,33 @@
   * README.rst, doc/configuration.rst: Removed SOCIAL_AUTH_IMPORT_BACKENDS from
   docs as its deprecated.
 
-  * social_auth/backends/__init__.py: Refactored backend loading to avoid a
-  race condition. Fixes #204
-
 2011-12-22  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.6.1
 
   * social_auth/backends/__init__.py, social_auth/backends/google.py: Fix
   google oauth athorization request. Closes #202.
 
-2011-12-21  Tim Richardson <mrichytech@gmail.com>
-
-  * social_auth/backends/__init__.py: Since "Google-Oauth2" is called precisely
-  that and we want to use "GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'access_type':
-  'offline'}" in our settings we must replace "-" with "_"
-
 2011-12-18  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/facebook.py: Fix log parameters
-
-  * social_auth/backends/facebook.py: Remove extra line
 
   * README.rst, doc/configuration.rst, social_auth/views.py: Difference
   active/inactive users on complete process. Closes #197
 
-2011-12-15  Youngrok pak <pak.youngrok@gmail.com>
-
-  * social_auth/views.py: read redirect field value from session before login()
-  will flush session
-
-2011-12-13  Daniel Greenfeld <pydanny@gmail.com>
-
-  * doc/conf.py: Bump the version in Sphinx to match the released version. This
-  is confusing me! ;)
-
-2011-12-06  Przemek Lewandowski <prze.lewandowski@gmail.com>
-
-  * social_auth/backends/facebook.py: Unnecessary set django username as
-  facebook full name.
-
-2011-12-03  Sandeep <sandeep@systematixtechnocrates.com>
-
-  * social_auth/views.py: Patch for login error message.
-
-2011-11-24  Przemek Lewandowski <prze.lewandowski@gmail.com>
-
-  * social_auth/backends/__init__.py: Fixed is_new user flag from pipelines to
-  complete_process view helper.
-
-2011-11-18  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/pipeline/user.py: That was dumb. Fixes #182
-
-2011-11-18  Steven Van Bael <steven.v.bael@gmail.com>
-
-  * social_auth/backends/__init__.py: Override get_user() in SocialAuthBackend
-  so it supports returning users from a custom user model
-
-2011-11-17  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/fields.py: Use str(e) to get exception message. Refs gh-176
-
-2011-11-15  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/fields.py: Fix JSONField rendering on admin section. Closes
-  gh-176
-
-2011-11-14  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/__init__.py: Don't incude OpenId backend if disabled.
-  Closes gh-179
-
-2011-10-31  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/facebook.py: Code cleanup
-
-2011-10-29  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/google.py: PEP8
-
-2011-10-29  mlavin <markdlavin@gmail.com>
-
-  * social_auth/backends/google.py: Don't set xoauth_displayname for registered
-  Google OAuth applications. Refs #156.
-
-2011-10-28  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/pipeline/social.py: Return User to avoid garbage user
-  creation. Closes gh-169
-
 2011-10-25  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/pipeline/user.py: PyLint
 
   * example/settings.py, social_auth/backends/contrib/flickr.py: Fix Flickr
   attribute getter
-
-  * social_auth/backends/contrib/flickr.py: PyLint
-
-2011-10-22  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/__init__.py: Fix syntax error
-
-2011-10-21  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/fields.py: South migration code for JSONField. Refs gh-57
 
 2011-10-18  Matías Aguirre <matiasaguirre@gmail.com>
 
   * social_auth/backends/__init__.py, social_auth/utils.py,
   social_auth/views.py: Clean imports
 
-2011-10-18  Luis Nell <ln@nells.eu>
-
-  * setup.py: Add new non-magical pipeline to setup.py
-
 2011-10-17  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.6.0
 
   * social_auth/backends/pipeline/__init__.py,
   social_auth/backends/pipeline/associate.py,
   social_auth/backends/pipeline/social.py,
   social_auth/backends/pipeline/user.py: Issue warnings for deprecated
   settings. Refs gh-90
-
-  * social_auth/backends/__init__.py: Remove debug code. Refs gh-90
 
   * example/settings.py, social_auth/backends/__init__.py,
   social_auth/backends/exceptions.py,
@@ -593,27 +587,11 @@
   social_auth/backends/pipeline/user.py, social_auth/views.py: Pipeline. Refs
   gh-90
 
-2011-10-10  Daniel G. Taylor <danielgtaylor@gmail.com>
-
-  * social_auth/backends/contrib/flickr.py: Fix Dropbox references to say
-  Flickr instead.
-
 2011-10-10  Daniel G. Taylor <dan@programmer-art.org>
-
-  * README.rst: Update contributors in README
-
-  * social_auth/context_processors.py: Add context processor to access social
-  auth information by backend name, useful to easily provide backend-specific
-  functionality in your app by checking e.g. social_auth.facebook and allowing
-  the user to publish to Facebook if it exists.
 
   * README.rst, social_auth/backends/contrib/flickr.py: Add Flickr backend
 
 2011-10-06  Daniel G. Taylor <dan@programmer-art.org>
-
-  * social_auth/backends/contrib/dropbox.py: Remove unneeded print statement
-
-  * README.rst: Fix typo
 
   * README.rst, social_auth/backends/contrib/dropbox.py: Add support for
   Dropbox OAuth so that users can associate their account with Dropbox and
@@ -625,39 +603,24 @@
 
 2011-09-26  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/__init__.py: v0.5.13
-
   * social_auth/backends/__init__.py, social_auth/backends/facebook.py: Migrate
   Facebook to OAuth2. Closes gh-134
 
-2011-09-19  Matías Aguirre <matiasaguirre@gmail.com>
+2011-09-20  Stas Kravets <krvss@mail.ru>
 
-  * social_auth/backends/twitter.py: Fix twitter first_name/last_name filling.
-  Closes gh-146
+  * social_auth/backends/contrib/mailru.py,
+  social_auth/backends/contrib/odnoklassniki.py,
+  social_auth/backends/contrib/vkontakte.py: Adding logging to OAuth backends:
+  log the api call errors
+
+2011-09-19  Matías Aguirre <matiasaguirre@gmail.com>
 
   * social_auth/models.py, social_auth/views.py: Remove ERROR_KEY/NAME_KEY
 
 2011-09-19  Mathijs de Bruin <mathijs@mathijsfietst.nl>
 
-  * social_auth/backends/facebook.py: Even more detailed logging of fetched
-  user data.
-
-  * social_auth/backends/__init__.py: Whoops.
-
-  * social_auth/utils.py: Beware of cyclical imports!
-
-  * social_auth/backends/__init__.py: Some more logging.
-
-  * social_auth/views.py: Get rid of session logging (?) and replaced by proper
-  Python error logging, including request data (so Sentry knows what to do with
-  it).
-
-  * social_auth/backends/facebook.py: Whoops in FB logging patch.
-
   * social_auth/backends/__init__.py, social_auth/backends/facebook.py: Some
   exception logging, making debugging easier.
-
-  * social_auth/utils.py: Helper function for 'clean' logging of data.
 
   * social_auth/backends/__init__.py,
   social_auth/backends/contrib/foursquare.py,
@@ -671,47 +634,20 @@
 
 2011-09-16  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/__init__.py: v0.5.12
-
-  * social_auth/views.py: Additional params to complete view
-
-  * social_auth/backends/__init__.py: Define sender
-
-  * social_auth/__init__.py: v0.5.11
-
   * social_auth/backends/__init__.py, social_auth/signals.py: Send signal for
   cases where tracking failed registering is needed
 
   * social_auth/backends/__init__.py, social_auth/views.py: Allow views to pass
   extra parameters to authentication backends
 
-2011-09-15  George Dorn <georgedorn@gmail.com>
-
-  * social_auth/urls.py: Don't assume that the association_id (actually, user
-  id) is a number.
-
 2011-09-12  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, doc/miscellaneous.rst: Fix link reference
-
-2011-09-11  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.5.10
 
 2011-09-09  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, doc/miscellaneous.rst: Mention
   http://djangopackages.com/grids/g/social-auth-backends/ in docs
-
-2011-09-08  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.5.9
-
-  * social_auth/views.py: Leave exception handling to decorator
-
-2011-09-07  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.5.8
 
 2011-09-06  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -720,30 +656,8 @@
 
 2011-08-29  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/context_processors.py: Fix error on context processor. Closes
-  gh-137.
-
   * example/app/views.py, example/templates/error.html, social_auth/views.py:
   Use messages framework if available. Refs gh-136
-
-  * social_auth/views.py: Improve error handling. Closes gh-136
-
-2011-08-29  Marco Monaco <inventore1@gmail.com>
-
-  * social_auth/views.py: removed logging
-
-  * social_auth/views.py: modified the exception handling to be more uniform
-  with social_auth
-
-2011-08-28  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/contrib/github.py: Use blank string if no email.
-  Closes gh-135
-
-2011-08-26  Marco Monaco <inventore1@gmail.com>
-
-  * social_auth/views.py: if a backend crashes the exception is catched, logged
-  and the user is redirected to a specific error page
 
 2011-08-25  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -754,34 +668,11 @@
 
   * README.rst, doc/backends/google.rst: Doc fix
 
-  * social_auth/__init__.py: v0.5.7
-
-  * social_auth/backends/__init__.py: Protect for possible race condition. Refs
-  #131
-
 2011-08-24  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, doc/configuration.rst, social_auth/backends/__init__.py,
   social_auth/backends/contrib/github.py, social_auth/backends/facebook.py: Add
   setting to define extra arguments that should be sent to providers
-
-  * social_auth/backends/facebook.py: Style for items
-
-  * social_auth/backends/facebook.py: Reduce indentation
-
-2011-08-23  Mike Zupan <mike@zcentric.com>
-
-  * README.rst: error in the readme.. should be foursquare not orkut for the
-  FoursquareBackend
-
-2011-08-22  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/models.py: Remove fields and methods check for custom user
-  models. Closes gh-126
-
-2011-08-22  revolunet <julien@bouquillon.com>
-
-  * social_auth/backends/contrib/github.py: fix typo first_name
 
 2011-08-22  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -789,64 +680,15 @@
   social_auth/backends/contrib/github.py: Small changes to github backend doc
   and code. Refs #122
 
-2011-08-21  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.5.6
-
-  * social_auth/backends/__init__.py: Fix user details update
-
 2011-08-19  revolunet <julien@bouquillon.com>
-
-  * README.rst: README update for github
 
   * README.rst, example/local_settings.py.template,
   social_auth/backends/contrib/github.py: add github OAuth backend fix #122
-
-2011-07-25  Cassus Adam Banko <banko.adam@gmail.com>
-
-  * social_auth/tests/__init__.py: settings options to control which tests to
-  run  SOCIAL_AUTH_TEST_TWITTER, SOCIAL_AUTH_TEST_GOOGLE,
-  SOCIAL_AUTH_TEST_FACEBOOK
-
-2011-07-26  Cassus Adam Banko <banko.adam@gmail.com>
-
-  * social_auth/backends/facebook.py: switch to urllib2 urlopen - the old one
-  blocked for a long time
-
-2011-08-16  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.5.5
-
-  * social_auth/views.py: Do not use current user when completing /login/
-  process. Closes gh-107
-
-2011-08-13  Michael Bashkirov <bashmish@gmail.com>
-
-  * social_auth/backends/__init__.py: Fixed bug in OpenIDBackend.extra_data()
-
-2011-07-11  Lior Sion <lior.sion@gmail.com>
-
-  * README.rst: slight readme change to avoid confusion
 
 2011-08-14  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, doc/configuration.rst: Mention URL names prefix in doc. Refs
   gh-115
-
-  * social_auth/__init__.py: v0.5.4
-
-  * social_auth/backends/__init__.py: Avoid updating with empty values. Closes
-  gh-111
-
-  * social_auth/__init__.py: v0.5.3
-
-  * social_auth/views.py: Remove more lame prints
-
-  * social_auth/__init__.py: v0.5.2
-
-  * social_auth/context_processors.py: Remove lame print :-/
-
-  * social_auth/__init__.py: v0.5.1
 
   * README.rst, doc/configuration.rst: Document context processors. Refs gh-113
 
@@ -861,65 +703,44 @@
   social_auth/backends/__init__.py: Add setting to control enabled backends.
   Closes gh-112
 
-  * social_auth/views.py: Decorate views to retrieve backend or return http
-  error if not correct. Closes gh-116
+2011-07-29  root <root@ubuntu.localdomain>
 
-  * social_auth/__init__.py: v0.5.0
+  * social_auth/backends/__init__.py,
+  social_auth/backends/contrib/vkontakte.py, social_auth/backends/facebook.py:
+  cosmetics
 
-  * social_auth/backends/google.py: Use primary email as user ID for Google
-  OpenId. Closes gh-117
+2011-07-27  Stas Kravets <skravets@applebough.(none)>
 
-2011-07-17  Matías Aguirre <matiasaguirre@gmail.com>
+  * example/local_settings.py.template,
+  social_auth/backends/contrib/vkontakte.py: VKontakte application
+  authentication improvements.
 
-  * social_auth/views.py: Avoid csrf check on complete views in case provider
-  uses POST and doesn't send CSRF token. Refs gh-67
-
-2011-07-16  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/__init__.py: Use details username only if it's
-  non-blank. Closes gh-104
+  * example/local_settings.py.template,
+  social_auth/backends/contrib/vkontakte.py: VKontakte application
+  authentication improvements.
 
 2011-07-14  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.4.2
 
   * social_auth/backends/__init__.py, social_auth/views.py: Refactor repeated
   code. Refs gh-102
 
-2011-07-14  Siddharth Mitra <sidmitra.del@gmail.com>
+  * social_auth/backends/__init__.py, social_auth/views.py: Refactor repeated
+  code. Refs gh-102
 
-  * social_auth/views.py: Adding exception handling for Value Error: Account
-  already in use, in view.associate_complete
+2011-07-11  Stas Kravets <skravets@applebough.(none)>
 
-2011-07-11  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/__init__.py: Change data loading order to be more
-  useful when signals are called. Refs gh-99
-
-  * social_auth/__init__.py: v0.4.1
-
-  * social_auth/views.py: Fix association redirect URL bug
-
-2011-07-10  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * example/local_settings.py.template: Misspell
-
-  * example/local_settings.py.template: Fix URL name in example settings.
-  Closes gh-101
+  * example/local_settings.py.template, example/templates/done.html,
+  example/templates/home.html: Updating templates for latest syntax.
 
 2011-07-03  Matías Aguirre <matiasaguirre@gmail.com>
 
   * example/app/views.py, example/templates/done.html,
   example/templates/home.html: Dynamic backend list on example app
 
-  * social_auth/__init__.py: v0.4.0
-
   * example/templates/done.html, example/templates/home.html,
   social_auth/tests/facebook.py, social_auth/tests/google.py,
   social_auth/tests/twitter.py, social_auth/urls.py, social_auth/views.py:
   Non-backward compatible URL name changes. Closes gh-95
-
-  * social_auth/views.py: Redirect new users to properly. Closes gh-98
 
 2011-06-29  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -931,11 +752,6 @@
 
 2011-06-21  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/__init__.py: v0.3.20
-
-  * social_auth/backends/contrib/linkedin.py: Fix linkedin data processing.
-  Closes #91
-
   * README.rst, doc/miscellaneous.rst: Add import note to warn about recursive
   import case
 
@@ -943,28 +759,7 @@
   social_auth/backends/__init__.py, social_auth/urls.py: Rename disconnect
   individual view and simplify example done view. Refs #85.
 
-  * social_auth/backends/contrib/livejournal.py: Correct exception
-  initialization
-
-  * social_auth/backends/facebook.py: Use facebook username if present in
-  response. Closes gh-83
-
-  * social_auth/views.py: Move some settings to the top
-
-2011-06-20  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/__init__.py: Force username field limit when
-  generating username. Closes gh-93
-
-2011-06-20  Flavio Curella <flavio.curella@gmail.com>
-
-  * social_auth/views.py: fixes an UnboundLocalError that occours when
-  SOCIAL_AUTH_SESSION_EXPIRATION is set to False
-
 2011-06-13  Rohan Jain <crodjer@gmail.com>
-
-  * example/settings.py: Redirect to / on login  Prevent 404 for profile page
-  by redirecting to '/' page always on login.
 
   * social_auth/backends/__init__.py, social_auth/urls.py,
   social_auth/views.py: Disconnect accounts by associations. Fix gh-#85  Add
@@ -973,16 +768,10 @@
 
 2011-06-03  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * README.rst: Link to Read the Docs documentation
-
-  * social_auth/__init__.py: v0.3.19
-
   * README.rst, doc/configuration.rst, social_auth/backends/__init__.py,
   social_auth/views.py: Add redirect url for newly created users. Closes gh-47
 
 2011-06-02  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.3.18
 
   * README.rst, doc/backends/facebook.rst, doc/backends/google.rst,
   doc/backends/oauth.rst, doc/backends/openid.rst, doc/backends/twitter.rst,
@@ -993,56 +782,25 @@
   social_auth/backends/contrib/linkedin.py: Add linkedin fields selector
   support
 
-2011-05-30  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/models.py: Properly split custom user string for get_model
-  usage. Closes gh-80
-
 2011-05-27  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.3.17
-
-  * social_auth/backends/contrib/linkedin.py: Use cgi.parse_qs instead of
-  urlparse one, import ExpatError properly. Closes gh-78
-
-  * social_auth/backends/contrib/orkut.py: Send orkut scope on each request,
-  check email value properly. Closes gh-77
 
   * example/app/views.py, example/templates/done.html, social_auth/views.py:
   Add last login backend name to session on login. Closes gh-76
 
-2011-05-25  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * contrib/tests/test_core.py: Check facebook Allow app screen on test
-
-2011-05-23  Miguel Araujo Perez <miguel.araujo.perez@gmail.com>
-
-  * contrib/tests/test_core.py: Fixing English grammar error, not my native
-  language, sorry
-
-  * contrib/tests/runtests.py: Updating test runner to use
-  DjangoTestSuiteRunner instead of function run_tests
-
 2011-05-23  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, doc/testing.rst: Selenium tests doc
-
-  * social_auth/views.py: Remove unused import
 
   * social_auth/backends/__init__.py, social_auth/views.py: Use OpenID
   identity_url field to identify UserSocialAuth instances. Closes gh-73
 
 2011-05-21  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * README.rst: More markdown fixes
-
   * README.rst, doc/miscellaneous.rst: README fix
 
   * README.rst, doc/miscellaneous.rst: Add doc about convore community
 
 2011-05-19  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.3.16
 
   * contrib/models.py, example/urls.py, social_auth/tests/base.py: Endline
   spaces and unused import cleanup
@@ -1058,25 +816,10 @@
   * social_auth/backends/contrib/foursquare.py,
   social_auth/backends/foursquare.py: Foursquare support
 
-2011-05-19  Miguel Araujo Perez <miguel.araujo.perez@gmail.com>
-
-  * contrib/tests/test_core.py: Twitter's input password id changed, updating
-  test
-
 2011-05-18  Matías Aguirre <matiasaguirre@gmail.com>
 
   * .gitignore, contrib/tests/test_core.py, contrib/tests/test_settings.py,
   contrib/tests/test_settings.py.template: Small changes to selenium tests
-
-  * contrib/tests/runtests.py: Small changes to runtest script
-
-2011-05-16  JasonGiedymin <jason.giedymin@gmail.com>
-
-  * README.rst: - Even clearer SOCIAL_AUTH_ASSOCIATE_BY_MAIL directions. Yes, I
-  absolutely need more coffee.
-
-  * README.rst: Slightly confusing directions for the
-  SOCIAL_AUTH_ASSOCIATE_BY_MAIL param. Maybe I need more coffee? :-P
 
 2011-05-05  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -1085,22 +828,10 @@
 
 2011-05-04  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/views.py: Use filter instead of get to avoid 'Multiple objects
-  returned' error. Closes gh-52
-
   * README.rst, doc/configuration.rst, social_auth/backends/__init__.py: Move
   UUID max length to settings. Closes gh-62
 
 2011-05-01  Miguel Araujo Perez <miguel.araujo.perez@gmail.com>
-
-  * contrib/tests/test_settings.py: Adding more User accounts to settings.py.
-
-  * contrib/tests/test_core.py: Adding Selenium2 Linkedin test.
-
-  * contrib/tests/test_core.py: Addding Selenium2 facebook test.
-
-  * contrib/tests/test_core.py: Adding Selenium2 google-oauth and google-oauth2
-  tests. Both up and running.
 
   * contrib/models.py, contrib/tests/runtests.py, contrib/tests/test_core.py,
   contrib/tests/test_settings.py: Adding contrib app to the root level.
@@ -1112,41 +843,33 @@
   social_auth/tests/test_settings.py: Moving Selenium2 testing to contrib
   directory as discussed in GH-25
 
-2011-04-30  Matías Aguirre <matiasaguirre@gmail.com>
+2011-04-30  Stas Kravets <skravets@applebough.(none)>
 
-  * social_auth/__init__.py: v0.3.15
+  * example/local_settings.py.template, example/settings.py,
+  example/templates/done.html, example/templates/home.html,
+  social_auth/backends/contrib/mailru.py,
+  social_auth/backends/contrib/odnoklassniki.py: Mail.ru OAuth 2.0 support
+  added.
 
-  * setup.py: Fixed licence in setup.py file. Closes gh-60
+2011-04-28  Stas Kravets <skravets@applebough.(none)>
 
-2011-04-28  Roderic Morris <roderyc@gmail.com>
+  * example/settings.py, example/templates/done.html,
+  example/templates/home.html, social_auth/backends/contrib/vkontakte.py:
+  VKontakte OAuth2 authentication support added.
 
-  * social_auth/backends/__init__.py: Include social_user in exception raised
-  when an account is already registered.  Give exception handling code more
-  information to mitigate the conflict.
-
-  * social_auth/backends/__init__.py: Don't ignore user defined EXTRA_DATA.
+  * requirements.txt, setup.py: Django dependency removed to allow development
+  version usage.
 
 2011-04-27  Matías Aguirre <matiasaguirre@gmail.com>
 
   * social_auth/backends/__init__.py, social_auth/views.py: Use request.REQUEST
   because some providers use form URLs with GET parameters
 
-2011-04-27  Ian Langworth ☠ <ian@langworth.com>
+2011-04-19  Stas Kravets <skravets@applebough.(none)>
 
-  * README.rst: Fixed a tiny typo in the README
-
-2011-04-21  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.3.14
-
-2011-04-21  Seyi Ogunyemi <micrypt@gmail.com>
-
-  * social_auth/admin.py: korneevm's fix for Issue #55
-
-2011-04-20  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/fields.py: Properly convert JSONField values to string when
-  doing dumpdata. Closes gh-53
+  * example/local_settings.py.template, example/settings.py,
+  example/templates/done.html, example/templates/home.html: Minor updates of
+  settings and html.
 
 2011-04-18  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -1158,8 +881,6 @@
 
 2011-04-15  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/__init__.py: v0.3.13
-
   * README.rst, doc/configuration.rst, social_auth/views.py: Correct
   user-defined redirect page that overrides django auth app LOGIN_REDIRECT_URL.
   Closes gh-47
@@ -1168,49 +889,16 @@
 
   * README.rst, doc/signals.rst: Updated doc with user-new signal details
 
-  * social_auth/backends/__init__.py: Fix email association if clause. Closes
-  gh-51.
-
-  * social_auth/__init__.py: v0.3.12
-
   * README.rst, doc/configuration.rst, social_auth/backends/__init__.py:
   Associate users if the share the same email address and if there's only a
   single user entry with same email. Closes gh-49
 
-  * social_auth/backends/__init__.py: Grouped settings on top of module
+2011-04-04  Stas Kravets <skravets@applebough.(none)>
 
-2011-04-13  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.3.11
-
-2011-04-13  Jakub Roztočil <jakub@roztocil.name>
-
-  * social_auth/backends/__init__.py: Fixed
-  `settings.SOCIAL_AUTH_USERNAME_FIXER`
-
-2011-04-01  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.3.10
-
-  * social_auth/backends/__init__.py: Fix bug caused by undefined username
-  variable
-
-2011-03-31  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/fields.py: Use get_prep_value instead of the database related
-  one. Closes gh-42
-
-2011-03-29  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.3.9
-
-  * social_auth/backends/__init__.py: User uuid4 to generate unique usernames.
-  Closes gh-41
-
-  * setup.py: Typo
-
-  * social_auth/fields.py: Use get_db_prep_value instead of get_db_prep_save.
-  Closes gh-42
+  * example/templates/home.html, setup.py,
+  social_auth/backends/contrib/yandex.py: Merging with latest head; Yandex
+  OpenID 2.0 support added - no need to specify Yandex username anymore, but it
+  still works if you do.
 
 2011-03-27  Miguel Araujo Perez <miguel.araujo.perez@gmail.com>
 
@@ -1225,8 +913,6 @@
   social_auth/tests/google.py, social_auth/tests/twitter.py: Google OpenID
   testing, improvements pending. Refs gh-25
 
-  * .gitignore: Ignore some scripts html on example dir
-
   * README.rst, doc/testing.rst, social_auth/tests/__init__.py,
   social_auth/tests/base.py, social_auth/tests/facebook.py: Facebook login
   testing. Refs gh-25
@@ -1239,12 +925,7 @@
   * requirements.txt, setup.py: Updated django version and added
   requirements.txt file
 
-  * social_auth/backends/__init__.py: Create random username if none was
-  supplied or generated. Closes gh-40
-
 2011-03-21  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * doc/conf.py: Remove static directory setting
 
   * doc/backends/index.rst, doc/index.rst: Doc improvements
 
@@ -1257,46 +938,18 @@
 
 2011-03-15  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/backends/google.py: Removed unneeded var
-
-  * README.rst: Amend doc
-
   * README.rst, social_auth/__init__.py: Update doc and version. Google OAuth2
   support complete, so far.
-
-  * social_auth/__init__.py: v0.3.7
-
-  * social_auth/backends/google.py: Bug fix
-
-  * social_auth/__init__.py: v0.3.6
-
-  * social_auth/backends/google.py: Fix Google OAuth process
-
-  * README.rst: Updated doc
-
-  * social_auth/__init__.py: v0.3.5
-
-  * README.rst: Updated README
-
-  * social_auth/__init__.py: v0.3.4
 
   * README.rst, example/local_settings.py.template, example/settings.py,
   example/templates/done.html, example/templates/home.html,
   social_auth/backends/__init__.py, social_auth/backends/google.py: Google
   OAuth2 support
 
-2011-03-07  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * README.rst: Updated readme
-
 2011-03-06  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.3.3
 
   * social_auth/utils.py, social_auth/views.py: Merged sanitize redirect url
   checker. Closes gh-38
-
-  * social_auth/__init__.py: v0.3.2
 
   * README.rst, example/app/views.py, setup.py,
   social_auth/backends/__init__.py: Migration to OAuth2 lib. Closes gh-37.
@@ -1315,26 +968,12 @@
   via the next param are now properly sanitized to disallow redirecting to
   external hosts; also DRY'd up views file a little.
 
-2011-03-06  Seyi Ogunyemi <micrypt@gmail.com>
-
-  * social_auth/backends/__init__.py: Switched to python-oauth2
-
-2011-03-05  Bernardo Kyotoku <bernardo@kyotoku.org>
-
-  * social_auth/models.py: max_length=255 correction
-
-  * social_auth/models.py: TextField to CharField change
-
 2011-02-28  Vadym Zakovinko <vp@zakovinko.com>
 
   * README.rst, example/local_settings.py.template: readme with linkedin info
 
   * .gitignore, example/settings.py, example/templates/home.html,
   social_auth/backends/linkedin.py: added linkedin support
-
-2011-02-28  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * README.rst: Typo
 
 2011-02-27  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -1350,13 +989,12 @@
   * README.rst, social_auth/views.py: Save expiration time if not disabled by
   setting
 
+2011-02-24  Stas Kravets <skravets@applebough.(none)>
+
+  * example/templates/done.html, example/templates/home.html,
+  social_auth/backends/contrib/yandex.py: Merging of latest changes.
+
 2011-02-23  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.3.1
-
-  * social_auth/models.py: Catch TypeError on int()
-
-  * social_auth/__init__.py: v0.3.0
 
   * README.rst, social_auth/backends/facebook.py, social_auth/models.py,
   social_auth/views.py: Add support for session expiration. Closes gh-29
@@ -1364,9 +1002,6 @@
   * README.rst, social_auth/backends/__init__.py,
   social_auth/backends/facebook.py, social_auth/backends/twitter.py,
   social_auth/models.py: Store extra data in JSON format, also add method to
-  extend extra values to store. Closes gh-30
-
-  * social_auth/fields.py: Store extra data in JSON format, also add method to
   extend extra values to store. Closes gh-30
 
 2011-02-21  Matías Aguirre <matiasaguirre@gmail.com>
@@ -1379,47 +1014,28 @@
 
 2011-02-16  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * example/templates/base.html: Small css change
-
   * social_auth/backends/__init__.py, social_auth/backends/google.py: Google
   OAuth is always enabled because of anon access, small comment fix
 
 2011-02-15  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/__init__.py: v0.2.8
-
   * social_auth/backends/__init__.py, social_auth/backends/facebook.py,
   social_auth/backends/google.py: Make AUTH_BACKEND a mandatory attribute
-
-  * social_auth/__init__.py: v0.2.7
 
   * example/templates/base.html, example/templates/done.html,
   example/templates/home.html, social_auth/backends/__init__.py,
   social_auth/backends/twitter.py, social_auth/urls.py, social_auth/views.py:
   Disconnect account feature
 
-  * social_auth/__init__.py: v0.2.6
-
   * social_auth/admin.py, social_auth/models.py: Little admin improvements,
   clear comment
 
-  * social_auth/backends/__init__.py: Fix fixer :-/
-
 2011-02-14  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.2.5
 
   * README.rst, social_auth/backends/__init__.py: Added username purifier
   method
 
-  * README.rst: Update doc to notify about incorrect facebook app setup on
-  facebook site
-
 2011-02-12  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * README.rst: Typo
-
-  * social_auth/__init__.py: v0.2.4
 
   * README.rst, example/app/views.py, example/local_settings.py.template,
   example/templates/base.html, example/templates/error.html,
@@ -1431,51 +1047,24 @@
   example/templates/base.html: Added doc warning about imports when using
   pre_update signal and custom user model, updated example
 
-  * social_auth/backends/facebook.py: Shorter comment line
+2011-01-25  Stas Kravets <skravets@internal-rfc1918.hn.nnov.stream.ru>
 
-2011-02-01  Lior Sion <liorsion@Lior-Sions-MacBook-Air.local>
-
-  * social_auth/backends/facebook.py: fixed an exception when offline access
-  flag is requested
-
-2011-02-01  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/facebook.py: Show facebook error properly
-
-2011-01-31  Alfredo <alfredoaguirre@theteam.co.uk>
-
-  * social_auth/backends/facebook.py: Raise error code
-
-2011-01-31  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.2.3
-
-  * social_auth/backends/__init__.py: Raise exception if current logged in user
-  is different to user associated with Social Account
-
-2011-01-28  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/contrib/livejournal.py: Convert livejournal backend to
-  self.data instead of request.POST
+  * social_auth/backends/contrib/livejournal.py,
+  social_auth/backends/contrib/yandex.py: Updated LJ and Yandex backends to
+  work with self.data, not self.POST.
 
 2011-01-24  Matías Aguirre <matiasaguirre@gmail.com>
 
   * social_auth/backends/__init__.py, social_auth/backends/facebook.py,
   social_auth/views.py: Check request method to access it's data
 
-  * social_auth/backends/__init__.py: Update user only if needed
+2011-01-19  Stas Kravets <skravets@internal-rfc1918.hn.nnov.stream.ru>
 
-2011-01-20  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/backends/contrib/orkut.py: Fix dict keys on orkut contrib
-
-  * social_auth/backends/__init__.py: Default to empty string on AX support
-
-  * README.rst: Updated doc. Closes gh-15
-
-2011-01-19  Alfredo <alfredoaguirre@theteam.co.uk>
-
-  * README.rst: Amended import path on example
+  * example/settings.py, example/templates/done.html,
+  example/templates/home.html, social_auth/backends/__init__.py,
+  social_auth/backends/contrib/yandex.py: Yandex.ru support added; small change
+  in default e-mail value in OpenIDBackend.get_user_details in order to make
+  sure it is not None.
 
 2011-01-19  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -1483,12 +1072,15 @@
   social_auth/backends/facebook.py, social_auth/backends/google.py,
   social_auth/backends/twitter.py: Added 'enabled' checking to backends
 
-  * social_auth/__init__.py: v0.2.2
+2011-01-19  Stas Kravets <skravets@internal-rfc1918.hn.nnov.stream.ru>
 
-  * example/local_settings.py.template: Remove namespace from example settings
-  template
+  * social_auth/backends/__init__.py,
+  social_auth/backends/contrib/vkontakte.py: Fixed openid issue, switch to
+  hashlib from md5 library.
 
-  * social_auth/backends/__init__.py: Add basic OpenID backend to enabled list
+  * example/app/views.py, example/local_settings.py.template,
+  example/settings.py, example/templates/home.html, example/templates/vk.html,
+  social_auth/vk.py: VKontakte support - initial version.
 
 2011-01-18  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -1510,24 +1102,11 @@
   * README.rst, example/urls.py: Removed namespace urls flavor from example and
   doc, they were mostly confused
 
-  * README.rst: Update doc to be compatible with django 1.2 and above
+2011-01-17  Stas Kravets <skravets@internal-rfc1918.hn.nnov.stream.ru>
 
-  * social_auth/__init__.py: v0.1.7
-
-  * social_auth/backends.py: Remove username update, username is already
-  generated and loaded in user instance. Closes gh-12
-
-  * README.rst: Doc update adding contributor
-
-  * social_auth/backends.py: Simplify extra_data update process
-
-  * social_auth/__init__.py: v0.1.6
-
-  * social_auth/backends.py: Fix signal handlers update result checking
-
-  * README.rst: Small doc change. Closes gh-13
-
-  * social_auth/conf.py: Removed unnecesary spacing
+  * setup.py, social_auth/backends.py: Reverted signal processing in user
+  details update; removed django dependency from setup - was not good for
+  development version of django.
 
 2011-01-17  Alfredo <alfredoaguirre@theteam.co.uk>
 
@@ -1536,24 +1115,14 @@
 
 2011-01-15  Matt Brown <matt@thataddress.com>
 
-  * social_auth/backends.py: This change moves extra_data fetch to
-  authenticate, to ensure that it gets updated in the UserSocialAuth record
-  even if the user account exists already.
-
   * social_auth/backends.py, social_auth/conf.py: Modified the twitter backend
   to use the authenticate url instead of authorize.  Fixed the default value
   for SOCIAL_AUTH_EXTRA_DATA.
 
 2011-01-14  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/backends.py: Restored changed check
-
-  * social_auth/__init__.py: v0.1.5
-
   * example/app/views.py, example/settings.py, example/templates/done.html,
   example/templates/home.html: Google OAuth support in example proyect
-
-  * README.rst: Update doc about Google OAuth support
 
   * social_auth/auth.py, social_auth/backends.py, social_auth/conf.py: Google
   OAuth support
@@ -1564,48 +1133,19 @@
   social_auth/auth.py, social_auth/backends.py, social_auth/conf.py: Minor
   style updates.
 
-2011-01-13  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: v0.1.4
-
-  * social_auth/backends.py: Setup signal sender properly. Closes gh-10
-
 2011-01-12  Stas Kravets <skravets@internal-rfc1918.hn.nnov.stream.ru>
 
   * example/app/views.py, example/local_settings.py.template,
   social_auth/auth.py, social_auth/conf.py, social_auth/views.py: LiveJournal
   backend added to social_auth and example.
 
-2011-01-12  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * example/templates/base.html: Keywords change
-
-  * example/templates/base.html: Keywords change
-
 2011-01-10  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/__init__.py: Increase version number
 
   * social_auth/auth.py, social_auth/models.py, social_auth/signals.py,
   social_auth/store.py, social_auth/views.py: Moved auth backend access to auth
   module, small docstring changes
 
-  * README.rst: Fix doc variable value. Closes gh-9
-
 2011-01-09  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * example/templates/base.html: Reset headings margin and padding
-
-  * example/templates/base.html: Reposition badges
-
-  * example/templates/base.html: Remove images border and position badges
-  properly
-
-  * example/templates/base.html: Validation badges
-
-  * example/templates/done.html: HTML validation changes
-
-  * example/templates/base.html: Declare encoding
 
   * example/templates/base.html, example/templates/home.html: HTML validation
   changes
@@ -1622,18 +1162,6 @@
 
 2011-01-06  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * README.rst: Updated doc
-
-  * example/templates/base.html: Remove image border on example
-
-  * social_auth/__init__.py: v0.1.2
-
-  * README.rst: easy_install installation example
-
-  * README.rst: Updated demo information
-
-  * README.rst: Docs
-
   * README.rst, example/templates/base.html: Example little improvements, added
   demo to README file
 
@@ -1646,53 +1174,14 @@
   example/templates/error.html, example/templates/home.html: Common templates
   directory
 
-  * example/app/templates/base.html: Small styling
-
   * example/app/templates/base.html, example/app/templates/done.html,
   example/app/templates/error.html, example/app/templates/home.html,
   example/app/views.py: Example app styling
 
 2011-01-05  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * README.rst: Updated README with link to issues section
-
-  * README.rst: Updated attributions on README.rst file
-
-  * social_auth/backends.py: Removed unneeded str() call. Closes gh-8
-
-2011-01-05  Jannis Leidel <jannis@leidel.info>
-
-  * social_auth/backends.py: Fixed typo.
-
-  * social_auth/backends.py: Use Django's md5_constructor for backwards
-  compatibility.
-
-2011-01-05  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * README.rst: Correct documentation, Closes gh-7
-
-  * social_auth/backends.py: Replaced deprecated md5 import, Refs gh-7
-
-  * social_auth/__init__.py: Increased version to 0.1.1
-
-  * README.rst: Amend documentation and add contribution
-
-2011-01-05  Jannis Leidel <jannis@leidel.info>
-
-  * README.rst: Minor rST bugfix to allow correct rendering on PyPI.
-
-2011-01-05  Matías Aguirre <matiasaguirre@gmail.com>
-
   * setup.py, social_auth/__init__.py: Updated setup.py file to install
   properly, added version to social_auth module
-
-2011-01-05  Jannis Leidel <jannis@leidel.info>
-
-  * README.rst: Minor rST bugfix to allow correct rendering on PyPI.
-
-2011-01-05  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * README.rst: Attributions added
 
   * README.rst, setup.py: Updated setup.py and README with installation
   instructions
@@ -1701,20 +1190,11 @@
 
   * .gitignore, setup.py: setup.py updated
 
-2010-12-27  Stas Kravets <skravets@internal-rfc1918.hn.nnov.stream.ru>
-
-  * setup.py: setup.py file added for correct install with pip
-
 2010-12-28  Matías Aguirre <matiasaguirre@gmail.com>
 
   * social_auth/auth.py, social_auth/backends.py, social_auth/conf.py,
   social_auth/models.py, social_auth/store.py, social_auth/views.py: A bit of
   pylint and django-lint
-
-2010-12-28  Stas Kravets <skravets@Applebough.local>
-
-  * social_auth/backends.py: Added new option to control saving of updates,
-  fixed update signal results check.
 
 2010-12-27  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -1722,16 +1202,6 @@
   example/settings.py, social_auth/auth.py, social_auth/backends.py,
   social_auth/models.py, social_auth/views.py: Improved user creation handling,
   closes gh-3
-
-2010-12-27  Stas Kravets <skravets@internal-rfc1918.hn.nnov.stream.ru>
-
-  * setup.py: removed dependencies to avoid potential conflicts
-
-  * setup.py: setup.py file added for correct install with pip
-
-2010-12-26  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * README.rst: Small doc change
 
 2010-12-10  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -1745,9 +1215,6 @@
   * social_auth/auth.py, social_auth/backends.py: Removed unnecessary base
   module, moved clases where they are used
 
-  * social_auth/base.py: Removed unnecessary base module, moved clases where
-  they are used
-
 2010-11-25  Matías Aguirre <matiasaguirre@gmail.com>
 
   * README.rst, example/app/views.py, example/urls.py, social_auth/auth.py,
@@ -1755,13 +1222,7 @@
   social_auth/urls.py, social_auth/views.py: Association of multiple social
   credentials to single user account support, Closes gh-5
 
-  * social_auth/base.py: Rename variable
-
 2010-11-23  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * social_auth/models.py: Switch uid from TextField to CharField
-
-  * README.rst: Orkut authentication included, Closes gh-4
 
   * README.rst, example/app/views.py, social_auth/auth.py,
   social_auth/backends.py, social_auth/base.py, social_auth/conf.py: OAuth
@@ -1777,11 +1238,6 @@
 
 2010-11-23  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * social_auth/models.py: Little improve on custom user class import. Refs
-  gh-3
-
-  * README.rst: Style documentation
-
   * README.rst, social_auth/models.py: Doc fix and added missing check
 
   * README.rst, example/app/models.py, example/local_settings.py.template,
@@ -1789,13 +1245,7 @@
   social_auth/conf.py, social_auth/models.py: Improvements and documentation on
   custom User class definition.  Closes #2
 
-2010-11-22  Caio Ariede <caio.ariede@gmail.com>
-
-  * social_auth/models.py: get_user_model() more Django compliant
-
 2010-11-20  Caio Ariede <caio.ariede@gmail.com>
-
-  * social_auth/models.py: typo
 
   * social_auth/base.py, social_auth/models.py: Allow setting a custom user
   model through SOCIAL_AUTH_MODEL_USER
@@ -1807,12 +1257,6 @@
 
 2010-11-16  Matías Aguirre <matiasaguirre@gmail.com>
 
-  * README.rst: Ammend doc
-
-  * README.rst: Ammend doc
-
-  * README.rst: Ammend doc
-
   * README.rst, social_auth/base.py: Added callable function to supply possible
   username
 
@@ -1822,23 +1266,12 @@
   example/urls.py, social_auth/views.py: Redirect user to an error url if
   configured
 
-  * social_auth/views.py: Typo
-
-  * README.rst: README updates
-
-  * README.rst: README updates
-
-  * README.rst: README updates
-
   * README.rst, example/local_settings.py.template, social_auth/views.py:
   Removed incorrect namespace name from complete url in view, replaced with
   setting value
 
   * README.rst, social_auth/auth.py, social_auth/oauth.py: Removed oauth module
   in favor of oauth original code
-
-  * social_auth/models.py: Remove max_length from TextFields and replace short
-  text fields with CharFields
 
 2010-11-12  Matías Aguirre <matiasaguirre@gmail.com>
 
@@ -1848,24 +1281,12 @@
   social_auth/urls.py, social_auth/views.py: Small docstrings, code a little
   pylinted and checked
 
-  * social_auth/auth.py: Fix twitter process with custom redirect parameter
-
 2010-11-12  Caio Ariede <caio.ariede@gmail.com>
 
   * README.rst, social_auth/auth.py: there is no need to specify the url
   callback on Twitter
 
-2010-11-11  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * README.rst: Link sections in README
-
-  * README.rst: Link sections in README
-
 2010-11-09  Matías Aguirre <matiasaguirre@gmail.com>
-
-  * README.rst: Silly simplication
-
-  * README.rst: More doc improvements
 
   * COPYRIGHT.Django-Socialauth, COPYRIGHT.django-twitter-oauth, README.rst:
   Fixed code licence, apps names where incorrect. Updated documentation
