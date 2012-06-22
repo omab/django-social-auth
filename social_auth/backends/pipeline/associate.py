@@ -1,5 +1,3 @@
-from django.core.exceptions import MultipleObjectsReturned
-
 from social_auth.utils import setting
 from social_auth.models import User
 from social_auth.backends.pipeline import warn_setting
@@ -18,7 +16,7 @@ def associate_by_email(details, *args, **kwargs):
         # objects are returned
         try:
             return {'user': User.objects.get(email=email)}
-        except MultipleObjectsReturned:
+        except User.MultipleObjectsReturned:
             raise AuthException(kwargs['backend'], 'Not unique email address.')
         except User.DoesNotExist:
             pass

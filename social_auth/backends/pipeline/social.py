@@ -14,7 +14,7 @@ def social_auth_user(backend, uid, user=None, *args, **kwargs):
     Raise AuthException if UserSocialAuth entry belongs to another user.
     """
     try:
-        social_user = UserSocialAuth.objects.select_related('user')\
+        social_user = UserSocialAuth.select_related()\
                                             .get(provider=backend.name,
                                                  uid=uid)
     except UserSocialAuth.DoesNotExist:
@@ -37,6 +37,8 @@ def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
         return None
 
     try:
+        if type(uid) is not str:
+            uid = str(uid)
         social = UserSocialAuth.objects.create(user=user, uid=uid,
                                                provider=backend.name)
     except IntegrityError:

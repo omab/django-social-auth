@@ -1,13 +1,21 @@
-"""Django ORM models for Social Auth"""
+"""MongoEngine models for Social Auth
+
+Requires MongoEngine 0.6.10
+
+"""
+# TODO extract common code into base objects/mixins
+
+
 from datetime import timedelta
-
-from django.db import models
-
-from social_auth.fields import JSONField
+from mongoengine import DictField
+from mongoengine import Document
+from mongoengine import IntField
+from mongoengine import ReferenceField
+from mongoengine import StringField
 from social_auth.utils import setting
 
 
-NAME = 'django_models'
+NAME = 'mongoengine_models'
 
 
 # If User class is overridden, it *must* provide the following fields
@@ -22,7 +30,7 @@ NAME = 'django_models'
 if setting('SOCIAL_AUTH_USER_MODEL'):
     User = models.get_model(*setting('SOCIAL_AUTH_USER_MODEL').rsplit('.', 1))
 else:
-    from django.contrib.auth.models import User
+    from mongoengine.django.auth import User
 
 
 # TODO make this a complementary config setting to SOCIAL_AUTH_USER_MODEL
@@ -32,38 +40,37 @@ USERNAME = 'username'
 def get_username_max_length():
     """Get the max length constraint from the User model username field.
     """
-    return User._meta.get_field(USERNAME).max_length
+    return getattr(User, USERNAME).max_length
 
 
 def simple_user_exists(*args, **kwargs):
     """Return True/False if a User instance exists with the given arguments.
     Arguments are directly passed to filter() manager method."""
-    return User.objects.filter(*args, **kwargs).exists()
+    return User.objects.filter(*args, **kwargs).count()
 
 
 def create_user(*args, **kwargs):
-    return User.objects.create_user(*args, **kwargs)
+    return User.objects.create(*args, **kwargs)
 
 
 def get_social_auth_for_user(user):
-    return user.social_auth.all()
+    return UserSocialAuth.objects(user=user)
 
 
-class UserSocialAuth(models.Model):
+class UserSocialAuth(Document):
     """Social Auth association model"""
-    user = models.ForeignKey(User, related_name='social_auth')
-    provider = models.CharField(max_length=32)
-    uid = models.CharField(max_length=255)
-    extra_data = JSONField(default='{}')
-
-    class Meta:
-        """Meta data"""
-        unique_together = ('provider', 'uid')
-        app_label = 'social_auth'
+    user = ReferenceField(User)
+    provider = StringField(max_length=32)
+    uid = StringField(max_length=255, unique_with='provider')
+    extra_data = DictField()
 
     def __unicode__(self):
         """Return associated user unicode representation"""
-        return u'%s - %s' % (unicode(self.user), self.provider.title())
+        return u'%s - %s' % (unicode(self.user), self.provider)
+
+    @classmethod
+    def select_related(cls):
+        return cls.objects #.select_related() No 'user', only provie a depth parameter
 
     @property
     def tokens(self):
@@ -89,36 +96,26 @@ class UserSocialAuth(models.Model):
                 pass
         return None
 
-    @classmethod
-    def select_related(cls):
-        return cls.objects.select_related('user')
 
-
-class Nonce(models.Model):
+class Nonce(Document):
     """One use numbers"""
-    server_url = models.CharField(max_length=255)
-    timestamp = models.IntegerField()
-    salt = models.CharField(max_length=40)
-
-    class Meta:
-        app_label = 'social_auth'
+    server_url = StringField(max_length=255)
+    timestamp = IntField()
+    salt = StringField(max_length=40)
 
     def __unicode__(self):
         """Unicode representation"""
         return self.server_url
 
 
-class Association(models.Model):
+class Association(Document):
     """OpenId account association"""
-    server_url = models.CharField(max_length=255)
-    handle = models.CharField(max_length=255)
-    secret = models.CharField(max_length=255)  # Stored base64 encoded
-    issued = models.IntegerField()
-    lifetime = models.IntegerField()
-    assoc_type = models.CharField(max_length=64)
-
-    class Meta:
-        app_label = 'social_auth'
+    server_url = StringField(max_length=255)
+    handle = StringField(max_length=255)
+    secret = StringField(max_length=255)  # Stored base64 encoded
+    issued = IntField()
+    lifetime = IntField()
+    assoc_type = StringField(max_length=64)
 
     def __unicode__(self):
         """Unicode representation"""

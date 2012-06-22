@@ -2,13 +2,10 @@
 # TODO define protocol for implementing modules...
 
 
-from django.conf import settings
-from django.utils import importlib
+from social_auth import conf
 
 
-models_module_name = getattr(settings, 'SOCIAL_AUTH_MODELS',
-        'social_auth.django_models')
-models_module = importlib.import_module(models_module_name)
+models_module = conf.get_models_module()
 
 this_module = globals()
 for key in dir(models_module):

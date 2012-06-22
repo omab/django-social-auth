@@ -10,11 +10,11 @@ import warnings
 from django.conf import settings
 
 from social_auth.models import User
+from social_auth.models import USERNAME, get_username_max_length
 from social_auth.backends import get_backend, PIPELINE
 
 
-USERNAME = 'username'
-USERNAME_MAX_LENGTH = User._meta.get_field(USERNAME).max_length
+USERNAME_MAX_LENGTH = get_username_max_length()
 
 
 def warn_setting(name, func_name):
