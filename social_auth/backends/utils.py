@@ -1,6 +1,6 @@
 from urllib2 import urlopen
 from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
-                   SignatureMethod_HMAC_SHA1
+                   SignatureMethod_HMAC_SHA1, HTTP_METHOD
 
 from django.utils import simplejson
 
@@ -26,7 +26,7 @@ def consumer_oauth_url_request(backend, url, user_or_id, redirect_uri='/',
 
 
 def build_consumer_oauth_request(backend, token, url, redirect_uri='/',
-                                 oauth_verifier=None, extra_params=None):
+                                 oauth_verifier=None, method=HTTP_METHOD, extra_params=None):
     """Builds a Consumer OAuth request."""
     params = {'oauth_callback': redirect_uri}
     if extra_params:
@@ -38,6 +38,7 @@ def build_consumer_oauth_request(backend, token, url, redirect_uri='/',
     consumer = OAuthConsumer(*backend.get_key_and_secret())
     request = OAuthRequest.from_consumer_and_token(consumer,
                                                    token=token,
+                                                   http_method=method,
                                                    http_url=url,
                                                    parameters=params)
     request.sign_request(SignatureMethod_HMAC_SHA1(), consumer, token)
