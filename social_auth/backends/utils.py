@@ -26,7 +26,7 @@ def consumer_oauth_url_request(backend, url, user_or_id, redirect_uri='/',
 
 
 def build_consumer_oauth_request(backend, token, url, redirect_uri='/',
-                                 oauth_verifier=None, method=HTTP_METHOD, extra_params=None):
+                                 oauth_verifier=None, extra_params=None, method=HTTP_METHOD):
     """Builds a Consumer OAuth request."""
     params = {'oauth_callback': redirect_uri}
     if extra_params:
