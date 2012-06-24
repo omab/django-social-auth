@@ -53,6 +53,13 @@ def create_user(*args, **kwargs):
     return User.objects.create(*args, **kwargs)
 
 
+def get_user(user_id):
+    try:
+        return User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return None
+
+
 def get_social_auth_for_user(user):
     return UserSocialAuth.objects(user=user)
 

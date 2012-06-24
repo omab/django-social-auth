@@ -19,13 +19,13 @@ from openid.extensions import sreg, ax
 
 from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest
 
-from django.db import models
 from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
 from social_auth.models import get_social_auth_for_user
+from social_auth.models import get_user
 from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
                               clean_partial_pipeline
 from social_auth.store import DjangoOpenIDStore
@@ -34,11 +34,6 @@ from social_auth.backends.exceptions import StopPipeline, AuthException, \
                                             AuthUnknownError, AuthTokenError, \
                                             AuthMissingParameter
 from social_auth.backends.utils import build_consumer_oauth_request
-
-
-def get_user_model():
-    from social_auth.models import User
-    return User
 
 
 # OpenID configuration
@@ -195,11 +190,7 @@ class SocialAuthBackend(ModelBackend):
         """
         Return user with given ID from the User model used by this backend
         """
-        user_cls = get_user_model()
-        try:
-            return user_cls.objects.get(id=user_id)
-        except user_cls.DoesNotExist:
-            return None
+        return get_user(user_id)
 
 
 class OAuthBackend(SocialAuthBackend):
