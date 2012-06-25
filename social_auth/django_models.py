@@ -1,7 +1,11 @@
 """Django ORM models for Social Auth"""
+
+
+import base64
 from datetime import timedelta
 
 from django.db import models
+from openid.association import Association as OIDAssociation
 
 from social_auth.fields import JSONField
 from social_auth.utils import setting
@@ -71,6 +75,45 @@ def get_social_auth_for_user(user):
 
 def create_social_auth(user, uid, provider):
     return UserSocialAuth.objects.create(user=user, uid=uid, provider=provider)
+
+
+def store_association(server_url, association):
+    args = {'server_url': server_url, 'handle': association.handle}
+    try:
+        assoc = Association.objects.get(**args)
+    except Association.DoesNotExist:
+        assoc = Association(**args)
+    assoc.secret = base64.encodestring(association.secret)
+    assoc.issued = association.issued
+    assoc.lifetime = association.lifetime
+    assoc.assoc_type = association.assoc_type
+    assoc.save()
+
+
+def get_oid_associations(server_url, handle=None):
+    args = {'server_url': server_url}
+    if handle is not None:
+        args['handle'] = handle
+
+    return sorted([
+            (assoc.id,
+             OIDAssociation(assoc.handle,
+                            base64.decodestring(assoc.secret),
+                            assoc.issued,
+                            assoc.lifetime,
+                            assoc.assoc_type))
+            for assoc in Association.objects.filter(**args)
+    ], key=lambda x: x[1].issued, reverse=True)
+
+
+def delete_associations(ids_to_delete):
+    Association.objects.filter(pk__in=ids_to_delete).delete()
+
+
+def use_nonce(server_url, timestamp, salt):
+    return Nonce.objects.get_or_create(server_url=server_url,
+                                       timestamp=timestamp,
+                                       salt=salt)[1]
 
 
 class UserSocialAuth(models.Model):
