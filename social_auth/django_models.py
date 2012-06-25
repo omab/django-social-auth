@@ -47,6 +47,10 @@ def get_user(user_id):
         return None
 
 
+def get_user_by_email(email):
+    return User.objects.get(email=email)
+
+
 def get_social_auth_for_user(user):
     return user.social_auth.all()
 
