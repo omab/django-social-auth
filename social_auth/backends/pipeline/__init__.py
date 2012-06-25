@@ -5,16 +5,11 @@ to next pipeline item. Pipelines must take **kwargs parameters to avoid
 failure. At some point a pipeline entry must create a UserSocialAuth instance
 and load it to the output if the user logged in correctly.
 """
+
+
 import warnings
 
 from django.conf import settings
-
-from social_auth.models import User
-from social_auth.models import USERNAME, get_username_max_length
-from social_auth.backends import get_backend, PIPELINE
-
-
-USERNAME_MAX_LENGTH = get_username_max_length()
 
 
 def warn_setting(name, func_name):

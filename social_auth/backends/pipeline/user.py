@@ -3,8 +3,8 @@ from uuid import uuid4
 from social_auth.utils import setting
 from social_auth.models import create_user as create_user_in_db
 from social_auth.models import simple_user_exists
-from social_auth.backends.pipeline import USERNAME, USERNAME_MAX_LENGTH, \
-                                          warn_setting
+from social_auth.models import USERNAME, USERNAME_MAX_LENGTH
+from social_auth.backends.pipeline import warn_setting
 from social_auth.signals import socialauth_not_registered, \
                                 socialauth_registered, \
                                 pre_update

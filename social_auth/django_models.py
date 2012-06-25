@@ -27,12 +27,7 @@ else:
 
 # TODO make this a complementary config setting to SOCIAL_AUTH_USER_MODEL
 USERNAME = 'username'
-
-
-def get_username_max_length():
-    """Get the max length constraint from the User model username field.
-    """
-    return User._meta.get_field(USERNAME).max_length
+USERNAME_MAX_LENGTH = User._meta.get_field(USERNAME).max_length
 
 
 def simple_user_exists(*args, **kwargs):
