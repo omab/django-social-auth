@@ -65,8 +65,21 @@ def resolve_user_or_id(user_or_id):
     return User.objects.get(pk=user_or_id)
 
 
+def get_social_auth(provider, uid):
+    try:
+        return UserSocialAuth.objects.get(provider=provider, uid=uid)
+    except UserSocialAuth.DoesNotExist:
+        return None
+
+
 def get_social_auth_for_user(user):
     return UserSocialAuth.objects(user=user)
+
+
+def create_social_auth(user, uid, provider):
+    if type(uid) is not str:
+        uid = str(uid)
+    return UserSocialAuth.objects.create(user=user, uid=uid, provider=provider)
 
 
 class UserSocialAuth(Document):
@@ -79,10 +92,6 @@ class UserSocialAuth(Document):
     def __unicode__(self):
         """Return associated user unicode representation"""
         return u'%s - %s' % (unicode(self.user), self.provider)
-
-    @classmethod
-    def select_related(cls):
-        return cls.objects #.select_related() No 'user', only provie a depth parameter
 
     @property
     def tokens(self):

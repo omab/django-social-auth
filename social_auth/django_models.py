@@ -57,8 +57,20 @@ def resolve_user_or_id(user_or_id):
     return User.objects.get(pk=user_or_id)
 
 
+def get_social_auth(provider, uid):
+    try:
+        return UserSocialAuth.objects.select_related('user').get(
+                provider=provider, uid=uid)
+    except UserSocialAuth.DoesNotExist:
+        return None
+
+
 def get_social_auth_for_user(user):
     return user.social_auth.all()
+
+
+def create_social_auth(user, uid, provider):
+    return UserSocialAuth.objects.create(user=user, uid=uid, provider=provider)
 
 
 class UserSocialAuth(models.Model):
@@ -100,10 +112,6 @@ class UserSocialAuth(models.Model):
             except (ValueError, TypeError):
                 pass
         return None
-
-    @classmethod
-    def select_related(cls):
-        return cls.objects.select_related('user')
 
 
 class Nonce(models.Model):
