@@ -51,6 +51,12 @@ def get_user_by_email(email):
     return User.objects.get(email=email)
 
 
+def resolve_user_or_id(user_or_id):
+    if isinstance(user_or_id, User):
+       return user_or_id
+    return User.objects.get(pk=user_or_id)
+
+
 def get_social_auth_for_user(user):
     return user.social_auth.all()
 
