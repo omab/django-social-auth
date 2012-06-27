@@ -14,4 +14,4 @@ Github works similar to Facebook (OAuth).
 
      GITHUB_EXTENDED_PERMISSIONS = [...]
 
-.. _GitHub Developers: https://github.com/account/applications/new
+.. _GitHub Developers: https://github.com/settings/applications/new
