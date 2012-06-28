@@ -118,7 +118,11 @@ def complete_process(request, backend, *args, **kwargs):
                 # setting. Use last social-auth instance for current provider,
                 # users can associate several accounts with a same provider.
                 if social_user.expiration_delta():
-                    request.session.set_expiry(social_user.expiration_delta())
+                    try:
+                        request.session.set_expiry(social_user.expiration_delta())
+                    except OverflowError:
+                        # Handle django time zone overflow, set default expiry.
+                        request.session.set_expiry(None)
 
             # store last login backend name in session
             key = setting('SOCIAL_AUTH_LAST_LOGIN',
