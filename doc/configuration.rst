@@ -255,7 +255,7 @@ Configuration
 
     SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.log_exceptions_to_messages'
 
-  The function parameters will ``request`` holding the current request object,
+  The function parameters are ``request`` holding the current request object,
   ``backend`` with the current backend and ``err`` which is the exception
   instance.
 
