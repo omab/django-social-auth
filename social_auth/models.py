@@ -1,8 +1,7 @@
 """Social auth models"""
-from datetime import timedelta
-
+from datetime import datetime
 from django.db import models
-
+from django.utils.timezone import utc
 from social_auth.fields import JSONField
 from social_auth.utils import setting
 
@@ -48,15 +47,15 @@ class UserSocialAuth(models.Model):
         else:
             return {}
 
-    def expiration_delta(self):
+    def expiration_datetime(self):
         """Return saved session expiration seconds if any. Is returned in
-        the form of a timedelta data type. None is returned if there's no
+        the form of timezone-aware datetime. None is returned if there's no
         value stored or it's malformed.
         """
         if self.extra_data:
             name = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
             try:
-                return timedelta(seconds=int(self.extra_data.get(name)))
+                return datetime.utcfromtimestamp(self.extra_data.get(name)).replace(tzinfo=utc)
             except (ValueError, TypeError):
                 pass
         return None
