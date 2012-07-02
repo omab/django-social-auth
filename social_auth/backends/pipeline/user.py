@@ -1,18 +1,13 @@
 from uuid import uuid4
 
 from social_auth.utils import setting
-from social_auth.models import User
-from social_auth.backends.pipeline import USERNAME, USERNAME_MAX_LENGTH, \
-                                          warn_setting
+from social_auth.models import create_user as create_user_in_db
+from social_auth.models import simple_user_exists
+from social_auth.models import USERNAME, USERNAME_MAX_LENGTH
+from social_auth.backends.pipeline import warn_setting
 from social_auth.signals import socialauth_not_registered, \
                                 socialauth_registered, \
                                 pre_update
-
-
-def simple_user_exists(*args, **kwargs):
-    """Return True/False if a User instance exists with the given arguments.
-    Arguments are directly passed to filter() manager method."""
-    return User.objects.filter(*args, **kwargs).exists()
 
 
 def get_username(details, user=None, user_exists=simple_user_exists,
@@ -73,9 +68,9 @@ def create_user(backend, details, response, uid, username, user=None, *args,
                                        details=details)
         return None
 
-    email = details.get('email')
+    email = details.get('email') or None
     return {
-        'user': User.objects.create_user(username=username, email=email),
+        'user': create_user_in_db(username=username, email=email),
         'is_new': True
     }
 
