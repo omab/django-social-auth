@@ -24,8 +24,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
-from social_auth.models import get_social_auth_for_user
-from social_auth.models import get_user
+from social_auth.models import UserSocialAuth
 from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
                               clean_partial_pipeline
 from social_auth.store import DjangoOpenIDStore
@@ -186,11 +185,10 @@ class SocialAuthBackend(ModelBackend):
             return {}
 
     def get_user(self, user_id):
-        
         """
         Return user with given ID from the User model used by this backend
         """
-        return get_user(user_id)
+        return UserSocialAuth.get_user(user_id)
 
 
 class OAuthBackend(SocialAuthBackend):
@@ -405,9 +403,11 @@ class BaseAuth(object):
         Override if extra operations are needed.
         """
         if association_id:
-            get_social_auth_for_user(user).get(id=association_id).delete()
+            UserSocialAuth.get_social_auth_for_user(user)\
+                            .get(id=association_id).delete()
         else:
-            get_social_auth_for_user(user).filter(provider=self.AUTH_BACKEND.name).delete()
+            UserSocialAuth.get_social_auth_for_user(user)\
+                            .filter(provider=self.AUTH_BACKEND.name).delete()
 
     def build_absolute_uri(self, path=None):
         """Build absolute URI for given path. Replace http:// schema with

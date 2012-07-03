@@ -1,16 +1,15 @@
 from uuid import uuid4
 
 from social_auth.utils import setting
-from social_auth.models import create_user as create_user_in_db
-from social_auth.models import simple_user_exists
-from social_auth.models import USERNAME, USERNAME_MAX_LENGTH
+from social_auth.models import UserSocialAuth, USERNAME
 from social_auth.backends.pipeline import warn_setting
 from social_auth.signals import socialauth_not_registered, \
                                 socialauth_registered, \
                                 pre_update
 
 
-def get_username(details, user=None, user_exists=simple_user_exists,
+def get_username(details, user=None,
+                 user_exists=UserSocialAuth.simple_user_exists,
                  *args, **kwargs):
     """Return an username for new user. Return current user username
     if user was given.
@@ -37,15 +36,16 @@ def get_username(details, user=None, user_exists=simple_user_exists,
     uuid_length = setting('SOCIAL_AUTH_UUID_LENGTH', 16)
     username_fixer = setting('SOCIAL_AUTH_USERNAME_FIXER', lambda u: u)
 
-    short_username = username[:USERNAME_MAX_LENGTH - uuid_length]
-    final_username = username_fixer(username)[:USERNAME_MAX_LENGTH]
+    max_length = UserSocialAuth.username_max_length()
+    short_username = username[:max_length - uuid_length]
+    final_username = username_fixer(username)[:max_length]
 
     # Generate a unique username for current user using username
     # as base but adding a unique hash at the end. Original
     # username is cut to avoid any field max_length.
     while user_exists(username=final_username):
         username = short_username + uuid4().get_hex()[:uuid_length]
-        final_username = username_fixer(username)[:USERNAME_MAX_LENGTH]
+        final_username = username_fixer(username)[:max_length]
 
     return {'username': final_username}
 
@@ -70,7 +70,7 @@ def create_user(backend, details, response, uid, username, user=None, *args,
 
     email = details.get('email') or None
     return {
-        'user': create_user_in_db(username=username, email=email),
+        'user': UserSocialAuth.create_user(username=username, email=email),
         'is_new': True
     }
 

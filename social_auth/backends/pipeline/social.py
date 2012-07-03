@@ -1,8 +1,7 @@
 from django.db.utils import IntegrityError
 
 from social_auth.utils import setting
-from social_auth.models import create_social_auth
-from social_auth.models import get_social_auth
+from social_auth.models import UserSocialAuth
 from social_auth.backends.pipeline import warn_setting
 from social_auth.backends.exceptions import AuthException
 from django.utils.translation import ugettext
@@ -14,12 +13,11 @@ def social_auth_user(backend, uid, user=None, *args, **kwargs):
 
     Raise AuthException if UserSocialAuth entry belongs to another user.
     """
-    social_user = get_social_auth(backend.name, uid)
+    social_user = UserSocialAuth.get_social_auth(backend.name, uid)
     if social_user:
         if user and social_user.user != user:
-            raise AuthException(backend, ugettext('This %(provider)s account already in use.') % {
-                'provider':backend.name,
-            })
+            msg = ugettext('This %(provider)s account already in use.')
+            raise AuthException(backend, msg % {'provider': backend.name})
         elif not user:
             user = social_user.user
     return {'social_user': social_user, 'user': user}
@@ -31,7 +29,7 @@ def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
         return None
 
     try:
-        social = create_social_auth(user, uid, backend.name)
+        social = UserSocialAuth.create_social_auth(user, uid, backend.name)
     except IntegrityError:
         # Protect for possible race condition, those bastard with FTL
         # clicking capabilities, check issue #131:
