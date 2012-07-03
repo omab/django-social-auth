@@ -1,10 +1,33 @@
 import urlparse
 import logging
 from collections import defaultdict
+from datetime import timedelta, tzinfo
 
 from django.conf import settings
 from django.db.models import Model
 from django.contrib.contenttypes.models import ContentType
+
+try:
+    from django.utils.timezone import utc as django_utc
+except ImportError:  # django < 1.4
+    class UTC(tzinfo):
+        """UTC implementation taken from django 1.4."""
+        def __repr__(self):
+            return '<UTC>'
+
+        def utcoffset(self, dt):
+            return timedelta(0)
+
+        def tzname(self, dt):
+            return 'UTC'
+
+        def dst(self, dt):
+            return timedelta(0)
+
+    django_utc = None
+
+
+utc = django_utc
 
 
 def sanitize_log_data(secret, data=None, leave_characters=4):

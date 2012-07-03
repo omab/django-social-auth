@@ -1,9 +1,10 @@
 """Social auth models"""
-from datetime import datetime
+import time
+from datetime import datetime, date, timedelta
 from django.db import models
-from django.utils.timezone import utc
+
 from social_auth.fields import JSONField
-from social_auth.utils import setting
+from social_auth.utils import setting, utc
 
 
 # If User class is overridden, it *must* provide the following fields
@@ -48,17 +49,30 @@ class UserSocialAuth(models.Model):
             return {}
 
     def expiration_datetime(self):
-        """Return saved session expiration seconds if any. Is returned in
-        the form of timezone-aware datetime. None is returned if there's no
-        value stored or it's malformed.
+        """Return provider session live seconds. Returns a timedelta ready to
+        use with session.set_expiry().
+
+        If provider returns a timestamp instead of session seconds to live, the
+        timedelta is inferred from current time (using UTC timezone). None is
+        returned if there's no value stored or it's invalid.
         """
-        if self.extra_data:
-            name = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
+        name = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
+        if self.extra_data and name in self.extra_data:
             try:
-                return datetime.utcfromtimestamp(self.extra_data.get(name)).replace(tzinfo=utc)
+                expires = int(self.extra_data.get(name))
             except (ValueError, TypeError):
-                pass
-        return None
+                return None
+
+            now = datetime.now()
+            now_timestamp = time.mktime(now.timetuple())
+
+            # Detect if expires is a timestamp
+            if expires > now_timestamp:  # expires is a datetime
+                return datetime.utcfromtimestamp(expires) \
+                               .replace(tzinfo=utc) - \
+                       now.replace(tzinfo=utc)
+            else:  # expires is a timedelta
+                return timedelta(seconds=expires)
 
 
 class Nonce(models.Model):

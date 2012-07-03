@@ -117,9 +117,10 @@ def complete_process(request, backend, *args, **kwargs):
                 # Set session expiration date if present and not disabled by
                 # setting. Use last social-auth instance for current provider,
                 # users can associate several accounts with a same provider.
-                if social_user.expiration_datetime():
+                expiration = social_user.expiration_datetime()
+                if expiration:
                     try:
-                        request.session.set_expiry(social_user.expiration_datetime())
+                        request.session.set_expiry(expiration)
                     except OverflowError:
                         # Handle django time zone overflow, set default expiry.
                         request.session.set_expiry(None)
