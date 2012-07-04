@@ -24,6 +24,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
+from django.utils.crypto import constant_time_compare, get_random_string
+from django.middleware.csrf import CSRF_KEY_LENGTH
 
 from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
                               clean_partial_pipeline
@@ -31,7 +33,8 @@ from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline, AuthException, \
                                             AuthFailed, AuthCanceled, \
                                             AuthUnknownError, AuthTokenError, \
-                                            AuthMissingParameter
+                                            AuthMissingParameter, \
+                                            AuthForbidden
 from social_auth.backends.utils import build_consumer_oauth_request
 
 
@@ -663,11 +666,21 @@ class BaseOAuth2(BaseOAuth):
     RESPONSE_TYPE = 'code'
     SCOPE_VAR_NAME = None
     DEFAULT_SCOPE = None
+    FORCE_STATE_CHECK = True
+
+    def csrf_token(self):
+        """Generate csrf token to include as state parameter."""
+        return get_random_string(CSRF_KEY_LENGTH)
 
     def auth_url(self):
         """Return redirect url"""
         client_id, client_secret = self.get_key_and_secret()
         args = {'client_id': client_id, 'redirect_uri': self.redirect_uri}
+
+        if self.FORCE_STATE_CHECK:
+            state = self.csrf_token()
+            args['state'] = state
+            self.request.session[self.AUTH_BACKEND.name + '_state'] = state
 
         scope = self.get_scope()
         if scope:
@@ -683,6 +696,13 @@ class BaseOAuth2(BaseOAuth):
         if self.data.get('error'):
             error = self.data.get('error_description') or self.data['error']
             raise AuthFailed(self, error)
+
+        if self.FORCE_STATE_CHECK:
+            if 'state' not in self.data:
+                raise AuthMissingParameter(self, 'state')
+            state = self.request.session[self.AUTH_BACKEND.name + '_state']
+            if not constant_time_compare(self.data['state'], state):
+                raise AuthForbidden(self)
 
         client_id, client_secret = self.get_key_and_secret()
         params = {'grant_type': 'authorization_code',  # request auth code

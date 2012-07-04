@@ -53,6 +53,8 @@ class GithubAuth(BaseOAuth2):
     SCOPE_SEPARATOR = ','
     # Look at http://developer.github.com/v3/oauth/
     SCOPE_VAR_NAME = 'GITHUB_EXTENDED_PERMISSIONS'
+    # Github doesn't return the state paramenter if specified :(
+    FORCE_STATE_CHECK = False
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""

@@ -24,7 +24,6 @@ class AuthException(SocialAuthBaseException):
 class AuthFailed(AuthException):
     """Auth process failed for some reason."""
     def __unicode__(self):
-
         if self.message == 'access_denied':
             return ugettext(u'Authentication process was cancelled')
         else:
@@ -60,3 +59,9 @@ class AuthMissingParameter(AuthException):
 
     def __unicode__(self):
         return u'Missing needed parameter %s' % self.parameter
+
+
+class AuthForbidden(AuthException):
+    """State parameter is incorrect."""
+    def __unicode__(self):
+        return u'Wrong state parameter given.'
