@@ -1061,7 +1061,7 @@ Yandex uses OAuth 2.0 workflow, fill and ``YANDEX_APP_ID`` and
 
 Currently there are 2 backends for Yandex, one is Yaru to log in using Ya.ru
 service and another one is YandexOAuth that could use service API from
-settings. Use YANDEX_OAUTH2_API_URL to set up which service to use.
+settings. Use ``YANDEX_OAUTH2_API_URL`` to set up which service to use.
 
 Tested with 'https://api-yaru.yandex.ru/me/' for Ya.ru and
 'http://api.moikrug.ru/v1/my/' for Moi Krug.
@@ -1072,20 +1072,20 @@ Yandex will do it for you.
 Mail.ru OAuth
 ^^^^^^^^^^^^^
 
-Mail.ru uses OAuth2 workflow, to use it fill in settings
+Mail.ru uses OAuth2 workflow, to use it fill in settings::
 
-MAILRU_OAUTH2_CLIENT_KEY   		  = ''
-MAILRU_OAUTH2_APP_KEY      		  = ''
-MAILRU_OAUTH2_CLIENT_SECRET       = ''
+    MAILRU_OAUTH2_CLIENT_KEY = ''
+    MAILRU_OAUTH2_APP_KEY = ''
+    MAILRU_OAUTH2_CLIENT_SECRET = ''
 
 Odnoklassniki.ru
 ^^^^^^^^^^^^^^^^
 
-Odnoklassniki.ru uses OAuth2 workflow, to use it fill in settings
+Odnoklassniki.ru uses OAuth2 workflow, to use it fill in settings::
 
-ODNOKLASSNIKI_OAUTH2_CLIENT_KEY    = ''
-ODNOKLASSNIKI_OAUTH2_APP_KEY       = ''
-ODNOKLASSNIKI_OAUTH2_CLIENT_SECRET = ''
+    ODNOKLASSNIKI_OAUTH2_CLIENT_KEY = ''
+    ODNOKLASSNIKI_OAUTH2_APP_KEY = ''
+    ODNOKLASSNIKI_OAUTH2_CLIENT_SECRET = ''
 
 Testing
 -------

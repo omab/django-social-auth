@@ -1,5 +1,5 @@
 Douban
-=======
+======
 
 Douban OAuth works similar to Twitter.
 Douban offers per application keys named ``Consumer Key`` and ``Consumer Secret``.

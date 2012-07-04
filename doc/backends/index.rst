@@ -24,3 +24,5 @@ Contents:
    yahoo
    evernote
    douban
+   mailru
+   odnoklassnikiru
