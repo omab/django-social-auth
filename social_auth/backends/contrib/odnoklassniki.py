@@ -54,6 +54,7 @@ class OdnoklassnikiOAuth2(BaseOAuth2):
     ACCESS_TOKEN_URL = 'http://api.odnoklassniki.ru/oauth/token.do'
     SETTINGS_KEY_NAME = 'ODNOKLASSNIKI_OAUTH2_CLIENT_KEY'
     SETTINGS_SECRET_NAME = 'ODNOKLASSNIKI_OAUTH2_CLIENT_SECRET'
+    FORCE_STATE_CHECK = False
 
     def get_scope(self):
         return setting('ODNOKLASSNIKI_OAUTH2_EXTRA_SCOPE', [])

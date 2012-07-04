@@ -34,7 +34,8 @@ from social_auth.backends.exceptions import StopPipeline, AuthException, \
                                             AuthFailed, AuthCanceled, \
                                             AuthUnknownError, AuthTokenError, \
                                             AuthMissingParameter, \
-                                            AuthForbidden
+                                            AuthStateMissing, \
+                                            AuthStateForbidden
 from social_auth.backends.utils import build_consumer_oauth_request
 
 
@@ -699,11 +700,14 @@ class BaseOAuth2(BaseOAuth):
             raise AuthFailed(self, error)
 
         if self.FORCE_STATE_CHECK:
-            if 'state' not in self.data:
+            request_state = self.data.get('state')
+            state = self.request.session.get(self.AUTH_BACKEND.name + '_state')
+            if not request_state:
                 raise AuthMissingParameter(self, 'state')
-            state = self.request.session[self.AUTH_BACKEND.name + '_state']
-            if not constant_time_compare(self.data['state'], state):
-                raise AuthForbidden(self)
+            elif not state:
+                raise AuthStateMissing(self, 'state')
+            elif not constant_time_compare(request_state, state):
+                raise AuthStateForbidden(self)
 
         client_id, client_secret = self.get_key_and_secret()
         params = {'grant_type': 'authorization_code',  # request auth code

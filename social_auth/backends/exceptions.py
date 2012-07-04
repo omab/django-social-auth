@@ -61,7 +61,13 @@ class AuthMissingParameter(AuthException):
         return u'Missing needed parameter %s' % self.parameter
 
 
-class AuthForbidden(AuthException):
+class AuthStateMissing(AuthException):
+    """State parameter is incorrect."""
+    def __unicode__(self):
+        return u'Session value state missing.'
+
+
+class AuthStateForbidden(AuthException):
     """State parameter is incorrect."""
     def __unicode__(self):
         return u'Wrong state parameter given.'
