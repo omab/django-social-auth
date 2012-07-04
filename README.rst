@@ -107,7 +107,8 @@ Configuration
         'social_auth'
     )
 
-- Add desired authentication backends to Django's AUTHENTICATION_BACKENDS_ setting::
+- Add desired authentication backends to Django's AUTHENTICATION_BACKENDS_
+  setting::
 
     AUTHENTICATION_BACKENDS = (
         'social_auth.backends.twitter.TwitterBackend',
@@ -134,11 +135,12 @@ Configuration
         'django.contrib.auth.backends.ModelBackend',
     )
 
-  Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
-  or Django won't pick them when trying to authenticate the user.
+  Take into account that backends **must** be defined in
+  AUTHENTICATION_BACKENDS_ or Django won't pick them when trying to
+  authenticate the user.
 
-  Don't miss ``django.contrib.auth.backends.ModelBackend`` if using ``django.auth``
-  user model or users won't be able to login.
+  Don't miss ``django.contrib.auth.backends.ModelBackend`` if using
+  ``django.auth`` user model or users won't be able to login.
 
 - Setup needed OAuth keys (see OAuth_ section for details)::
 
@@ -236,15 +238,16 @@ Configuration
     provider, otherwise ``None``.
 
   * ``social_auth_backends``:
-    Adds a ``social_auth`` dict with keys are ``associated``, ``not_associated`` and
-    ``backends``. ``associated`` key is a list of ``UserSocialAuth`` instances
-    associated with current user. ``not_associated`` is a list of providers names
-    that the current user doesn't have any association yet. ``backends`` holds
-    the list of backend names supported.
+    Adds a ``social_auth`` dict with keys are ``associated``,
+    ``not_associated`` and ``backends``. ``associated`` key is a list of
+    ``UserSocialAuth`` instances associated with current user.
+    ``not_associated`` is a list of providers names that the current user
+    doesn't have any association yet. ``backends`` holds the list of backend
+    names supported.
 
   * ``social_auth_by_type_backends``:
-    Simiar to ``social_auth_backends`` but each value is grouped by backend type
-    ``openid``, ``oauth2`` and ``oauth``.
+    Simiar to ``social_auth_backends`` but each value is grouped by backend
+    type ``openid``, ``oauth2`` and ``oauth``.
 
   Check ``social_auth.context_processors`` for details.
 
@@ -292,8 +295,8 @@ Configuration
 
   and use such setting name where expiration times are returned. View that
   completes login process will set session expiration time using this name if
-  it's present or ``expires`` by default. Expiration configuration can be disabled
-  with setting::
+  it's present or ``expires`` by default. Expiration configuration can be
+  disabled with setting::
 
     SOCIAL_AUTH_SESSION_EXPIRATION = False
 
@@ -301,8 +304,8 @@ Configuration
 
     SOCIAL_AUTH_USER_MODEL = 'myapp.CustomUser'
 
-  This class **must** have a custom `Model Manager`_ with a ``create_user`` method
-  that resembles the one on `auth.UserManager`_.
+  This class **must** have a custom `Model Manager`_ with a ``create_user``
+  method that resembles the one on `auth.UserManager`_.
 
   Also, it's highly recommended that this class define the following fields::
 
@@ -315,9 +318,9 @@ Configuration
     is_authenticated():
         ...
 
-  These are needed to ensure a better ``django-auth`` integration, in other case
-  `login_required`_ won't be usable. A warning is displayed if any of these are
-  missing. By default `auth.User`_ is used.
+  These are needed to ensure a better ``django-auth`` integration, in other
+  case `login_required`_ won't be usable. A warning is displayed if any of
+  these are missing. By default `auth.User`_ is used.
 
   Check example application for implementation details, but first, please take
   a look to `User Profiles`_, it might be what you were looking for.
@@ -471,8 +474,8 @@ Each pipeline function will receive the following parameters:
 Each pipeline entry must return a ``dict`` or ``None``, any value in the
 ``dict`` will be used in the ``kwargs`` argument for the next pipeline entry.
 
-The workflow will be cut if the exception ``social_auth.backends.exceptions.StopPipeline``
-is raised at any point.
+The workflow will be cut if the exception
+``social_auth.backends.exceptions.StopPipeline`` is raised at any point.
 
 If any function returns something else beside a ``dict`` or ``None``, the
 workflow will be cut and the value returned immediately, this is useful to
@@ -572,7 +575,8 @@ Template code example::
       </li>
     </ul>
 
-In the example above we assume that Twitter and Facebook authentication backends enabled, and following settings provided::
+In the example above we assume that Twitter and Facebook authentication
+backends enabled, and following settings provided::
 
     TWITTER_CONSUMER_KEY = 'real key here'
     TWITTER_CONSUMER_SECRET = 'real secret here'
@@ -601,13 +605,13 @@ signal handler if this setting value is set to True::
 
     SOCIAL_AUTH_CHANGE_SIGNAL_ONLY = False
 
-Take into account that when defining a custom ``User`` model and declaring signal
-handler in ``models.py``, the imports and handler definition **must** be made
-after the custom ``User`` model is defined or circular imports issues will be
-raised.
+Take into account that when defining a custom ``User`` model and declaring
+signal handler in ``models.py``, the imports and handler definition **must** be
+made after the custom ``User`` model is defined or circular imports issues will
+be raised.
 
-Also a new-user signal (``socialauth_registered``) is sent when new accounts are
-created::
+Also a new-user signal (``socialauth_registered``) is sent when new accounts
+are created::
 
     from social_auth.signals import socialauth_registered
 
@@ -707,9 +711,9 @@ any data.
 Twitter
 ^^^^^^^
 
-Twitter offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
-To enable Twitter these two keys are needed. Further documentation at
-`Twitter development resources`_:
+Twitter offers per application keys named ``Consumer Key`` and ``Consumer
+Secret``.  To enable Twitter these two keys are needed. Further documentation
+at `Twitter development resources`_:
 
 - Register a new application at `Twitter App Creation`_,
 
@@ -738,8 +742,9 @@ at `Facebook development resources`_:
       FACEBOOK_APP_ID
       FACEBOOK_API_SECRET
 
-- Define ``FACEBOOK_EXTENDED_PERMISSIONS`` to get extra permissions from facebook.
-  NOTE: to get users' email addresses, you must request the 'email' permission::
+- Define ``FACEBOOK_EXTENDED_PERMISSIONS`` to get extra permissions from
+  facebook.  NOTE: to get users' email addresses, you must request the 'email'
+  permission::
 
      FACEBOOK_EXTENDED_PERMISSIONS = ['email']
 
@@ -765,8 +770,8 @@ look to `Facebook Canvas Application Authentication`_.
 Orkut
 ^^^^^
 
-Orkut offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
-To enable Orkut these two keys are needed.
+Orkut offers per application keys named ``Consumer Key`` and ``Consumer
+Secret``.  To enable Orkut these two keys are needed.
 
 Check `Google support`_ and `Orkut API`_ for details on getting
 your consumer_key and consumer_secret keys.
@@ -788,9 +793,9 @@ Google OAuth
 ^^^^^^^^^^^^
 
 Google provides ``Consumer Key`` and ``Consumer Secret`` keys to registered
-applications, but also allows unregistered application to use their authorization
-system with, but beware that this method will display a security banner to the
-user telling that the application is not trusted.
+applications, but also allows unregistered application to use their
+authorization system with, but beware that this method will display a security
+banner to the user telling that the application is not trusted.
 
 Check `Google OAuth`_ and make your choice.
 
@@ -813,23 +818,25 @@ anonymous values will be used if not configured as described in their
 
       GOOGLE_OAUTH_EXTRA_SCOPE = [...]
 
-Check which applications can be included in their `Google Data Protocol Directory`_
+Check which applications can be included in their `Google Data Protocol
+Directory`_
 
 Google OAuth2
 ^^^^^^^^^^^^^
 
-Recently Google launched OAuth2 support following the definition at `OAuth2 draft`.
-It works in a similar way to plain OAuth mechanism, but developers **must** register
-an application and apply for a set of keys. Check `Google OAuth2`_ document for details.
+Recently Google launched OAuth2 support following the definition at `OAuth2
+draft`.  It works in a similar way to plain OAuth mechanism, but developers
+**must** register an application and apply for a set of keys. Check `Google
+OAuth2`_ document for details.
 
 **Note**:
-  This support is experimental as Google implementation may change and OAuth2 is still
-  a draft.
+  This support is experimental as Google implementation may change and OAuth2
+  is still a draft.
 
 To enable OAuth2 support:
 
-- fill ``Client ID`` and ``Client Secret`` settings, these values can be obtained
-  easily as described on `OAuth2 Registering`_ doc::
+- fill ``Client ID`` and ``Client Secret`` settings, these values can be
+  obtained easily as described on `OAuth2 Registering`_ doc::
 
       GOOGLE_OAUTH2_CLIENT_ID = ''
       GOOGLE_OAUTH2_CLIENT_SECRET = ''
@@ -841,7 +848,8 @@ To enable OAuth2 support:
 
       GOOGLE_OAUTH_EXTRA_SCOPE = [...]
 
-Check which applications can be included in their `Google Data Protocol Directory`_
+Check which applications can be included in their `Google Data Protocol
+Directory`_
 
 LinkedIn
 ^^^^^^^^
@@ -851,8 +859,8 @@ using `LinkedIn fields selectors`_ just define the setting::
 
     LINKEDIN_EXTRA_FIELD_SELECTORS = [...]
 
-with the needed fields selectors, also define LINKEDIN_EXTRA_DATA properly, that
-way the values will be stored in ``UserSocialAuth.extra_data`` field.
+with the needed fields selectors, also define LINKEDIN_EXTRA_DATA properly,
+that way the values will be stored in ``UserSocialAuth.extra_data`` field.
 
 By default ``id``, ``first-name`` and ``last-name`` are requested and stored.
 
@@ -946,10 +954,11 @@ Instagram uses OAuth v2 for Authentication
 
 .. note::
 
-    Instagram only allows one callback url so you'll have to change your urls.py to
-    accomodate both ``/complete`` and ``/associate`` routes, for example by having
-    a single ``/associate`` url which takes a ``?complete=true`` parameter for the
-    cases when you want to complete rather than associate.
+    Instagram only allows one callback url so you'll have to change your
+    urls.py to accomodate both ``/complete`` and ``/associate`` routes, for
+    example by having a single ``/associate`` url which takes
+    a ``?complete=true`` parameter for the cases when you want to complete
+    rather than associate.
 
 Vkontakte
 ^^^^^^^^^
@@ -963,7 +972,8 @@ Vkontakte uses OAuth v2 for Authentication
       VK_APP_ID = ''
       VK_API_SECRET = ''
 
-- Define VK_EXTRA_DATA to pass extra fields when gathering the user profile data, like::
+- Define VK_EXTRA_DATA to pass extra fields when gathering the user profile
+  data, like::
 
       VK_EXTRA_DATA = ['photo','country']
 
@@ -973,18 +983,20 @@ Vkontakte uses OAuth v2 for Authentication
 
   See the `names of the privileges VKontakte`_.
 
-You can also use Vkontakte's own OpenAPI to log in, but you need to provide a HTML template
-with JavaScript code to authenticate. See vkontakte.html in templates folder for details.
+You can also use Vkontakte's own OpenAPI to log in, but you need to provide
+a HTML template with JavaScript code to authenticate. See vkontakte.html in
+templates folder for details.
 
-To support authentication for VKontakte applications see `authentication for VKontakte applications`_.
+To support authentication for VKontakte applications see `authentication for
+VKontakte applications`_.
 
 MSN Live Connect
 ^^^^^^^^^^^^^^^^
 
 OAuth2 based Live Connect workflow, notice that it isn't OAuth WRAP.
 
-- Register a new application at `Live Connect Developer Center`_, set your site domain as
-  redirect domain,
+- Register a new application at `Live Connect Developer Center`_, set your site
+  domain as redirect domain,
 
 - Fill ``Client Id`` and ``Client Secret`` values in the settings::
 
@@ -995,13 +1007,14 @@ OAuth2 based Live Connect workflow, notice that it isn't OAuth WRAP.
 
      LIVE_EXTENDED_PERMISSIONS = [...]
 
-  Defaults are "wl.basic" and "wl.emails". Latter one is necessary to retrieve user email.
+  Defaults are "wl.basic" and "wl.emails". Latter one is necessary to retrieve
+  user email.
 
 Skyrock
 ^^^^^^^
 
-Skyrock offers per application keys named ``Consumer Key`` and ``Consumer Secret``.
-To enable Skyrock these two keys are needed. Further documentation at
+Skyrock offers per application keys named ``Consumer Key`` and ``Consumer
+Secret``. To enable Skyrock these two keys are needed. Further documentation at
 `Skyrock API Documentation`_:
 
 - Register a new application at `Skyrock App Creation`_,
@@ -1016,7 +1029,8 @@ Yahoo OAuth
 
 OAuth 1.0 workflow, useful if you are planning to use Yahoo's API.
 
-- Register a new application at `Yahoo Developer Center`_, set your app domain and configure scopes (they can't be overriden by application).
+- Register a new application at `Yahoo Developer Center`_, set your app domain
+  and configure scopes (they can't be overriden by application).
 
 - Fill ``Consumer Key`` and ``Consumer Secret`` values in the settings::
 
@@ -1042,12 +1056,18 @@ Evernote OAuth 1.0 workflow.
 Yandex OAuth and OpenID
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Yandex uses OAuth 2.0 workflow, fill and YANDEX_APP_ID and YANDEX_API_SECRET settings to log in.
-Currently there are 2 backends for Yandex, one is Yaru to log in using Ya.ru service and another one is
-YandexOAuth that could use service API from settings. Use YANDEX_OAUTH2_API_URL to set up which service to use.
-Tested with 'https://api-yaru.yandex.ru/me/' for Ya.ru and 'http://api.moikrug.ru/v1/my/' for Moi Krug.
+Yandex uses OAuth 2.0 workflow, fill and ``YANDEX_APP_ID`` and
+``YANDEX_API_SECRET`` settings to log in.
 
-Yandex also uses OpenID 2.0. You do not need to provide user's name because Yandex will do it for you.
+Currently there are 2 backends for Yandex, one is Yaru to log in using Ya.ru
+service and another one is YandexOAuth that could use service API from
+settings. Use YANDEX_OAUTH2_API_URL to set up which service to use.
+
+Tested with 'https://api-yaru.yandex.ru/me/' for Ya.ru and
+'http://api.moikrug.ru/v1/my/' for Moi Krug.
+
+Yandex also uses OpenID 2.0. You do not need to provide user's name because
+Yandex will do it for you.
 
 Mail.ru OAuth
 ^^^^^^^^^^^^^
@@ -1160,9 +1180,9 @@ Miscellaneous
 
 Mailing list
 ^^^^^^^^^^^^
-Join to `django-social-auth discussion list`_ and bring any questions or suggestions
-that would improve this application. Convore_ discussion group is deprecated since
-the service is going to be shut down on April 1st.
+Join to `django-social-auth discussion list`_ and bring any questions or
+suggestions that would improve this application. Convore_ discussion group is
+deprecated since the service is going to be shut down on April 1st.
 
 South users
 ^^^^^^^^^^^
