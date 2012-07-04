@@ -1,12 +1,42 @@
+import time
+import random
+import hashlib
 import urlparse
 import urllib
 import logging
+
 from collections import defaultdict
 from datetime import timedelta, tzinfo
 
 from django.conf import settings
 from django.db.models import Model
 from django.contrib.contenttypes.models import ContentType
+
+
+try:
+    random = random.SystemRandom()
+    using_sysrandom = True
+except NotImplementedError:
+    using_sysrandom = False
+
+
+try:
+    from django.utils.crypto import get_random_string as random_string
+except ImportError:  # django < 1.4
+    # Implementation borrowed from django 1.4
+    def random_string(length=12,
+                      allowed_chars='abcdefghijklmnopqrstuvwxyz'
+                                    'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'):
+        if not using_sysrandom:
+            random.seed(hashlib.sha256('%s%s%s' % (random.getstate(),
+                                                   time.time(),
+                                                   settings.SECRET_KEY))
+                               .digest())
+        return ''.join([random.choice(allowed_chars) for i in range(length)])
+
+
+get_random_string = random_string
+
 
 try:
     from django.utils.timezone import utc as django_utc
