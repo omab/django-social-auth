@@ -329,7 +329,7 @@ class BaseAuth(object):
     """Base authentication class, new authenticators should subclass
     and implement needed methods.
 
-        @AUTH_BACKEND   Authorization backend related with this service
+        AUTH_BACKEND   Authorization backend related with this service
     """
     AUTH_BACKEND = None
 
@@ -561,10 +561,10 @@ class ConsumerBasedOAuth(BaseOAuth):
     """Consumer based mechanism OAuth authentication, fill the needed
     parameters to communicate properly with authentication service.
 
-        @AUTHORIZATION_URL       Authorization service url
-        @REQUEST_TOKEN_URL       Request token URL
-        @ACCESS_TOKEN_URL        Access token URL
-        @SERVER_URL              Authorization server URL
+        AUTHORIZATION_URL       Authorization service url
+        REQUEST_TOKEN_URL       Request token URL
+        ACCESS_TOKEN_URL        Access token URL
+        SERVER_URL              Authorization server URL
     """
     AUTHORIZATION_URL = ''
     REQUEST_TOKEN_URL = ''
@@ -656,8 +656,10 @@ class BaseOAuth2(BaseOAuth):
         http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 
     Attributes:
-        @AUTHORIZATION_URL       Authorization service url
-        @ACCESS_TOKEN_URL        Token URL
+        AUTHORIZATION_URL       Authorization service url
+        ACCESS_TOKEN_URL        Token URL
+        FORCE_STATE_CHECK       Ensure state argument check (check issue #386
+                                for further details)
     """
     AUTHORIZATION_URL = None
     ACCESS_TOKEN_URL = None
