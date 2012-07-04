@@ -1,4 +1,5 @@
 import urlparse
+import urllib
 import logging
 from collections import defaultdict
 from datetime import timedelta, tzinfo
@@ -172,6 +173,16 @@ def log_exceptions_to_messages(request, backend, err):
         from django.contrib.messages.api import error
         name = backend.AUTH_BACKEND.name
         error(request, unicode(err), extra_tags='social-auth %s' % name)
+
+
+def url_add_parameters(url, params):
+    """Adds parameters to URL, parameter will be repeated if already present"""
+    if params:
+        fragments = list(urlparse.urlparse(url))
+        fragments[4] = urllib.urlencode(urlparse.parse_qsl(fragments[4]) +
+                                        params.items())
+        url = urlparse.urlunparse(fragments)
+    return url
 
 
 if __name__ == '__main__':

@@ -91,9 +91,10 @@ class FacebookAuth(BaseOAuth2):
         expires = None
 
         if 'code' in self.data:
+            state = self.validate_state()
             url = ACCESS_TOKEN + urlencode({
                 'client_id': setting('FACEBOOK_APP_ID'),
-                'redirect_uri': self.redirect_uri,
+                'redirect_uri': self.get_redirect_uri(state),
                 'client_secret': setting('FACEBOOK_API_SECRET'),
                 'code': self.data['code']
             })

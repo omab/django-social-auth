@@ -37,7 +37,6 @@ class InstagramAuth(BaseOAuth2):
     AUTH_BACKEND = InstagramBackend
     SETTINGS_KEY_NAME = 'INSTAGRAM_CLIENT_ID'
     SETTINGS_SECRET_NAME = 'INSTAGRAM_CLIENT_SECRET'
-    FORCE_STATE_CHECK = False
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""

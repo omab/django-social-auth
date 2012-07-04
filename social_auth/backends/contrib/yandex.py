@@ -12,8 +12,8 @@ from urllib import urlencode
 from urllib2 import urlopen
 from urlparse import urlparse, urlsplit
 
-from social_auth.backends import OpenIDBackend, OpenIdAuth, USERNAME,\
-    OAuthBackend, BaseOAuth2
+from social_auth.backends import OpenIDBackend, OpenIdAuth, USERNAME, \
+                                 OAuthBackend, BaseOAuth2
 
 from social_auth.utils import setting, log
 
