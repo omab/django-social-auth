@@ -76,7 +76,8 @@ class GoogleOAuth2Backend(GoogleOAuthBackend):
 
     def get_user_id(self, details, response):
         """Use google email or id as unique id"""
-        user_id = super(GoogleOAuth2Backend, self).get_user_id(details, response)
+        user_id = super(GoogleOAuth2Backend, self).get_user_id(details,
+                                                               response)
         if setting('GOOGLE_OAUTH2_USE_UNIQUE_USER_ID', False):
             return response['id']
         return user_id

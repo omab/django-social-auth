@@ -16,20 +16,23 @@ from social_auth.backends.exceptions import AuthCanceled
 
 
 DOUBAN_SERVER = 'www.douban.com'
-DOUBAN_REQUEST_TOKEN_URL = 'http://%s/service/auth/request_token' % DOUBAN_SERVER
-DOUBAN_ACCESS_TOKEN_URL = 'http://%s/service/auth/access_token' % DOUBAN_SERVER
+DOUBAN_REQUEST_TOKEN_URL = 'http://%s/service/auth/request_token' % \
+                                DOUBAN_SERVER
+DOUBAN_ACCESS_TOKEN_URL = 'http://%s/service/auth/access_token' % \
+                                DOUBAN_SERVER
 
-DOUBAN_AUTHORIZATION_URL = 'http://%s/service/auth/authorize' % DOUBAN_SERVER
+DOUBAN_AUTHORIZATION_URL = 'http://%s/service/auth/authorize' % \
+                                DOUBAN_SERVER
 
 
 class DoubanBackend(OAuthBackend):
     """Douban OAuth authentication backend"""
     name = 'douban'
     EXTRA_DATA = [('id', 'id')]
-    
+
     def get_user_id(self, details, response):
         return response['db:uid']['$t']
-    
+
     def get_user_details(self, response):
         """Return user details from Douban"""
         return {USERNAME: response["db:uid"]["$t"],
@@ -51,7 +54,7 @@ class DoubanAuth(ConsumerBasedOAuth):
         url = 'http://api.douban.com/people/%40me?&alt=json'
         request = self.oauth_request(access_token, url)
         json = self.fetch_response(request)
-    
+
         try:
             return simplejson.loads(json)
         except ValueError:

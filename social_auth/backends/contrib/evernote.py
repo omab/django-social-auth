@@ -13,8 +13,8 @@ except ImportError:
 
 from oauth2 import Token
 from social_auth.utils import setting
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME,\
-        exceptions
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME, \
+                                 exceptions
 
 
 if setting('EVERNOTE_DEBUG', False):

@@ -331,7 +331,6 @@ class BaseAuth(object):
 
         @AUTH_BACKEND   Authorization backend related with this service
     """
-
     AUTH_BACKEND = None
 
     def __init__(self, request, redirect):
