@@ -24,7 +24,6 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 from django.utils.crypto import constant_time_compare
-from django.middleware.csrf import CSRF_KEY_LENGTH
 
 from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
                               clean_partial_pipeline, url_add_parameters, \
@@ -665,7 +664,7 @@ class BaseOAuth2(BaseOAuth):
 
     def state_token(self):
         """Generate csrf token to include as state parameter."""
-        return get_random_string(CSRF_KEY_LENGTH)
+        return get_random_string(32)
 
     def get_redirect_uri(self, state):
         """Build redirect_uri with redirect_state parameter."""
