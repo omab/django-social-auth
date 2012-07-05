@@ -195,6 +195,7 @@ class GoogleOAuth2(BaseOAuth2):
     SETTINGS_SECRET_NAME = 'GOOGLE_OAUTH2_CLIENT_SECRET'
     SCOPE_VAR_NAME = 'GOOGLE_OAUTH_EXTRA_SCOPE'
     DEFAULT_SCOPE = GOOGLE_OAUTH2_SCOPE
+    REDIRECT_STATE = False
 
     def user_data(self, access_token, *args, **kwargs):
         """Return user data from Google API"""

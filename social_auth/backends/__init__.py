@@ -660,6 +660,7 @@ class BaseOAuth2(BaseOAuth):
     RESPONSE_TYPE = 'code'
     SCOPE_VAR_NAME = None
     DEFAULT_SCOPE = None
+    REDIRECT_STATE = True
 
     def state_token(self):
         """Generate csrf token to include as state parameter."""
@@ -667,7 +668,10 @@ class BaseOAuth2(BaseOAuth):
 
     def get_redirect_uri(self, state):
         """Build redirect_uri with redirect_state parameter."""
-        return url_add_parameters(self.redirect_uri, {'redirect_state': state})
+        uri = self.redirect_uri
+        if self.REDIRECT_STATE:
+            uri = url_add_parameters(uri, {'redirect_state': state})
+        return uri
 
     def auth_url(self):
         """Return redirect url"""
