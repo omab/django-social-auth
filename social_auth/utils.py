@@ -35,9 +35,6 @@ except ImportError:  # django < 1.4
         return ''.join([random.choice(allowed_chars) for i in range(length)])
 
 
-get_random_string = random_string
-
-
 try:
     from django.utils.timezone import utc as django_utc
 except ImportError:  # django < 1.4
@@ -55,9 +52,23 @@ except ImportError:  # django < 1.4
         def dst(self, dt):
             return timedelta(0)
 
-    django_utc = None
+    django_utc = UTC()
 
 
+try:
+    from django.utils.crypto import constant_time_compare as ct_compare
+except ImportError:  # django < 1.4
+    def ct_compare(val1, val2):
+        if len(val1) != len(val2):
+            return False
+        result = 0
+        for x, y in zip(val1, val2):
+            result |= ord(x) ^ ord(y)
+        return result == 0
+
+
+get_random_string = random_string
+constant_time_compare = ct_compare
 utc = django_utc
 
 

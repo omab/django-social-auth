@@ -23,11 +23,10 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
-from django.utils.crypto import constant_time_compare
 
 from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
                               clean_partial_pipeline, url_add_parameters, \
-                              get_random_string
+                              get_random_string, constant_time_compare
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline, AuthException, \
                                             AuthFailed, AuthCanceled, \
