@@ -443,7 +443,7 @@ pipeline overrides.
 
 The default pipeline is composed by::
 
-(
+    (
         # Find UserSocialAuth object by backend and backend uid. 
         # Fail if UserSocialAuth already exists but not associated with 
         # the current user in the pipeline. Otherwise set the current user
