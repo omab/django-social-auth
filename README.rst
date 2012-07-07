@@ -51,6 +51,7 @@ credentials, some features are:
     * `Evernote OAuth`_
     * `Mail.ru OAuth`_
     * `Odnoklassniki OAuth`_
+    * `Mixcloud OAuth2`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -131,6 +132,7 @@ Configuration
         'social_auth.backends.contrib.yahoo.YahooOAuthBackend',        
         'social_auth.backends.OpenIDBackend',
         'social_auth.backends.contrib.bitbucket.BitbucketBackend',
+        'social_auth.backends.contrib.mixcloud.MixcloudBackend',
         'social_auth.backends.contrib.live.LiveBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -176,6 +178,8 @@ Configuration
     SKYROCK_CONSUMER_SECRET      = ''
     YAHOO_CONSUMER_KEY           = ''
     YAHOO_CONSUMER_SECRET        = ''
+    MIXCLOUD_CLIENT_ID           = ''
+    MIXCLOUD_CLIENT_SECRET       = ''
 
 - Setup login URLs::
 
@@ -1087,6 +1091,32 @@ Odnoklassniki.ru uses OAuth2 workflow, to use it fill in settings::
     ODNOKLASSNIKI_OAUTH2_APP_KEY = ''
     ODNOKLASSNIKI_OAUTH2_CLIENT_SECRET = ''
 
+Mixcloud OAuth2
+^^^^^^^^^^^^^^^
+
+The `Mixcloud API`_ offers support for authorization.
+To enable OAuth2 support:
+
+- Register a new application at `Mixcloud Developers`_
+
+- Add Mixcloud backend to ``AUTHENTICATION_BACKENDS`` in settings::
+
+    AUTHENTICATION_BACKENDS = (
+        ...
+        'social_auth.backends.contrib.mixcloud.MixcloudBackend',
+    )
+
+- Fill ``Client Id`` and ``Client Secret`` values in the settings::
+
+    MIXCLOUD_CLIENT_ID = ''
+    MIXCLOUD_CLIENT_SECRET = ''
+
+- Similar to the other OAuth backends you can define::
+
+    MIXCLOUD_EXTRA_DATA = [('username', 'username'), ('name', 'name'), ('pictures', 'pictures'), ('url', 'url')]
+
+as a list of tuples ``(response name, alias)`` to store user profile data on the UserSocialAuth model.
+
 Testing
 -------
 
@@ -1289,6 +1319,10 @@ Attributions to whom deserves:
 
   - Evernote support
 
+- fmoga_ (Florian Moga)
+
+  - Mixcloud support
+
 
 Copyrights
 ----------
@@ -1394,3 +1428,7 @@ Base work is copyrighted by:
 .. _Odnoklassniki OAuth: http://dev.odnoklassniki.ru/wiki/display/ok/The+OAuth+2.0+Protocol
 .. _authentication for VKontakte applications: http://www.ikrvss.ru/2011/11/08/django-social-auh-and-vkontakte-application/
 .. _Facebook Canvas Application Authentication: http://www.ikrvss.ru/2011/09/22/django-social-auth-and-facebook-canvas-applications/
+.. _Mixcloud OAuth2: http://www.mixcloud.com/developers/documentation/#authorization 
+.. _Mixcloud API: http://www.mixcloud.com/developers/documentation
+.. _Mixcloud Developers: http://www.mixcloud.com/developers
+.. _fmoga: https://github.com/fmoga
