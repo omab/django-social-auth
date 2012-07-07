@@ -443,13 +443,37 @@ pipeline overrides.
 
 The default pipeline is composed by::
 
-    (
+(
+        # Find UserSocialAuth object by backend and backend uid. 
+        # Fail if UserSocialAuth already exists but not associated with 
+        # the current user in the pipeline. Otherwise set the current user
+        # in the pipeline to be the user associated with UserSocialAuth
         'social_auth.backends.pipeline.social.social_auth_user',
+        # Try to find an existing user that has the email address provided
+        # by the authentication backend. Fail if email addr. is not unique
         'social_auth.backends.pipeline.associate.associate_by_email',
+        # If no user is found so far, generate a unique username based on 
+        # configured settings
         'social_auth.backends.pipeline.user.get_username',
+        # Depends on get_username. If no user is found so far, then create 
+        # a new user based on the username returned by get_username
+        # If new user is created, set the current user in the pipeline to be
+        # the newly created user and set the is_new arg to be true and 
+        # sends the socialauth_not_registered signal 
         'social_auth.backends.pipeline.user.create_user',
+        # If no instance of UserSocialAuth is found so far (through social_auth_user)
+        # create a new UserSocialAuth instance associated with the given user
         'social_auth.backends.pipeline.social.associate_user',
+        # Take the extra data given by backend and store them in the 
+        # UserSocialAuth instance's extra_data field, updating existing values
+        # Depends on an instance of UserSocialAuth to exist of course
         'social_auth.backends.pipeline.social.load_extra_data',
+        # Update fields on the user object based on details provided by the
+        # authentication backend, skipping sensative fields such as username,
+        # id, pk, (and other provided in SOCIAL_AUTH_PROTECTED_USER_FIELDS if a 
+        # user is already registered)
+        # Fires the pre_update signal before updating and socialauth_registered
+        # signal if is_new flag is set (by create_user pipeline)
         'social_auth.backends.pipeline.user.update_user_details'
     )
 
