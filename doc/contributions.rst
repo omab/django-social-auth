@@ -8,6 +8,10 @@ caioariede_ (Caio Ariede):
 
 krvss_ (Stas Kravets):
   * Initial setup.py configuration
+  * LiveJournal support
+  * Mail.ru, Odnoklassniki support
+  * Yandex OpenID support
+  * VKontakte OpenAPI support
 
 jezdez_ (Jannis Leidel):
   * Improvements and documentation update
@@ -36,6 +40,17 @@ maraujop_ (Miguel Araujo)
 bedspax_
   * Foursquare support
 
+revolunet_ (Julien Bouquillon)
+  * GitHub support
+
+danielgtaylor_ (Daniel G. Taylor)
+  * Dropbox support
+  * Flickr support
+  * Provider name context processor
+
+r4vi_ (Ravi Kotecha)
+  * Instagram support
+
 andrusha_ (Andrew Korzhuev)
   * MSN Live Connect support
   * Yahoo OAuth 1.0 support
@@ -45,6 +60,10 @@ niQo_ (Nicolas Quiénot)
 
 hassek_ (Tomas Henriquez)
   * Evernote support
+
+fmoga_ (Florian Moga)
+  * Mixcloud support
+
 
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
@@ -61,3 +80,7 @@ hassek_ (Tomas Henriquez)
 .. _python-oauth2: https://github.com/simplegeo/python-oauth2
 .. _niQo: https://github.com/niQo
 .. _hassek: https://github.com/hassek
+.. _fmoga: https://github.com/fmoga
+.. _revolunet: https://github.com/revolunet
+.. _r4vi: https://github.com/r4vi
+.. _danielgtaylor: https://github.com/danielgtaylor

@@ -1,6 +1,6 @@
 """Social auth models"""
 import time
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 from django.db import models
 
 from social_auth.fields import JSONField
