@@ -1,9 +1,8 @@
+from django.contrib.auth import REDIRECT_FIELD_NAME
+
 from social_auth.models import UserSocialAuth
 from social_auth.backends import get_backends
 from social_auth.utils import group_backend_by_type
-
-from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.conf import settings
 
 # Note: social_auth_backends, social_auth_by_type_backends and
 #       social_auth_by_name_backends don't play nice together.
