@@ -15,7 +15,7 @@ def associate_by_email(details, user=None, *args, **kwargs):
 
     warn_setting('SOCIAL_AUTH_ASSOCIATE_BY_MAIL', 'associate_by_email')
 
-    if email and setting('SOCIAL_AUTH_ASSOCIATE_BY_MAIL', True):
+    if email and setting('SOCIAL_AUTH_ASSOCIATE_BY_MAIL', False):
         # try to associate accounts registered with the same email address,
         # only if it's a single object. AuthException is raised if multiple
         # objects are returned
