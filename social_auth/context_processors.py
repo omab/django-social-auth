@@ -2,7 +2,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 
 from social_auth.models import UserSocialAuth
 from social_auth.backends import get_backends
-from social_auth.utils import group_backend_by_type
+from social_auth.utils import group_backend_by_type, LazyDict
 
 # Note: social_auth_backends, social_auth_by_type_backends and
 #       social_auth_by_name_backends don't play nice together.
@@ -12,7 +12,9 @@ def social_auth_backends(request):
     """Load Social Auth current user data to context.
     Will add a output from backends_data to context under social_auth key.
     """
-    return {'social_auth': backends_data(request.user)}
+    def context_value():
+        return backends_data(request.user)
+    return {'social_auth': LazyDict(context_value)}
 
 
 def social_auth_by_type_backends(request):
@@ -20,12 +22,16 @@ def social_auth_by_type_backends(request):
     Will add a output from backends_data to context under social_auth key where
     each entry will be grouped by backend type (openid, oauth, oauth2).
     """
-    data = backends_data(request.user)
-    data['backends'] = group_backend_by_type(data['backends'])
-    data['not_associated'] = group_backend_by_type(data['not_associated'])
-    data['associated'] = group_backend_by_type(data['associated'],
-                                              key=lambda assoc: assoc.provider)
-    return {'social_auth': data}
+    def context_value():
+        data = backends_data(request.user)
+        data['backends'] = group_backend_by_type(data['backends'])
+        data['not_associated'] = group_backend_by_type(data['not_associated'])
+        data['associated'] = group_backend_by_type(
+            data['associated'],
+            key=lambda assoc: assoc.provider
+        )
+        return data
+    return {'social_auth': LazyDict(context_value)}
 
 
 def social_auth_by_name_backends(request):
@@ -36,15 +42,15 @@ def social_auth_by_name_backends(request):
     with a hyphen have the hyphen replaced with an underscore, e.g.
     google-oauth2 becomes google_oauth2 when referenced in templates.
     """
-    keys = get_backends().keys()
-    accounts = dict(zip(keys, [None] * len(keys)))
-    user = request.user
-
-    if hasattr(user, 'is_authenticated') and user.is_authenticated():
-        accounts.update((assoc.provider.replace('-', '_'), assoc)
+    def context_value():
+        keys = get_backends().keys()
+        accounts = dict(zip(keys, [None] * len(keys)))
+        user = request.user
+        if hasattr(user, 'is_authenticated') and user.is_authenticated():
+            accounts.update((assoc.provider.replace('-', '_'), assoc)
                     for assoc in UserSocialAuth.get_social_auth_for_user(user))
-
-    return {'social_auth': accounts}
+        return accounts
+    return {'social_auth': LazyDict(context_value)}
 
 
 def backends_data(user):

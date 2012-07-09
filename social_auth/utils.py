@@ -11,6 +11,7 @@ from datetime import timedelta, tzinfo
 from django.conf import settings
 from django.db.models import Model
 from django.contrib.contenttypes.models import ContentType
+from django.utils.functional import SimpleLazyObject
 
 
 try:
@@ -224,6 +225,19 @@ def url_add_parameters(url, params):
                                         params.items())
         url = urlparse.urlunparse(fragments)
     return url
+
+
+class LazyDict(SimpleLazyObject):
+    """Lazy dict initialization."""
+    def __getitem__(self, name):
+        if self._wrapped is None:
+            self._setup()
+        return self._wrapped[name]
+
+    def __setitem__(self, name, value):
+        if self._wrapped is None:
+            self._setup()
+        self._wrapped[name] = value
 
 
 if __name__ == '__main__':
