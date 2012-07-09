@@ -6,8 +6,11 @@ from social_auth.backends.pipeline import warn_setting
 from social_auth.backends.exceptions import AuthException
 
 
-def associate_by_email(details, *args, **kwargs):
+def associate_by_email(details, user=None, *args, **kwargs):
     """Return user entry with same email address as one returned on details."""
+    if user:
+        return None
+
     email = details.get('email')
 
     warn_setting('SOCIAL_AUTH_ASSOCIATE_BY_MAIL', 'associate_by_email')
