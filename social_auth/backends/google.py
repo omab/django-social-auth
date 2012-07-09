@@ -58,7 +58,7 @@ class GoogleOAuthBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Orkut account"""
-        email = response['email']
+        email = response.get('email', '')
         return {USERNAME: email.split('@', 1)[0],
                 'email': email,
                 'fullname': '',
@@ -83,7 +83,7 @@ class GoogleOAuth2Backend(GoogleOAuthBackend):
         return user_id
 
     def get_user_details(self, response):
-        email = response['email']
+        email = response.get('email', '')
         return {USERNAME: email.split('@', 1)[0],
                 'email': email,
                 'fullname': response.get('name', ''),
