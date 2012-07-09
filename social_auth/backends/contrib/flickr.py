@@ -83,7 +83,8 @@ class FlickrAuth(ConsumerBasedOAuth):
 
     def auth_extra_arguments(self):
         params = super(FlickrAuth, self).auth_extra_arguments() or {}
-        params['perms'] = 'read'
+        if not 'perms' in params:
+            params['perms'] = 'read'
         return params
 
 
