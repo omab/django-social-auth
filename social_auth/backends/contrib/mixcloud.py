@@ -3,15 +3,12 @@ Mixcloud OAuth2 support
 """
 from urllib import urlencode
 from urllib2 import Request, urlopen
-from oauth2 import Request as OAuthRequest
 from django.utils import simplejson
-from social_auth.utils import setting
-from social_auth.backends import OpenIdAuth, ConsumerBasedOAuth, BaseOAuth2, \
-                                 OAuthBackend, OpenIDBackend, USERNAME
-from social_auth.backends.exceptions import AuthFailed
-from pprint import pprint
+from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+
 
 MIXCLOUD_PROFILE_URL = 'https://api.mixcloud.com/me/'
+
 
 class MixcloudBackend(OAuthBackend):
     name = 'mixcloud'
@@ -21,10 +18,11 @@ class MixcloudBackend(OAuthBackend):
 
     def get_user_details(self, response):
         return {USERNAME: response['username'],
-             'email': None,
-             'fullname': response['name'],
-             'first_name': None,
-             'last_name': None }
+                'email': None,
+                'fullname': response['name'],
+                'first_name': None,
+                'last_name': None}
+
 
 class MixcloudOAuth2(BaseOAuth2):
     AUTH_BACKEND = MixcloudBackend
@@ -36,6 +34,7 @@ class MixcloudOAuth2(BaseOAuth2):
     def user_data(self, access_token, *args, **kwargs):
         return mixcloud_profile(access_token)
 
+
 def mixcloud_profile(access_token):
     data = {'access_token': access_token, 'alt': 'json'}
     request = Request(MIXCLOUD_PROFILE_URL + '?' + urlencode(data))
@@ -43,6 +42,7 @@ def mixcloud_profile(access_token):
         return simplejson.loads(urlopen(request).read())
     except (ValueError, KeyError, IOError):
         return None
+
 
 BACKENDS = {
     'mixcloud': MixcloudOAuth2,
