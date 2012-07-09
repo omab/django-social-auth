@@ -46,6 +46,9 @@ niQo_ (Nicolas Quiénot)
 hassek_ (Tomas Henriquez)
   * Evernote support
 
+estebistec_ (Steven Cummings)
+  * Overrideable models feature
+
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
@@ -61,3 +64,4 @@ hassek_ (Tomas Henriquez)
 .. _python-oauth2: https://github.com/simplegeo/python-oauth2
 .. _niQo: https://github.com/niQo
 .. _hassek: https://github.com/hassek
+.. _estebistec: https://github.com/estebistec

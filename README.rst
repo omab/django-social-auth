@@ -421,6 +421,26 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
         SOCIAL_AUTH_LOGIN_REDIRECT_URL
         SOCIAL_AUTH_INACTIVE_USER_URL
 
+- The ORM models can be replaced by providing the name of an alternate module
+  for the ``SOCIAL_AUTH_MODELS`` setting. The default is
+  ``'social_auth.db.django_models'``, which defines the Django ORM models that
+  were originally defined to implement Social Auth's storage. The app provides
+  an example alternate based on `MongoEngine`_. You can use it by setting::
+
+    SOCIAL_AUTH_MODELS = 'social_auth.db.mongoengine_models'
+
+  Make sure you've followed the instructions for `MongoEngine Django
+  integration`_, as you're now utilizing that user model.
+
+  The `MongoEngine_` backend was developed and tested with version 0.6.10 of
+  `MongoEngine_`.
+
+  Alternate storage models implementations currently follow a tight pattern of
+  models that behave near or identical to Django ORM models. It is currently
+  not decoupled from this pattern by any abstraction layer. If you would like
+  to implement your own alternate, please see the
+  ``social_auth.db.django_models`` and ``social_auth.db.mongoengine_models``
+  modules for guidance.
 
 Authentication Pipeline
 -----------------------
@@ -1269,6 +1289,10 @@ Attributions to whom deserves:
 
   - Evernote support
 
+- estebistec_ (Steven Cummings)
+
+  - Overrideable models feature
+
 
 Copyrights
 ----------
@@ -1374,3 +1398,6 @@ Base work is copyrighted by:
 .. _Odnoklassniki OAuth: http://dev.odnoklassniki.ru/wiki/display/ok/The+OAuth+2.0+Protocol
 .. _authentication for VKontakte applications: http://www.ikrvss.ru/2011/11/08/django-social-auh-and-vkontakte-application/
 .. _Facebook Canvas Application Authentication: http://www.ikrvss.ru/2011/09/22/django-social-auth-and-facebook-canvas-applications/
+.. _MongoEngine: http://mongoengine.org
+.. _MongoEngine Django integration: http://mongoengine-odm.readthedocs.org/en/latest/django.html
+.. _estebistec: https://github.com/estebistec

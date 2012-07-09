@@ -310,25 +310,24 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
 
 - The ORM models can be replaced by providing the name of an alternate module
   for the ``SOCIAL_AUTH_MODELS`` setting. The default is
-  ``'social_auth.django_models'``, which defines the Django ORM models that
-  were originally defined to implement Social Auth's storage. Social auth
-  provides an example alternate based on `MongoEngine`_. You can use it by
-  setting::
+  ``'social_auth.db.django_models'``, which defines the Django ORM models that
+  were originally defined to implement Social Auth's storage. The app provides
+  an example alternate based on `MongoEngine`_. You can use it by setting::
 
-    SOCIAL_AUTH_MODELS = 'social_auth.mongoengine_models'
+    SOCIAL_AUTH_MODELS = 'social_auth.db.mongoengine_models'
 
-  Make sure you've followed the instructions for
-  `MongoEngine Django integration`_, as you're now utilizing that user model.
+  Make sure you've followed the instructions for `MongoEngine Django
+  integration`_, as you're now utilizing that user model.
 
-  The MongoEngine backing was developed and tested with version 0.6.10 of
-  MongoEngine.
+  The `MongoEngine_` backend was developed and tested with version 0.6.10 of
+  `MongoEngine_`.
 
   Alternate storage models implementations currently follow a tight pattern of
   models that behave near or identical to Django ORM models. It is currently
   not decoupled from this pattern by any abstraction layer. If you would like
   to implement your own alternate, please see the
-  ``social_auth.django_models`` and ``social_auth.mongoengine_models`` modules
-  for guidance.
+  ``social_auth.db.django_models`` and ``social_auth.db.mongoengine_models``
+  modules for guidance.
 
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
 .. _Login URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-url
