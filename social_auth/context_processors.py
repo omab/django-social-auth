@@ -2,11 +2,12 @@ from social_auth.models import UserSocialAuth
 from social_auth.backends import get_backends
 from social_auth.utils import group_backend_by_type
 
-from django.contrib.auth import REDIRECT_FIELD_NAME as auth_redirect
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.conf import settings
 
 # Note: social_auth_backends, social_auth_by_type_backends and
 #       social_auth_by_name_backends don't play nice together.
+
 
 def social_auth_backends(request):
     """Load Social Auth current user data to context.
@@ -73,17 +74,18 @@ def backends_data(user):
         values['associated'] = associated
         values['not_associated'] = not_associated
     return values
- 
+
+
 def social_auth_login_redirect(request):
-    """Load current redirect to context
-    Provides access to the redirect variable as named in the settings file
-    Assumes that the redirect field name is set in the settings file
-		"""
-    redirect_name = getattr(settings, 'REDIRECT_FIELD_NAME', auth_redirect)
-    redirect_value = request.REQUEST.get(redirect_name, '')
-    context = {
-        'REDIRECT_FIELD_NAME' : redirect_name, 
-        'REDIRECT_FIELD_VALUE' : redirect_value,
-        'redirect_querystring' : redirect_name + '=' + redirect_value
+    """Load current redirect to context."""
+    redirect_value = request.REQUEST.get(REDIRECT_FIELD_NAME)
+    if redirect_value:
+        redirect_querystring = REDIRECT_FIELD_NAME + '=' + redirect_value
+    else:
+        redirect_querystring = ''
+
+    return {
+        'REDIRECT_FIELD_NAME': REDIRECT_FIELD_NAME,
+        'REDIRECT_FIELD_VALUE': redirect_value,
+        'redirect_querystring': redirect_querystring
     }
-    return context

@@ -116,6 +116,7 @@ Configuration
         'social_auth.context_processors.social_auth_by_name_backends',
         'social_auth.context_processors.social_auth_backends',
         'social_auth.context_processors.social_auth_by_type_backends',
+        'social_auth.context_processors.social_auth_login_redirect',
     )
 
   * ``social_auth_by_name_backends``:
@@ -134,17 +135,21 @@ Configuration
     Simiar to ``social_auth_backends`` but each value is grouped by backend type
     ``openid``, ``oauth2`` and ``oauth``.
 
+  * ``social_auth_login_redirect``:
+    For man in the middle redirects (ie authenticating via a login
+    required decorator), a convenince query string can be added to your context
+    for templates. On your login options page::
+
+        <a href={{% url socialauth_begin 'twitter' %}?{{ redirect_querystring }}">...</a>
+
+    allows for a continuous login. Useful if multiple login options are
+    presented.
+
   Check ``social_auth.context_processors`` for details.
 
   **Note**:
   ``social_auth_backends`` and ``social_auth_by_type_backends`` don't play nice
   together.
-
-  **Also:** For man in the middle redirects (ie authenticating via a login required decorator), a convenince query string can be added to your context for templates.  On your login options page: ``<a href={{% url socialauth_begin 'twitter' %}?{{ redirect_querystring }}">`` allows for a continuous login.  Useful if multiple login options are presented.  
-
-	To enable, add the following Context Processor::
-		
-		'social_auth.context_processors.social_auth_login_redirect',
 
 - Sync database to create needed models::
 
