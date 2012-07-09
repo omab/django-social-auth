@@ -4,17 +4,13 @@ from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
 
 from django.utils import simplejson
 
-from social_auth.models import User
+from social_auth.models import UserSocialAuth
 
 
 def consumer_oauth_url_request(backend, url, user_or_id, redirect_uri='/',
                                json=True):
     """Builds and retrieves an OAuth signed response."""
-    if isinstance(user_or_id, User):
-        user = user_or_id
-    else:
-        user = User.objects.get(pk=user_or_id)
-
+    user = UserSocialAuth.resolve_user_or_id(user_or_id)
     oauth_info = user.social_auth.filter(provider=backend.AUTH_BACKEND.name)[0]
     token = Token.from_string(oauth_info.tokens['access_token'])
     request = build_consumer_oauth_request(backend, token, url, redirect_uri)
@@ -26,7 +22,8 @@ def consumer_oauth_url_request(backend, url, user_or_id, redirect_uri='/',
 
 
 def build_consumer_oauth_request(backend, token, url, redirect_uri='/',
-                                 oauth_verifier=None, extra_params=None, method=HTTP_METHOD):
+                                 oauth_verifier=None, extra_params=None,
+                                 method=HTTP_METHOD):
     """Builds a Consumer OAuth request."""
     params = {'oauth_callback': redirect_uri}
     if extra_params:

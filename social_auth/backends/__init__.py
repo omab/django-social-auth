@@ -18,12 +18,12 @@ from openid.extensions import sreg, ax
 
 from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest
 
-from django.db import models
 from django.contrib.auth import authenticate
 from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
+from social_auth.models import UserSocialAuth
 from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
                               clean_partial_pipeline, url_add_parameters, \
                               get_random_string, constant_time_compare
@@ -35,12 +35,6 @@ from social_auth.backends.exceptions import StopPipeline, AuthException, \
                                             AuthStateMissing, \
                                             AuthStateForbidden
 from social_auth.backends.utils import build_consumer_oauth_request
-
-
-if setting('SOCIAL_AUTH_USER_MODEL'):
-    User = models.get_model(*setting('SOCIAL_AUTH_USER_MODEL').rsplit('.', 1))
-else:
-    from django.contrib.auth.models import User
 
 
 # OpenID configuration
@@ -196,10 +190,7 @@ class SocialAuthBackend(ModelBackend):
         """
         Return user with given ID from the User model used by this backend
         """
-        try:
-            return User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return None
+        return UserSocialAuth.get_user(user_id)
 
 
 class OAuthBackend(SocialAuthBackend):
@@ -413,9 +404,11 @@ class BaseAuth(object):
         Override if extra operations are needed.
         """
         if association_id:
-            user.social_auth.get(id=association_id).delete()
+            UserSocialAuth.get_social_auth_for_user(user)\
+                            .get(id=association_id).delete()
         else:
-            user.social_auth.filter(provider=self.AUTH_BACKEND.name).delete()
+            UserSocialAuth.get_social_auth_for_user(user)\
+                            .filter(provider=self.AUTH_BACKEND.name).delete()
 
     def build_absolute_uri(self, path=None):
         """Build absolute URI for given path. Replace http:// schema with

@@ -64,6 +64,8 @@ hassek_ (Tomas Henriquez)
 fmoga_ (Florian Moga)
   * Mixcloud support
 
+estebistec_ (Steven Cummings)
+  * Overrideable models feature
 
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
@@ -84,3 +86,4 @@ fmoga_ (Florian Moga)
 .. _revolunet: https://github.com/revolunet
 .. _r4vi: https://github.com/r4vi
 .. _danielgtaylor: https://github.com/danielgtaylor
+.. _estebistec: https://github.com/estebistec

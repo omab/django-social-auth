@@ -13,18 +13,11 @@ def social_auth_user(backend, uid, user=None, *args, **kwargs):
 
     Raise AuthException if UserSocialAuth entry belongs to another user.
     """
-    try:
-        social_user = UserSocialAuth.objects.select_related('user')\
-                                            .get(provider=backend.name,
-                                                 uid=uid)
-    except UserSocialAuth.DoesNotExist:
-        social_user = None
-
+    social_user = UserSocialAuth.get_social_auth(backend.name, uid)
     if social_user:
         if user and social_user.user != user:
-            raise AuthException(backend, ugettext('This %(provider)s account already in use.') % {
-                'provider':backend.name,
-            })
+            msg = ugettext('This %(provider)s account already in use.')
+            raise AuthException(backend, msg % {'provider': backend.name})
         elif not user:
             user = social_user.user
     return {'social_user': social_user, 'user': user}
@@ -36,8 +29,7 @@ def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
         return None
 
     try:
-        social = UserSocialAuth.objects.create(user=user, uid=uid,
-                                               provider=backend.name)
+        social = UserSocialAuth.create_social_auth(user, uid, backend.name)
     except IntegrityError:
         # Protect for possible race condition, those bastard with FTL
         # clicking capabilities, check issue #131:
