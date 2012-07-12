@@ -2,7 +2,7 @@ from django.conf.urls.defaults import patterns, url, include
 from django.contrib import admin
 
 from app.views import home, done, logout, error, form, form2
-
+from app.facebook import facebook_view
 
 admin.autodiscover()
 
@@ -14,5 +14,6 @@ urlpatterns = patterns('',
     url(r'^form/$', form, name='form'),
     url(r'^form2/$', form2, name='form2'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^fb/', facebook_view, name='fb_app'),
     url(r'', include('social_auth.urls')),
 )
