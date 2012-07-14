@@ -34,11 +34,16 @@ or use dnsmasq_.
 
 If you need to perform authentication from Facebook Canvas application:
     - Create your canvas application at http://developers.facebook.com/apps
-    - In Facebook application settings specify your canvas URL ``mysite.com/fb`` (current default)
-    - Setup your Django Social Auth settings like you usually do for Facebook authentication (FACEBOOK_APP_ID etc)
-    - Launch manage.py via sudo ``./manage.py mysite.com:80`` for browser to be able to load it when Facebook calls canvas URL
-    - Open your Facebook page via http://apps.facebook.com/app_namespace or better via http://www.facebook.com/pages/user-name/user-id?sk=app_app-id
-    - After that you will see this page in a right way and will able to connect to application and login automatically after connection
+    - In Facebook application settings specify your canvas URL
+      ``mysite.com/fb`` (current default)
+    - Setup your Django Social Auth settings like you usually do for Facebook
+      authentication (FACEBOOK_APP_ID etc)
+    - Launch manage.py via sudo ``./manage.py runserver mysite.com:80`` for
+      browser to be able to load it when Facebook calls canvas URL
+    - Open your Facebook page via http://apps.facebook.com/app_namespace or
+      better via http://www.facebook.com/pages/user-name/user-id?sk=app_app-id
+    - After that you will see this page in a right way and will able to connect
+      to application and login automatically after connection
 
 More info on the topic at `Facebook Canvas Application Authentication`_.
 
