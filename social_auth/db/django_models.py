@@ -22,10 +22,6 @@ else:
     from django.contrib.auth.models import User as UserModel
 
 
-# TODO make this a complementary config setting to SOCIAL_AUTH_USER_MODEL
-USERNAME = 'username'
-
-
 class UserSocialAuth(models.Model, UserSocialAuthMixin):
     """Social Auth association model"""
     User = UserModel
@@ -50,6 +46,10 @@ class UserSocialAuth(models.Model, UserSocialAuthMixin):
                                                           uid=uid)
         except UserSocialAuth.DoesNotExist:
             return None
+
+    @classmethod
+    def username_max_length(cls):
+        return cls.User._meta.get_field('username').max_length
 
 
 class Nonce(models.Model, NonceMixin):

@@ -1,7 +1,8 @@
 from uuid import uuid4
 
 from social_auth.utils import setting
-from social_auth.models import UserSocialAuth, USERNAME
+from social_auth.models import UserSocialAuth
+from social_auth.backends import USERNAME
 from social_auth.backends.pipeline import warn_setting
 from social_auth.signals import socialauth_not_registered, \
                                 socialauth_registered, \

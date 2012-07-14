@@ -11,10 +11,6 @@ from social_auth.db.base import UserSocialAuthMixin, AssociationMixin, \
                                 NonceMixin
 
 
-# TODO make this a complementary config setting to SOCIAL_AUTH_USER_MODEL
-USERNAME = 'username'
-
-
 class UserSocialAuth(Document, UserSocialAuthMixin):
     """Social Auth association model"""
     user = ReferenceField(User)
@@ -31,6 +27,10 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
         if not isinstance(type(uid), basestring):
             uid = str(uid)
         return cls.objects.create(user=user, uid=uid, provider=provider)
+
+    @classmethod
+    def username_max_length(cls):
+        return User._meta.get_field('username').max_length
 
 
 class Nonce(Document, NonceMixin):
