@@ -23,7 +23,7 @@ from django.utils import simplejson
 from django.contrib.auth import authenticate
 
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
-from social_auth.utils import sanitize_log_data, setting, log
+from social_auth.utils import sanitize_log_data, backend_setting, setting, log
 from social_auth.backends.exceptions import AuthException, AuthCanceled, \
                                             AuthFailed, AuthTokenError, \
                                             AuthUnknownError
@@ -61,11 +61,12 @@ class FacebookAuth(BaseOAuth2):
     SETTINGS_KEY_NAME = 'FACEBOOK_APP_ID'
     SETTINGS_SECRET_NAME = 'FACEBOOK_API_SECRET'
     SCOPE_VAR_NAME = 'FACEBOOK_EXTENDED_PERMISSIONS'
+    EXTRA_PARAMS_VAR_NAME = 'FACEBOOK_PROFILE_EXTRA_PARAMS'
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
         data = None
-        params = setting('FACEBOOK_PROFILE_EXTRA_PARAMS', {})
+        params = backend_setting(self, self.EXTRA_PARAMS_VAR_NAME, {})
         params['access_token'] = access_token
         url = FACEBOOK_ME + urlencode(params)
 
@@ -93,9 +94,9 @@ class FacebookAuth(BaseOAuth2):
         if 'code' in self.data:
             state = self.validate_state()
             url = ACCESS_TOKEN + urlencode({
-                'client_id': setting('FACEBOOK_APP_ID'),
+                'client_id': backend_setting(self, self.SETTINGS_KEY_NAME),
                 'redirect_uri': self.get_redirect_uri(state),
-                'client_secret': setting('FACEBOOK_API_SECRET'),
+                'client_secret': backend_setting(self, self.SETTINGS_SECRET_NAME),
                 'code': self.data['code']
             })
             try:
@@ -109,7 +110,7 @@ class FacebookAuth(BaseOAuth2):
                 expires = response['expires'][0]
 
         if 'signed_request' in self.data:
-            response = load_signed_request(self.data.get('signed_request'))
+            response = load_signed_request(self.data.get('signed_request'), backend_setting(self, self.SETTINGS_SECRET_NAME))
 
             if response is not None:
                 access_token = response.get('access_token') or \
@@ -152,7 +153,7 @@ class FacebookAuth(BaseOAuth2):
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return setting('FACEBOOK_APP_ID') and setting('FACEBOOK_API_SECRET')
+        return backend_setting(cls, cls.SETTINGS_KEY_NAME) and backend_setting(cls, cls.SETTINGS_SECRET_NAME)
 
 
 def base64_url_decode(data):
@@ -165,13 +166,16 @@ def base64_url_encode(data):
     return base64.urlsafe_b64encode(data).rstrip('=')
 
 
-def load_signed_request(signed_request):
+def load_signed_request(signed_request, api_secret=None):
+    if api_secret is None: 
+        #for backwards-compatibility
+        setting('FACEBOOK_API_SECRET')
     try:
         sig, payload = signed_request.split(u'.', 1)
         sig = base64_url_decode(sig)
         data = simplejson.loads(base64_url_decode(payload))
 
-        expected_sig = hmac.new(setting('FACEBOOK_API_SECRET'),
+        expected_sig = hmac.new(api_secret,
                                 msg=payload,
                                 digestmod=hashlib.sha256).digest()
 
