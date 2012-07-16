@@ -96,7 +96,8 @@ class FacebookAuth(BaseOAuth2):
             url = ACCESS_TOKEN + urlencode({
                 'client_id': backend_setting(self, self.SETTINGS_KEY_NAME),
                 'redirect_uri': self.get_redirect_uri(state),
-                'client_secret': backend_setting(self, self.SETTINGS_SECRET_NAME),
+                'client_secret': backend_setting(self,
+                                                 self.SETTINGS_SECRET_NAME),
                 'code': self.data['code']
             })
             try:
@@ -110,7 +111,10 @@ class FacebookAuth(BaseOAuth2):
                 expires = response['expires'][0]
 
         if 'signed_request' in self.data:
-            response = load_signed_request(self.data.get('signed_request'), backend_setting(self, self.SETTINGS_SECRET_NAME))
+            response = load_signed_request(self.data.get('signed_request'),
+                                           backend_setting(
+                                               self,
+                                               self.SETTINGS_SECRET_NAME))
 
             if response is not None:
                 access_token = response.get('access_token') or \
@@ -153,7 +157,8 @@ class FacebookAuth(BaseOAuth2):
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return backend_setting(cls, cls.SETTINGS_KEY_NAME) and backend_setting(cls, cls.SETTINGS_SECRET_NAME)
+        return backend_setting(cls, cls.SETTINGS_KEY_NAME) and \
+               backend_setting(cls, cls.SETTINGS_SECRET_NAME)
 
 
 def base64_url_decode(data):
@@ -167,15 +172,12 @@ def base64_url_encode(data):
 
 
 def load_signed_request(signed_request, api_secret=None):
-    if api_secret is None: 
-        #for backwards-compatibility
-        setting('FACEBOOK_API_SECRET')
     try:
         sig, payload = signed_request.split(u'.', 1)
         sig = base64_url_decode(sig)
         data = simplejson.loads(base64_url_decode(payload))
 
-        expected_sig = hmac.new(api_secret,
+        expected_sig = hmac.new(api_secret or setting('FACEBOOK_API_SECRET'),
                                 msg=payload,
                                 digestmod=hashlib.sha256).digest()
 
