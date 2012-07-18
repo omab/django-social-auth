@@ -9,7 +9,8 @@ if setting('SOCIAL_AUTH_MODELS') in (None, 'social_auth.db.django_models'):
     class UserSocialAuthOption(admin.ModelAdmin):
         """Social Auth user options"""
         list_display = ('id', 'user', 'provider', 'uid')
-        search_fields = ('user__first_name', 'user__last_name', 'user__email')
+        search_fields = ('user__first_name', 'user__last_name', 'user__email',
+                'user__username')
         list_filter = ('provider',)
         raw_id_fields = ('user',)
         list_select_related = True
