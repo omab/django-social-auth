@@ -9,7 +9,6 @@ from social_auth.utils import setting, log, backend_setting
 
 
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
-RAISE_EXCEPTIONS = setting('SOCIAL_AUTH_RAISE_EXCEPTIONS', setting('DEBUG'))
 PROCESS_EXCEPTIONS = setting('SOCIAL_AUTH_PROCESS_EXCEPTIONS',
                              'social_auth.utils.log_exceptions_to_messages')
 
@@ -33,6 +32,7 @@ def dsa_view(redirect_name=None):
                 return HttpResponseServerError('Incorrect authentication ' + \
                                                'service')
 
+            RAISE_EXCEPTIONS = backend_setting(backend, 'SOCIAL_AUTH_RAISE_EXCEPTIONS', setting('DEBUG'))
             try:
                 return func(request, backend, *args, **kwargs)
             except Exception, e:  # some error ocurred
