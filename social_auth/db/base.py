@@ -3,11 +3,9 @@ import base64
 import time
 from datetime import datetime, timedelta
 
-from django.utils.timezone import utc
-
 from openid.association import Association as OIDAssociation
 
-from social_auth.utils import setting
+from social_auth.utils import setting, utc
 
 
 class UserSocialAuthMixin(object):
