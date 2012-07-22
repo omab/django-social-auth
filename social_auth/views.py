@@ -19,6 +19,7 @@ from social_auth.decorators import dsa_view
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                    setting('LOGIN_REDIRECT_URL')
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
+PIPELINE_KEY = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
 
 
 @dsa_view(setting('SOCIAL_AUTH_COMPLETE_URL_NAME', 'socialauth_complete'))
@@ -157,13 +158,13 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
     if user and not user.is_authenticated():
         user = None
 
-    name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
-    if request.session.get(name):
-        data = request.session.pop(name)
-        idx, args, kwargs = backend.from_session_dict(data, user=user,
-                                                      request=request,
-                                                      *args, **kwargs)
-        return backend.continue_pipeline(pipeline_index=idx, *args, **kwargs)
-    else:
-        return backend.auth_complete(user=user, request=request, *args,
-                                     **kwargs)
+    if request.session.get(PIPELINE_KEY):
+        data = request.session.pop(PIPELINE_KEY)
+        idx, xargs, xkwargs = backend.from_session_dict(data, user=user,
+                                                        request=request,
+                                                        *args, **kwargs)
+        if 'backend' in xkwargs and \
+           xkwargs['backend'].name == backend.AUTH_BACKEND.name:
+            return backend.continue_pipeline(pipeline_index=idx,
+                                             *xargs, **xkwargs)
+    return backend.auth_complete(user=user, request=request, *args, **kwargs)
