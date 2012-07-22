@@ -68,6 +68,12 @@ except ImportError:  # django < 1.4
         return result == 0
 
 
+try:
+    from django.utils.functional import empty
+except ImportError:  # django < 1.4
+    empty = None
+
+
 get_random_string = random_string
 constant_time_compare = ct_compare
 utc = django_utc
@@ -230,12 +236,12 @@ def url_add_parameters(url, params):
 class LazyDict(SimpleLazyObject):
     """Lazy dict initialization."""
     def __getitem__(self, name):
-        if self._wrapped is None:
+        if self._wrapped is empty:
             self._setup()
         return self._wrapped[name]
 
     def __setitem__(self, name, value):
-        if self._wrapped is None:
+        if self._wrapped is empty:
             self._setup()
         self._wrapped[name] = value
 
