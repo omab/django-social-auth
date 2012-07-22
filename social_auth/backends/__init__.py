@@ -352,17 +352,16 @@ class BaseAuth(object):
                                 for key, val in kwargs.iteritems())
         }
 
-    def from_session_dict(self, entry, *args, **kwargs):
-        """Takes session saved entry to continue pipeline and merges with
-        any new extra argument needed. Returns tuple with next pipeline
-        index entry, arguments and keyword arguments to continue the
-        process."""
-        args = args[:] + tuple(map(ctype_to_model, entry['args']))
+    def from_session_dict(self, session_data, *args, **kwargs):
+        """Takes session saved data to continue pipeline and merges with any
+        new extra argument needed. Returns tuple with next pipeline index
+        entry, arguments and keyword arguments to continue the process."""
+        args = args[:] + tuple(map(ctype_to_model, session_data['args']))
 
         kwargs = kwargs.copy()
         kwargs.update((key, ctype_to_model(val))
-                            for key, val in entry['kwargs'].iteritems())
-        return (entry['next'], args, kwargs)
+                            for key, val in session_data['kwargs'].iteritems())
+        return (session_data['next'], args, kwargs)
 
     def continue_pipeline(self, *args, **kwargs):
         """Continue previous halted pipeline"""
