@@ -1184,6 +1184,21 @@ To enable OAuth2 support:
 
 as a list of tuples ``(response name, alias)`` to store user profile data on the UserSocialAuth model.
 
+Weibo OAuth
+^^^^^^^^^^^
+
+Weibo OAuth 2.0 workflow.
+
+- Register a new application at Weibo_.
+
+- Fill ``Consumer Key`` and ``Consumer Secret`` values in the settings::
+
+      WEIBO_CLIENT_KEY = ''
+      WEIBO_CLIENT_SECRET = ''
+
+By default account id, profile_image_url, gender are stored in extra_data
+field, check OAuthBackend class for details on how to extend it.
+
 Testing
 -------
 
@@ -1394,6 +1409,10 @@ Attributions to whom deserves:
 
   - Overrideable models feature
 
+- hepochen_
+
+  - Weibo support
+
 
 Copyrights
 ----------
@@ -1506,3 +1525,5 @@ Base work is copyrighted by:
 .. _MongoEngine: http://mongoengine.org
 .. _MongoEngine Django integration: http://mongoengine-odm.readthedocs.org/en/latest/django.html
 .. _estebistec: https://github.com/estebistec
+.. _Weibo: http://open.weibo.com
+.. _hepochen: https://github.com/hepochen

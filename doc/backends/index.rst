@@ -26,3 +26,4 @@ Contents:
    douban
    mailru
    odnoklassnikiru
+   weibo

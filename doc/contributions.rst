@@ -67,6 +67,9 @@ fmoga_ (Florian Moga)
 estebistec_ (Steven Cummings)
   * Overrideable models feature
 
+hepochen_
+  * Weibo support
+
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
@@ -87,3 +90,4 @@ estebistec_ (Steven Cummings)
 .. _r4vi: https://github.com/r4vi
 .. _danielgtaylor: https://github.com/danielgtaylor
 .. _estebistec: https://github.com/estebistec
+.. _hepochen: https://github.com/hepochen
