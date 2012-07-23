@@ -4,10 +4,22 @@ from django.utils import simplejson
 from social_auth.backends import OAuthBackend, USERNAME, BaseOAuth2
 from urllib import urlencode,urlopen
 
-Weibo_SERVER = 'api.weibo.com'
-Weibo_REQUEST_TOKEN_URL = 'https://%s/oauth2/request_token' %  Weibo_SERVER
-Weibo_ACCESS_TOKEN_URL = 'https://%s/oauth2/access_token' %  Weibo_SERVER
-Weibo_AUTHORIZATION_URL = 'https://%s/oauth2/authorize' % Weibo_SERVER
+"""
+Weibo OAuth support.
+
+This script adds support for Weibo OAuth service. An application must
+be registered first on http://open.weibo.com.
+
+WEIBO_CLIENT_KEY and WEIBO_CLIENT_SECRET must be defined in the settings.py correctly.
+
+By default account id,profile_image_url,gender are stored in extra_data field, check OAuthBackend
+class for details on how to extend it.
+"""
+
+WEIBO_SERVER = 'api.weibo.com'
+WEIBO_REQUEST_TOKEN_URL = 'https://%s/oauth2/request_token' %  WEIBO_SERVER
+WEIBO_ACCESS_TOKEN_URL = 'https://%s/oauth2/access_token' %  WEIBO_SERVER
+WEIBO_AUTHORIZATION_URL = 'https://%s/oauth2/authorize' % WEIBO_SERVER
 
 
 class WeiboBackend(OAuthBackend):
@@ -24,17 +36,18 @@ class WeiboBackend(OAuthBackend):
         return response['uid']
 
     def get_user_details(self, response):
-        """Return user details from Douban"""
+        """Return user details from Weibo
+        and the api url is https://api.weibo.com/2/users/show.json/?uid=%s&access_token=%s"""
         return {USERNAME: response["name"],
                 'first_name': response.get('screen_name','')}
 
 
 class WeiboAuth(BaseOAuth2):
     """Douban OAuth authentication mechanism"""
-    AUTHORIZATION_URL = Weibo_AUTHORIZATION_URL
-    REQUEST_TOKEN_URL = Weibo_REQUEST_TOKEN_URL
-    ACCESS_TOKEN_URL = Weibo_ACCESS_TOKEN_URL
-    SERVER_URL = Weibo_SERVER
+    AUTHORIZATION_URL = WEIBO_AUTHORIZATION_URL
+    REQUEST_TOKEN_URL = WEIBO_REQUEST_TOKEN_URL
+    ACCESS_TOKEN_URL = WEIBO_ACCESS_TOKEN_URL
+    SERVER_URL = WEIBO_SERVER
     AUTH_BACKEND = WeiboBackend
     SETTINGS_KEY_NAME = 'WEIBO_CLIENT_KEY'
     SETTINGS_SECRET_NAME = 'WEIBO_CLIENT_SECRET'
