@@ -47,7 +47,7 @@ class WeiboBackend(OAuthBackend):
 
 
 class WeiboAuth(BaseOAuth2):
-    """Douban OAuth authentication mechanism"""
+    """Weibo OAuth authentication mechanism"""
     AUTHORIZATION_URL = WEIBO_AUTHORIZATION_URL
     REQUEST_TOKEN_URL = WEIBO_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = WEIBO_ACCESS_TOKEN_URL
