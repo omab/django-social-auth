@@ -12,11 +12,12 @@ correctly.
 By default account id,profile_image_url,gender are stored in extra_data field,
 check OAuthBackend class for details on how to extend it.
 """
-from urllib import urlencode, urlopen
+from urllib import urlencode
 
 from django.utils import simplejson
 
 from social_auth.backends import OAuthBackend, USERNAME, BaseOAuth2
+from social_auth.utils import dsa_urlopen
 
 
 WEIBO_SERVER = 'api.weibo.com'
@@ -58,11 +59,10 @@ class WeiboAuth(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         uid = args[0]['uid']
-        url = 'https://api.weibo.com/2/users/show.json'
         data = {'access_token': access_token, 'uid': uid}
-        c = urlopen(url + '?' + urlencode(data)).read()
+        url = 'https://api.weibo.com/2/users/show.json?' + urlencode(data)
         try:
-            return simplejson.loads(c)
+            return simplejson.loads(dsa_urlopen(url).read())
         except (ValueError, KeyError, IOError):
             return None
 

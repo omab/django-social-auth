@@ -1,10 +1,10 @@
-from urllib2 import urlopen
 from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest, \
                    SignatureMethod_HMAC_SHA1, HTTP_METHOD
 
 from django.utils import simplejson
 
 from social_auth.models import UserSocialAuth
+from social_auth.utils import dsa_urlopen
 
 
 def consumer_oauth_url_request(backend, url, user_or_id, redirect_uri='/',
@@ -14,7 +14,7 @@ def consumer_oauth_url_request(backend, url, user_or_id, redirect_uri='/',
     oauth_info = user.social_auth.filter(provider=backend.AUTH_BACKEND.name)[0]
     token = Token.from_string(oauth_info.tokens['access_token'])
     request = build_consumer_oauth_request(backend, token, url, redirect_uri)
-    response = '\n'.join(urlopen(request.to_url()).readlines())
+    response = '\n'.join(dsa_urlopen(request.to_url()).readlines())
 
     if json:
         response = simplejson.loads(response)

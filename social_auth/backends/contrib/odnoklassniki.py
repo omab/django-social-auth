@@ -14,11 +14,11 @@ from django.conf import settings
 from django.utils import simplejson
 
 from urllib import urlencode, unquote
-from urllib2 import Request, urlopen
+from urllib2 import Request
 from hashlib import md5
 
 from social_auth.backends import OAuthBackend, BaseOAuth2, USERNAME
-from social_auth.utils import setting, log
+from social_auth.utils import setting, log, dsa_urlopen
 
 ODNOKLASSNIKI_API_URL = 'http://api.odnoklassniki.ru/fb.do'
 ODNOKLASSNIKI_OAUTH2_SCOPE = ['']  # Enough for authentication
@@ -89,7 +89,7 @@ def odnoklassniki_api(data):
     params = urlencode(data)
     request = Request(ODNOKLASSNIKI_API_URL + '?' + params)
     try:
-        return simplejson.loads(urlopen(request).read())
+        return simplejson.loads(dsa_urlopen(request).read())
     except (TypeError, KeyError, IOError, ValueError, IndexError):
         log('error', 'Could not load data from Odnoklassniki.',
             exc_info=True, extra=dict(data=params))

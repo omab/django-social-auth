@@ -4,13 +4,12 @@ BrowserID support
 import time
 from datetime import datetime
 from urllib import urlencode
-from urllib2 import urlopen
 
 from django.contrib.auth import authenticate
 from django.utils import simplejson
 
 from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
-from social_auth.utils import log, setting
+from social_auth.utils import log, setting, dsa_urlopen
 from social_auth.backends.exceptions import AuthFailed, AuthMissingParameter
 
 
@@ -69,7 +68,8 @@ class BrowserIDAuth(BaseAuth):
         })
 
         try:
-            response = simplejson.load(urlopen(BROWSER_ID_SERVER, data=data))
+            response = simplejson.load(dsa_urlopen(BROWSER_ID_SERVER,
+                                                   data=data))
         except ValueError:
             log('error', 'Could not load user data from BrowserID.',
                 exc_info=True)

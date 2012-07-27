@@ -14,11 +14,11 @@ References:
 Throws:
 AuthUnknownError - if user data retrieval fails
 """
-from urllib import urlencode, urlopen
+from urllib import urlencode
 
 from django.utils import simplejson
 
-from social_auth.utils import setting
+from social_auth.utils import setting, dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.backends.exceptions import AuthUnknownError
 
@@ -77,7 +77,7 @@ class LiveAuth(BaseOAuth2):
             'access_token': access_token
         })
         try:
-            return simplejson.load(urlopen(url))
+            return simplejson.load(dsa_urlopen(url))
         except (ValueError, IOError):
             raise AuthUnknownError('Error during profile retrieval, ' \
                                    'please, try again later')

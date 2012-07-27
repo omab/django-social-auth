@@ -427,6 +427,11 @@ Configuration
 
     SOCIAL_AUTH_LAST_LOGIN = 'social_auth_last_login_backend'
 
+- Any ``urllib2.urlopen`` call will be performed with the default timeout
+  value, to change it without affecting the global socket timeout define this
+  setting (the value specifies timeout seconds)::
+
+    SOCIAL_AUTH_URLOPEN_TIMEOUT = 30
 
 Some settings can be tweak by backend by adding the backend name prefix (all
 uppercase and replace ``-`` with ``_``), here's the supported settings so far::
