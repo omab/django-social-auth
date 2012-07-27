@@ -41,17 +41,17 @@ class VKontakteBackend(SocialAuthBackend):
 
     def get_user_id(self, details, response):
         """Return user unique id provided by VKontakte"""
-        return response.GET['id']
+        return response['id']
 
     def get_user_details(self, response):
         """Return user details from VKontakte request"""
-        nickname = response.GET['nickname']
+        nickname = response.get('nickname') or ''
         return {
-            USERNAME: response.GET['id'] if len(nickname) == 0 else nickname,
+            USERNAME: response['id'] if len(nickname) == 0 else nickname,
             'email': '',
             'fullname': '',
-            'first_name': response.GET['first_name'],
-            'last_name': response.GET['last_name']
+            'first_name': response.get('first_name')[0] if 'first_name' in response else '',
+            'last_name': response.get('last_name')[0] if 'last_name' in response else ''
         }
 
 
@@ -59,6 +59,9 @@ class VKontakteAuth(BaseAuth):
     """VKontakte OpenAPI authorization mechanism"""
     AUTH_BACKEND = VKontakteBackend
     APP_ID = setting('VKONTAKTE_APP_ID')
+
+    def user_data(self, access_token, *args, **kwargs):
+        return dict(self.request.GET)
 
     def auth_html(self):
         """Returns local VK authentication page, not necessary for
@@ -94,7 +97,8 @@ class VKontakteAuth(BaseAuth):
             raise ValueError('VKontakte authentication failed: invalid hash')
         else:
             kwargs.update({
-                'response': self.request,
+                'auth': self,
+                'response': self.user_data(cookie_dict['mid']),
                 self.AUTH_BACKEND.name: True
             })
             return authenticate(*args, **kwargs)
