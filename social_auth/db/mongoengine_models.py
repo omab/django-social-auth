@@ -30,7 +30,7 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
 
     @classmethod
     def username_max_length(cls):
-        return User._meta.get_field('username').max_length
+        return User.username.max_length
 
 
 class Nonce(Document, NonceMixin):
