@@ -433,6 +433,14 @@ Configuration
 
     SOCIAL_AUTH_URLOPEN_TIMEOUT = 30
 
+  ``urllib2.urlopen`` uses ``socket.getdefaulttimeout()`` value by default, so
+  setting ``socket.setdefaulttimeout(...)`` will affect ``urlopen`` when this
+  setting is not defined, otherwise this setting takes precedence. Also this
+  might affect other places in Django.
+
+  ``timeout`` argument was introduced in python 2.6 according to `urllib2
+  documentation`_
+
 Some settings can be tweak by backend by adding the backend name prefix (all
 uppercase and replace ``-`` with ``_``), here's the supported settings so far::
 
@@ -1532,3 +1540,4 @@ Base work is copyrighted by:
 .. _estebistec: https://github.com/estebistec
 .. _Weibo: http://open.weibo.com
 .. _hepochen: https://github.com/hepochen
+.. _urllib2 documentation: http://docs.python.org/library/urllib2.html#urllib2.urlopen
