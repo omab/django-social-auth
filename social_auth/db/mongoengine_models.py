@@ -13,6 +13,7 @@ from social_auth.db.base import UserSocialAuthMixin, AssociationMixin, \
 
 class UserSocialAuth(Document, UserSocialAuthMixin):
     """Social Auth association model"""
+    User = User
     user = ReferenceField(User)
     provider = StringField(max_length=32)
     uid = StringField(max_length=255, unique_with='provider')
