@@ -1,3 +1,25 @@
+
+0.7.2 / 2012-07-28
+==================
+
+  * Merge branch 'timeouts'. Closes #420
+  * Merge pull request #421 from estebistec/master
+  * Add missing User class attribute to mongoengine's UserSocialAuth
+  * Doc about getdefaulttimeout()/setdefaulttimeout() and timeout parameter
+  * urllib2.urlopen timeout from settings. Refs #420
+  * Merge pull request #419 from krvss/master
+  * Fixing of VKontate OpenAPI authentication
+  * Merge pull request #418 from ozexpert/patch-1
+  * Update social_auth/db/mongoengine_models.py
+  * Merge pull request #413 from stephenLee/patch-1
+  * Update social_auth/backends/contrib/weibo.py
+  * Weibo docs and PEP8. Refs #411
+  * Merge pull request #411 from hepochen/master
+  * add small doc for contrib/weibo.py
+  * add a backend for weibo.com
+  * Support django 1.4 emtpy value in LazyDict. Closes #409
+  * Validate that current backend matches partial pipeline data. Closes #408
+  * Better parameter name
 2012-06-16  Kulbir <ksinghsandhu@gmail.com>
 
   * doc/backends/twilio.md, social_auth/backends/contrib/twilio.py: added
