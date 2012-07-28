@@ -27,7 +27,7 @@ raised.
 Also a new-user signal (``socialauth_registered``) is sent when new accounts are
 created::
 
-    from social_auth.signals import socialauth_registered 
+    from social_auth.signals import socialauth_registered
 
     def new_users_handler(sender, user, response, details, **kwargs):
         user.is_new = True

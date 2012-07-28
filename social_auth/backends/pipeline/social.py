@@ -1,8 +1,6 @@
 from django.db.utils import IntegrityError
 
-from social_auth.utils import setting
 from social_auth.models import UserSocialAuth
-from social_auth.backends.pipeline import warn_setting
 from social_auth.backends.exceptions import AuthException
 from django.utils.translation import ugettext
 
@@ -45,13 +43,10 @@ def load_extra_data(backend, details, response, social_user, uid, user,
     """Load extra data from provider and store it on current UserSocialAuth
     extra_data field.
     """
-    warn_setting('SOCIAL_AUTH_EXTRA_DATA', 'load_extra_data')
-
-    if setting('SOCIAL_AUTH_EXTRA_DATA', True):
-        extra_data = backend.extra_data(user, uid, response, details)
-        if extra_data and social_user.extra_data != extra_data:
-            if social_user.extra_data:
-                social_user.extra_data.update(extra_data)
-            else:
-                social_user.extra_data = extra_data
-            social_user.save()
+    extra_data = backend.extra_data(user, uid, response, details)
+    if extra_data and social_user.extra_data != extra_data:
+        if social_user.extra_data:
+            social_user.extra_data.update(extra_data)
+        else:
+            social_user.extra_data = extra_data
+        social_user.save()

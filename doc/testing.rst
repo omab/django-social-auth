@@ -1,7 +1,7 @@
 Testing
 =======
 Django-social-auth aims to be a fully tested project, some partial test are
-present at the moment and others are being worked. 
+present at the moment and others are being worked.
 
 To test the application just run::
 

@@ -78,7 +78,7 @@ To enable OAuth2 support:
 Check which applications can be included in their `Google Data Protocol Directory`_
 
 
-Google OpenID 
+Google OpenID
 -------------
 
 Configurable settings:

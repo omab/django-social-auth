@@ -129,7 +129,7 @@ Configuration
         'social_auth.backends.contrib.instagram.InstagramBackend',
         'social_auth.backends.contrib.vkontakte.VKontakteBackend',
         'social_auth.backends.contrib.skyrock.SkyrockBackend',
-        'social_auth.backends.contrib.yahoo.YahooOAuthBackend',        
+        'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
         'social_auth.backends.OpenIDBackend',
         'social_auth.backends.contrib.bitbucket.BitbucketBackend',
         'social_auth.backends.contrib.mixcloud.MixcloudBackend',
@@ -299,7 +299,7 @@ Configuration
   are listed below on OpenId and OAuth sections.
 
 - The update_user_details pipeline processor will set certain fields on user
-  objects, such as ``email``. Set this to a list of fields you only want to 
+  objects, such as ``email``. Set this to a list of fields you only want to
   set for newly created users:
 
     SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email',]
@@ -488,33 +488,33 @@ pipeline overrides.
 The default pipeline is composed by::
 
     (
-        # Find UserSocialAuth object by backend and backend uid. 
-        # Fail if UserSocialAuth already exists but not associated with 
+        # Find UserSocialAuth object by backend and backend uid.
+        # Fail if UserSocialAuth already exists but not associated with
         # the current user in the pipeline. Otherwise set the current user
         # in the pipeline to be the user associated with UserSocialAuth
         'social_auth.backends.pipeline.social.social_auth_user',
         # Try to find an existing user that has the email address provided
         # by the authentication backend. Fail if email addr. is not unique
         'social_auth.backends.pipeline.associate.associate_by_email',
-        # If no user is found so far, generate a unique username based on 
+        # If no user is found so far, generate a unique username based on
         # configured settings
         'social_auth.backends.pipeline.user.get_username',
-        # Depends on get_username. If no user is found so far, then create 
+        # Depends on get_username. If no user is found so far, then create
         # a new user based on the username returned by get_username
         # If new user is created, set the current user in the pipeline to be
-        # the newly created user and set the is_new arg to be true and 
-        # sends the socialauth_not_registered signal 
+        # the newly created user and set the is_new arg to be true and
+        # sends the socialauth_not_registered signal
         'social_auth.backends.pipeline.user.create_user',
         # If no instance of UserSocialAuth is found so far (through social_auth_user)
         # create a new UserSocialAuth instance associated with the given user
         'social_auth.backends.pipeline.social.associate_user',
-        # Take the extra data given by backend and store them in the 
+        # Take the extra data given by backend and store them in the
         # UserSocialAuth instance's extra_data field, updating existing values
         # Depends on an instance of UserSocialAuth to exist of course
         'social_auth.backends.pipeline.social.load_extra_data',
         # Update fields on the user object based on details provided by the
         # authentication backend, skipping sensative fields such as username,
-        # id, pk, (and other provided in SOCIAL_AUTH_PROTECTED_USER_FIELDS if a 
+        # id, pk, (and other provided in SOCIAL_AUTH_PROTECTED_USER_FIELDS if a
         # user is already registered)
         # Fires the pre_update signal before updating and socialauth_registered
         # signal if is_new flag is set (by create_user pipeline)
@@ -590,8 +590,8 @@ Deprecated bits
 
 The following settings are deprecated in favor of pipeline functions.
 
-- These settings should be avoided and override ``get_username`` pipeline entry
-  with the desired behavior::
+- These old settings aren't supported anymore, override ``get_username``
+  pipeline entry with the desired behavior::
 
     SOCIAL_AUTH_FORCE_RANDOM_USERNAME
     SOCIAL_AUTH_DEFAULT_USERNAME
@@ -599,23 +599,29 @@ The following settings are deprecated in favor of pipeline functions.
     SOCIAL_AUTH_USERNAME_FIXER
     SOCIAL_AUTH_ASSOCIATE_URL_NAME
 
-- User creation setting should be avoided and remove the entry ``create_user``
+- User creation setting was removed, remove the entry ``create_user``
   from pipeline instead::
 
     SOCIAL_AUTH_CREATE_USERS
 
-- Automatic data update should be stopped by overriding ``update_user_details``
-  pipeline entry instead of using this setting::
+  Also the signal ``socialauth_not_registered`` was removed.
+
+- Automatic data update is the default behavior, this old setting was removed::
 
     SOCIAL_AUTH_CHANGE_SIGNAL_ONLY
 
-- Extra data retrieval from providers should be stopped by removing
-  ``load_extra_data`` from pipeline instead of using this setting::
+  Override ``update_user_details`` if needed.
+
+- Extra data retrieval is default behavior, this setting is not supported any
+  more::
 
     SOCIAL_AUTH_EXTRA_DATA
 
-- Automatic email association should be avoided by removing
-  ``associate_by_email`` pipeline entry instead of using this setting::
+  Remove ``load_extra_data`` from pipeline if needed.
+
+- Automatic email association is disabled by default since it could be
+  a security risk and allow users to take-over others accounts by spoofing
+  email address in providers. Also this setting is not supported any more::
 
     SOCIAL_AUTH_ASSOCIATE_BY_MAIL
 
@@ -629,7 +635,6 @@ The following settings are deprecated in favor of pipeline functions.
   And to complete the process::
 
         /<social auth path>/complete/<backend>/
-
 
 Usage example
 -------------
@@ -1531,7 +1536,7 @@ Base work is copyrighted by:
 .. _Odnoklassniki OAuth: http://dev.odnoklassniki.ru/wiki/display/ok/The+OAuth+2.0+Protocol
 .. _authentication for VKontakte applications: http://www.ikrvss.ru/2011/11/08/django-social-auh-and-vkontakte-application/
 .. _Facebook Canvas Application Authentication: http://www.ikrvss.ru/2011/09/22/django-social-auth-and-facebook-canvas-applications/
-.. _Mixcloud OAuth2: http://www.mixcloud.com/developers/documentation/#authorization 
+.. _Mixcloud OAuth2: http://www.mixcloud.com/developers/documentation/#authorization
 .. _Mixcloud API: http://www.mixcloud.com/developers/documentation
 .. _Mixcloud Developers: http://www.mixcloud.com/developers
 .. _fmoga: https://github.com/fmoga

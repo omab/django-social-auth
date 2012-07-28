@@ -3,8 +3,8 @@ Deprecated bits
 
 The following settings are deprecated in favor of pipeline functions.
 
-- These settings should be avoided and override ``get_username`` pipeline entry
-  with the desired behavior::
+- These old settings aren't supported anymore, override ``get_username``
+  pipeline entry with the desired behavior::
 
     SOCIAL_AUTH_FORCE_RANDOM_USERNAME
     SOCIAL_AUTH_DEFAULT_USERNAME
@@ -12,23 +12,29 @@ The following settings are deprecated in favor of pipeline functions.
     SOCIAL_AUTH_USERNAME_FIXER
     SOCIAL_AUTH_ASSOCIATE_URL_NAME
 
-- User creation setting should be avoided and remove the entry ``create_user``
+- User creation setting was removed, remove the entry ``create_user``
   from pipeline instead::
 
     SOCIAL_AUTH_CREATE_USERS
 
-- Automatic data update should be stopped by overriding ``update_user_details``
-  pipeline entry instead of using this setting::
+  Also the signal ``socialauth_not_registered`` was removed.
+
+- Automatic data update is the default behavior, this old setting was removed::
 
     SOCIAL_AUTH_CHANGE_SIGNAL_ONLY
 
-- Extra data retrieval from providers should be stopped by removing
-  ``load_extra_data`` from pipeline instead of using this setting::
+  Override ``update_user_details`` if needed.
+
+- Extra data retrieval is default behavior, this setting is not supported any
+  more::
 
     SOCIAL_AUTH_EXTRA_DATA
 
-- Automatic email association should be avoided by removing
-  ``associate_by_email`` pipeline entry instead of using this setting::
+  Remove ``load_extra_data`` from pipeline if needed.
+
+- Automatic email association is disabled by default since it could be
+  a security risk and allow users to take-over others accounts by spoofing
+  email address in providers. Also this setting is not supported any more::
 
     SOCIAL_AUTH_ASSOCIATE_BY_MAIL
 

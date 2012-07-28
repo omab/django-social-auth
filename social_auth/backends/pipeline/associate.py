@@ -1,8 +1,6 @@
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
-from social_auth.utils import setting
 from social_auth.models import UserSocialAuth
-from social_auth.backends.pipeline import warn_setting
 from social_auth.backends.exceptions import AuthException
 
 
@@ -13,9 +11,7 @@ def associate_by_email(details, user=None, *args, **kwargs):
 
     email = details.get('email')
 
-    warn_setting('SOCIAL_AUTH_ASSOCIATE_BY_MAIL', 'associate_by_email')
-
-    if email and setting('SOCIAL_AUTH_ASSOCIATE_BY_MAIL', False):
+    if email:
         # try to associate accounts registered with the same email address,
         # only if it's a single object. AuthException is raised if multiple
         # objects are returned
