@@ -14,13 +14,13 @@ APIs console https://code.google.com/apis/console/ Identity option.
 OpenID also works straightforward, it doesn't need further configurations.
 """
 from urllib import urlencode
-from urllib2 import Request, urlopen
+from urllib2 import Request
 
 from oauth2 import Request as OAuthRequest
 
 from django.utils import simplejson
 
-from social_auth.utils import setting
+from social_auth.utils import setting, dsa_urlopen
 from social_auth.backends import OpenIdAuth, ConsumerBasedOAuth, BaseOAuth2, \
                                  OAuthBackend, OpenIDBackend, USERNAME
 from social_auth.backends.exceptions import AuthFailed
@@ -213,7 +213,7 @@ def googleapis_email(url, params):
     """
     request = Request(url + '?' + params, headers={'Authorization': params})
     try:
-        return simplejson.loads(urlopen(request).read())['data']
+        return simplejson.loads(dsa_urlopen(request).read())['data']
     except (ValueError, KeyError, IOError):
         return None
 
@@ -227,7 +227,7 @@ def googleapis_profile(url, access_token):
     data = {'access_token': access_token, 'alt': 'json'}
     request = Request(url + '?' + urlencode(data))
     try:
-        return simplejson.loads(urlopen(request).read())
+        return simplejson.loads(dsa_urlopen(request).read())
     except (ValueError, KeyError, IOError):
         return None
 

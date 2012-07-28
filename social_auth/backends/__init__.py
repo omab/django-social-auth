@@ -9,7 +9,7 @@ Also the modules *must* define a BACKENDS dictionary with the backend name
 (which is used for URLs matching) and Auth class, otherwise it won't be
 enabled.
 """
-from urllib2 import Request, urlopen, HTTPError
+from urllib2 import Request, HTTPError
 from urllib import urlencode
 
 from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
@@ -26,7 +26,8 @@ from django.utils.importlib import import_module
 from social_auth.models import UserSocialAuth
 from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
                               clean_partial_pipeline, url_add_parameters, \
-                              get_random_string, constant_time_compare
+                              get_random_string, constant_time_compare, \
+                              dsa_urlopen
 from social_auth.store import DjangoOpenIDStore
 from social_auth.backends.exceptions import StopPipeline, AuthException, \
                                             AuthFailed, AuthCanceled, \
@@ -618,7 +619,7 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def fetch_response(self, request):
         """Executes request and fetchs service response"""
-        response = urlopen(request.to_url())
+        response = dsa_urlopen(request.to_url())
         return '\n'.join(response.readlines())
 
     def access_token(self, token):
@@ -724,7 +725,7 @@ class BaseOAuth2(BaseOAuth):
                           headers=headers)
 
         try:
-            response = simplejson.loads(urlopen(request).read())
+            response = simplejson.loads(dsa_urlopen(request).read())
         except HTTPError, e:
             if e.code == 400:
                 raise AuthCanceled(self)

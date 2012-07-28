@@ -11,13 +11,12 @@ from django.contrib.auth import authenticate
 from django.utils import simplejson
 
 from urllib import urlencode
-from urllib2 import urlopen
 from hashlib import md5
 from time import time
 
 from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, \
                                  BaseOAuth2, USERNAME
-from social_auth.utils import setting, log
+from social_auth.utils import setting, log, dsa_urlopen
 
 
 # Vkontakte configuration
@@ -248,7 +247,9 @@ def _api_get_val_fun(name, conf):
 def vkontakte_api(method, data):
     """Calls VKontakte OpenAPI method
         http://vkontakte.ru/apiclub,
-        http://vkontakte.ru/pages.php?o=-1&p=%C2%FB%EF%EE%EB%ED%E5%ED%E8%E5%20%E7%E0%EF%F0%EE%F1%EE%E2%20%EA%20API
+        http://vkontakte.ru/pages.php?o=-1&p=%C2%FB%EF%EE%EB%ED%E5%ED%E8%E5%20
+                                             %E7%E0%EF%F0%EE%F1%EE%E2%20%EA%20
+                                             API
     """
 
     # We need to perform server-side call if no access_token
@@ -273,7 +274,7 @@ def vkontakte_api(method, data):
     params = urlencode(data)
     url += '?' + params
     try:
-        return simplejson.load(urlopen(url))
+        return simplejson.load(dsa_urlopen(url))
     except (TypeError, KeyError, IOError, ValueError, IndexError):
         log('error', 'Could not load data from VKontakte.',
             exc_info=True, extra=dict(data=data))

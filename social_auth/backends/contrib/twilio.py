@@ -1,18 +1,13 @@
 """
 Twilio support
 """
-import time
-from datetime import datetime
 from urllib import urlencode
-from urllib2 import urlopen
 from re import sub
 
 from django.contrib.auth import authenticate
 from django.conf import settings
 
 from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
-from social_auth.utils import log, setting
-from social_auth.backends.exceptions import AuthFailed, AuthMissingParameter
 
 
 TWILIO_SERVER = 'https://www.twilio.com'
@@ -26,7 +21,8 @@ class TwilioBackend(SocialAuthBackend):
         return response['AccountSid']
 
     def get_user_details(self, response):
-        """Return twilio details, Twilio only provides AccountSID as parameters."""
+        """Return twilio details, Twilio only provides AccountSID as
+        parameters."""
         # /complete/twilio/?AccountSid=ACc65ea16c9ebd4d4684edf814995b27e
         account_sid = response['AccountSid']
         return {USERNAME: account_sid,

@@ -9,13 +9,12 @@ If username is not specified, OpenID 2.0 url used for authentication.
 from django.utils import simplejson
 
 from urllib import urlencode
-from urllib2 import urlopen
 from urlparse import urlparse, urlsplit
 
 from social_auth.backends import OpenIDBackend, OpenIdAuth, USERNAME, \
                                  OAuthBackend, BaseOAuth2
 
-from social_auth.utils import setting, log
+from social_auth.utils import setting, log, dsa_urlopen
 
 # Yandex configuration
 YANDEX_AUTHORIZATION_URL = 'https://oauth.yandex.ru/authorize'
@@ -110,7 +109,7 @@ class YaruAuth(BaseOAuth2):
 
         url = self.get_api_url() + '?' + urlencode(params)
         try:
-            return simplejson.load(urlopen(url))
+            return simplejson.load(dsa_urlopen(url))
         except (ValueError, IndexError):
             log('error', 'Could not load data from Yandex.',
                 exc_info=True, extra=dict(data=params))

@@ -3,6 +3,7 @@ import random
 import hashlib
 import urlparse
 import urllib
+from urllib2 import urlopen
 import logging
 
 from collections import defaultdict
@@ -244,6 +245,16 @@ class LazyDict(SimpleLazyObject):
         if self._wrapped is empty:
             self._setup()
         self._wrapped[name] = value
+
+
+def dsa_urlopen(*args, **kwargs):
+    """Like urllib2.urlopen but sets a timeout defined by
+    SOCIAL_AUTH_URLOPEN_TIMEOUT setting if defined (and not already in
+    kwargs)."""
+    timeout = setting('SOCIAL_AUTH_URLOPEN_TIMEOUT')
+    if timeout and 'timeout' not in kwargs:
+        kwargs['timeout'] = timeout
+    return urlopen(*args, **kwargs)
 
 
 if __name__ == '__main__':

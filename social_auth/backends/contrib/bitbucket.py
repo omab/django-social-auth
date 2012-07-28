@@ -12,8 +12,7 @@ extend it.
 """
 from django.utils import simplejson
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
-from urllib import urlopen
-from social_auth.utils import setting
+from social_auth.utils import setting, dsa_urlopen
 
 # Bitbucket configuration
 BITBUCKET_SERVER = 'bitbucket.org/api/1.0'
@@ -94,7 +93,7 @@ class BitbucketAuth(ConsumerBasedOAuth):
                         break
             # Then return the user data using a normal GET with the
             # BITBUCKET_USER_DATA_URL and the user's email
-            response = urlopen(BITBUCKET_USER_DATA_URL + email)
+            response = dsa_urlopen(BITBUCKET_USER_DATA_URL + email)
             user_details = simplejson.load(response)['user']
             user_details['email'] = email
             return user_details
