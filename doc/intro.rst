@@ -31,10 +31,25 @@ credentials, some features are:
     * `LiveJournal OpenID`_
     * `Orkut OAuth`_
     * `Linkedin OAuth`_
+    * `Foursquare OAuth2`_
+    * `GitHub OAuth`_
+    * `Dropbox OAuth`_
+    * `Flickr OAuth`_
     * `Vkontakte OAuth`_
     * `MSN Live Connect OAuth2`_
     * `Skyrock OAuth`_
     * `Yahoo OAuth`_
+    * `Evernote OAuth`_
+    * `Mail.ru OAuth`_
+    * `Odnoklassniki OAuth`_
+    * `Mixcloud OAuth2`_
+    * `BitBucket OAuth`_
+    * `Douban OAuth`_
+    * `Fitbit OAuth`_
+    * `Instagram OAuth2`_
+    * `Twilio`_
+    * `Weibo OAuth2`_
+    * `Yandex OpenId`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -54,13 +69,28 @@ credentials, some features are:
 .. _Google OAuth: http://code.google.com/apis/accounts/docs/OAuth.html
 .. _Google OAuth2: http://code.google.com/apis/accounts/docs/OAuth2.html
 .. _Yahoo OpenID: http://openid.yahoo.com/
+.. _myOpenID: https://www.myopenid.com/
 .. _Twitter OAuth: http://dev.twitter.com/pages/oauth_faq
 .. _Facebook OAuth: http://developers.facebook.com/docs/authentication/
-.. _Linkedin OAuth: https://www.linkedin.com/secure/developer
-.. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
-.. _myOpenID: https://www.myopenid.com/
 .. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
+.. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
+.. _Linkedin OAuth: https://www.linkedin.com/secure/developer
+.. _Foursquare OAuth2: https://developer.foursquare.com/docs/oauth.html
+.. _GitHub OAuth: http://developer.github.com/v3/oauth/
+.. _Dropbox OAuth: https://www.dropbox.com/developers_beta/reference/api
+.. _Flickr OAuth: http://www.flickr.com/services/api/
 .. _Vkontakte OAuth: http://vk.com/developers.php?oid=-1&p=%D0%90%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F_%D1%81%D0%B0%D0%B9%D1%82%D0%BE%D0%B2
 .. _MSN Live Connect OAuth2: http://msdn.microsoft.com/en-us/library/live/hh243647.aspx
 .. _Skyrock OAuth: http://www.skyrock.com/developer/
 .. _Yahoo OAuth: http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html
+.. _Evernote OAuth: http://dev.evernote.com/documentation/cloud/chapters/Authentication.php
+.. _Mail.ru OAuth: http://api.mail.ru/docs/guides/oauth/
+.. _Odnoklassniki OAuth: http://dev.odnoklassniki.ru/wiki/display/ok/The+OAuth+2.0+Protocol
+.. _Mixcloud OAuth2: http://www.mixcloud.com/developers/documentation/#authorization
+.. _BitBucket OAuth: https://confluence.atlassian.com/display/BITBUCKET/OAuth+Consumers
+.. _Douban OAuth: http://www.douban.com/service/apidoc/auth
+.. _Fitbit OAuth: https://wiki.fitbit.com/display/API/OAuth+Authentication+in+the+Fitbit+API
+.. _Instagram OAuth2: http://instagram.com/developer/authentication/
+.. _Twilio: https://www.twilio.com/user/account/connect/apps
+.. _Weibo OAuth2: http://open.weibo.com/wiki/Oauth2
+.. _Yandex OpenId: http://openid.yandex.ru/

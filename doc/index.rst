@@ -26,6 +26,8 @@ Contents:
    miscellaneous
    bugs
 
+   copyrights
+
 Indices and tables
 ==================
 

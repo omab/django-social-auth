@@ -6,24 +6,27 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   openid
    oauth
-   twitter
-   facebook
-   google
-   linkedin
-   github
+   openid
+
    bitbucket
-   dropbox
-   flickr
    browserid
-   instagram
-   vkontakte
-   live
-   skyrock
-   yahoo
-   evernote
    douban
+   dropbox
+   evernote
+   facebook
+   flickr
+   github
+   google
+   instagram
+   linkedin
+   live
    mailru
+   mixcloud
    odnoklassnikiru
+   skyrock
+   twilio
+   twitter
+   vkontakte
    weibo
+   yahoo
