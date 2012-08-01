@@ -12,11 +12,13 @@ You can check this app documentation on `Read the Docs`_ too.
 
 .. contents:: Table of Contents
 
+
 Demo
 ----
 
 There's a demo at http://social.matiasaguirre.net/.
 Note: It lacks some backends support at the moment.
+
 
 Features
 --------
@@ -69,6 +71,13 @@ credentials, some features are:
 
 - Extensible pipeline to handle authentication/association mechanism
 
+
+Documentation
+-------------
+
+Extensive documentaion at `Read the Docs`_.
+
+
 Dependencies
 ------------
 
@@ -80,6 +89,7 @@ Dependencies that **must** be meet to use the application:
 
 - Several backends demands application registration on their corresponding
   sites.
+
 
 Installation
 ------------
@@ -105,10 +115,6 @@ or::
     $ cd django-social-auth
     $ sudo python setup.py install
 
-Documentation
--------------
-
-Extensive documentaion at `Read the Docs`_.
 
 Copyrights and Licence
 ----------------------
@@ -127,6 +133,7 @@ Some bits were derived from others work and copyrighted by:
     django-openid-auth -  OpenID integration for django.contrib.auth
     Copyright (C) 2007 Simon Willison
     Copyright (C) 2008-2010 Canonical Ltd.
+
 
 .. _django-twitter-oauth: https://github.com/henriklied/django-twitter-oauth
 .. _django-openid-auth: https://launchpad.net/django-openid-auth
@@ -161,7 +168,6 @@ Some bits were derived from others work and copyrighted by:
 .. _Twilio: https://www.twilio.com/user/account/connect/apps
 .. _Weibo OAuth2: http://open.weibo.com/wiki/Oauth2
 .. _Yandex OpenId: http://openid.yandex.ru/
-
 .. _auth.User: http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/models.py#L186
 .. _python-openid: http://pypi.python.org/pypi/python-openid/
 .. _python-oauth2: https://github.com/simplegeo/python-oauth2
