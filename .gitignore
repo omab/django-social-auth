@@ -16,4 +16,5 @@ Django-social-auth.iml
 tags
 Vagrantfile
 .vagrant
-
+.*project
+.settings
