@@ -41,6 +41,7 @@ USE_L10N = True
 MEDIA_ROOT = ''
 ADMIN_MEDIA_PREFIX = '/admin-media/'
 MEDIA_URL = ''
+STATIC_URL = '/static/'
 
 SECRET_KEY = 't2eo^kd%k+-##ml3@_x__$j0(ps4p0q6eg*c4ttp9d2n(t!iol'
 
@@ -68,6 +69,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.staticfiles',
     'django.contrib.messages',
     'django.contrib.admin',
     'social_auth',
@@ -98,6 +100,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.yandex.YandexOAuth2Backend',
     'social_auth.backends.contrib.yandex.YaruBackend',
     'social_auth.backends.contrib.odnoklassniki.OdnoklassnikiBackend',
+    'social_auth.backends.contrib.odnoklassniki.OdnoklassnikiAppBackend',
     'social_auth.backends.contrib.vkontakte.VKontakteOAuth2Backend',
     'social_auth.backends.contrib.mailru.MailruBackend',
     'django.contrib.auth.backends.ModelBackend',

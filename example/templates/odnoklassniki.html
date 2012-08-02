@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+	{% if user.is_authenticated %}
+		Hello! You've successfully authenticated within your Odnoklassniki app. I know you, your name is {{ user.get_full_name }}!
+	{% else %}
+		Hello! Something went wrong and you're still seem to be anonymous for me.
+	{% endif %}
+{% endblock %}
