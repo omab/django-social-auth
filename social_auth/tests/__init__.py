@@ -9,3 +9,6 @@ if setting('SOCIAL_AUTH_TEST_FACEBOOK', True):
 
 if setting('SOCIAL_AUTH_TEST_GOOGLE', True):
     from social_auth.tests.google import *
+
+if setting('SOCIAL_AUTH_TEST_ODNOKLASSNIKI', True):
+    from social_auth.tests.odnoklassniki import *

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>This demo works with Sandbox mode only. </h3>
+<p>
+	Please set <pre>ODNOKLASSNIKI_APP_ID</pre>, <pre>ODNOKLASSNIKI_APP_PUBLIC_KEY</pre> and <pre>ODNOKLASSNIKI_APP_SECRET</pre> in
+	your <pre>settings.py</pre>. Also set <pre>LOGIN_URL = '/ok/'</pre> Then edit your sandbox app that it point to the
+	 <pre>http://localhost:8000/ok/</pre>, 	start your server with <pre>python manage.py runserver</pre> and open your sandbox app. 
+	 You should see the name of your sandbox user. 
+</p>
+{% endblock %}
