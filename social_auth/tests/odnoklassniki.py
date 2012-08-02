@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 from __future__ import unicode_literals
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.test.testcases import LiveServerTestCase, SimpleTestCase
 from django.test.utils import override_settings
@@ -9,12 +8,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from social_auth.backends.contrib.odnoklassniki import odnoklassniki_oauth_sig
 from social_auth.models import UserSocialAuth
-from social_auth.utils import setting
-from unittest.case import skip
 import time
-#from social_auth.db.django_models import UserSocialAuth
-#from social_auth.utils import setting
-#import re
         
 class SignatureTest(SimpleTestCase):
     def test_oauth_signature(self):

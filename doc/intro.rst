@@ -41,7 +41,7 @@ credentials, some features are:
     * `Yahoo OAuth`_
     * `Evernote OAuth`_
     * `Mail.ru OAuth`_
-    * `Odnoklassniki OAuth`_
+    * `Odnoklassniki OAuth`_ and `Odnoklassniki IFrame applications`_
     * `Mixcloud OAuth2`_
     * `BitBucket OAuth`_
     * `Douban OAuth`_
@@ -85,7 +85,8 @@ credentials, some features are:
 .. _Yahoo OAuth: http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html
 .. _Evernote OAuth: http://dev.evernote.com/documentation/cloud/chapters/Authentication.php
 .. _Mail.ru OAuth: http://api.mail.ru/docs/guides/oauth/
-.. _Odnoklassniki OAuth: http://dev.odnoklassniki.ru/wiki/display/ok/The+OAuth+2.0+Protocol
+.. _Odnoklassniki OAuth: http://dev.odnoklassniki.ru/wiki/pages/viewpage.action?pageId=12878032
+.. _Odnoklassniki IFrame applications: http://dev.odnoklassniki.ru/wiki/display/ok/Odnoklassniki.ru+Third+Party+Platform
 .. _Mixcloud OAuth2: http://www.mixcloud.com/developers/documentation/#authorization
 .. _BitBucket OAuth: https://confluence.atlassian.com/display/BITBUCKET/OAuth+Consumers
 .. _Douban OAuth: http://www.douban.com/service/apidoc/auth

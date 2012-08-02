@@ -18,3 +18,4 @@ Vagrantfile
 .vagrant
 .*project
 .settings
+.coverage

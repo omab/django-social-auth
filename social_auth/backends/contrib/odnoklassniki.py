@@ -1,10 +1,8 @@
 '''
 Odnoklassniki.ru OAuth2 and IFRAME application support
-
 If you are using OAuth2 authentication,
     * Take a look to:
         http://dev.odnoklassniki.ru/wiki/display/ok/The+OAuth+2.0+Protocol
-
     * You need to register OAuth application here:
         http://dev.odnoklassniki.ru/wiki/pages/viewpage.action?pageId=13992188
 elif you're building iframe application,
@@ -13,7 +11,6 @@ elif you're building iframe application,
     * You need to register your iframe application here:
         http://dev.odnoklassniki.ru/wiki/pages/viewpage.action?pageId=5668937
     * You need to sign a public offer and do some bureaucracy if you want to be listed in application registry
-
 Then setup your application according manual and use information from
 registration mail to set settings values.
 '''
@@ -137,7 +134,8 @@ class OdnoklassnikiIframeForm(forms.Form):
     
     def get_auth_sig(self):
         secret_key = backend_setting(self.auth, 'ODNOKLASSNIKI_APP_SECRET')
-        hash_source = '{0:d}{1:s}{2:s}'.format(self.cleaned_data['logged_user_id'], self.cleaned_data['session_key'], secret_key)  
+        hash_source = '{0:d}{1:s}{2:s}'.format(self.cleaned_data['logged_user_id'],
+                                               self.cleaned_data['session_key'], secret_key)  
         return md5(hash_source).hexdigest()
     
     def clean_auth_sig(self):
@@ -163,6 +161,7 @@ class OdnoklassnikiIframeForm(forms.Form):
         return response
     
 class OdnoklassnikiAppBackend(SocialAuthBackend):
+    '''Odnoklassniki iframe app authentication backend'''
     name = 'odnoklassnikiapp'
     
     def get_user_id(self, details, response):
@@ -181,6 +180,7 @@ class OdnoklassnikiAppBackend(SocialAuthBackend):
                 }
 
 class OdnoklassnikiApp(BaseAuth, OdnoklassnikiMixin):
+    '''Odnoklassniki iframe app authentication class'''
     SETTINGS_KEY_NAME = 'ODNOKLASSNIKI_APP_KEY'
     SETTINGS_SECRET_NAME = 'ODNOKLASSNIKI_APP_SECRET'
     SETTINGS_PUBLIC_NAME = 'ODNOKLASSNIKI_APP_PUBLIC_KEY'
