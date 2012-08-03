@@ -1,5 +1,6 @@
 """Django ORM models for Social Auth"""
 from django.db import models
+from django.db.utils import IntegrityError
 
 from social_auth.db.base import UserSocialAuthMixin, AssociationMixin, \
                                 NonceMixin
@@ -73,3 +74,7 @@ class Association(models.Model, AssociationMixin):
 
     class Meta:
         app_label = 'social_auth'
+
+
+def is_integrity_error(exc):
+    return exc.__class__ is IntegrityError

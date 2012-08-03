@@ -6,6 +6,7 @@ Requires MongoEngine 0.6.10
 from mongoengine import DictField, Document, IntField, ReferenceField, \
                         StringField
 from mongoengine.django.auth import User
+from mongoengine.queryset import OperationError
 
 from social_auth.db.base import UserSocialAuthMixin, AssociationMixin, \
                                 NonceMixin
@@ -49,3 +50,8 @@ class Association(Document, AssociationMixin):
     issued = IntField()
     lifetime = IntField()
     assoc_type = StringField(max_length=64)
+
+
+def is_integrity_error(exc):
+    return exc.__class__ is OperationError and 'E11000' in exc.message
+
