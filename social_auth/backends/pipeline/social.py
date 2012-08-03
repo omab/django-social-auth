@@ -1,5 +1,4 @@
-from django.db.utils import IntegrityError
-
+from social_auth.models import SOCIAL_AUTH_MODELS_MODULE
 from social_auth.models import UserSocialAuth
 from social_auth.backends.exceptions import AuthException
 from django.utils.translation import ugettext
@@ -28,7 +27,9 @@ def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
 
     try:
         social = UserSocialAuth.create_social_auth(user, uid, backend.name)
-    except IntegrityError:
+    except Exception as e:
+        if not SOCIAL_AUTH_MODELS_MODULE.is_integrity_error(e):
+            raise
         # Protect for possible race condition, those bastard with FTL
         # clicking capabilities, check issue #131:
         #   https://github.com/omab/django-social-auth/issues/131
