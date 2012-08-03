@@ -1,5 +1,4 @@
-from social_auth.models import SOCIAL_AUTH_MODELS_MODULE
-from social_auth.models import UserSocialAuth
+from social_auth.models import UserSocialAuth, SOCIAL_AUTH_MODELS_MODULE
 from social_auth.backends.exceptions import AuthException
 from django.utils.translation import ugettext
 

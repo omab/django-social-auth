@@ -104,7 +104,7 @@ class FacebookAuth(BaseOAuth2):
             try:
                 response = cgi.parse_qs(dsa_urlopen(url).read())
             except HTTPError:
-                raise AuthFailed(self, 'There was an error authenticating ' \
+                raise AuthFailed(self, 'There was an error authenticating '
                                        'the app')
 
             access_token = response['access_token'][0]
@@ -134,8 +134,8 @@ class FacebookAuth(BaseOAuth2):
                 # data is needed (it contains the user ID used to identify the
                 # account on further logins), this app cannot allow it to
                 # continue with the auth process.
-                raise AuthUnknownError(self, 'An error ocurred while ' \
-                                             'retrieving users Facebook ' \
+                raise AuthUnknownError(self, 'An error ocurred while '
+                                             'retrieving users Facebook '
                                              'data')
 
             data['access_token'] = access_token

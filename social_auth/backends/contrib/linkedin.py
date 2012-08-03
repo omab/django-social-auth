@@ -70,7 +70,7 @@ class LinkedinAuth(ConsumerBasedOAuth):
             if oauth_problem == 'user_refused':
                 raise AuthCanceled(self, '')
             else:
-                raise AuthUnknownError(self, 'LinkedIn error was %s' % \
+                raise AuthUnknownError(self, 'LinkedIn error was %s' %
                                                     oauth_problem)
         return super(LinkedinAuth, self).auth_complete(*args, **kwargs)
 

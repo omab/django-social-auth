@@ -29,10 +29,12 @@ def dsa_view(redirect_name=None):
             backend = get_backend(backend, request, redirect)
 
             if not backend:
-                return HttpResponseServerError('Incorrect authentication ' + \
+                return HttpResponseServerError('Incorrect authentication ' +
                                                'service')
 
-            RAISE_EXCEPTIONS = backend_setting(backend, 'SOCIAL_AUTH_RAISE_EXCEPTIONS', setting('DEBUG'))
+            RAISE_EXCEPTIONS = backend_setting(backend,
+                                               'SOCIAL_AUTH_RAISE_EXCEPTIONS',
+                                               setting('DEBUG'))
             try:
                 return func(request, backend, *args, **kwargs)
             except Exception, e:  # some error ocurred

@@ -7,8 +7,10 @@ YAHOO_CONSUMER_SECRET
 
 References:
 * http://developer.yahoo.com/oauth/guide/oauth-auth-flow.html
-* http://developer.yahoo.com/social/rest_api_guide/introspective-guid-resource.html
-* http://developer.yahoo.com/social/rest_api_guide/extended-profile-resource.html
+* http://developer.yahoo.com/social/rest_api_guide/
+*           introspective-guid-resource.html
+* http://developer.yahoo.com/social/rest_api_guide/
+*           extended-profile-resource.html
 
 Scopes:
 To make this extension works correctly you have to have at least
@@ -79,7 +81,7 @@ class YahooOAuth(ConsumerBasedOAuth):
         try:
             return simplejson.loads(response)['profile']
         except ValueError:
-            raise AuthUnknownError('Error during profile retrieval, ' \
+            raise AuthUnknownError('Error during profile retrieval, '
                                    'please, try again later')
 
     def _get_guid(self, access_token):
@@ -94,7 +96,7 @@ class YahooOAuth(ConsumerBasedOAuth):
             json = simplejson.loads(response)
             return json['guid']['value']
         except ValueError:
-            raise AuthUnknownError('Error during user id retrieval, ' \
+            raise AuthUnknownError('Error during user id retrieval, '
                                    'please, try again later')
 
 

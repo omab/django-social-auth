@@ -54,4 +54,3 @@ class Association(Document, AssociationMixin):
 
 def is_integrity_error(exc):
     return exc.__class__ is OperationError and 'E11000' in exc.message
-

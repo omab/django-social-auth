@@ -279,7 +279,7 @@ class OpenIDBackend(SocialAuthBackend):
         # values
         values.update(self.values_from_response(response,
                                                 SREG_ATTR,
-                                                OLD_AX_ATTRS + \
+                                                OLD_AX_ATTRS +
                                                 AX_SCHEMA_ATTRS))
 
         fullname = values.get('fullname') or ''
@@ -296,7 +296,7 @@ class OpenIDBackend(SocialAuthBackend):
 
         values.update({'fullname': fullname, 'first_name': first_name,
                        'last_name': last_name,
-                       USERNAME: values.get(USERNAME) or \
+                       USERNAME: values.get(USERNAME) or
                                    (first_name.title() + last_name.title())})
         return values
 

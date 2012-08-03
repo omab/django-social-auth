@@ -49,8 +49,10 @@ class VKontakteBackend(SocialAuthBackend):
             USERNAME: response['id'] if len(nickname) == 0 else nickname,
             'email': '',
             'fullname': '',
-            'first_name': response.get('first_name')[0] if 'first_name' in response else '',
-            'last_name': response.get('last_name')[0] if 'last_name' in response else ''
+            'first_name': response.get('first_name')[0]
+                                if 'first_name' in response else '',
+            'last_name': response.get('last_name')[0]
+                                if 'last_name' in response else ''
         }
 
 
@@ -217,7 +219,7 @@ class VKontakteAppAuth(VKontakteOAuth2):
                                   USE_APP_AUTH['key']])).hexdigest()
 
             if check_key != auth_key:
-                raise ValueError('VKontakte authentication failed: invalid ' \
+                raise ValueError('VKontakte authentication failed: invalid '
                                  'auth key')
 
         user_check = USE_APP_AUTH.get('user_mode', 0)

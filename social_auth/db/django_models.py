@@ -17,7 +17,7 @@ from social_auth.utils import setting
 #   def is_authenticated():
 #       ...
 if setting('SOCIAL_AUTH_USER_MODEL'):
-    UserModel = models.get_model(*setting('SOCIAL_AUTH_USER_MODEL')\
+    UserModel = models.get_model(*setting('SOCIAL_AUTH_USER_MODEL')
                                     .rsplit('.', 1))
 else:
     from django.contrib.auth.models import User as UserModel

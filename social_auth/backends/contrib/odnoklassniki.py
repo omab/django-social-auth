@@ -7,10 +7,12 @@ If you are using OAuth2 authentication,
         http://dev.odnoklassniki.ru/wiki/pages/viewpage.action?pageId=13992188
 elif you're building iframe application,
     * Take a look to:
-        http://dev.odnoklassniki.ru/wiki/display/ok/Odnoklassniki.ru+Third+Party+Platform
+        http://dev.odnoklassniki.ru/wiki/display/ok/
+                Odnoklassniki.ru+Third+Party+Platform
     * You need to register your iframe application here:
         http://dev.odnoklassniki.ru/wiki/pages/viewpage.action?pageId=5668937
-    * You need to sign a public offer and do some bureaucracy if you want to be listed in application registry
+    * You need to sign a public offer and do some bureaucracy if you want to be
+      listed in application registry
 Then setup your application according manual and use information from
 registration mail to set settings values.
 '''
@@ -18,15 +20,17 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.utils import simplejson
 from hashlib import md5
-from social_auth.backends import OAuthBackend, BaseOAuth2, USERNAME, BaseAuth, \
-    SocialAuthBackend
+from social_auth.backends import OAuthBackend, BaseOAuth2, USERNAME, \
+                                 BaseAuth, SocialAuthBackend
 from social_auth.backends.exceptions import AuthFailed
 from social_auth.utils import setting, log, dsa_urlopen, backend_setting
 from urllib import urlencode, unquote
 from urllib2 import Request
 
+
 ODNOKLASSNIKI_API_SERVER = 'http://api.odnoklassniki.ru/'
 EXPIRES_NAME = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
+
 
 class OdnoklassnikiBackend(OAuthBackend):
     '''Odnoklassniki authentication backend'''
@@ -48,12 +52,14 @@ class OdnoklassnikiBackend(OAuthBackend):
             'last_name': unquote(response['last_name'])
         }
 
+
 class OdnoklassnikiMixin(object):
     def get_settings(self):
         client_key = backend_setting(self, self.SETTINGS_KEY_NAME)
         client_secret = backend_setting(self, self.SETTINGS_SECRET_NAME)
         public_key = backend_setting(self, self.SETTINGS_PUBLIC_NAME)
         return client_key, client_secret, public_key
+
 
 class OdnoklassnikiOAuth2(BaseOAuth2, OdnoklassnikiMixin):
     '''Odnoklassniki OAuth2 support'''
@@ -71,25 +77,40 @@ class OdnoklassnikiOAuth2(BaseOAuth2, OdnoklassnikiMixin):
     def user_data(self, access_token, *args, **kwargs):
         '''Return user data from Odnoklassniki REST API'''
         data = {'access_token': access_token, 'method': 'users.getCurrentUser'}
-        client_key, client_secret, public_key = self.get_settings()  
-        return odnoklassniki_api(data, ODNOKLASSNIKI_API_SERVER, public_key, client_secret, 'oauth')
+        client_key, client_secret, public_key = self.get_settings()
+        return odnoklassniki_api(data, ODNOKLASSNIKI_API_SERVER, public_key,
+                                 client_secret, 'oauth')
+
 
 def odnoklassniki_oauth_sig(data, client_secret):
     '''Calculates signature of request data access_token value must be included
-    Algorithm is described at http://dev.odnoklassniki.ru/wiki/pages/viewpage.action?pageId=12878032 , search for "little bit different way" 
+    Algorithm is described at
+        http://dev.odnoklassniki.ru/wiki/pages/viewpage.action?pageId=12878032,
+    search for "little bit different way"
     '''
-    suffix = md5('{0:s}{1:s}'.format(data['access_token'], client_secret)).hexdigest()
-    check_list = sorted(['{0:s}={1:s}'.format(key, value) for key, value in data.items() if key != 'access_token'])
+    suffix = md5('{0:s}{1:s}'.format(data['access_token'],
+                                     client_secret)).hexdigest()
+    check_list = sorted(['{0:s}={1:s}'.format(key, value)
+                            for key, value in data.items()
+                                if key != 'access_token'])
     return md5(''.join(check_list) + suffix).hexdigest()
 
-def odnoklassniki_iframe_sig(data, client_secret_or_session_secret):
-    '''Calculates signature as described at http://dev.odnoklassniki.ru/wiki/display/ok/Authentication+and+Authorization
-    If API method requires session context, request is signed with session secret key. 
-    Otherwise it is signed with application secret key'''
-    param_list = sorted(['{0:s}={1:s}'.format(key, value) for key, value in data.items()])
-    return md5(''.join(param_list) + client_secret_or_session_secret).hexdigest()
 
-def odnoklassniki_api(data, api_url, public_key, client_secret, request_type = 'oauth'):
+def odnoklassniki_iframe_sig(data, client_secret_or_session_secret):
+    '''Calculates signature as described at:
+        http://dev.odnoklassniki.ru/wiki/display/ok/
+            Authentication+and+Authorization
+    If API method requires session context, request is signed with session
+    secret key. Otherwise it is signed with application secret key
+    '''
+    param_list = sorted(['{0:s}={1:s}'.format(key, value)
+                            for key, value in data.items()])
+    return md5(''.join(param_list) +
+               client_secret_or_session_secret).hexdigest()
+
+
+def odnoklassniki_api(data, api_url, public_key, client_secret,
+                      request_type='oauth'):
     ''' Calls Odnoklassniki REST API method
         http://dev.odnoklassniki.ru/wiki/display/ok/Odnoklassniki+Rest+API
     '''
@@ -100,11 +121,13 @@ def odnoklassniki_api(data, api_url, public_key, client_secret, request_type = '
     if request_type == 'oauth':
         data['sig'] = odnoklassniki_oauth_sig(data, client_secret)
     elif request_type == 'iframe_session':
-        data['sig'] = odnoklassniki_iframe_sig(data, data['session_secret_key'])
+        data['sig'] = odnoklassniki_iframe_sig(data,
+                                               data['session_secret_key'])
     elif request_type == 'iframe_nosession':
         data['sig'] = odnoklassniki_iframe_sig(data, client_secret)
     else:
-        raise AuthFailed('Unknown request type {0}. How should it be signed?'.format(request_type))
+        msg = 'Unknown request type {0}. How should it be signed?'
+        raise AuthFailed(msg.format(request_type))
     params = urlencode(data)
     request = Request('{0}fb.do?{1}'.format(api_url, params))
     try:
@@ -113,7 +136,8 @@ def odnoklassniki_api(data, api_url, public_key, client_secret, request_type = '
         log('error', 'Could not load data from Odnoklassniki.',
             exc_info=True, extra=dict(data=params))
         return None
-#    
+
+
 class OdnoklassnikiIframeForm(forms.Form):
     logged_user_id = forms.IntegerField()
     api_server = forms.CharField()
@@ -126,25 +150,28 @@ class OdnoklassnikiIframeForm(forms.Form):
     referer = forms.CharField(required=False)
     auth_sig = forms.CharField()
     sig = forms.CharField()
-    custom_args = forms.CharField(required=False) 
-    
+    custom_args = forms.CharField(required=False)
+
     def __init__(self, auth, *args, **kwargs):
         self.auth = auth
         super(OdnoklassnikiIframeForm, self).__init__(*args, **kwargs)
-    
+
     def get_auth_sig(self):
         secret_key = backend_setting(self.auth, 'ODNOKLASSNIKI_APP_SECRET')
-        hash_source = '{0:d}{1:s}{2:s}'.format(self.cleaned_data['logged_user_id'],
-                                               self.cleaned_data['session_key'], secret_key)  
+        hash_source = '{0:d}{1:s}{2:s}'.format(
+                self.cleaned_data['logged_user_id'],
+                self.cleaned_data['session_key'],
+                secret_key
+        )
         return md5(hash_source).hexdigest()
-    
+
     def clean_auth_sig(self):
         correct_key = self.get_auth_sig()
         key = self.cleaned_data['auth_sig'].lower()
         if correct_key != key:
             raise forms.ValidationError('Wrong authorization key')
         return self.cleaned_data['auth_sig']
-    
+
     def get_response(self):
         fields = ('logged_user_id',
                   'api_server',
@@ -159,17 +186,19 @@ class OdnoklassnikiIframeForm(forms.Form):
             if fieldname in fields:
                 response[fieldname] = self.cleaned_data[fieldname]
         return response
-    
+
+
 class OdnoklassnikiAppBackend(SocialAuthBackend):
     '''Odnoklassniki iframe app authentication backend'''
     name = 'odnoklassnikiapp'
-    
+
     def get_user_id(self, details, response):
         '''Return unique user id provided by Odnoklassniki'''
         return response['uid']
-    
+
     def extra_data(self, user, uid, response, details):
-        return dict([(key, value) for key, value in response.items() if key in response['extra_data_list']])
+        return dict([(key, value) for key, value in response.items()
+                            if key in response['extra_data_list']])
 
     def get_user_details(self, response):
         return {USERNAME: response['uid'],
@@ -178,6 +207,7 @@ class OdnoklassnikiAppBackend(SocialAuthBackend):
                 'first_name': unquote(response['first_name']),
                 'last_name': unquote(response['last_name'])
                 }
+
 
 class OdnoklassnikiApp(BaseAuth, OdnoklassnikiMixin):
     '''Odnoklassniki iframe app authentication class'''
@@ -192,7 +222,8 @@ class OdnoklassnikiApp(BaseAuth, OdnoklassnikiMixin):
             raise AuthFailed('Cannot authorize: malformed parameters')
         else:
             response = form.get_response()
-            extra_user_data = backend_setting(self, 'ODNOKLASSNIKI_APP_EXTRA_USER_DATA_LIST', ())
+            extra_user_data = backend_setting(
+                self, 'ODNOKLASSNIKI_APP_EXTRA_USER_DATA_LIST', ())
             base_fields = ('uid', 'first_name', 'last_name', 'name')
             fields = base_fields + extra_user_data
             data = {
@@ -201,11 +232,17 @@ class OdnoklassnikiApp(BaseAuth, OdnoklassnikiMixin):
                 'fields': ','.join(fields),
             }
             client_key, client_secret, public_key = self.get_settings()
-            details = odnoklassniki_api(data, response['api_server'], public_key, client_secret, 'iframe_nosession')
+            details = odnoklassniki_api(data, response['api_server'],
+                                        public_key, client_secret,
+                                        'iframe_nosession')
             if len(details) == 1 and 'uid' in details[0]:
                 details = details[0]
-                auth_data_fields = backend_setting(self, 'ODNOKLASSNIKI_APP_EXTRA_AUTH_DATA_LIST',
-                                             ('api_server', 'apiconnection', 'session_key', 'session_secret_key', 'authorized'))
+                auth_data_fields = backend_setting(
+                    self,
+                    'ODNOKLASSNIKI_APP_EXTRA_AUTH_DATA_LIST',
+                    ('api_server', 'apiconnection', 'session_key',
+                     'session_secret_key', 'authorized')
+                )
 
                 for field in auth_data_fields:
                     details[field] = response[field]
@@ -218,11 +255,14 @@ class OdnoklassnikiApp(BaseAuth, OdnoklassnikiMixin):
             else:
                 raise AuthFailed('Cannot get user details: API error')
         return authenticate(*args, **kwargs)
-    
+
     @property
     def uses_redirect(self):
-        '''Odnoklassniki API for iframe application does not require redirects'''
+        '''
+        Odnoklassniki API for iframe application does not require redirects
+        '''
         return False
+
 
 # Backend definition
 BACKENDS = {
