@@ -41,15 +41,19 @@ def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
         return {'social_user': social, 'user': social.user}
 
 
-def load_extra_data(backend, details, response, social_user, uid, user,
+def load_extra_data(backend, details, response, uid, user, social_user=None,
                     *args, **kwargs):
     """Load extra data from provider and store it on current UserSocialAuth
     extra_data field.
     """
-    extra_data = backend.extra_data(user, uid, response, details)
-    if extra_data and social_user.extra_data != extra_data:
-        if social_user.extra_data:
-            social_user.extra_data.update(extra_data)
-        else:
-            social_user.extra_data = extra_data
-        social_user.save()
+    social_user = social_user or \
+                  UserSocialAuth.get_social_auth(backend.name, uid)
+    if social_user:
+        extra_data = backend.extra_data(user, uid, response, details)
+        if extra_data and social_user.extra_data != extra_data:
+            if social_user.extra_data:
+                social_user.extra_data.update(extra_data)
+            else:
+                social_user.extra_data = extra_data
+            social_user.save()
+        return {'social_user': social_user}
