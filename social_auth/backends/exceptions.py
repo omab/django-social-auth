@@ -76,4 +76,3 @@ class AuthStateForbidden(AuthException):
 class AuthAlreadyAssociated(AuthException):
     """A different user has already associated the target social account"""
     pass
-
