@@ -71,3 +71,9 @@ class AuthStateForbidden(AuthException):
     """State parameter is incorrect."""
     def __unicode__(self):
         return u'Wrong state parameter given.'
+
+
+class AuthAlreadyAssociated(AuthException):
+    """A different user has already associated the target social account"""
+    pass
+

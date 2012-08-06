@@ -284,6 +284,9 @@ Configuration
     AuthMissingParameter    - A needed parameter to continue the process was
                               missing, usually raised by the services that
                               need some POST data like myOpenID
+    AuthAlreadyAssociated   - A different user has already associated
+                              the social account that the current user
+                              is trying to associate. 
 
   These are a subclass of ``ValueError`` to keep backward compatibility.
 

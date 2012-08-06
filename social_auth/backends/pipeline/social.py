@@ -1,5 +1,5 @@
 from social_auth.models import UserSocialAuth, SOCIAL_AUTH_MODELS_MODULE
-from social_auth.backends.exceptions import AuthException
+from social_auth.backends.exceptions import AuthAlreadyAssociated
 from django.utils.translation import ugettext
 
 
@@ -7,13 +7,13 @@ def social_auth_user(backend, uid, user=None, *args, **kwargs):
     """Return UserSocialAuth account for backend/uid pair or None if it
     doesn't exists.
 
-    Raise AuthException if UserSocialAuth entry belongs to another user.
+    Raise AuthAlreadyAssociated if UserSocialAuth entry belongs to another user.
     """
     social_user = UserSocialAuth.get_social_auth(backend.name, uid)
     if social_user:
         if user and social_user.user != user:
             msg = ugettext('This %(provider)s account already in use.')
-            raise AuthException(backend, msg % {'provider': backend.name})
+            raise AuthAlreadyAssociated(backend, msg % {'provider': backend.name})
         elif not user:
             user = social_user.user
     return {'social_user': social_user, 'user': user}
@@ -50,3 +50,4 @@ def load_extra_data(backend, details, response, social_user, uid, user,
         else:
             social_user.extra_data = extra_data
         social_user.save()
+
