@@ -168,10 +168,16 @@ def backend_setting(backend, name, default=None):
         2. Search for setting given by name
         3. Return default
     """
-    backend_name = backend.AUTH_BACKEND.name.upper().replace('-', '_')
-    return setting('%s_%s' % (backend_name, name)) or \
-           setting(name) or \
-           default
+    backend_setting_name = '{0}_{1}'.format(
+        backend.AUTH_BACKEND.name.upper().replace('-', '_'),
+        name
+    )
+    if hasattr(settings, backend_setting_name):
+        return setting(backend_setting_name)
+    elif hasattr(settings, name):
+        return setting(name)
+    else:
+        return default
 
 
 logger = None
