@@ -34,11 +34,12 @@ class LinkedinBackend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Linkedin account"""
         first_name, last_name = response['first-name'], response['last-name']
+        email = response.get('email-address', '')
         return {USERNAME: first_name + last_name,
                 'fullname': first_name + ' ' + last_name,
                 'first_name': first_name,
                 'last_name': last_name,
-                'email': ''}
+                'email': email}
 
 
 class LinkedinAuth(ConsumerBasedOAuth):
