@@ -357,6 +357,16 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
   ``social_auth.db.django_models`` and ``social_auth.db.mongoengine_models``
   modules for guidance.
 
+- A base middleware is provided that handles social ``AuthExceptions`` by
+  providing a message to the user via the Django messages framework, and then
+  reponding with a redirect to a URL defined by one of the middleware methods.
+  The base middleware is
+  ``social_auth.middleware.SocialAuthExceptionMiddleware``. The two methods to
+  override when subclassing are ``get_message(request, exception)`` and
+  ``get_redirect_uri(request, exception)``. By default, the message is the
+  exception message and the URL for the redirect is the location specified by
+  the ``LOGIN_ERROR_URL`` configuration setting.
+
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
 .. _Login URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-url
 .. _Login redirect URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-redirect-url
