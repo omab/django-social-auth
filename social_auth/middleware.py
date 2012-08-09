@@ -21,7 +21,7 @@ class SocialAuthExceptionMiddleware(object):
 
     def process_exception(self, request, exception):
         if isinstance(exception, AuthException):
-            backend_name = exception.backend.AUTH_BACKEND.name
+            backend_name = exception.backend.name
             message = self.get_message(request, exception)
             messages.error(request, message,
                     extra_tags=u'social-auth {0}'.format(backend_name))
