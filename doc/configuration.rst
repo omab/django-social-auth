@@ -359,7 +359,7 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
 
 - A base middleware is provided that handles social ``AuthExceptions`` by
   providing a message to the user via the Django messages framework, and then
-  reponding with a redirect to a URL defined by one of the middleware methods.
+  responding with a redirect to a URL defined by one of the middleware methods.
   The base middleware is
   ``social_auth.middleware.SocialAuthExceptionMiddleware``. The two methods to
   override when subclassing are ``get_message(request, exception)`` and
