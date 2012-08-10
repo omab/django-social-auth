@@ -5,7 +5,6 @@ from social_auth.middleware import SocialAuthExceptionMiddleware
 
 
 class ExampleSocialAuthExceptionMiddleware(SocialAuthExceptionMiddleware):
-
     def get_message(self, request, exception):
         if isinstance(exception, AuthAlreadyAssociated):
             return "Somebody is already using that account!"
@@ -13,4 +12,3 @@ class ExampleSocialAuthExceptionMiddleware(SocialAuthExceptionMiddleware):
 
     def get_redirect_uri(self, request, exception):
         return reverse('done')
-

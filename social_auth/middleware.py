@@ -21,10 +21,13 @@ class SocialAuthExceptionMiddleware(object):
 
     def process_exception(self, request, exception):
         if isinstance(exception, AuthException):
-            backend_name = exception.backend.name
+            if hasattr(exception.backend, 'AUTH_BACKEND'):
+                backend_name = exception.backend.AUTH_BACKEND.name
+            else:
+                backend_name = exception.backend.name
             message = self.get_message(request, exception)
             messages.error(request, message,
-                    extra_tags=u'social-auth {0}'.format(backend_name))
+                           extra_tags=u'social-auth {0}'.format(backend_name))
 
             url = self.get_redirect_uri(request, exception)
             return redirect(url)
@@ -34,4 +37,3 @@ class SocialAuthExceptionMiddleware(object):
 
     def get_redirect_uri(self, request, exception):
         return settings.LOGIN_ERROR_URL
-
