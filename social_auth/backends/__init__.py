@@ -690,7 +690,7 @@ class BaseOAuth2(BaseOAuth):
             args['response_type'] = self.RESPONSE_TYPE
 
         args.update(self.auth_extra_arguments())
-        return self.AUTHORIZATION_URL + '?' + urlencode(args)
+        return self.AUTHORIZATION_URL + '?' + urlencode(args) + '&' + self.request.META.get('QUERY_STRING','')
 
     def validate_state(self):
         """Validate state value. Raises exception on error, returns state
