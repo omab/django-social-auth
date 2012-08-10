@@ -12,6 +12,7 @@ example/templates/script*.html
 contrib/tests/test_settings.py
 *.ipr
 *.iws
+*.DS_Store
 Django-social-auth.iml
 tags
 Vagrantfile
