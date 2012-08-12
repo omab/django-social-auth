@@ -140,7 +140,7 @@ Configuration
     required decorator), a convenince query string can be added to your context
     for templates. On your login options page::
 
-        <a href={{% url socialauth_begin 'twitter' %}?{{ redirect_querystring }}">...</a>
+        <a href={% url socialauth_begin 'twitter' %}?{{ redirect_querystring }}">...</a>
 
     allows for a continuous login. Useful if multiple login options are
     presented.
@@ -367,6 +367,23 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
   exception message and the URL for the redirect is the location specified by
   the ``LOGIN_ERROR_URL`` configuration setting.
 
+
+Notes
+-----
+
+Since Django 1.3 the URL templatetag ``{% url socialauth_begin ... %}`` syntax
+is deprecated in favor the new format where the URL name is quoted (using
+single quotes). See the `release notes`_ for details.
+
+The new syntax is not enforced yet but will be on Django 1.5 (current trunk),
+and it's also available by importing ``url`` tag from ``future`` module doing::
+
+    {% load url from future %}
+
+In case of experiencing issues similar to `#303`_, check the tag being used and
+its syntax.
+
+
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
 .. _Login URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-url
 .. _Login redirect URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-redirect-url
@@ -379,3 +396,5 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
 .. _MongoEngine: http://mongoengine.org
 .. _MongoEngine Django integration: http://mongoengine-odm.readthedocs.org/en/latest/django.html
 .. _urllib2 documentation: http://docs.python.org/library/urllib2.html#urllib2.urlopen
+.. _release notes: https://docs.djangoproject.com/en/1.3/releases/1.3/#changes-to-url-and-ssi
+.. _#303: https://github.com/omab/django-social-auth/issues/303
