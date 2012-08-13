@@ -25,11 +25,22 @@ class SocialAuthExceptionMiddleware(object):
                 backend_name = exception.backend.AUTH_BACKEND.name
             else:
                 backend_name = exception.backend.name
-            message = self.get_message(request, exception)
-            messages.error(request, message,
-                           extra_tags=u'social-auth {0}'.format(backend_name))
 
+            message = self.get_message(request, exception)
             url = self.get_redirect_uri(request, exception)
+
+            if request.user.is_authenticated():
+                # Ensure that messages are added to authenticated users only,
+                # otherwise this fails
+                messages.error(
+                    request,
+                    message,
+                    extra_tags=u'social-auth {0}'.format(backend_name)
+                )
+            else:
+                url = url + ('?' in url and '&' or '?') \
+                          + 'message={0}&backend={1}'.format(message,
+                                                             backend_name)
             return redirect(url)
 
     def get_message(self, request, exception):
