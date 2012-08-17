@@ -44,6 +44,7 @@ def dsa_view(redirect_name=None):
                     'request': request
                 })
 
+                url = None
                 mod, func_name = PROCESS_EXCEPTIONS.rsplit('.', 1)
                 try:
                     process = getattr(import_module(mod), func_name,
@@ -51,10 +52,11 @@ def dsa_view(redirect_name=None):
                 except ImportError:
                     pass
                 else:
-                    process(request, backend, e)
+                    url = process(request, backend, e)
 
-                url = backend_setting(backend, 'SOCIAL_AUTH_BACKEND_ERROR_URL',
-                                      LOGIN_ERROR_URL)
+                if not url:
+                    url = backend_setting(backend, 'SOCIAL_AUTH_BACKEND_ERROR_URL',
+                                        LOGIN_ERROR_URL)
                 return HttpResponseRedirect(url)
         return wrapper
     return dec
