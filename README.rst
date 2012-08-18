@@ -1,14 +1,14 @@
 Django Social Auth
 ==================
 
-Django Social Auth is an easy to setup social authentication/authorization
+Django Social Auth is an easy way to setup social authentication/authorization
 mechanism for Django projects.
 
 Crafted using base code from django-twitter-oauth_ and django-openid-auth_,
-implements a common interface to define new authentication providers from
+it implements a common interface to define new authentication providers from
 third parties.
 
-You can check this app documentation on `Read the Docs`_ too.
+You can view this app's documentation on `Read the Docs`_ too.
 
 .. contents:: Table of Contents
 
@@ -17,16 +17,16 @@ Demo
 ----
 
 There's a demo at http://social.matiasaguirre.net/.
-Note: It lacks some backends support at the moment.
+Note: It lacks some backends' support at the moment.
 
 
 Features
 --------
 
-This application provides user registration and login using social sites
-credentials, some features are:
+This application provides user registration and login using social site
+credentials. Some features are:
 
-- Registration and Login using social sites using the following providers
+- Registration and login with social sites using the following providers
   at the moment:
 
     * `Google OpenID`_
@@ -62,10 +62,10 @@ credentials, some features are:
     * `Weibo OAuth2`_
     * `Yandex OpenId`_
 
-- Basic user data population and signaling, to allows custom fields values
-  from providers response
+- Basic user data population and signaling to allows custom fields values
+  from providers' responses
 
-- Multiple social accounts association to single users
+- Multiple social account associations to a single user
 
 - Custom User model override if needed (`auth.User`_ by default)
 
@@ -81,14 +81,14 @@ Extensive documentaion at `Read the Docs`_.
 Dependencies
 ------------
 
-Dependencies that **must** be meet to use the application:
+Dependencies that **must** be met to use the application:
 
 - OpenId_ support depends on python-openid_
 
 - OAuth_ support depends on python-oauth2_
 
 - Several backends demands application registration on their corresponding
-  sites.
+  sites
 
 
 Installation
@@ -121,7 +121,7 @@ Copyrights and Licence
 
 ``django-social-auth`` is protected by BSD licence.
 
-Some bits were derived from others work and copyrighted by:
+Some bits were derived from others' work and copyrighted by:
 
 - django-twitter-oauth::
 

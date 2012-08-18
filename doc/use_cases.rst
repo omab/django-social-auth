@@ -17,6 +17,7 @@ Some particular use cases are listed below.
     )
 
 2. Include a similar snippet in your page to make BrowserID_ work::
+
     <!-- Include BrowserID JavaScript -->
     <script src="https://browserid.org/include.js" type="text/javascript"></script>
 
