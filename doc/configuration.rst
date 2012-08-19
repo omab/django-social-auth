@@ -262,7 +262,9 @@ Configuration
 
   The function parameters are ``request`` holding the current request object,
   ``backend`` with the current backend and ``err`` which is the exception
-  instance.
+  instance. If the function returns a URL, the user will be redirected to it.
+  Otherwise, they will be redirected to the backend's error URL, or
+  ``LOGIN_ERROR_URL``.
 
   Recently this set of exceptions were introduce to describe the situations
   a bit more than the old ``ValueError`` usually raised::
