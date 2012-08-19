@@ -14,13 +14,27 @@ The default pipeline is composed by::
 
     (
         'social_auth.backends.pipeline.social.social_auth_user',
-        'social_auth.backends.pipeline.associate.associate_by_email',
+        #'social_auth.backends.pipeline.associate.associate_by_email',
         'social_auth.backends.pipeline.user.get_username',
         'social_auth.backends.pipeline.user.create_user',
         'social_auth.backends.pipeline.social.associate_user',
         'social_auth.backends.pipeline.social.load_extra_data',
         'social_auth.backends.pipeline.user.update_user_details'
     )
+
+Email association (``associate_by_email`` pipeline entry) is disabled by
+default for security reasons, take for instance this scenario:
+
+    1. User A registered using ``django-social-auth`` and we got email address
+       ``foo@bar.com``.
+    2. User B goes to provider XXX and registers using ``foo@bar.com``
+       (provider XXX doesn't validate emails).
+    3. User B goes to your site and logins using its XXX account using
+       ``django-social-auth``.
+    4. User B got access to User A account.
+
+If this doesn't concern for you site, just defined ``SOCIAL_AUTH_PIPELINE``
+like the one shown above and uncomment the line for ``associate_by_email``.
 
 But it's possible to override it by defining the setting
 ``SOCIAL_AUTH_PIPELINE``, for example a pipeline that won't create users, just
