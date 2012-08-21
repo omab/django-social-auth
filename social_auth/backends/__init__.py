@@ -24,7 +24,7 @@ from django.utils import simplejson
 from django.utils.importlib import import_module
 
 from social_auth.models import UserSocialAuth
-from social_auth.utils import setting, log, model_to_ctype, ctype_to_model, \
+from social_auth.utils import setting, model_to_ctype, ctype_to_model, \
                               clean_partial_pipeline, url_add_parameters, \
                               get_random_string, constant_time_compare, \
                               dsa_urlopen
@@ -134,26 +134,21 @@ class SocialAuthBackend(ModelBackend):
         for idx, name in enumerate(pipeline):
             out['pipeline_index'] = base_index + idx
             mod_name, func_name = name.rsplit('.', 1)
+            mod = import_module(mod_name)
+            func = getattr(mod, func_name, None)
+
             try:
-                mod = import_module(mod_name)
-            except ImportError:
-                log('exception', 'Error importing pipeline %s', name)
+                result = func(*args, **out) or {}
+            except StopPipeline:
+                # Clean partial pipeline on stop
+                if 'request' in kwargs:
+                    clean_partial_pipeline(kwargs['request'])
+                break
+
+            if isinstance(result, dict):
+                out.update(result)
             else:
-                func = getattr(mod, func_name, None)
-
-                if callable(func):
-                    try:
-                        result = func(*args, **out) or {}
-                    except StopPipeline:
-                        # Clean partial pipeline on stop
-                        if 'request' in kwargs:
-                            clean_partial_pipeline(kwargs['request'])
-                        break
-
-                    if isinstance(result, dict):
-                        out.update(result)
-                    else:
-                        return result
+                return result
         return out
 
     def extra_data(self, user, uid, response, details):
