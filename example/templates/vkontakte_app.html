@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block heading %}<a href="http://www.vkontakte.ru">VKontakte</a> application authentication{% endblock %}
+
+{% block content %}
+
+<script src="http://vkontakte.ru/js/api/xd_connection.js?2" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+    VK.init(function() {
+            VK.addCallback("onApplicationAdded", requestRights);
+            VK.addCallback("onSettingsChanged", onSettingsChanged);
+        }
+    );
+
+    function startConnect() {
+        VK.callMethod('showInstallBox');
+    }
+
+    function requestRights() {
+        VK.callMethod('showSettingsBox', 1 + 2); // 1+2 is just an example
+    }
+
+    function onSettingsChanged(settings) {
+        window.location.reload();
+    }
+</script>
+
+    {% if user.is_anonymous %}
+        {% if warning %}
+            <p>GET request does not contain user_id and this is not something VKontakte usually does.
+               Probably you do not use VKontakte to open this page. To do a real test you need to do following:
+            </p>
+            <ol>
+                <li>Create your IFrame application at <a href="https://http://vk.com/apps.php?act=add">VKontakte</a>.</li>
+                <li>In your application settings specify your IFrame URL <b>mysite.com</b>/vk (current default). </li>
+                <li>Because VKontakte IFrame uses other app ID than OAuth/OpenAPI authentication one, you have to specify it and its secret key in VKONTAKTE_APP_AUTH setting:</li>
+                <li><b>VKONTAKTE_APP_AUTH={'key':'iframe_app_secret_key', 'user_mode': 2, 'id':'iframe_app_id'}</b></li></li>
+                <li><b>user_mode</b> values</li>
+                <ol>
+                    <li>if 0 there will be no check whether a user connected to your application or not</li>
+                    <li>if 1 DSA will check is_app_user parameter VKontakte sends when user opens app page one time</li>
+                    <li>if 2 (safest) DSA will check status of user interactively (useful when you have interactive authentication via AJAX)</li>
+                </ol>
+                <li>Launch manage.py via sudo ./manage.py <b>mysite.com</b>:80 for browser to be able to load it when VKontakte calls IFrame URL.</li>
+                <li>Open your VKontakte app page via http://vk.com/app<b>app_id</b></li>
+                <li>After that you will see this page in a right way and will able to connect to application and login automatically after connection.</li>
+            </ol>
+        {% else %}
+            <p>You are not authenticated at VKontakte.</p>
+            <a href="#" onclick="startConnect(); return false;">Click to authenticate</a>
+        {% endif %}
+    {% else %}
+        <p>Authenticated successfully as {{ user }}</p>
+        <a href="{% url done %}">Done</a>
+
+    {% endif %}
+
+{% endblock %}

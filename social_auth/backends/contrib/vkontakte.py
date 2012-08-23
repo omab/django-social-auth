@@ -172,7 +172,7 @@ class VKontakteAppAuth(VKontakteOAuth2):
 
     def auth_complete(self, *args, **kwargs):
         if USE_APP_AUTH:
-            stop, app_auth = self.application_auth()
+            stop, app_auth = self.application_auth(*args, **kwargs)
 
             if app_auth:
                 return app_auth
@@ -202,7 +202,7 @@ class VKontakteAppAuth(VKontakteOAuth2):
 
         return vkontakte_api('isAppUser', data).get('response', 0)
 
-    def application_auth(self):
+    def application_auth(self, *args, **kwargs):
         required_params = ('is_app_user', 'viewer_id', 'access_token',
                            'api_id')
 
@@ -234,7 +234,8 @@ class VKontakteAppAuth(VKontakteOAuth2):
 
         data = {'response': self.user_profile(user_id), 'user_id': user_id}
 
-        return (True, authenticate(**{
+        return (True, authenticate(*args, **{'auth': self,
+            'request': self.request,
             'response': data, self.AUTH_BACKEND.name: True
         }))
 
@@ -286,5 +287,5 @@ def vkontakte_api(method, data):
 # Backend definition
 BACKENDS = {
     'vkontakte': VKontakteAuth,
-    'vkontakte-oauth2': VKontakteOAuth2
+    'vkontakte-oauth2': VKontakteAppAuth if USE_APP_AUTH else VKontakteOAuth2
 }
