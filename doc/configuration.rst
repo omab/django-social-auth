@@ -235,6 +235,8 @@ Configuration
 
       <uppercase backend name>_AUTH_EXTRA_ARGUMENTS = {...}
 
+  You can override the arguments defined in the settings with GET parameters.
+
 - Also, you can send extra parameters on request token process by defining
   settings per provider in the same way explained above but with this other
   suffix::
