@@ -388,8 +388,8 @@ class BaseAuth(object):
         backend_name = self.AUTH_BACKEND.name.upper().replace('-', '_')
         extra_arguments = setting(backend_name + '_AUTH_EXTRA_ARGUMENTS', {})
         for key in extra_arguments:
-            if key in self.request.GET:
-                extra_arguments[key] = self.request.GET[key]
+            if key in self.data:
+                extra_arguments[key] = self.data[key]
         return extra_arguments
 
     @property
