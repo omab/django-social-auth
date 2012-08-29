@@ -383,9 +383,14 @@ class BaseAuth(object):
         """Return extra arguments needed on auth process, setting is per
         backend and defined by:
             <backend name in uppercase>_AUTH_EXTRA_ARGUMENTS.
+        The defaults can be overriden by GET parameters.
         """
         backend_name = self.AUTH_BACKEND.name.upper().replace('-', '_')
-        return setting(backend_name + '_AUTH_EXTRA_ARGUMENTS', {})
+        extra_arguments = setting(backend_name + '_AUTH_EXTRA_ARGUMENTS', {})
+        for key in extra_arguments:
+            if key in self.data:
+                extra_arguments[key] = self.data[key]
+        return extra_arguments
 
     @property
     def uses_redirect(self):
