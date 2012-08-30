@@ -83,20 +83,24 @@ class LinkedinAuth(ConsumerBasedOAuth):
         """Return list with needed access scope"""
         scope = []
         if self.SCOPE_VAR_NAME:
-            scope = scope + setting(self.SCOPE_VAR_NAME, [])
+            scope = setting(self.SCOPE_VAR_NAME, [])
+        else:
+            scope = []
         return scope
 
     def unauthorized_token(self):
         """Makes first request to oauth. Returns an unauthorized Token."""
-        request_token_url = self.REQUEST_TOKEN_URL                            
+        request_token_url = self.REQUEST_TOKEN_URL
         scope = self.get_scope()
         if scope:
             qs = 'scope=' + self.SCOPE_SEPARATOR.join(scope)
             request_token_url = request_token_url + '?' + qs
-        
-        request = self.oauth_request(token=None, url=request_token_url,
-                        extra_params=self.request_token_extra_arguments()
-                    )
+
+        request = self.oauth_request(
+            token=None,
+            url=request_token_url,
+            extra_params=self.request_token_extra_arguments()
+        )
         response = self.fetch_response(request)
         return Token.from_string(response)
 
