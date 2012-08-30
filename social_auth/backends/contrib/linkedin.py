@@ -6,6 +6,8 @@ No extra configurations are needed to make this work.
 from xml.etree import ElementTree
 from xml.parsers.expat import ExpatError
 
+from oauth2 import Token
+
 from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
 from social_auth.backends.exceptions import AuthCanceled, AuthUnknownError
@@ -51,6 +53,8 @@ class LinkedinAuth(ConsumerBasedOAuth):
     AUTH_BACKEND = LinkedinBackend
     SETTINGS_KEY_NAME = 'LINKEDIN_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'LINKEDIN_CONSUMER_SECRET'
+    SCOPE_VAR_NAME = 'LINKEDIN_SCOPE'
+    SCOPE_SEPARATOR = '+'
 
     def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
@@ -74,6 +78,27 @@ class LinkedinAuth(ConsumerBasedOAuth):
                 raise AuthUnknownError(self, 'LinkedIn error was %s' %
                                                     oauth_problem)
         return super(LinkedinAuth, self).auth_complete(*args, **kwargs)
+
+    def get_scope(self):
+        """Return list with needed access scope"""
+        scope = []
+        if self.SCOPE_VAR_NAME:
+            scope = scope + setting(self.SCOPE_VAR_NAME, [])
+        return scope
+
+    def unauthorized_token(self):
+        """Makes first request to oauth. Returns an unauthorized Token."""
+        request_token_url = self.REQUEST_TOKEN_URL                            
+        scope = self.get_scope()
+        if scope:
+            qs = 'scope=' + self.SCOPE_SEPARATOR.join(scope)
+            request_token_url = request_token_url + '?' + qs
+        
+        request = self.oauth_request(token=None, url=request_token_url,
+                        extra_params=self.request_token_extra_arguments()
+                    )
+        response = self.fetch_response(request)
+        return Token.from_string(response)
 
 
 def to_dict(xml):
