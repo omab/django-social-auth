@@ -14,7 +14,8 @@ from urllib2 import Request
 from django.utils import simplejson
 
 from social_auth.utils import dsa_urlopen
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME, BaseOAuth2
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME, \
+                                 BaseOAuth2
 from social_auth.backends.exceptions import AuthCanceled
 
 
@@ -71,7 +72,6 @@ class DoubanAuth(ConsumerBasedOAuth):
             return super(DoubanAuth, self).auth_complete(*args, **kwargs)
 
 
-####################
 class DoubanBackend2(OAuthBackend):
     """Douban OAuth authentication backend"""
     name = 'douban2'
@@ -86,7 +86,6 @@ class DoubanBackend2(OAuthBackend):
                 'email': ''}
 
 
-#class DoubanAuth(ConsumerBasedOAuth):
 class DoubanAuth2(BaseOAuth2):
     """Douban OAuth authentication mechanism"""
     AUTHORIZATION_URL = 'https://%s/service/auth2/auth' % DOUBAN_SERVER
@@ -102,7 +101,7 @@ class DoubanAuth2(BaseOAuth2):
         headers = {'Authorization': 'Bearer %s' % access_token}
         request = Request(url, headers=headers)
         try:
-             return simplejson.loads(dsa_urlopen(request).read())
+            return simplejson.loads(dsa_urlopen(request).read())
         except (ValueError, KeyError, IOError):
             return None
 
@@ -117,12 +116,12 @@ class DoubanAuth2(BaseOAuth2):
             self.data = data
             pos = s.find('?')
             self.data['redirect_state'] = s[:pos]
-            self.data['code'] = s[pos+6:]
+            self.data['code'] = s[pos + 6:]
             return super(DoubanAuth2, self).auth_complete(*args, **kwargs)
 
 
 # Backend definition
 BACKENDS = {
     'douban': DoubanAuth,
-    'douban2': DoubanAuth2,#OAuth2.0
+    'douban2': DoubanAuth2,  # OAuth2.0
 }
