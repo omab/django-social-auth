@@ -74,7 +74,7 @@ class DoubanAuth(ConsumerBasedOAuth):
 ####################
 class DoubanBackend2(OAuthBackend):
     """Douban OAuth authentication backend"""
-    name = 'douban'
+    name = 'douban2'
     EXTRA_DATA = [('id', 'id')]
 
     def get_user_id(self, details, response):
@@ -118,11 +118,11 @@ class DoubanAuth2(BaseOAuth2):
             pos = s.find('?')
             self.data['redirect_state'] = s[:pos]
             self.data['code'] = s[pos+6:]
-            return super(DoubanAuth, self).auth_complete(*args, **kwargs)
+            return super(DoubanAuth2, self).auth_complete(*args, **kwargs)
 
 
 # Backend definition
 BACKENDS = {
     'douban': DoubanAuth,
-    'douban2': DoubanAuth,#OAuth2.0
+    'douban2': DoubanAuth2,#OAuth2.0
 }
