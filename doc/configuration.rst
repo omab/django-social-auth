@@ -268,7 +268,7 @@ Configuration
   Otherwise, they will be redirected to the backend's error URL, or
   ``LOGIN_ERROR_URL``.
 
-  Recently this set of exceptions were introduce to describe the situations
+  Recently this set of exceptions was introduced to describe the situations
   a bit more than the old ``ValueError`` usually raised::
 
     AuthException           - Base exception class
