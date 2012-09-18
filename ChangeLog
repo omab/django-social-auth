@@ -1,3 +1,13 @@
+0.7.5 / 2012-08-22
+==================
+
+  * Make the pipeline raise import and not-callable errors. Refs #376
+  * Merge branch 'master' of github.com:omab/django-social-auth
+  * Update docs droping deprecated setting and explanation of security risk for associate_by_email. Refs #289
+  * Merge pull request #443 from droptype/master
+  * Merge pull request #444 from droptype/minor-docs-cleanup
+  * Minor docs cleanup
+  * Allow exception processors to redirect to arbitrary URLs
 
 0.7.2 / 2012-07-28
 ==================

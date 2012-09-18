@@ -357,9 +357,11 @@ class BaseAuth(object):
         args = args[:] + tuple(map(ctype_to_model, session_data['args']))
 
         kwargs = kwargs.copy()
-        kwargs.update((key, ctype_to_model(val))
+        saved_kwargs = dict((key, ctype_to_model(val))
                             for key, val in session_data['kwargs'].iteritems())
-        return (session_data['next'], args, kwargs)
+        saved_kwargs.update((key, val)
+                            for key, val in kwargs.iteritems())
+        return (session_data['next'], args, saved_kwargs)
 
     def continue_pipeline(self, *args, **kwargs):
         """Continue previous halted pipeline"""
@@ -381,9 +383,14 @@ class BaseAuth(object):
         """Return extra arguments needed on auth process, setting is per
         backend and defined by:
             <backend name in uppercase>_AUTH_EXTRA_ARGUMENTS.
+        The defaults can be overriden by GET parameters.
         """
         backend_name = self.AUTH_BACKEND.name.upper().replace('-', '_')
-        return setting(backend_name + '_AUTH_EXTRA_ARGUMENTS', {})
+        extra_arguments = setting(backend_name + '_AUTH_EXTRA_ARGUMENTS', {})
+        for key in extra_arguments:
+            if key in self.data:
+                extra_arguments[key] = self.data[key]
+        return extra_arguments
 
     @property
     def uses_redirect(self):

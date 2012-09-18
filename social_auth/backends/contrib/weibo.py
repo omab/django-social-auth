@@ -56,6 +56,7 @@ class WeiboAuth(BaseOAuth2):
     AUTH_BACKEND = WeiboBackend
     SETTINGS_KEY_NAME = 'WEIBO_CLIENT_KEY'
     SETTINGS_SECRET_NAME = 'WEIBO_CLIENT_SECRET'
+    REDIRECT_STATE = False
 
     def user_data(self, access_token, *args, **kwargs):
         uid = args[0]['uid']
