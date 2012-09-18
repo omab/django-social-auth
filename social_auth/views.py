@@ -51,9 +51,9 @@ def associate_complete(request, backend, *args, **kwargs):
     elif isinstance(user, HttpResponse):
         return user
     else:
-        url = backend_setting(backend,
+        url = redirect_value or \
+              backend_setting(backend,
                               'SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL') or \
-              redirect_value or \
               DEFAULT_REDIRECT
     return HttpResponseRedirect(url)
 
