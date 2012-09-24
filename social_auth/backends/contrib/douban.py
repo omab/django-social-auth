@@ -110,13 +110,6 @@ class DoubanAuth2(BaseOAuth2):
         if 'denied' in self.data:
             raise AuthCanceled(self)
         else:
-            s = self.data.get('redirect_state', '')
-            data = {}
-            data.update(self.data)
-            self.data = data
-            pos = s.find('?')
-            self.data['redirect_state'] = s[:pos]
-            self.data['code'] = s[pos + 6:]
             return super(DoubanAuth2, self).auth_complete(*args, **kwargs)
 
 
