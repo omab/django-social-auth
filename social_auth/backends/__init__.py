@@ -494,13 +494,13 @@ class OpenIdAuth(BaseAuth):
         openid_request.addExtension(fetch_request)
 
         # Add PAPE Extension for max_auth_age, if configured
-        if setting('SOCIAL_AUTH_OPENID_PAPE_MAX_AUTH_AGE') is not None:
+        max_age = setting('SOCIAL_AUTH_OPENID_PAPE_MAX_AUTH_AGE')
+        if max_age is not None:
             try:
-                max_age = int(setting('SOCIAL_AUTH_OPENID_PAPE_MAX_AUTH_AGE'))
-                pape_request = pape.Request(max_auth_age=max_age)
-                openid_request.addExtension(pape_request)
-            except:
-                # ignore misconfiguration
+                openid_request.addExtension(
+                    pape.Request(max_auth_age=int(max_age))
+                )
+            except (ValueError, TypeError):
                 pass
 
         return openid_request
