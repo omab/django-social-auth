@@ -60,7 +60,9 @@ class LinkedinAuth(ConsumerBasedOAuth):
         """Return user data provided"""
         fields_selectors = LINKEDIN_FIELD_SELECTORS + \
                            setting('LINKEDIN_EXTRA_FIELD_SELECTORS', [])
-        url = LINKEDIN_CHECK_AUTH + ':(%s)' % ','.join(fields_selectors)
+        # use set() over fields_selectors since LinkedIn fails when values are
+        # duplicated
+        url = LINKEDIN_CHECK_AUTH + ':(%s)' % ','.join(set(fields_selectors))
         request = self.oauth_request(access_token, url)
         raw_xml = self.fetch_response(request)
         try:
