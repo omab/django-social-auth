@@ -75,7 +75,9 @@ class DoubanAuth(ConsumerBasedOAuth):
 class DoubanBackend2(OAuthBackend):
     """Douban OAuth authentication backend"""
     name = 'douban2'
-    EXTRA_DATA = [('id', 'id')]
+    EXTRA_DATA = [('id', 'id'),
+            ('uid', 'username'),
+            ]
 
     def get_user_id(self, details, response):
         return response['id']

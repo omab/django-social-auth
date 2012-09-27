@@ -32,6 +32,7 @@ class WeiboBackend(OAuthBackend):
     # Default extra data to store
     EXTRA_DATA = [
         ('id', 'id'),
+        ('name', 'username'),
         ('profile_image_url', 'profile_image_url'),
         ('gender', 'gender')
     ]
