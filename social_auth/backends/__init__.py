@@ -186,7 +186,8 @@ class SocialAuthBackend(ModelBackend):
 
     def get_user(self, user_id):
         """
-        Return user with given ID from the User model used by this backend
+        Return user with given ID from the User model used by this backend.
+        This is called by django.contrib.auth.middleware.
         """
         return UserSocialAuth.get_user(user_id)
 
