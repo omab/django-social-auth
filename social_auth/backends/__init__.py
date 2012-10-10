@@ -19,7 +19,6 @@ from openid.extensions import sreg, ax, pape
 from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest
 
 from django.contrib.auth import authenticate
-from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
@@ -78,7 +77,7 @@ PIPELINE = setting('SOCIAL_AUTH_PIPELINE', (
            ))
 
 
-class SocialAuthBackend(ModelBackend):
+class SocialAuthBackend(object):
     """A django.contrib.auth backend that authenticates the user based on
     a authentication provider response"""
     name = ''  # provider name, it's stored in database
