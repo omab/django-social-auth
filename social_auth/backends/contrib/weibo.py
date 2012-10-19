@@ -44,7 +44,7 @@ class WeiboBackend(OAuthBackend):
         """Return user details from Weibo. API URL is:
         https://api.weibo.com/2/users/show.json/?uid=<UID>&access_token=<TOKEN>
         """
-        return {USERNAME: response["name"],
+        return {USERNAME: response.get("name", ""),
                 'first_name': response.get('screen_name', '')}
 
 

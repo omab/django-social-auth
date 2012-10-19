@@ -39,7 +39,7 @@ class SocialAuthExceptionMiddleware(object):
                 )
             else:
                 url = url + ('?' in url and '&' or '?') \
-                          + 'message={0}&backend={1}'.format(message,
+                          + u'message={0}&backend={1}'.format(message,
                                                              backend_name)
             return redirect(url)
 
