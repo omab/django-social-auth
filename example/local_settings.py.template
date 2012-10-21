@@ -38,6 +38,8 @@ DOUBAN_CONSUMER_SECRET            = ''
 YANDEX_OAUTH2_CLIENT_KEY          = ''
 YANDEX_OAUTH2_CLIENT_SECRET       = ''
 YANDEX_OAUTH2_API_URL             = 'https://api-yaru.yandex.ru/me/' # http://api.moikrug.ru/v1/my/ for Moi Krug
+DAILYMOTION_OAUTH2_KEY            = ''
+DAILYMOTION_OAUTH2_SECRET            = ''
 
 # Backward compatibility
 YANDEX_APP_ID = YANDEX_OAUTH2_CLIENT_KEY
