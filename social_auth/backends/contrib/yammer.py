@@ -10,6 +10,7 @@ from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.utils import dsa_urlopen, setting
 
 YAMMER_OAUTH_URL = 'https://www.yammer.com/oauth/'
+YAMMER_AUTH_URL = 'https://www.yammer.com/dialog/oauth'
 YAMMER_API_URL = 'https://www.yammer.com/api/v1/'
 
 class YammerBackend(OAuthBackend):
@@ -45,7 +46,7 @@ class YammerBackend(OAuthBackend):
 
 class YammerOAuth2(BaseOAuth2):
     AUTH_BACKEND = YammerBackend
-    AUTHORIZATION_URL = '%s%s' % (YAMMER_OAUTH_URL, 'authorize')
+    AUTHORIZATION_URL = YAMMER_AUTH_URL
     ACCESS_TOKEN_URL = '%s%s' % (YAMMER_OAUTH_URL, 'access_token')
     REQUEST_TOKEN_URL = '%s%s' % (YAMMER_OAUTH_URL, 'request_token')
 
