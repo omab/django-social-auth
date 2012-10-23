@@ -38,7 +38,7 @@ class YammerBackend(OAuthBackend):
             pass
 
         return {USERNAME: response.get('name', ''),
-                'email': None,
+                'email': email,
                 'fullname': full_name,
                 'first_name': first_name,
                 'last_name': last_name}
