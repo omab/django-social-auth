@@ -2,12 +2,12 @@
 Yammer OAuth2 support
 """
 from urllib import urlencode
-from urllib2 import Request
+import logging
 
 from django.utils import simplejson
 
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
-from social_auth.utils import dsa_urlopen
+from social_auth.utils import dsa_urlopen, setting
 
 YAMMER_OAUTH_URL = 'https://www.yammer.com/oauth/'
 YAMMER_API_URL = 'https://www.yammer.com/api/v1/'
@@ -15,10 +15,13 @@ YAMMER_API_URL = 'https://www.yammer.com/api/v1/'
 class YammerBackend(OAuthBackend):
     name = 'yammer'
     EXTRA_DATA = [
-            
+        ('id', 'id'),
+        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
     ]
 
     def get_user_details(self, response):
+        logging.error(response)
+
         first_name = last_name = email = None
         full_name = response.get('full_name', '')
 
@@ -50,16 +53,18 @@ class YammerOAuth2(BaseOAuth2):
     SETTINGS_SECRET_NAME = 'YAMMER_CONSUMER_SECRET'
 
     def user_data(self, access_token, *args, **kwargs):
-        return mixcloud_profile(access_token)
-
-def mixcloud_profile(access_token):
-
-    data = {'access_token': access_token, 'alt': 'json'}
-    request = Request(MIXCLOUD_PROFILE_URL + '?' + urlencode(data))
-
-    try:
-        return simplejson.loads(dsa_urlopen(request).read())
-    except (ValueError, KeyError, IOError):
+        """Load user data from yammer"""
+        # /users/[:id].json
+        params = {
+            'client_id': setting(self.SETTINGS_KEY_NAME, ''),
+            'client_secret': setting(self.SETTINGS_SECRET_NAME, ''),
+            'code': access_token
+        }
+        url = '%s?%s' % (ACCESS_TOKEN_URL, urlencode(params))
+        try:
+            return simplejson.load(dsa_urlopen(url))
+        except Exception, e:
+            logging.exception(e)
         return None
 
 BACKENDS = {
