@@ -182,14 +182,15 @@ class YammerOAuth2(BaseOAuth2):
             ))
             raise AuthCanceled(self)
         # now we need to clean up the data params
-        new_data = {}
+        data = self.data.copy()
+        #new_data = {}
         redirect_state = self.data.get('redirect_state')
         try:
             parts = redirect_state.split('?')
-            new_data['redirect_state'] = parts[0]
+            data['redirect_state'] = parts[0]
             extra = parse_qs(parts[1])
-            new_data['code'] = extra['code'][0]
-            self.data = MergeDict(new_data)
+            data['code'] = extra['code'][0]
+            self.data = data
         except Exception as e:
             logging.exception(e)
 
