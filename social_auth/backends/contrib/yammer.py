@@ -21,7 +21,7 @@ class YammerBackend(OAuthBackend):
     EXTRA_DATA = [
         ('id', 'id'),
         ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
-        ('picture_url', 'mugshot_url')
+        ('mugshot_url', 'mugshot_url')
     ]
 
     def get_user_id(self, details, response):
