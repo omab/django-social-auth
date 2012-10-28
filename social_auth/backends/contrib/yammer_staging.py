@@ -12,14 +12,13 @@ from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.backends.exceptions import AuthCanceled
 from social_auth.utils import dsa_urlopen, setting
 
-YAMMER_SERVER = 'www.yammer.com'
 YAMMER_STAGING_SERVER = 'staging.yammer.com'
-YAMMER_OAUTH_URL = 'https://www.%s/oauth2/' % YAMMER_SERVER
-YAMMER_AUTH_URL = 'https://www.%s/dialog/oauth' % YAMMER_SERVER
-YAMMER_API_URL = 'https://www.%s/api/v1/' % YAMMER_SERVER
+YAMMER_OAUTH_URL = 'https://www.%s/oauth2/' % YAMMER_STAGING_SERVER
+YAMMER_AUTH_URL = 'https://www.%s/dialog/oauth' % YAMMER_STAGING_SERVER
+YAMMER_API_URL = 'https://www.%s/api/v1/' % YAMMER_STAGING_SERVER
 
-class YammerBackend(OAuthBackend):
-    name = 'yammer'
+class YammerStagingBackend(OAuthBackend):
+    name = 'yammer_staging'
     EXTRA_DATA = [
         ('id', 'id'),
         ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
@@ -50,8 +49,8 @@ class YammerBackend(OAuthBackend):
 
         return user_data
 
-class YammerOAuth2(BaseOAuth2):
-    AUTH_BACKEND = YammerBackend
+class YammerStagingOAuth2(BaseOAuth2):
+    AUTH_BACKEND = YammerStagingBackend
     AUTHORIZATION_URL = YAMMER_AUTH_URL
     ACCESS_TOKEN_URL = '%s%s' % (YAMMER_OAUTH_URL, 'access_token')
     REQUEST_TOKEN_URL = '%s%s' % (YAMMER_OAUTH_URL, 'request_token')
@@ -96,9 +95,9 @@ class YammerOAuth2(BaseOAuth2):
         except Exception as e:
             logging.exception(e)
 
-        return super(YammerOAuth2, self).auth_complete(*args, **kwargs)
+        return super(YammerStagingOAuth2, self).auth_complete(*args, **kwargs)
 
 BACKENDS = {
-    'yammer': YammerOAuth2,
+    'yammer_staging': YammerStagingOAuth2,
 }
 
