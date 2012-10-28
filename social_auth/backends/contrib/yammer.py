@@ -20,7 +20,8 @@ class YammerBackend(OAuthBackend):
     name = 'yammer'
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
+        ('picture_url', 'mugshot_url')
     ]
 
     def get_user_id(self, details, response):
@@ -34,13 +35,15 @@ class YammerBackend(OAuthBackend):
         last_name = response['user']['last_name']
         full_name = response['user']['full_name']
         email = response['user']['contact']['email_addresses'][0]['address']
+        mugshot_url = response['user']['mugshot_url']
 
         user_data = {
             USERNAME: username,
             'email': email,
             'fullname': full_name,
             'first_name': first_name,
-            'last_name': last_name
+            'last_name': last_name,
+            'picture_url': mugshot_url
         }
 
         return user_data
@@ -77,9 +80,9 @@ class YammerOAuth2(BaseOAuth2):
                 self.data('error_description')
             ))
             raise AuthCanceled(self)
+
         # now we need to clean up the data params
         data = dict(self.data.copy())
-        #new_data = {}
         redirect_state = data.get('redirect_state')
         try:
             parts = redirect_state.split('?')
