@@ -11,6 +11,8 @@ User screen name is used to generate username.
 By default account id is stored in extra_data field, check OAuthBackend
 class for details on how to extend it.
 """
+from urllib2 import HTTPError
+
 from django.utils import simplejson
 
 from social_auth.utils import dsa_urlopen
@@ -26,9 +28,11 @@ DAILYMOTION_REQUEST_TOKEN_URL = 'https://%s/oauth/token' % DAILYMOTION_SERVER
 DAILYMOTION_ACCESS_TOKEN_URL = 'https://%s/oauth/token' % DAILYMOTION_SERVER
 # Note: oauth/authorize forces the user to authorize every time.
 #       oauth/authenticate uses their previous selection, barring revocation.
-DAILYMOTION_AUTHORIZATION_URL = 'https://%s/oauth/authorize' % DAILYMOTION_SERVER
+DAILYMOTION_AUTHORIZATION_URL = 'https://%s/oauth/authorize' % \
+                                    DAILYMOTION_SERVER
 DAILYMOTION_CHECK_AUTH = 'https://%s/1.1/account/verify_credentials.json' % \
                                     DAILYMOTION_SERVER
+DAILYMOTION_CHECK_AUTH = 'https://%s/me/?access_token=' % DAILYMOTION_SERVER
 
 
 class DailymotionBackend(SocialAuthBackend):
@@ -57,12 +61,10 @@ class DailymotionAuth(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
-        request = self.oauth_request(access_token, DAILYMOTION_CHECK_AUTH)
-        url = 'https://api.dailymotion.com/me/?access_token=' + access_token
-        data = dsa_urlopen(url).read()
         try:
+            data = dsa_urlopen(DAILYMOTION_SERVER + access_token).read()
             return simplejson.loads(data)
-        except ValueError:
+        except (ValueError, HTTPError):
             return None
 
     def auth_complete(self, *args, **kwargs):
