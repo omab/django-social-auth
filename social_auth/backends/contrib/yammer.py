@@ -12,7 +12,7 @@ from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.backends.exceptions import AuthCanceled
 from social_auth.utils import dsa_urlopen, setting
 
-YAMMER_SERVER = 'www.yammer.com'
+YAMMER_SERVER = 'yammer.com'
 YAMMER_STAGING_SERVER = 'staging.yammer.com'
 YAMMER_OAUTH_URL = 'https://www.%s/oauth2/' % YAMMER_SERVER
 YAMMER_AUTH_URL = 'https://www.%s/dialog/oauth' % YAMMER_SERVER
