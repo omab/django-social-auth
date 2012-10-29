@@ -43,10 +43,13 @@ def create_user(backend, details, response, uid, username, user=None, *args,
         return {'user': user}
     if not username:
         return None
-    # NOTE: not return None because Django raises exception of strip email
-    email = details.get('email') or ''
+
+    args = {'username': username}
+    if details.get('email'):
+        args['email'] = details['email']
+
     return {
-        'user': UserSocialAuth.create_user(username=username, email=email),
+        'user': UserSocialAuth.create_user(**args),
         'is_new': True
     }
 
