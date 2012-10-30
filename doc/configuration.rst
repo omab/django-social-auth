@@ -256,7 +256,7 @@ Configuration
   Defaults to ``LOGIN_ERROR_URL``.
 
 - The application catches any exception and logs errors to ``logger`` or
-  ``django.contrib.messagess`` application by default. But it's possible to
+  ``django.contrib.messages`` application by default. But it's possible to
   override the default behavior by defining a function to process the
   exceptions using this setting::
 
