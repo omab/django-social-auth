@@ -55,8 +55,8 @@ class YammerStagingOAuth2(BaseOAuth2):
     ACCESS_TOKEN_URL = '%s%s' % (YAMMER_OAUTH_URL, 'access_token')
     REQUEST_TOKEN_URL = '%s%s' % (YAMMER_OAUTH_URL, 'request_token')
 
-    SETTINGS_KEY_NAME = 'YAMMER_CONSUMER_KEY'
-    SETTINGS_SECRET_NAME = 'YAMMER_CONSUMER_SECRET'
+    SETTINGS_KEY_NAME = 'YAMMER_STAGING_CONSUMER_KEY'
+    SETTINGS_SECRET_NAME = 'YAMMER_STAGING_CONSUMER_SECRET'
 
     def user_data(self, access_token, *args, **kwargs):
         """Load user data from yammer"""
