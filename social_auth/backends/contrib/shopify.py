@@ -30,10 +30,11 @@ class ShopifyBackend(OAuthBackend):
     ]
 
     def get_user_details(self, response):
-        """Return user details from Dropbox account"""
+        """Use the shopify store name as the username"""
         return {
             USERNAME: unicode(response.get('shop', '')\
-                                      .replace('.myshopify.com', ''))
+                                      .replace('.myshopify.com', '')),
+            'email': "no_email_set@example.com"
         }
 
     def get_user_id(self, details, response):
@@ -71,7 +72,7 @@ class ShopifyAuth(BaseOAuth2):
         return permission_url
 
     def auth_complete(self, *args, **kwargs):
-        """Completes loging process, must return user instance"""
+        """Completes login process, must return user instance"""
         access_token = None
         if self.data.get('error'):
             error = self.data.get('error_description') or self.data['error']
@@ -80,6 +81,8 @@ class ShopifyAuth(BaseOAuth2):
         client_id, client_secret = self.get_key_and_secret()
         try:
             shop_url = self.request.GET.get('shop')
+            self.shopifyAPI.Session.setup(api_key=setting('SHOPIFY_APP_API_KEY'),
+                secret=setting('SHOPIFY_SHARED_SECRET'))
             shopify_session = self.shopifyAPI.Session(shop_url,
                                                       self.request.REQUEST)
             access_token = shopify_session.token
