@@ -105,6 +105,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.vkontakte.VKontakteOAuth2Backend',
     'social_auth.backends.contrib.mailru.MailruBackend',
     'social_auth.backends.contrib.dailymotion.DailymotionBackend',
+    'social_auth.backends.contrib.shopify.ShopifyBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
