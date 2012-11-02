@@ -34,10 +34,6 @@ class UserSocialAuth(models.Model, UserSocialAuthMixin):
         app_label = 'social_auth'
 
     @classmethod
-    def create_user(cls, *args, **kwargs):
-        return UserSocialAuth.user_model().objects.create_user(*args, **kwargs)
-
-    @classmethod
     def get_social_auth(cls, provider, uid):
         try:
             return cls.objects.select_related('user').get(provider=provider,

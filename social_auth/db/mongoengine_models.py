@@ -38,8 +38,12 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
         return User
 
     @classmethod
-    def user_model_fields(cls):
-        return cls.user_model()._fields.keys()
+    def create_user(cls, username, email=None):
+        # Empty string makes email regex validation fail
+        if email == '':
+            email = None
+        return cls.user_model().objects.create_user(username=username,
+                                                    email=email)
 
 
 class Nonce(Document, NonceMixin):

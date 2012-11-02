@@ -62,16 +62,6 @@ class UserSocialAuthMixin(object):
         raise NotImplementedError('Implement in subclass')
 
     @classmethod
-    def user_model_fields(cls):
-        # Return fields defined for user model, defaults to django ORM model
-        # attributes.
-        meta = getattr(cls.user_model(), '_meta', None)
-        if meta and hasattr(meta, 'get_all_field_names'):
-            return meta.get_all_field_names()
-        else:
-            return []
-
-    @classmethod
     def simple_user_exists(cls, *args, **kwargs):
         """
         Return True/False if a User instance exists with the given arguments.
@@ -80,8 +70,9 @@ class UserSocialAuthMixin(object):
         return cls.user_model().objects.filter(*args, **kwargs).count() > 0
 
     @classmethod
-    def create_user(cls, *args, **kwargs):
-        return cls.user_model().objects.create(*args, **kwargs)
+    def create_user(cls, username, email=None):
+        return cls.user_model().objects.create_user(username=username,
+                                                    email=email)
 
     @classmethod
     def get_user(cls, pk):
