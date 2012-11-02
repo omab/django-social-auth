@@ -9,7 +9,6 @@ from social_auth.utils import setting, utc
 
 
 class UserSocialAuthMixin(object):
-    User = None
     user = ''
     provider = ''
 
@@ -55,6 +54,10 @@ class UserSocialAuthMixin(object):
                 return timedelta(seconds=expires)
 
     @classmethod
+    def user_model(cls):
+        raise NotImplementedError('Implement in subclass')
+
+    @classmethod
     def username_max_length(cls):
         raise NotImplementedError('Implement in subclass')
 
@@ -64,28 +67,29 @@ class UserSocialAuthMixin(object):
         Return True/False if a User instance exists with the given arguments.
         Arguments are directly passed to filter() manager method.
         """
-        return cls.User.objects.filter(*args, **kwargs).count() > 0
+        return cls.user_model().objects.filter(*args, **kwargs).count() > 0
 
     @classmethod
-    def create_user(cls, *args, **kwargs):
-        return cls.User.objects.create(*args, **kwargs)
+    def create_user(cls, username, email=None):
+        return cls.user_model().objects.create_user(username=username,
+                                                    email=email)
 
     @classmethod
     def get_user(cls, pk):
         try:
-            return cls.User.objects.get(pk=pk)
-        except cls.User.DoesNotExist:
+            return cls.user_model().objects.get(pk=pk)
+        except cls.user_model().DoesNotExist:
             return None
 
     @classmethod
     def get_user_by_email(cls, email):
-        return cls.User.objects.get(email=email)
+        return cls.user_model().objects.get(email=email)
 
     @classmethod
     def resolve_user_or_id(cls, user_or_id):
-        if isinstance(user_or_id, cls.User):
+        if isinstance(user_or_id, cls.user_model()):
             return user_or_id
-        return cls.User.objects.get(pk=user_or_id)
+        return cls.user_model().objects.get(pk=user_or_id)
 
     @classmethod
     def get_social_auth(cls, provider, uid):

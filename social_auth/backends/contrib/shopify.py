@@ -10,7 +10,7 @@ You must:
 
 """
 import imp
-from requests import HTTPError
+from urllib2 import HTTPError
 
 from django.contrib.auth import authenticate
 
@@ -52,7 +52,6 @@ class ShopifyAuth(BaseOAuth2):
 
     def __init__(self, request, redirect):
         super(ShopifyAuth, self).__init__(request, redirect)
-        self.shopifyAPI = None
         fp, pathname, description = imp.find_module('shopify')
         self.shopifyAPI = imp.load_module('shopify', fp, pathname, description)
 
