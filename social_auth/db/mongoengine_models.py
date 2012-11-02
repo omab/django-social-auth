@@ -14,7 +14,6 @@ from social_auth.db.base import UserSocialAuthMixin, AssociationMixin, \
 
 class UserSocialAuth(Document, UserSocialAuthMixin):
     """Social Auth association model"""
-    User = User
     user = ReferenceField(User)
     provider = StringField(max_length=32)
     uid = StringField(max_length=255, unique_with='provider')
@@ -32,7 +31,15 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
 
     @classmethod
     def username_max_length(cls):
-        return User.username.max_length
+        return UserSocialAuth.user_model().username.max_length
+
+    @classmethod
+    def user_model(cls):
+        return User
+
+    @classmethod
+    def user_model_fields(cls):
+        return cls.user_model()._fields.keys()
 
 
 class Nonce(Document, NonceMixin):

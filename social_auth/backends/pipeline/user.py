@@ -48,6 +48,10 @@ def create_user(backend, details, response, uid, username, user=None, *args,
     if details.get('email'):
         args['email'] = details['email']
 
+    model_fields = UserSocialAuth.user_model_fields()
+    args = dict((key, val) for key, val in args.iteritems()
+                    if key in model_fields)
+
     return {
         'user': UserSocialAuth.create_user(**args),
         'is_new': True
