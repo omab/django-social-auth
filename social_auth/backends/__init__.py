@@ -81,6 +81,7 @@ class SocialAuthBackend(object):
     """A django.contrib.auth backend that authenticates the user based on
     a authentication provider response"""
     name = ''  # provider name, it's stored in database
+    supports_inactive_user = False
 
     def authenticate(self, *args, **kwargs):
         """Authenticate user using social credentials
