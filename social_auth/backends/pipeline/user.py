@@ -44,7 +44,7 @@ def create_user(backend, details, response, uid, username, user=None, *args,
     if not username:
         return None
 
-    args = {'username': username}
+    args = {'username': username, 'email': ''}
     if details.get('email'):
         args['email'] = details['email']
 

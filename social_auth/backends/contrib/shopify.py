@@ -33,8 +33,7 @@ class ShopifyBackend(OAuthBackend):
         """Use the shopify store name as the username"""
         return {
             USERNAME: unicode(response.get('shop', '')\
-                                      .replace('.myshopify.com', '')),
-            'email': "no_email_set@example.com"
+                                      .replace('.myshopify.com', ''))
         }
 
     def get_user_id(self, details, response):
