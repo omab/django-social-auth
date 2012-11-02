@@ -530,11 +530,14 @@ class OpenIdAuth(BaseAuth):
 
     def openid_request(self, extra_params=None):
         """Return openid request"""
-        try:
-            return self.consumer().begin(url_add_parameters(self.openid_url(),
-                                                            extra_params))
-        except DiscoveryFailure, err:
-            raise AuthException(self, 'OpenID discovery error: %s' % err)
+        if not hasattr(self, '_openid_request'):
+            try:
+                self._openid_request = self.consumer().begin(
+                    url_add_parameters(self.openid_url(), extra_params)
+                )
+            except DiscoveryFailure, err:
+                raise AuthException(self, 'OpenID discovery error: %s' % err)
+        return self._openid_request
 
     def openid_url(self):
         """Return service provider URL.
