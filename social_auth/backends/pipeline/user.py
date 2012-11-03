@@ -51,9 +51,12 @@ def create_user(backend, details, response, uid, username, user=None, *args,
     }
 
 
-def update_user_details(backend, details, response, user, is_new=False, *args,
-                        **kwargs):
+def update_user_details(backend, details, response, user=None, is_new=False,
+                        *args, **kwargs):
     """Update user details using data from provider."""
+    if user is None:
+        return
+
     changed = False  # flag to track changes
 
     for name, value in details.iteritems():
