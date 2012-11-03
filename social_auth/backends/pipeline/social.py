@@ -26,6 +26,9 @@ def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
     """Associate user social account with user instance."""
     if social_user:
         return None
+    
+    if not user:
+        return {}
 
     try:
         social = UserSocialAuth.create_social_auth(user, uid, backend.name)
