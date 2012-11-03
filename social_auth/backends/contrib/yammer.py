@@ -1,9 +1,9 @@
 """
 Yammer OAuth2 support
 """
+import logging
 from urllib import urlencode
 from urlparse import parse_qs
-import logging
 
 from django.utils import simplejson
 from django.utils.datastructures import MergeDict
@@ -12,11 +12,13 @@ from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.backends.exceptions import AuthCanceled
 from social_auth.utils import dsa_urlopen, setting
 
+
 YAMMER_SERVER = 'yammer.com'
 YAMMER_STAGING_SERVER = 'staging.yammer.com'
 YAMMER_OAUTH_URL = 'https://www.%s/oauth2/' % YAMMER_SERVER
 YAMMER_AUTH_URL = 'https://www.%s/dialog/oauth' % YAMMER_SERVER
 YAMMER_API_URL = 'https://www.%s/api/v1/' % YAMMER_SERVER
+
 
 class YammerBackend(OAuthBackend):
     name = 'yammer'
@@ -30,16 +32,13 @@ class YammerBackend(OAuthBackend):
         return response['user']['id']
 
     def get_user_details(self, response):
-        logging.error(response)
-
         username = response['user']['name']
         first_name = response['user']['first_name']
         last_name = response['user']['last_name']
         full_name = response['user']['full_name']
         email = response['user']['contact']['email_addresses'][0]['address']
         mugshot_url = response['user']['mugshot_url']
-
-        user_data = {
+        return {
             USERNAME: username,
             'email': email,
             'fullname': full_name,
@@ -48,14 +47,12 @@ class YammerBackend(OAuthBackend):
             'picture_url': mugshot_url
         }
 
-        return user_data
 
 class YammerOAuth2(BaseOAuth2):
     AUTH_BACKEND = YammerBackend
     AUTHORIZATION_URL = YAMMER_AUTH_URL
     ACCESS_TOKEN_URL = '%s%s' % (YAMMER_OAUTH_URL, 'access_token')
     REQUEST_TOKEN_URL = '%s%s' % (YAMMER_OAUTH_URL, 'request_token')
-
     SETTINGS_KEY_NAME = 'YAMMER_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'YAMMER_CONSUMER_SECRET'
 
@@ -74,7 +71,7 @@ class YammerOAuth2(BaseOAuth2):
         except Exception, e:
             logging.exception(e)
         return None
-    
+
     def auth_complete(self, *args, **kwargs):
         """Yammer API is a little strange"""
         if 'error' in self.data:
@@ -87,18 +84,16 @@ class YammerOAuth2(BaseOAuth2):
         # now we need to clean up the data params
         data = dict(self.data.copy())
         redirect_state = data.get('redirect_state')
-        try:
-            parts = redirect_state.split('?')
-            data['redirect_state'] = parts[0]
-            extra = parse_qs(parts[1])
-            data['code'] = extra['code'][0]
-            self.data = MergeDict(data)
-        except Exception as e:
-            logging.exception(e)
-
+        if redirect_state and '?' in redirect_state:
+            redirect_state, extra = redirect_state.split('?', 1)
+            extra = parse_qs(extra)
+            data['redirect_state'] = redirect_state
+            if 'code' in extra:
+                data['code'] = extra['code'][0]
+        self.data = MergeDict(data)
         return super(YammerOAuth2, self).auth_complete(*args, **kwargs)
 
-BACKENDS = {
-    'yammer': YammerOAuth2,
-}
 
+BACKENDS = {
+    'yammer': YammerOAuth2
+}
