@@ -33,7 +33,8 @@ from social_auth.backends.exceptions import StopPipeline, AuthException, \
                                             AuthUnknownError, AuthTokenError, \
                                             AuthMissingParameter, \
                                             AuthStateMissing, \
-                                            AuthStateForbidden
+                                            AuthStateForbidden, \
+                                            NotAllowedToDisconnect
 from social_auth.backends.utils import build_consumer_oauth_request
 
 
@@ -408,12 +409,17 @@ class BaseAuth(object):
         """Deletes current backend from user if associated.
         Override if extra operations are needed.
         """
-        if association_id:
-            UserSocialAuth.get_social_auth_for_user(user)\
-                            .get(id=association_id).delete()
+        name = self.AUTH_BACKEND.name
+        if UserSocialAuth.allowed_to_disconnect(user, name, association_id):
+            if association_id:
+                UserSocialAuth.get_social_auth_for_user(user)\
+                                .get(id=association_id).delete()
+            else:
+                UserSocialAuth.get_social_auth_for_user(user)\
+                                .filter(provider=name)\
+                                .delete()
         else:
-            UserSocialAuth.get_social_auth_for_user(user)\
-                            .filter(provider=self.AUTH_BACKEND.name).delete()
+            raise NotAllowedToDisconnect()
 
     def build_absolute_uri(self, path=None):
         """Build absolute URI for given path. Replace http:// schema with

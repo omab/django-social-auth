@@ -71,6 +71,20 @@ class UserSocialAuthMixin(object):
         return CLEAN_USERNAME_REGEX.sub('', value)
 
     @classmethod
+    def allowed_to_disconnect(cls, user, backend_name, association_id=None):
+        if association_id is not None:
+            qs = cls.objects.exclude(id=association_id)
+        else:
+            qs = cls.objects.exclude(provider=backend_name)
+
+        if hasattr(user, 'has_usable_password'):
+            valid_password = user.has_usable_password()
+        else:
+            valid_password = True
+
+        return valid_password or qs.count() > 0
+
+    @classmethod
     def simple_user_exists(cls, *args, **kwargs):
         """
         Return True/False if a User instance exists with the given arguments.
