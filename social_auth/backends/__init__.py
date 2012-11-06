@@ -559,6 +559,10 @@ class BaseOAuth(BaseAuth):
     """OAuth base class"""
     SETTINGS_KEY_NAME = ''
     SETTINGS_SECRET_NAME = ''
+    SCOPE_VAR_NAME = None
+    SCOPE_PARAMETER_NAME = 'scope'
+    DEFAULT_SCOPE = None
+    SCOPE_SEPARATOR = ' '
 
     def __init__(self, request, redirect):
         """Init method"""
@@ -579,6 +583,20 @@ class BaseOAuth(BaseAuth):
         return setting(cls.SETTINGS_KEY_NAME) and \
                setting(cls.SETTINGS_SECRET_NAME)
 
+    def get_scope(self):
+        """Return list with needed access scope"""
+        scope = self.DEFAULT_SCOPE or []
+        if self.SCOPE_VAR_NAME:
+            scope = scope + setting(self.SCOPE_VAR_NAME, [])
+        return scope
+
+    def get_scope_argument(self):
+        param = {}
+        scope = self.get_scope()
+        if scope:
+            param[self.SCOPE_PARAMETER_NAME] = self.SCOPE_SEPARATOR.join(scope)
+        return param
+
 
 class ConsumerBasedOAuth(BaseOAuth):
     """Consumer based mechanism OAuth authentication, fill the needed
@@ -587,12 +605,10 @@ class ConsumerBasedOAuth(BaseOAuth):
         AUTHORIZATION_URL       Authorization service url
         REQUEST_TOKEN_URL       Request token URL
         ACCESS_TOKEN_URL        Access token URL
-        SERVER_URL              Authorization server URL
     """
     AUTHORIZATION_URL = ''
     REQUEST_TOKEN_URL = ''
     ACCESS_TOKEN_URL = ''
-    SERVER_URL = ''
 
     def auth_url(self):
         """Return redirect url"""
@@ -640,10 +656,14 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def oauth_authorization_request(self, token):
         """Generate OAuth request to authorize token."""
-        return OAuthRequest.from_token_and_callback(token=token,
-                                        callback=self.redirect_uri,
-                                        http_url=self.AUTHORIZATION_URL,
-                                        parameters=self.auth_extra_arguments())
+        params = self.auth_extra_arguments() or {}
+        params.update(self.get_scope_argument())
+        return OAuthRequest.from_token_and_callback(
+            token=token,
+            callback=self.redirect_uri,
+            http_url=self.AUTHORIZATION_URL,
+            parameters=params
+        )
 
     def oauth_request(self, token, url, extra_params=None):
         """Generate OAuth request, setups callback url"""
@@ -684,10 +704,7 @@ class BaseOAuth2(BaseOAuth):
     """
     AUTHORIZATION_URL = None
     ACCESS_TOKEN_URL = None
-    SCOPE_SEPARATOR = ' '
     RESPONSE_TYPE = 'code'
-    SCOPE_VAR_NAME = None
-    DEFAULT_SCOPE = None
     REDIRECT_STATE = True
 
     def state_token(self):
@@ -716,9 +733,7 @@ class BaseOAuth2(BaseOAuth):
             'redirect_uri': self.get_redirect_uri(state)
         }
 
-        scope = self.get_scope()
-        if scope:
-            args['scope'] = self.SCOPE_SEPARATOR.join(self.get_scope())
+        args.update(self.get_scope_argument())
         if self.RESPONSE_TYPE:
             args['response_type'] = self.RESPONSE_TYPE
 
@@ -785,13 +800,6 @@ class BaseOAuth2(BaseOAuth):
                 self.AUTH_BACKEND.name: True
             })
             return authenticate(*args, **kwargs)
-
-    def get_scope(self):
-        """Return list with needed access scope"""
-        scope = self.DEFAULT_SCOPE or []
-        if self.SCOPE_VAR_NAME:
-            scope = scope + setting(self.SCOPE_VAR_NAME, [])
-        return scope
 
 
 # Backend loading was previously performed via the
