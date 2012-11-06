@@ -20,3 +20,4 @@ Vagrantfile
 .*project
 .settings
 .coverage
+settings.js
