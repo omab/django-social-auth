@@ -3,8 +3,9 @@ import random
 import hashlib
 import urlparse
 import urllib
-from urllib2 import urlopen
 import logging
+from urllib2 import urlopen
+from cgi import parse_qsl
 
 from collections import defaultdict
 from datetime import timedelta, tzinfo
@@ -168,7 +169,7 @@ def backend_setting(backend, name, default=None):
         2. Search for setting given by name
         3. Return default
     """
-    backend_setting_name = '{0}_{1}'.format(
+    backend_setting_name = '%s_%s' % (
         backend.AUTH_BACKEND.name.upper().replace('-', '_'),
         name
     )
@@ -234,7 +235,7 @@ def url_add_parameters(url, params):
     """Adds parameters to URL, parameter will be repeated if already present"""
     if params:
         fragments = list(urlparse.urlparse(url))
-        fragments[4] = urllib.urlencode(urlparse.parse_qsl(fragments[4]) +
+        fragments[4] = urllib.urlencode(parse_qsl(fragments[4]) +
                                         params.items())
         url = urlparse.urlunparse(fragments)
     return url
