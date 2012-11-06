@@ -24,14 +24,14 @@ def get_username(details, user=None,
     uuid_length = 16
     max_length = UserSocialAuth.username_max_length()
     short_username = username[:max_length - uuid_length]
-    final_username = username[:max_length]
+    final_username = UserSocialAuth.clean_username(username[:max_length])
 
     # Generate a unique username for current user using username
     # as base but adding a unique hash at the end. Original
     # username is cut to avoid any field max_length.
     while user_exists(username=final_username):
         username = short_username + uuid4().get_hex()[:uuid_length]
-        final_username = username[:max_length]
+        final_username = UserSocialAuth.clean_username(username[:max_length])
 
     return {'username': final_username}
 

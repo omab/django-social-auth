@@ -1,11 +1,16 @@
 """Models mixins for Social Auth"""
 import base64
 import time
+import re
 from datetime import datetime, timedelta
 
 from openid.association import Association as OIDAssociation
 
 from social_auth.utils import setting, utc
+
+# django.contrib.auth and mongoengine.django.auth regex to validate usernames
+# '^[\w@.+-_]+$', we use the opposite to clean invalid characters
+CLEAN_USERNAME_REGEX = re.compile(r'[^\w.@+-_]+')
 
 
 class UserSocialAuthMixin(object):
@@ -60,6 +65,10 @@ class UserSocialAuthMixin(object):
     @classmethod
     def username_max_length(cls):
         raise NotImplementedError('Implement in subclass')
+
+    @classmethod
+    def clean_username(cls, value):
+        return CLEAN_USERNAME_REGEX.sub('', value)
 
     @classmethod
     def simple_user_exists(cls, *args, **kwargs):
