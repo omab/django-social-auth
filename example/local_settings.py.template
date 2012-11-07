@@ -42,6 +42,8 @@ DAILYMOTION_OAUTH2_KEY            = ''
 DAILYMOTION_OAUTH2_SECRET         = ''
 SHOPIFY_APP_API_KEY                 = ''
 SHOPIFY_SHARED_SECRET             = ''
+STOCKTWITS_CONSUMER_KEY           = ''
+STOCKTWITS_CONSUMER_SECRET        = ''
 
 # Backward compatibility
 YANDEX_APP_ID = YANDEX_OAUTH2_CLIENT_KEY

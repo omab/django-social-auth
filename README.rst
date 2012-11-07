@@ -62,6 +62,7 @@ credentials. Some features are:
     * `Weibo OAuth2`_
     * `Yandex OpenId`_
     * `Shopify OAuth2`_
+    * `StockTwits OAuth2`_
 
 - Basic user data population and signaling to allows custom fields values
   from providers' responses
@@ -170,6 +171,7 @@ Some bits were derived from others' work and copyrighted by:
 .. _Weibo OAuth2: http://open.weibo.com/wiki/Oauth2
 .. _Yandex OpenId: http://openid.yandex.ru/
 .. _Shopify OAuth2: http://api.shopify.com/authentication.html
+.. _StockTwits OAuth2: http://stocktwits.com/developers/docs/authentication
 .. _auth.User: http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/models.py#L186
 .. _python-openid: http://pypi.python.org/pypi/python-openid/
 .. _python-oauth2: https://github.com/simplegeo/python-oauth2
