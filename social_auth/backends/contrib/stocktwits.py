@@ -5,9 +5,12 @@ from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.utils import dsa_urlopen
 
 STOCKTWITS_SERVER = 'api.stocktwits.com'
-STOCKTWITS_AUTHORIZATION_URL = 'https://%s/api/2/oauth/authorize' % STOCKTWITS_SERVER
-STOCKTWITS_ACCESS_TOKEN_URL = 'https://%s/api/2/oauth/token' % STOCKTWITS_SERVER
-STOCKTWITS_CHECK_AUTH = 'https://%s/api/2/account/verify.json' % STOCKTWITS_SERVER
+STOCKTWITS_AUTHORIZATION_URL = 'https://%s/api/2/oauth/authorize' % \
+                                            STOCKTWITS_SERVER
+STOCKTWITS_ACCESS_TOKEN_URL = 'https://%s/api/2/oauth/token' % \
+                                            STOCKTWITS_SERVER
+STOCKTWITS_CHECK_AUTH = 'https://%s/api/2/account/verify.json' % \
+                                            STOCKTWITS_SERVER
 
 
 class StocktwitsBackend(OAuthBackend):
@@ -39,7 +42,8 @@ class StocktwitsAuth(BaseOAuth2):
     SETTINGS_KEY_NAME = 'STOCKTWITS_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'STOCKTWITS_CONSUMER_SECRET'
     SCOPE_SEPARATOR = ','
-    DEFAULT_SCOPE = ['read', 'publish_messages', 'publish_watch_lists', 'follow_users', 'follow_stocks']
+    DEFAULT_SCOPE = ['read', 'publish_messages', 'publish_watch_lists',
+                     'follow_users', 'follow_stocks']
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
