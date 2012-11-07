@@ -79,14 +79,14 @@ class ShopifyAuth(BaseOAuth2):
         client_id, client_secret = self.get_key_and_secret()
         try:
             shop_url = self.request.GET.get('shop')
-            self.shopifyAPI.Session.setup(api_key=setting('SHOPIFY_APP_API_KEY'),
-                secret=setting('SHOPIFY_SHARED_SECRET'))
+            self.shopifyAPI.Session.setup(
+                api_key=setting('SHOPIFY_APP_API_KEY'),
+                secret=setting('SHOPIFY_SHARED_SECRET')
+            )
             shopify_session = self.shopifyAPI.Session(shop_url,
                                                       self.request.REQUEST)
             access_token = shopify_session.token
         except self.shopifyAPI.ValidationException, e:
-            #messages.error(request, "Could not log in to Shopify store.")
-            #return redirect(reverse('shopify_app.views.login'))
             raise AuthCanceled(self)
         except HTTPError, e:
             if e.code == 400:
@@ -95,14 +95,18 @@ class ShopifyAuth(BaseOAuth2):
                 raise
 
         if not access_token:
-            raise AuthFailed(self, "Authentication Failed")
+            raise AuthFailed(self, 'Authentication Failed')
+        return self.do_auth(access_token, shop_url, shopify_session.url,
+                            *args, **kwargs)
 
-        response = {'shop': shop_url,
-                    'website': "http://%s" % shopify_session.url,
-                    'access_token': access_token}
+    def do_auth(self, access_token, shop_url, website, *args, **kwargs):
         kwargs.update({
             'auth': self,
-            'response': response,
+            'response': {
+                'shop': shop_url,
+                'website': 'http://%s' % website,
+                'access_token': access_token
+            },
             self.AUTH_BACKEND.name: True
         })
         return authenticate(*args, **kwargs)

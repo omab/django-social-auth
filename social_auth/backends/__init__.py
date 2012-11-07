@@ -635,7 +635,10 @@ class ConsumerBasedOAuth(BaseOAuth):
                 raise AuthCanceled(self)
             else:
                 raise
+        return self.do_auth(access_token, *args, **kwargs)
 
+    def do_auth(self, access_token, *args, **kwargs):
+        """Finish the auth process once the access_token was retrieved"""
         data = self.user_data(access_token)
         if data is not None:
             data['access_token'] = access_token.to_string()
@@ -792,14 +795,19 @@ class BaseOAuth2(BaseOAuth):
             error = response.get('error_description') or response.get('error')
             raise AuthFailed(self, error)
         else:
-            data = self.user_data(response['access_token'], response)
-            response.update(data or {})
-            kwargs.update({
-                'auth': self,
-                'response': response,
-                self.AUTH_BACKEND.name: True
-            })
-            return authenticate(*args, **kwargs)
+            return self.do_auth(response['access_token'], response=response)
+
+    def do_auth(self, access_token, *args, **kwargs):
+        """Finish the auth process once the access_token was retrieved"""
+        data = self.user_data(access_token, *args, **kwargs)
+        response = kwargs.get('response') or {}
+        response.update(data or {})
+        kwargs.update({
+            'auth': self,
+            'response': response,
+            self.AUTH_BACKEND.name: True
+        })
+        return authenticate(*args, **kwargs)
 
 
 # Backend loading was previously performed via the

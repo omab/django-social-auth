@@ -126,34 +126,36 @@ class FacebookAuth(BaseOAuth2):
                     expires = response['expires']
 
         if access_token:
-            data = self.user_data(access_token)
-
-            if not isinstance(data, dict):
-                # From time to time Facebook responds back a JSON with just
-                # False as value, the reason is still unknown, but since the
-                # data is needed (it contains the user ID used to identify the
-                # account on further logins), this app cannot allow it to
-                # continue with the auth process.
-                raise AuthUnknownError(self, 'An error ocurred while '
-                                             'retrieving users Facebook '
-                                             'data')
-
-            data['access_token'] = access_token
-            # expires will not be part of response if offline access
-            # premission was requested
-            if expires:
-                data['expires'] = expires
-
-            kwargs.update({'auth': self,
-                           'response': data,
-                           self.AUTH_BACKEND.name: True})
-
-            return authenticate(*args, **kwargs)
+            return self.do_auth(access_token, expires=expires,
+                                *args, **kwargs)
         else:
             if self.data.get('error') == 'access_denied':
                 raise AuthCanceled(self)
             else:
                 raise AuthException(self)
+
+    def do_auth(self, access_token, expires=None, *args, **kwargs):
+        data = self.user_data(access_token)
+
+        if not isinstance(data, dict):
+            # From time to time Facebook responds back a JSON with just
+            # False as value, the reason is still unknown, but since the
+            # data is needed (it contains the user ID used to identify the
+            # account on further logins), this app cannot allow it to
+            # continue with the auth process.
+            raise AuthUnknownError(self, 'An error ocurred while '
+                                         'retrieving users Facebook '
+                                         'data')
+
+        data['access_token'] = access_token
+        if expires:  # expires is None on offline access
+            data['expires'] = expires
+
+        kwargs.update({'auth': self,
+                       'response': data,
+                       self.AUTH_BACKEND.name: True})
+        return authenticate(*args, **kwargs)
+
 
     @classmethod
     def enabled(cls):
