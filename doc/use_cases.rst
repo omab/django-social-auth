@@ -58,3 +58,25 @@ Some particular use cases are listed below.
             });
         });
     </script>
+
+
+3. Integration with client side authorization libraries
+
+   OAuth providers like Facebook provide some form of Javascript library/SDK to
+   perform client side authorization. That authorization can be stored using
+   django-social-auth by defining a simple view like this::
+
+    from django.contrib.auth import login
+    from django.shortcuts import redirect
+    from social_auth.decorators import dsa_view
+
+    @dsa_view()
+    def register_by_access_token(request, backend, *args, **kwargs):
+        access_token = request.GET.get('access_token')
+        user = backend.do_auth(access_token)
+        if user and user.is_active:
+            login(request, user)
+        return redirect('/')
+
+   This view just expect the ``access_token`` as a GET parameter and the
+   backend name in the URL (check django-social-auth URLs).
