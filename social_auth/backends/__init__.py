@@ -622,11 +622,11 @@ class ConsumerBasedOAuth(BaseOAuth):
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
         unauthed_token = self.request.session.get(name)
         if not unauthed_token:
-            raise AuthTokenError('Missing unauthorized token')
+            raise AuthTokenError(self, 'Missing unauthorized token')
 
         token = Token.from_string(unauthed_token)
         if token.key != self.data.get('oauth_token', 'no-token'):
-            raise AuthTokenError('Incorrect tokens')
+            raise AuthTokenError(self, 'Incorrect tokens')
 
         try:
             access_token = self.access_token(token)
