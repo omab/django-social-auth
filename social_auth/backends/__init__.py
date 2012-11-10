@@ -709,47 +709,58 @@ class BaseOAuth2(BaseOAuth):
     ACCESS_TOKEN_URL = None
     RESPONSE_TYPE = 'code'
     REDIRECT_STATE = True
+    STATE_PARAMETER = True
 
     def state_token(self):
         """Generate csrf token to include as state parameter."""
         return get_random_string(32)
 
-    def get_redirect_uri(self, state):
+    def get_redirect_uri(self, state=None):
         """Build redirect_uri with redirect_state parameter."""
         uri = self.redirect_uri
-        if self.REDIRECT_STATE:
+        if self.REDIRECT_STATE and state:
             uri = url_add_parameters(uri, {'redirect_state': state})
         return uri
 
-    def auth_url(self):
-        """Return redirect url"""
+    def auth_params(self, state=None):
         client_id, client_secret = self.get_key_and_secret()
-        state = self.state_token()
-        # Store state in session for further request validation. The state
-        # value is passed as state parameter (as specified in OAuth2 spec), but
-        # also added to redirect_uri, that way we can still verify the request
-        # if the provider doesn't implement the state parameter.
-        self.request.session[self.AUTH_BACKEND.name + '_state'] = state
-        args = {
+        params = {
             'client_id': client_id,
-            'state': state,
             'redirect_uri': self.get_redirect_uri(state)
         }
-
-        args.update(self.get_scope_argument())
+        if self.STATE_PARAMETER and state:
+            params['state'] = state
         if self.RESPONSE_TYPE:
-            args['response_type'] = self.RESPONSE_TYPE
+            params['response_type'] = self.RESPONSE_TYPE
+        return params
 
-        args.update(self.auth_extra_arguments())
+    def auth_url(self):
+        """Return redirect url"""
+        if self.STATE_PARAMETER or self.REDIRECT_STATE:
+            # Store state in session for further request validation. The state
+            # value is passed as state parameter (as specified in OAuth2 spec),
+            # but also added to redirect_uri, that way we can still verify the
+            # request if the provider doesn't implement the state parameter.
+            state = self.state_token()
+            self.request.session[self.AUTH_BACKEND.name + '_state'] = state
+        else:
+            state = None
+
+        params = self.auth_params(state)
+        params.update(self.get_scope_argument())
+        params.update(self.auth_extra_arguments())
+
         if self.request.META.get('QUERY_STRING'):
             query_string = '&' + self.request.META['QUERY_STRING']
         else:
             query_string = ''
-        return self.AUTHORIZATION_URL + '?' + urlencode(args) + query_string
+        return self.AUTHORIZATION_URL + '?' + urlencode(params) + query_string
 
     def validate_state(self):
         """Validate state value. Raises exception on error, returns state
         value if valid."""
+        if not self.STATE_PARAMETER and not self.REDIRECT_STATE:
+            return None
         state = self.request.session.get(self.AUTH_BACKEND.name + '_state')
         request_state = self.data.get('state') or \
                         self.data.get('redirect_state')
@@ -761,25 +772,31 @@ class BaseOAuth2(BaseOAuth):
             raise AuthStateForbidden(self)
         return state
 
-    def auth_complete(self, *args, **kwargs):
-        """Completes loging process, must return user instance"""
-        if self.data.get('error'):
+    def process_error(self, data):
+        if data.get('error'):
             error = self.data.get('error_description') or self.data['error']
             raise AuthFailed(self, error)
 
-        state = self.validate_state()
+    def auth_complete_params(self, state=None):
         client_id, client_secret = self.get_key_and_secret()
-        params = {
+        return {
             'grant_type': 'authorization_code',  # request auth code
             'code': self.data.get('code', ''),  # server response code
             'client_id': client_id,
             'client_secret': client_secret,
             'redirect_uri': self.get_redirect_uri(state)
         }
-        headers = {'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'}
+
+    def auth_complete_headers(self):
+        return {'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'}
+
+    def auth_complete(self, *args, **kwargs):
+        """Completes loging process, must return user instance"""
+        self.process_error(self.data)
+        params = self.auth_complete_params(self.validate_state())
         request = Request(self.ACCESS_TOKEN_URL, data=urlencode(params),
-                          headers=headers)
+                          headers=self.auth_complete_headers())
 
         try:
             response = simplejson.loads(dsa_urlopen(request).read())
@@ -791,11 +808,8 @@ class BaseOAuth2(BaseOAuth):
         except (ValueError, KeyError):
             raise AuthUnknownError(self)
 
-        if response.get('error'):
-            error = response.get('error_description') or response.get('error')
-            raise AuthFailed(self, error)
-        else:
-            return self.do_auth(response['access_token'], response=response)
+        self.process_error(response)
+        return self.do_auth(response['access_token'], response=response)
 
     def do_auth(self, access_token, *args, **kwargs):
         """Finish the auth process once the access_token was retrieved"""
