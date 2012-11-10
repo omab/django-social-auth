@@ -207,10 +207,11 @@ class OAuthBackend(SocialAuthBackend):
     access_token is always stored.
     """
     EXTRA_DATA = None
+    ID_KEY = 'id'
 
     def get_user_id(self, details, response):
         """OAuth providers return an unique user id in response"""
-        return response['id']
+        return response[self.ID_KEY]
 
     def extra_data(self, user, uid, response, details):
         """Return access_token and extra defined names to store in
@@ -597,6 +598,10 @@ class BaseOAuth(BaseAuth):
             param[self.SCOPE_PARAMETER_NAME] = self.SCOPE_SEPARATOR.join(scope)
         return param
 
+    def user_data(self, access_token, *args, **kwargs):
+        """Loads user data from service. Implement in subclass"""
+        return {}
+
 
 class ConsumerBasedOAuth(BaseOAuth):
     """Consumer based mechanism OAuth authentication, fill the needed
@@ -684,10 +689,6 @@ class ConsumerBasedOAuth(BaseOAuth):
         """Return request for access token value"""
         request = self.oauth_request(token, self.ACCESS_TOKEN_URL)
         return Token.from_string(self.fetch_response(request))
-
-    def user_data(self, access_token, *args, **kwargs):
-        """Loads user data from service"""
-        raise NotImplementedError('Implement in subclass')
 
     @property
     def consumer(self):

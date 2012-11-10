@@ -25,6 +25,7 @@ Contents:
    mixcloud
    odnoklassnikiru
    skyrock
+   stripe
    twilio
    twitter
    vkontakte
