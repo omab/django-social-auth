@@ -69,7 +69,6 @@ class OdnoklassnikiOAuth2(BaseOAuth2, OdnoklassnikiMixin):
     SETTINGS_KEY_NAME = 'ODNOKLASSNIKI_OAUTH2_CLIENT_KEY'
     SETTINGS_SECRET_NAME = 'ODNOKLASSNIKI_OAUTH2_CLIENT_SECRET'
     SETTINGS_PUBLIC_NAME = 'ODNOKLASSNIKI_OAUTH2_APP_KEY'
-    FORCE_STATE_CHECK = False
 
     def get_scope(self):
         return backend_setting(self, 'ODNOKLASSNIKI_OAUTH2_EXTRA_SCOPE', [])
