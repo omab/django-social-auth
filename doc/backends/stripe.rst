@@ -30,5 +30,5 @@ Stripe uses OAuth2 for its authorization service. To setup Stripe backend:
 
 More info on Stripe OAuth2 at `Integrating OAuth`_.
 
-.. _Strip App Creation: https://manage.stripe.com/#account/applications/settings
+.. _Stripe App Creation: https://manage.stripe.com/#account/applications/settings
 .. _Integrating OAuth: https://stripe.com/docs/connect/oauth
