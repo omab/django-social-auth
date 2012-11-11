@@ -619,18 +619,29 @@ class ConsumerBasedOAuth(BaseOAuth):
         """Return redirect url"""
         token = self.unauthorized_token()
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
-        self.request.session[name] = token.to_string()
+        if not isinstance(self.request.session.get(name), list):
+            self.request.session[name] = []
+        self.request.session[name].append(token.to_string())
+        self.request.session.modified = True
         return self.oauth_authorization_request(token).to_url()
 
     def auth_complete(self, *args, **kwargs):
         """Return user, might be logged in"""
+        # Multiple unauthorized tokens are supported (see #521)
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
-        unauthed_token = self.request.session.get(name)
-        if not unauthed_token:
+        token = None
+        unauthed_tokens = self.request.session.get(name) or []
+        if not unauthed_tokens:
             raise AuthTokenError(self, 'Missing unauthorized token')
-
-        token = Token.from_string(unauthed_token)
-        if token.key != self.data.get('oauth_token', 'no-token'):
+        for unauthed_token in unauthed_tokens:
+            token = Token.from_string(unauthed_token)
+            if token.key == self.data.get('oauth_token', 'no-token'):
+                unauthed_tokens = list(set(unauthed_tokens) - \
+                                       set([unauthed_token]))
+                self.request.session[name] = unauthed_tokens
+                self.request.session.modified = True
+                break
+        else:
             raise AuthTokenError(self, 'Incorrect tokens')
 
         try:
@@ -657,10 +668,12 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def unauthorized_token(self):
         """Return request for unauthorized token (first stage)"""
-        request = self.oauth_request(token=None, url=self.REQUEST_TOKEN_URL,
-                             extra_params=self.request_token_extra_arguments())
-        response = self.fetch_response(request)
-        return Token.from_string(response)
+        request = self.oauth_request(
+            token=None,
+            url=self.REQUEST_TOKEN_URL,
+            extra_params=self.request_token_extra_arguments()
+        )
+        return Token.from_string(self.fetch_response(request))
 
     def oauth_authorization_request(self, token):
         """Generate OAuth request to authorize token."""
