@@ -755,7 +755,9 @@ class BaseOAuth2(BaseOAuth):
             # value is passed as state parameter (as specified in OAuth2 spec),
             # but also added to redirect_uri, that way we can still verify the
             # request if the provider doesn't implement the state parameter.
-            state = self.state_token()
+            # Reuse token if any.
+            name = self.AUTH_BACKEND.name + '_state'
+            state = self.request.session.get(name) or self.state_token()
             self.request.session[self.AUTH_BACKEND.name + '_state'] = state
         else:
             state = None
@@ -776,14 +778,15 @@ class BaseOAuth2(BaseOAuth):
         if not self.STATE_PARAMETER and not self.REDIRECT_STATE:
             return None
         state = self.request.session.get(self.AUTH_BACKEND.name + '_state')
-        request_state = self.data.get('state') or \
-                        self.data.get('redirect_state')
-        if not request_state:
-            raise AuthMissingParameter(self, 'state')
-        elif not state:
-            raise AuthStateMissing(self, 'state')
-        elif not constant_time_compare(request_state, state):
-            raise AuthStateForbidden(self)
+        if state:
+            request_state = self.data.get('state') or \
+                            self.data.get('redirect_state')
+            if not request_state:
+                raise AuthMissingParameter(self, 'state')
+            elif not state:
+                raise AuthStateMissing(self, 'state')
+            elif not constant_time_compare(request_state, state):
+                raise AuthStateForbidden(self)
         return state
 
     def process_error(self, data):
