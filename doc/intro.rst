@@ -28,6 +28,7 @@ credentials, some features are:
 
   Some contributions added support for:
 
+    * `DISQUS OAuth`_
     * `LiveJournal OpenID`_
     * `Orkut OAuth`_
     * `Linkedin OAuth`_
@@ -72,6 +73,7 @@ credentials, some features are:
 .. _myOpenID: https://www.myopenid.com/
 .. _Twitter OAuth: http://dev.twitter.com/pages/oauth_faq
 .. _Facebook OAuth: http://developers.facebook.com/docs/authentication/
+.. _DISQUS OAuth: http://disqus.com/api/docs/auth/
 .. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
 .. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _Linkedin OAuth: https://www.linkedin.com/secure/developer

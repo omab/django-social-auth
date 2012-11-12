@@ -12,6 +12,7 @@ Contents:
    angel
    bitbucket
    browserid
+   disqus
    douban
    dropbox
    evernote

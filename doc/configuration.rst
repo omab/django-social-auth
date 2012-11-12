@@ -19,6 +19,7 @@ Configuration
         'social_auth.backends.yahoo.YahooBackend',
         'social_auth.backends.browserid.BrowserIDBackend',
         'social_auth.backends.contrib.linkedin.LinkedinBackend',
+        'social_auth.backends.contrib.disqus.DisqusBackend',
         'social_auth.backends.contrib.livejournal.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.contrib.foursquare.FoursquareBackend',
@@ -55,12 +56,12 @@ Configuration
     FOURSQUARE_CONSUMER_SECRET   = ''
     VK_APP_ID                    = ''
     VK_API_SECRET                = ''
-    LIVE_CLIENT_ID = ''
-    LIVE_CLIENT_SECRET = ''
-    SKYROCK_CONSUMER_KEY      = ''
-    SKYROCK_CONSUMER_SECRET   = ''
-    YAHOO_CONSUMER_KEY        = ''
-    YAHOO_CONSUMER_SECRET     = ''
+    LIVE_CLIENT_ID               = ''
+    LIVE_CLIENT_SECRET           = ''
+    SKYROCK_CONSUMER_KEY         = ''
+    SKYROCK_CONSUMER_SECRET      = ''
+    YAHOO_CONSUMER_KEY           = ''
+    YAHOO_CONSUMER_SECRET        = ''
 
 
 - Setup login URLs::
@@ -271,7 +272,7 @@ Configuration
                               need some POST data like myOpenID
     AuthAlreadyAssociated   - A different user has already associated
                               the social account that the current user
-                              is trying to associate. 
+                              is trying to associate.
 
   These are a subclass of ``ValueError`` to keep backward compatibility.
 
