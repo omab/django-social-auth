@@ -1,3 +1,15 @@
+"""
+settings.py should include the following:
+
+    ANGEL_CLIENT_ID = '...'
+    ANGEL_CLIENT_SECRET = '...'
+
+Optional scope to include 'email' and/or 'messages' separated by space:
+
+    ANGEL_AUTH_EXTRA_ARGUMENTS = {'scope': 'email messages'}
+
+More information on scope can be found at https://angel.co/api/oauth/faq
+"""
 from urllib import urlencode
 
 from django.utils import simplejson
@@ -5,18 +17,6 @@ from django.utils import simplejson
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.utils import dsa_urlopen
 
-
-"""
-settings.py should include the following:
-ANGEL_CLIENT_ID = '...'
-ANGEL_CLIENT_SECRET = '...'
-
-# Optional scope to include 'email' and/or 'messages' separated by space
-ANGEL_AUTH_EXTRA_ARGUMENTS = {'scope': 'email messages'}
-
-More information on scope can be found at https://angel.co/api/oauth/faq
-
-"""
 
 ANGEL_SERVER = 'angel.co'
 ANGEL_AUTHORIZATION_URL = 'https://angel.co/api/oauth/authorize/'
@@ -41,7 +41,7 @@ class AngelBackend(OAuthBackend):
             'first_name': first_name,
             'last_name': last_name,
             'email': email,
-            }
+        }
 
 
 class AngelAuth(BaseOAuth2):
@@ -51,6 +51,8 @@ class AngelAuth(BaseOAuth2):
     AUTH_BACKEND = AngelBackend
     SETTINGS_KEY_NAME = 'ANGEL_CLIENT_ID'
     SETTINGS_SECRET_NAME = 'ANGEL_CLIENT_SECRET'
+    REDIRECT_STATE = False
+    STATE_PARAMETER = False
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
@@ -61,12 +63,8 @@ class AngelAuth(BaseOAuth2):
         except ValueError:
             return None
 
-    def validate_state(self):
-        # Angel has not implemented the "state" variable as of 11/13/2012
-        return "not yet implemented by angel.co"
-
 
 # Backend definition
 BACKENDS = {
     'angel': AngelAuth,
-    }
+}
