@@ -102,6 +102,7 @@ def complete_process(request, backend, *args, **kwargs):
     if not user and request.user.is_authenticated():
         return HttpResponseRedirect(redirect_value)
 
+    msg = None
     if user:
         if getattr(user, 'is_active', True):
             # catch is_new flag before login() might reset the instance
@@ -143,13 +144,14 @@ def complete_process(request, backend, *args, **kwargs):
                                       'SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                       DEFAULT_REDIRECT
         else:
+            msg = setting('SOCIAL_AUTH_INACTIVE_USER_MESSAGE', None)
             url = backend_setting(backend, 'SOCIAL_AUTH_INACTIVE_USER_URL',
                                   LOGIN_ERROR_URL)
     else:
         msg = setting('LOGIN_ERROR_MESSAGE', None)
-        if msg:
-            messages.error(request, msg)
         url = backend_setting(backend, 'LOGIN_ERROR_URL', LOGIN_ERROR_URL)
+    if msg:
+        messages.error(request, msg)
     return HttpResponseRedirect(url)
 
 
