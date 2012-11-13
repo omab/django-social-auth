@@ -16,7 +16,7 @@ from time import time
 
 from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, \
                                  BaseOAuth2, USERNAME
-from social_auth.backends.exceptions import AuthTokenRevoked, AuthException
+from social_auth.exceptions import AuthTokenRevoked, AuthException
 from social_auth.utils import setting, log, dsa_urlopen
 
 

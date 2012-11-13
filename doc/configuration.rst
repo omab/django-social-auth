@@ -255,21 +255,8 @@ Configuration
 
   Defaults to ``LOGIN_ERROR_URL``.
 
-- The application catches any exception and logs errors to ``logger`` or
-  ``django.contrib.messages`` application by default. But it's possible to
-  override the default behavior by defining a function to process the
-  exceptions using this setting::
-
-    SOCIAL_AUTH_PROCESS_EXCEPTIONS = 'social_auth.utils.log_exceptions_to_messages'
-
-  The function parameters are ``request`` holding the current request object,
-  ``backend`` with the current backend and ``err`` which is the exception
-  instance. If the function returns a URL, the user will be redirected to it.
-  Otherwise, they will be redirected to the backend's error URL, or
-  ``LOGIN_ERROR_URL``.
-
-  Recently this set of exceptions was introduced to describe the situations
-  a bit more than the old ``ValueError`` usually raised::
+- This set of exceptions were introduced to describe the situations a bit more
+  than the old ``ValueError`` usually raised::
 
     AuthException           - Base exception class
     AuthFailed              - Authentication failed for some reason
@@ -287,14 +274,6 @@ Configuration
                               is trying to associate. 
 
   These are a subclass of ``ValueError`` to keep backward compatibility.
-
-  Having tracebacks is really useful when debugging, for that purpose this
-  setting was defined::
-
-    SOCIAL_AUTH_RAISE_EXCEPTIONS = DEBUG
-
-  It's default value is ``DEBUG``, so you need to set it to ``False`` to avoid
-  tracebacks when ``DEBUG = True``.
 
 - When your project is behind a reverse proxy that uses HTTPS the redirect URIs
   can became with the wrong schema (``http://`` instead of ``https://``), and
@@ -362,15 +341,28 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
   ``social_auth.db.django_models`` and ``social_auth.db.mongoengine_models``
   modules for guidance.
 
-- A base middleware is provided that handles social ``AuthExceptions`` by
+- A base middleware is provided that handles ``SocialAuthBaseException`` by
   providing a message to the user via the Django messages framework, and then
   responding with a redirect to a URL defined by one of the middleware methods.
-  The base middleware is
-  ``social_auth.middleware.SocialAuthExceptionMiddleware``. The two methods to
-  override when subclassing are ``get_message(request, exception)`` and
-  ``get_redirect_uri(request, exception)``. By default, the message is the
-  exception message and the URL for the redirect is the location specified by
-  the ``LOGIN_ERROR_URL`` configuration setting.
+  The base middleware is ``social_auth.middleware.SocialAuthExceptionMiddleware``.
+  The two methods to override when subclassing are::
+
+    get_message(request, exception)
+    get_redirect_uri(request, exception)
+
+  By default, the message is the exception message and the URL for the redirect
+  is the location specified by the ``LOGIN_ERROR_URL`` configuration setting.
+
+  If a valid backend was detected by ``dsa_view()`` decorator, it will be
+  available at ``request.social_auth_backend`` and ``process_exception()`` will
+  use it to build a backend-dependent redirect URL.
+
+  Exception processing is disabled if any of this settings is defined with
+  a ``True`` value::
+
+    <backend name>_SOCIAL_AUTH_RAISE_EXCEPTIONS = True
+    SOCIAL_AUTH_RAISE_EXCEPTIONS = True
+    DEBUG = True
 
 
 Notes

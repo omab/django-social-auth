@@ -10,7 +10,7 @@ from django.utils import simplejson
 
 from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
 from social_auth.utils import log, setting, dsa_urlopen
-from social_auth.backends.exceptions import AuthFailed, AuthMissingParameter
+from social_auth.exceptions import AuthFailed, AuthMissingParameter
 
 
 # BrowserID verification server

@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate
 from django.core.urlresolvers import reverse
 
 from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
-from social_auth.backends.exceptions import AuthException
+from social_auth.exceptions import AuthException
 
 
 class GAEBackend(SocialAuthBackend):

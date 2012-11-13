@@ -25,9 +25,8 @@ from django.contrib.auth import authenticate
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.utils import sanitize_log_data, backend_setting, setting, \
                               log, dsa_urlopen
-from social_auth.backends.exceptions import AuthException, AuthCanceled, \
-                                            AuthFailed, AuthTokenError, \
-                                            AuthUnknownError
+from social_auth.exceptions import AuthException, AuthCanceled, AuthFailed, \
+                                   AuthTokenError, AuthUnknownError
 
 
 # Facebook configuration
@@ -155,7 +154,6 @@ class FacebookAuth(BaseOAuth2):
                        'response': data,
                        self.AUTH_BACKEND.name: True})
         return authenticate(*args, **kwargs)
-
 
     @classmethod
     def enabled(cls):

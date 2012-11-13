@@ -1,6 +1,7 @@
-from social_auth.models import UserSocialAuth, SOCIAL_AUTH_MODELS_MODULE
-from social_auth.backends.exceptions import AuthAlreadyAssociated
 from django.utils.translation import ugettext
+
+from social_auth.models import UserSocialAuth, SOCIAL_AUTH_MODELS_MODULE
+from social_auth.exceptions import AuthAlreadyAssociated
 
 
 def social_auth_user(backend, uid, user=None, *args, **kwargs):

@@ -14,7 +14,7 @@ class for details on how to extend it.
 from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthCanceled
+from social_auth.exceptions import AuthCanceled
 
 
 # Twitter configuration

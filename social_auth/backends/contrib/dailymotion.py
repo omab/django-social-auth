@@ -19,7 +19,7 @@ from social_auth.utils import dsa_urlopen
 from social_auth.backends import USERNAME
 from social_auth.backends import BaseOAuth2
 from social_auth.backends import SocialAuthBackend
-from social_auth.backends.exceptions import AuthCanceled
+from social_auth.exceptions import AuthCanceled
 
 
 # Dailymotion configuration

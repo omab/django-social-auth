@@ -11,9 +11,10 @@ User screen name is used to generate username.
 from xml.dom import minidom
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthCanceled
+
 
 TRIPIT_CHECK_AUTH = 'https://api.tripit.com/v1/get/profile'
+
 
 class TripItBackend(OAuthBackend):
     """TripIt OAuth authentication backend"""

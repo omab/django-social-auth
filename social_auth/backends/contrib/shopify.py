@@ -16,7 +16,7 @@ from django.contrib.auth import authenticate
 
 from social_auth.utils import setting
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthFailed, AuthCanceled
+from social_auth.exceptions import AuthFailed, AuthCanceled
 
 
 class ShopifyBackend(OAuthBackend):

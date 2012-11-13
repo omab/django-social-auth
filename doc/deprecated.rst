@@ -48,3 +48,7 @@ The following settings are deprecated in favor of pipeline functions.
   And to complete the process::
 
         /<social auth path>/complete/<backend>/
+
+
+- Exceptions handling setting ``SOCIAL_AUTH_PROCESS_EXCEPTIONS`` is deprecated
+  in favor of ``SocialAuthExceptionMiddleware`` subclassing.

@@ -11,7 +11,7 @@ from urllib import urlencode
 from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthCanceled, AuthUnknownError
+from social_auth.exceptions import AuthCanceled, AuthUnknownError
 
 
 XING_SERVER = 'xing.com'

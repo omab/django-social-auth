@@ -7,7 +7,7 @@ username.livejournal.com. Username is retrieved from the identity url.
 import urlparse
 
 from social_auth.backends import OpenIDBackend, OpenIdAuth, USERNAME
-from social_auth.backends.exceptions import AuthMissingParameter
+from social_auth.exceptions import AuthMissingParameter
 
 
 # LiveJournal conf

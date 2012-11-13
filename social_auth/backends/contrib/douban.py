@@ -16,7 +16,7 @@ from django.utils import simplejson
 from social_auth.utils import dsa_urlopen
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME, \
                                  BaseOAuth2
-from social_auth.backends.exceptions import AuthCanceled
+from social_auth.exceptions import AuthCanceled
 
 
 DOUBAN_SERVER = 'www.douban.com'

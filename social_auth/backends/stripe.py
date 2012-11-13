@@ -6,7 +6,7 @@ STRIPE_APP_ID and STRIPE_API_SECRET must be defined with the values
 given by Stripe application registration process.
 """
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthFailed, AuthCanceled
+from social_auth.exceptions import AuthFailed, AuthCanceled
 
 
 class StripeBackend(OAuthBackend):

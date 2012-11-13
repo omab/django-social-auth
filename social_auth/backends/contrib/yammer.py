@@ -9,7 +9,7 @@ from django.utils import simplejson
 from django.utils.datastructures import MergeDict
 
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthCanceled
+from social_auth.exceptions import AuthCanceled
 from social_auth.utils import dsa_urlopen, setting
 
 

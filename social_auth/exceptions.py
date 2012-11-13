@@ -6,6 +6,15 @@ class SocialAuthBaseException(ValueError):
     pass
 
 
+class WrongBackend(SocialAuthBaseException):
+    def __init__(self, backend_name):
+        self.backend_name = backend_name
+
+    def __unicode__(self):
+        return ugettext(u'Incorrect authentication service "%s"') % \
+                self.backend_name
+
+
 class NotAllowedToDisconnect(SocialAuthBaseException):
     """User is not allowed to disconnect it's social account."""
     pass

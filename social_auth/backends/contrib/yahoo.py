@@ -24,7 +24,7 @@ from django.utils import simplejson
 
 from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthUnknownError
+from social_auth.exceptions import AuthUnknownError
 
 
 # Google OAuth base configuration

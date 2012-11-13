@@ -10,7 +10,7 @@ from oauth2 import Token
 
 from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthCanceled, AuthUnknownError
+from social_auth.exceptions import AuthCanceled, AuthUnknownError
 
 
 LINKEDIN_SERVER = 'linkedin.com'

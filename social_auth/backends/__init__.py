@@ -28,13 +28,11 @@ from social_auth.utils import setting, model_to_ctype, ctype_to_model, \
                               get_random_string, constant_time_compare, \
                               dsa_urlopen
 from social_auth.store import DjangoOpenIDStore
-from social_auth.backends.exceptions import StopPipeline, AuthException, \
-                                            AuthFailed, AuthCanceled, \
-                                            AuthUnknownError, AuthTokenError, \
-                                            AuthMissingParameter, \
-                                            AuthStateMissing, \
-                                            AuthStateForbidden, \
-                                            NotAllowedToDisconnect
+from social_auth.exceptions import StopPipeline, AuthException, AuthFailed, \
+                                   AuthCanceled, AuthUnknownError, \
+                                   AuthTokenError, AuthMissingParameter, \
+                                   AuthStateMissing, AuthStateForbidden, \
+                                   NotAllowedToDisconnect
 from social_auth.backends.utils import build_consumer_oauth_request
 
 

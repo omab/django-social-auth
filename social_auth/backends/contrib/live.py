@@ -20,7 +20,7 @@ from django.utils import simplejson
 
 from social_auth.utils import setting, dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthUnknownError
+from social_auth.exceptions import AuthUnknownError
 
 
 # Live Connect configuration
