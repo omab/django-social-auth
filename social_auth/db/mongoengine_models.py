@@ -3,6 +3,11 @@ MongoEngine models for Social Auth
 
 Requires MongoEngine 0.6.10
 """
+try:
+    from django.contrib.auth.hashers import UNUSABLE_PASSWORD
+except (ImportError, AttributeError):
+    UNUSABLE_PASSWORD = '!'
+
 from mongoengine import DictField, Document, IntField, ReferenceField, \
                         StringField
 from mongoengine.django.auth import User
@@ -39,10 +44,28 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
 
     @classmethod
     def create_user(cls, username, email=None):
-        # Empty string makes email regex validation fail
+        """
+        Create user with given username and email, sets an UNUSABLE_PASSWORD.
+        Base code borrwed from:
+            https://github.com/hmarr/mongoengine/blob/master/mongoengine/
+                                                        django/auth.py#L129
+        """
         if email == '':
             email = None
-        return cls.user_model().create_user(username=username, email=email)
+
+        # Normalize the address by lowercasing the domain part of the email
+        # address.
+        if email is not None:
+            try:
+                email_name, domain_part = email.strip().split('@', 1)
+            except ValueError:
+                pass
+            else:
+                email = '@'.join([email_name, domain_part.lower()])
+        user = cls(username=username, email=email)
+        user.password = UNUSABLE_PASSWORD
+        user.save()
+        return user
 
 
 class Nonce(Document, NonceMixin):
