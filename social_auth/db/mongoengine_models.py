@@ -42,8 +42,7 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
         # Empty string makes email regex validation fail
         if email == '':
             email = None
-        return cls.user_model().objects.create_user(username=username,
-                                                    email=email)
+        return cls.user_model().create_user(username=username, email=email)
 
 
 class Nonce(Document, NonceMixin):
