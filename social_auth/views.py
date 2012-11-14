@@ -16,8 +16,8 @@ from social_auth.utils import sanitize_redirect, setting, \
 from social_auth.decorators import dsa_view
 
 
-DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
-                   setting('LOGIN_REDIRECT_URL')
+DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL',
+                           setting('LOGIN_REDIRECT_URL'))
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
 PIPELINE_KEY = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
 
