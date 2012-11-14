@@ -44,28 +44,24 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
 
     @classmethod
     def create_user(cls, username, email=None):
-        """
-        Create user with given username and email, sets an UNUSABLE_PASSWORD.
-        Base code borrwed from:
-            https://github.com/hmarr/mongoengine/blob/master/mongoengine/
-                                                        django/auth.py#L129
-        """
+        # Empty string makes email regex validation fail
         if email == '':
             email = None
+        return cls.user_model().create_user(username=username, password=UNUSABLE_PASSWORD, email=email)
 
-        # Normalize the address by lowercasing the domain part of the email
-        # address.
-        if email is not None:
-            try:
-                email_name, domain_part = email.strip().split('@', 1)
-            except ValueError:
-                pass
-            else:
-                email = '@'.join([email_name, domain_part.lower()])
-        user = cls(username=username, email=email)
-        user.password = UNUSABLE_PASSWORD
-        user.save()
-        return user
+    @classmethod
+    def allowed_to_disconnect(cls, user, backend_name, association_id=None):
+        if association_id is not None:
+            qs = cls.objects.filter(id__ne=association_id)
+        else:
+            qs = cls.objects.filter(provider__ne=backend_name)
+
+        if hasattr(user, 'has_usable_password'):
+            valid_password = user.has_usable_password()
+        else:
+            valid_password = True
+
+        return valid_password or qs.count() > 0
 
 
 class Nonce(Document, NonceMixin):
