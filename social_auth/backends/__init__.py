@@ -824,7 +824,8 @@ class BaseOAuth2(BaseOAuth):
             raise AuthUnknownError(self)
 
         self.process_error(response)
-        return self.do_auth(response['access_token'], response=response)
+        return self.do_auth(response['access_token'], response=response,
+                            *args, **kwargs)
 
     def do_auth(self, access_token, *args, **kwargs):
         """Finish the auth process once the access_token was retrieved"""
