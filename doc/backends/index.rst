@@ -9,6 +9,7 @@ Contents:
    oauth
    openid
 
+   angel
    bitbucket
    browserid
    douban
@@ -24,8 +25,11 @@ Contents:
    mailru
    mixcloud
    odnoklassnikiru
+   shopify
    skyrock
+   stocktwits
    stripe
+   tripit
    twilio
    twitter
    vkontakte
