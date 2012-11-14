@@ -47,7 +47,9 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
         # Empty string makes email regex validation fail
         if email == '':
             email = None
-        return cls.user_model().create_user(username=username, password=UNUSABLE_PASSWORD, email=email)
+        return cls.user_model().create_user(username=username,
+                                            password=UNUSABLE_PASSWORD,
+                                            email=email)
 
     @classmethod
     def allowed_to_disconnect(cls, user, backend_name, association_id=None):
