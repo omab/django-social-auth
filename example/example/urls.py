@@ -8,6 +8,7 @@ from app.odnoklassniki import ok_app, ok_app_info
 
 admin.autodiscover()
 
+
 urlpatterns = patterns('',
     url(r'^$', home, name='home'),
     url(r'^done/$', done, name='done'),
@@ -18,7 +19,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^fb/', facebook_view, name='fb_app'),
     url(r'^vk/', vkontakte_view, name='vk_app'),
-    url(r'^ok/$', ok_app , name='ok_app'),
-    url(r'^ok/info/$', ok_app_info , name='ok_app_info'),
-    url(r'', include('social_auth.urls')),
+    url(r'^ok/$', ok_app, name='ok_app'),
+    url(r'^ok/info/$', ok_app_info, name='ok_app_info'),
+    url(r'^sa/', include('social_auth.urls')),
 )
