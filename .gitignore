@@ -21,3 +21,4 @@ Vagrantfile
 .settings
 .coverage
 settings.js
+fabfile.py
