@@ -48,6 +48,16 @@ Facebook backend. The bug report `#315`_ explains it a bit more and shows
 a workaround fit avoid it.
 
 
+Server date time
+----------------
+
+Bad date in the server might cause errors in the auth process on some services
+like Twitter (probably all OAuth1.0 since timestamp is passed in the parameters
+to request a token).
+
+This issue is usually solved by installing ``ntp`` in the server (which is
+a good practice to have too), and syncing the time with some ntp pool service.
+
 
 .. _South: http://south.aeracode.org/
 .. _django-social-auth: https://github.com/omab/django-social-auth
