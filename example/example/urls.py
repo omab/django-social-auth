@@ -21,5 +21,5 @@ urlpatterns = patterns('',
     url(r'^vk/', vkontakte_view, name='vk_app'),
     url(r'^ok/$', ok_app, name='ok_app'),
     url(r'^ok/info/$', ok_app_info, name='ok_app_info'),
-    url(r'^sa/', include('social_auth.urls')),
+    url(r'', include('social_auth.urls')),
 )
