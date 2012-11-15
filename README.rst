@@ -13,13 +13,6 @@ You can view this app's documentation on `Read the Docs`_ too.
 .. contents:: Table of Contents
 
 
-Demo
-----
-
-There's a demo at http://social.matiasaguirre.net/.
-Note: It lacks some backends' support at the moment.
-
-
 Features
 --------
 
@@ -72,6 +65,22 @@ credentials. Some features are:
 - Custom User model override if needed (`auth.User`_ by default)
 
 - Extensible pipeline to handle authentication/association mechanism
+
+
+Demo
+----
+
+There's a demo at http://social.matiasaguirre.net/.
+Note: It lacks some backends' support at the moment.
+
+
+Contact
+-------
+
+Join to `django-social-auth discussion list`_ and bring any questions or suggestions
+that would improve this application.
+
+Also join the IRC channel ``#django-social-auth`` on Freenode server.
 
 
 Documentation
