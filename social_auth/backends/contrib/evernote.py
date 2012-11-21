@@ -13,8 +13,8 @@ except ImportError:
 
 from oauth2 import Token
 from social_auth.utils import setting
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME, \
-                                 exceptions
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.exceptions import AuthCanceled
 
 
 if setting('EVERNOTE_DEBUG', False):
@@ -82,7 +82,7 @@ class EvernoteAuth(ConsumerBasedOAuth):
         except HTTPError, e:
             # Evernote returns a 401 error when AuthCanceled
             if e.code == 401:
-                raise exceptions.AuthCanceled(self)
+                raise AuthCanceled(self)
             else:
                 raise
 
