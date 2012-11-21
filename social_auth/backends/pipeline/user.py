@@ -21,7 +21,7 @@ def get_username(details, user=None,
     else:
         username = uuid4().get_hex()
 
-    uuid_length = 16
+    uuid_length = setting('SOCIAL_AUTH_UUID_LENGTH', 16)
     max_length = UserSocialAuth.username_max_length()
     short_username = username[:max_length - uuid_length]
     final_username = UserSocialAuth.clean_username(username[:max_length])
