@@ -1,16 +1,3 @@
-"""
-Facebook OAuth support.
-
-This contribution adds support for Facebook OAuth service. The settings
-FACEBOOK_APP_ID and FACEBOOK_API_SECRET must be defined with the values
-given by Facebook application registration process.
-
-Extended permissions are supported by defining FACEBOOK_EXTENDED_PERMISSIONS
-setting, it must be a list of values to request.
-
-By default account id and token expiration time are stored in extra_data
-field, check OAuthBackend class for details on how to extend it.
-"""
 import cgi
 import base64
 import hmac
@@ -25,10 +12,10 @@ from django.http import HttpResponse
 from django.template import TemplateDoesNotExist
 
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
-from social_auth.utils import sanitize_log_data, backend_setting, setting, \
-                              log, dsa_urlopen
-from social_auth.exceptions import AuthException, AuthCanceled, AuthFailed, \
-                                   AuthTokenError, AuthUnknownError
+from social_auth.utils import sanitize_log_data, backend_setting, setting,\
+    log, dsa_urlopen
+from social_auth.exceptions import AuthException, AuthCanceled, AuthFailed,\
+    AuthTokenError, AuthUnknownError
 
 
 # Facebook configuration
@@ -130,8 +117,8 @@ class FacebookAuth(BaseOAuth2):
             )
 
             if response is not None:
-                access_token = response.get('access_token') or \
-                               response.get('oauth_token') or \
+                access_token = response.get('access_token') or\
+                               response.get('oauth_token') or\
                                self.data.get('access_token')
 
                 if 'expires' in response:
@@ -170,7 +157,7 @@ class FacebookAuth(BaseOAuth2):
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return backend_setting(cls, cls.SETTINGS_KEY_NAME) and \
+        return backend_setting(cls, cls.SETTINGS_KEY_NAME) and\
                backend_setting(cls, cls.SETTINGS_SECRET_NAME)
 
 
