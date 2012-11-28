@@ -32,22 +32,13 @@ class DisqusBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Disqus account"""
-        rr = response['response']
-
-        user_id = rr['id']
-        email = rr.get('email', '')
-        full_name = rr.get('name', '')
-        first_name = full_name.split()[0] if full_name else ''
-        last_name = full_name.split()[-1] if full_name else ''
-        username = rr['username']
+        rr = response.get('response', {})
 
         return {
-            USERNAME: username,
-            'user_id': user_id,
-            'email': email,
-            'firstname': first_name,
-            'fullname': full_name,
-            'lastname': last_name if first_name != last_name else '',
+            USERNAME: rr.get('username', ''),
+            'user_id': response.get('user_id', ''),
+            'email': rr.get('email', ''),
+            'name': rr.get('name', ''),
         }
 
     def extra_data(self, user, uid, response, details):
