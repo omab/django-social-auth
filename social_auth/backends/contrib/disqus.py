@@ -58,7 +58,6 @@ class DisqusAuth(BaseOAuth2):
         """Loads user data from service"""
         params = {
             'access_token': access_token,
-            'api_key': backend_setting(self, self.SETTINGS_KEY_NAME),
             'api_secret': backend_setting(self, self.SETTINGS_SECRET_NAME),
         }
         url = DISQUS_CHECK_AUTH + '?' + urlencode(params)
