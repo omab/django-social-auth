@@ -41,14 +41,9 @@ class BrowserIDBackend(SocialAuthBackend):
 
     def extra_data(self, user, uid, response, details):
         """Return users extra data"""
-        # BrowserID sends timestamp for expiration date, here we
-        # comvert it to the remaining seconds
-        expires = (response['expires'] / 1000) - \
-                  time.mktime(datetime.now().timetuple())
         return {
             'audience': response['audience'],
-            'issuer': response['issuer'],
-            setting('SOCIAL_AUTH_EXPIRATION', 'expires'): expires
+            'issuer': response['issuer']
         }
 
 
