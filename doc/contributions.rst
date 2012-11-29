@@ -70,6 +70,9 @@ estebistec_ (Steven Cummings)
 hepochen_
   * Weibo support
 
+northisup_ (Adam Hitchcock)
+  * DISQUS support
+
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
@@ -91,3 +94,4 @@ hepochen_
 .. _danielgtaylor: https://github.com/danielgtaylor
 .. _estebistec: https://github.com/estebistec
 .. _hepochen: https://github.com/hepochen
+.. _northisup: https://github.com/northisup

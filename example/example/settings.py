@@ -126,6 +126,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.instagram.InstagramBackend',
     'social_auth.backends.contrib.github.GithubBackend',
     'social_auth.backends.contrib.yandex.YandexBackend',
+    'social_auth.backends.contrib.disqus.DisqusBackend',
     'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     'social_auth.backends.contrib.foursquare.FoursquareBackend',
     'social_auth.backends.OpenIDBackend',
