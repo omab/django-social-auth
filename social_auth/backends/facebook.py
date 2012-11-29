@@ -22,7 +22,7 @@ from urllib2 import HTTPError
 from django.utils import simplejson
 from django.contrib.auth import authenticate
 from django.http import HttpResponse
-from django.template import TemplateDoesNotExist
+from django.template import TemplateDoesNotExist, RequestContext, loader
 
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.utils import sanitize_log_data, backend_setting, setting,\
@@ -37,15 +37,16 @@ ACCESS_TOKEN = 'https://graph.facebook.com/oauth/access_token?'
 USE_APP_AUTH = setting('FACEBOOK_APP_AUTH', False)
 LOCAL_HTML = setting('FACEBOOK_LOCAL_HTML', 'facebook.html')
 APP_NAMESPACE = setting('FACEBOOK_APP_NAMESPACE', None)
-
-REDIRECT_HTML = '''
+REDIRECT_HTML = """
 <script type="text/javascript">
-    window.top.location = 'https://www.facebook.com/dialog/oauth/'+
-    '?client_id={{ FACEBOOK_APP_ID }}'+
-    '&redirect_uri='+ encodeURIComponent('https://apps.facebook.com/{{ FACEBOOK_APP_NAMESPACE }}/')+
+    var domain = 'https://apps.facebook.com/',
+        redirectURI = domain + {{ FACEBOOK_APP_NAMESPACE }} + '/';
+    window.top.location = 'https://www.facebook.com/dialog/oauth/' +
+    '?client_id={{ FACEBOOK_APP_ID }}' +
+    '&redirect_uri=' + encodeURIComponent(redirectURI) +
     '&scope={{ FACEBOOK_EXTENDED_PERMISSIONS }}';
 </script>
-'''
+"""
 
 
 class FacebookBackend(OAuthBackend):
@@ -110,7 +111,10 @@ class FacebookAuth(BaseOAuth2):
             url = ACCESS_TOKEN + urlencode({
                 'client_id': backend_setting(self, self.SETTINGS_KEY_NAME),
                 'redirect_uri': self.get_redirect_uri(state),
-                'client_secret': backend_setting(self, self.SETTINGS_SECRET_NAME),
+                'client_secret': backend_setting(
+                    self,
+                    self.SETTINGS_SECRET_NAME
+                ),
                 'code': self.data['code']
             })
             try:
@@ -204,9 +208,7 @@ def load_signed_request(signed_request, api_secret=None):
 
 class FacebookAppAuth(FacebookAuth):
     """Facebook Application Authentication support"""
-
     uses_redirect = False
-
 
     def auth_complete(self, *args, **kwargs):
         if not self.application_auth():
@@ -229,7 +231,6 @@ class FacebookAppAuth(FacebookAuth):
                 if 'expires' in response:
                     expires = response['expires']
 
-
         if access_token:
             return self.do_auth(access_token, expires=expires, *args, **kwargs)
         else:
@@ -238,25 +239,24 @@ class FacebookAppAuth(FacebookAuth):
             else:
                 raise AuthException(self)
 
-
-
     def application_auth(self):
         required_params = ('user_id', 'oauth_token')
-        data = load_signed_request(self.data.get('signed_request'), backend_setting(self, self.SETTINGS_SECRET_NAME))
-
+        data = load_signed_request(
+            self.data.get('signed_request'),
+            backend_setting(self, self.SETTINGS_SECRET_NAME)
+        )
         for param in required_params:
             if not param in data:
                 return False
         return True
 
-
     def auth_html(self):
-        from django.template import RequestContext, loader
-
         app_id = backend_setting(self, self.SETTINGS_KEY_NAME)
-        dict = {
+        ctx = {
             'FACEBOOK_APP_ID':  app_id,
-            'FACEBOOK_EXTENDED_PERMISSIONS': ','.join(backend_setting(self, self.SCOPE_VAR_NAME)),
+            'FACEBOOK_EXTENDED_PERMISSIONS': ','.join(
+                backend_setting(self, self.SCOPE_VAR_NAME)
+            ),
             'FACEBOOK_COMPLETE_URI': self.redirect_uri,
             'FACEBOOK_APP_NAMESPACE': APP_NAMESPACE or app_id
         }
@@ -265,7 +265,7 @@ class FacebookAppAuth(FacebookAuth):
             fb_template = loader.get_template(LOCAL_HTML)
         except TemplateDoesNotExist:
             fb_template = loader.get_template_from_string(REDIRECT_HTML)
-        context = RequestContext(self.request, dict)
+        context = RequestContext(self.request, ctx)
 
         return fb_template.render(context)
 
