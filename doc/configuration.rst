@@ -366,6 +366,17 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
     DEBUG = True
 
 
+- Some databases impose limitations to indexes columns (like MySQL InnoDB),
+  these limitations won't play nice on `UserSocialAuth provider-uid` key. To
+  avoid such error define::
+
+    SOCIAL_AUTH_UID_LENGTH = <int>
+
+  Which will be used to define the field `uid` `max_length`. A value of 223
+  should work when using MySQL InnoDB which impose a 767 bytes limit (assuming
+  UTF-8 encoding).
+
+
 Notes
 -----
 

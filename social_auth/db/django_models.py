@@ -19,13 +19,14 @@ from social_auth.utils import setting
 USER_MODEL = setting('SOCIAL_AUTH_USER_MODEL') or \
              setting('AUTH_USER_MODEL') or \
              'auth.User'
+UID_LENGTH = setting('SOCIAL_AUTH_UID_LENGTH', 255)
 
 
 class UserSocialAuth(models.Model, UserSocialAuthMixin):
     """Social Auth association model"""
     user = models.ForeignKey(USER_MODEL, related_name='social_auth')
     provider = models.CharField(max_length=32)
-    uid = models.CharField(max_length=255)
+    uid = models.CharField(max_length=UID_LENGTH)
     extra_data = JSONField(default='{}')
 
     class Meta:
