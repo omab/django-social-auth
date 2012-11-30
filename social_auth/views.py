@@ -5,6 +5,8 @@ Notes:
       on third party providers that (if using POST) won't be sending csrf
       token back.
 """
+from urllib2 import quote
+
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
@@ -152,6 +154,13 @@ def complete_process(request, backend, *args, **kwargs):
         url = backend_setting(backend, 'LOGIN_ERROR_URL', LOGIN_ERROR_URL)
     if msg:
         messages.error(request, msg)
+
+    if redirect_value and redirect_value != url:
+        redirect_value = quote(redirect_value)
+        if '?' in url:
+            url += '&%s=%s' % (REDIRECT_FIELD_NAME, redirect_value)
+        else:
+            url += '?%s=%s' % (REDIRECT_FIELD_NAME, redirect_value)
     return HttpResponseRedirect(url)
 
 
