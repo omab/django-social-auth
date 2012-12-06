@@ -10,7 +10,7 @@ from social_auth.utils import setting, utc
 
 # django.contrib.auth and mongoengine.django.auth regex to validate usernames
 # '^[\w@.+-_]+$', we use the opposite to clean invalid characters
-CLEAN_USERNAME_REGEX = re.compile(r'[^\w.@+-_]+')
+CLEAN_USERNAME_REGEX = re.compile(r'[^\w.@+-_]+', re.UNICODE)
 
 
 class UserSocialAuthMixin(object):
