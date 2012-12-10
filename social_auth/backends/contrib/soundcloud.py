@@ -1,11 +1,10 @@
 """
 SoundCloud OAuth2 support.
 
-This contribution adds support for SoundCloud OAuth2 service. 
+This contribution adds support for SoundCloud OAuth2 service.
 
-The settings SOUNDCLOUD_CLIENT_ID & SOUNDCLOUD_CLIENT_SECRET
-SOUNDCLOUD_APP_ID and SOUNDCLOUD_API_SECRET must be defined with the values
-given by SoundCloud application registration process.
+The settings SOUNDCLOUD_CLIENT_ID & SOUNDCLOUD_CLIENT_SECRET must be defined
+with the values given by SoundCloud application registration process.
 
 http://developers.soundcloud.com/
 http://developers.soundcloud.com/docs
@@ -20,9 +19,9 @@ from django.conf import settings
 
 from social_auth.utils import setting, dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+
+
 EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
-
-
 # SoundCloud configuration
 SOUNDCLOUD_AUTHORIZATION_URL = 'https://soundcloud.com/connect'
 SOUNDCLOUD_ACCESS_TOKEN_URL = 'https://api.soundcloud.com/oauth2/token'
@@ -30,7 +29,9 @@ SOUNDCLOUD_USER_DATA_URL = 'https://api.soundcloud.com/me.json'
 SOUNDCLOUD_SERVER = 'soundcloud.com'
 EXTRA_DATA = [
     ('refresh_token', 'refresh_token'),
-    ('expires_in', EXPIRES_NAME)]
+    ('expires_in', EXPIRES_NAME)
+]
+
 
 class SoundcloudBackend(OAuthBackend):
     """Soundcloud OAuth authentication backend"""
@@ -43,20 +44,19 @@ class SoundcloudBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Soundcloud account"""
-        
         fullname = response.get('full_name')
         full_name = fullname.split(' ')
         first_name = full_name[0]
-        if len(full_name)>1:
+        if len(full_name) > 1:
             last_name = full_name[-1]
         else:
             last_name = ''
-        
+
         return {USERNAME: response.get('username'),
                 'email': response.get('email') or '',
-               'fullname': fullname,
-               'first_name':first_name,
-               'last_name':last_name}
+                'fullname': fullname,
+                'first_name': first_name,
+                'last_name': last_name}
 
 
 class SoundcloudAuth(BaseOAuth2):
@@ -80,6 +80,7 @@ class SoundcloudAuth(BaseOAuth2):
             return value
         except ValueError:
             return None
+
     def auth_url(self):
         """Return redirect url"""
         if self.STATE_PARAMETER or self.REDIRECT_STATE:
@@ -102,10 +103,10 @@ class SoundcloudAuth(BaseOAuth2):
             query_string = '&' + self.request.META['QUERY_STRING']
         else:
             query_string = ''
-        print params
         return self.AUTHORIZATION_URL + '?' + urlencode(params) + query_string
+
 
 # Backend definition
 BACKENDS = {
-    'soundcloud': SoundcloudAuth,
+    'soundcloud': SoundcloudAuth
 }

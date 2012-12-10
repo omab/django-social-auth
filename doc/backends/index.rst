@@ -29,6 +29,7 @@ Contents:
    odnoklassnikiru
    shopify
    skyrock
+   soundcloud
    stocktwits
    stripe
    tripit
