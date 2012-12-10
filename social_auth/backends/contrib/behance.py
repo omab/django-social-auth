@@ -1,5 +1,5 @@
 """
-Behance OAuth support.
+Behance OAuth2 support.
 
 This contribution adds support for the Behance OAuth service. The settings
 BEHANCE_CLIENT_ID and BEHANCE_CLIENT_SECRET must be defined with the values
@@ -10,8 +10,6 @@ setting, it must be a list of values to request.
 
 By default username and access_token are stored in extra_data field.
 """
-
-
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 
 
@@ -66,5 +64,5 @@ class BehanceAuth(BaseOAuth2):
 
 # Backend definition
 BACKENDS = {
-    'behance': BehanceAuth,
+    'behance': BehanceAuth
 }

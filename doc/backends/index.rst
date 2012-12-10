@@ -10,6 +10,7 @@ Contents:
    openid
 
    angel
+   behance
    bitbucket
    browserid
    disqus
