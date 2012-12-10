@@ -78,7 +78,7 @@ Note: It lacks some backends' support at the moment.
 Contact
 -------
 
-Join to `django-social-auth discussion list`_ and bring any questions or suggestions
+Join the `django-social-auth discussion list`_ and bring any questions or suggestions
 that would improve this application.
 
 Also join the IRC channel ``#django-social-auth`` on Freenode server.
@@ -87,7 +87,7 @@ Also join the IRC channel ``#django-social-auth`` on Freenode server.
 Documentation
 -------------
 
-Extensive documentaion at `Read the Docs`_.
+Extensive documentation at `Read the Docs`_.
 
 
 Dependencies
@@ -189,3 +189,4 @@ Some bits were derived from others' work and copyrighted by:
 .. _OAuth: http://oauth.net/
 .. _pypi: http://pypi.python.org/pypi/django-social-auth/
 .. _github: https://github.com/omab/django-social-auth
+.. _django-social-auth discussion list: https://groups.google.com/forum/?fromgroups#!forum/django-social-auth
