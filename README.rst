@@ -87,7 +87,7 @@ Also join the IRC channel ``#django-social-auth`` on Freenode server.
 Documentation
 -------------
 
-Extensive documentaion at `Read the Docs`_.
+Extensive documentation at `Read the Docs`_.
 
 
 Dependencies
