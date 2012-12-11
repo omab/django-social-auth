@@ -71,7 +71,8 @@ class GoogleOAuth2Backend(GoogleOAuthBackend):
     name = 'google-oauth2'
     EXTRA_DATA = [
         ('refresh_token', 'refresh_token', True),
-        ('expires_in', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires_in', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
+        ('token_type', 'token_type', True)
     ]
 
     def get_user_id(self, details, response):

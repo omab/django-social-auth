@@ -66,11 +66,19 @@ class StripeAuth(BaseOAuth2):
             'code': self.data['code']
        }
 
-    def auth_complete_headers(self):
-        client_id, client_secret = self.get_key_and_secret()
+    @classmethod
+    def auth_headers(cls):
+        client_id, client_secret = cls.get_key_and_secret()
         return {
             'Accept': 'application/json',
             'Authorization': 'Bearer %s' % client_secret
+        }
+
+    @classmethod
+    def refresh_token_params(cls, refresh_token):
+        return {
+            'refresh_token': refresh_token,
+            'grant_type': 'refresh_token'
         }
 
 

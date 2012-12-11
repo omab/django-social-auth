@@ -58,6 +58,7 @@ class FacebookAuth(BaseOAuth2):
     RESPONSE_TYPE = None
     SCOPE_SEPARATOR = ','
     AUTHORIZATION_URL = 'https://www.facebook.com/dialog/oauth'
+    ACCESS_TOKEN_URL = ACCESS_TOKEN
     SETTINGS_KEY_NAME = 'FACEBOOK_APP_ID'
     SETTINGS_SECRET_NAME = 'FACEBOOK_API_SECRET'
     SCOPE_VAR_NAME = 'FACEBOOK_EXTENDED_PERMISSIONS'
@@ -132,6 +133,21 @@ class FacebookAuth(BaseOAuth2):
                 raise AuthCanceled(self)
             else:
                 raise AuthException(self)
+
+    @classmethod
+    def process_refresh_token_response(cls, response):
+        return dict((key, val[0])
+                        for key, val in cgi.parse_qs(response).iteritems())
+
+    @classmethod
+    def refresh_token_params(cls, token):
+        client_id, client_secret = cls.get_key_and_secret()
+        return {
+            'fb_exchange_token': token,
+            'grant_type': 'fb_exchange_token',
+            'client_id': client_id,
+            'client_secret': client_secret
+        }
 
     def do_auth(self, access_token, expires=None, *args, **kwargs):
         data = self.user_data(access_token)
