@@ -377,6 +377,16 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
   UTF-8 encoding).
 
 
+- Disconnect is an side-effect operation and should be protected against CSRF
+  attacks, but for historical reasons it wasn't and by default it's kept that
+  way. To force CSRF protection define::
+
+    SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
+
+  And ensure that any call to `/disconnect/foobar/` or `/disconnect/foobar/id/`
+  is done using POST.
+
+
 Notes
 -----
 

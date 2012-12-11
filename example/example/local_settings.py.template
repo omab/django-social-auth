@@ -53,6 +53,8 @@ VK_APP_ID = VKONTAKTE_APP_ID
 VK_API_SECRET = VKONTAKTE_APP_SECRET
 # VKONTAKTE_APP_AUTH={'key':'iframe_app_secret_key', 'user_mode': 2, 'id':'iframe_app_id'}
 
+SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
+
 SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.social_auth_user',
     'social_auth.backends.pipeline.associate.associate_by_email',

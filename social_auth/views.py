@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from social_auth.utils import sanitize_redirect, setting, \
                               backend_setting, clean_partial_pipeline
-from social_auth.decorators import dsa_view
+from social_auth.decorators import dsa_view, disconnect_view
 
 
 DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL',
@@ -62,6 +62,7 @@ def associate_complete(request, backend, *args, **kwargs):
 
 @login_required
 @dsa_view()
+@disconnect_view
 def disconnect(request, backend, association_id=None):
     """Disconnects given backend from current logged in user."""
     backend.disconnect(request.user, association_id)
