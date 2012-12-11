@@ -95,7 +95,8 @@ def auth_process(request, backend):
 def complete_process(request, backend, *args, **kwargs):
     """Authentication complete process"""
     # pop redirect value before the session is trashed on login()
-    redirect_value = request.session.get(REDIRECT_FIELD_NAME, '')
+    redirect_value = request.session.get(REDIRECT_FIELD_NAME, '') or \
+                     request.REQUEST.get(REDIRECT_FIELD_NAME, '')
     user = auth_complete(request, backend, *args, **kwargs)
 
     if isinstance(user, HttpResponse):
