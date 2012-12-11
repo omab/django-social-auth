@@ -211,12 +211,13 @@ class OAuthBackend(SocialAuthBackend):
         """OAuth providers return an unique user id in response"""
         return response[self.ID_KEY]
 
-    def extra_data(self, user, uid, response, details):
+    @classmethod
+    def extra_data(cls, user, uid, response, details=None):
         """Return access_token and extra defined names to store in
         extra_data field"""
         data = {'access_token': response.get('access_token', '')}
-        name = self.name.replace('-', '_').upper()
-        names = (self.EXTRA_DATA or []) + setting(name + '_EXTRA_DATA', [])
+        name = cls.name.replace('-', '_').upper()
+        names = (cls.EXTRA_DATA or []) + setting(name + '_EXTRA_DATA', [])
         for entry in names:
             if len(entry) == 2:
                 (name, alias), discard = entry, False
@@ -719,6 +720,7 @@ class BaseOAuth2(BaseOAuth):
     """
     AUTHORIZATION_URL = None
     ACCESS_TOKEN_URL = None
+    REFRESH_TOKEN_URL = None
     RESPONSE_TYPE = 'code'
     REDIRECT_STATE = True
     STATE_PARAMETER = True
@@ -802,7 +804,8 @@ class BaseOAuth2(BaseOAuth):
             'redirect_uri': self.get_redirect_uri(state)
         }
 
-    def auth_complete_headers(self):
+    @classmethod
+    def auth_headers(cls):
         return {'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': 'application/json'}
 
@@ -811,7 +814,7 @@ class BaseOAuth2(BaseOAuth):
         self.process_error(self.data)
         params = self.auth_complete_params(self.validate_state())
         request = Request(self.ACCESS_TOKEN_URL, data=urlencode(params),
-                          headers=self.auth_complete_headers())
+                          headers=self.auth_headers())
 
         try:
             response = simplejson.loads(dsa_urlopen(request).read())
@@ -826,6 +829,31 @@ class BaseOAuth2(BaseOAuth):
         self.process_error(response)
         return self.do_auth(response['access_token'], response=response,
                             *args, **kwargs)
+
+    @classmethod
+    def refresh_token_params(cls, token):
+        client_id, client_secret = cls.get_key_and_secret()
+        return {
+            'refresh_token': token,
+            'grant_type': 'refresh_token',
+            'client_id': client_id,
+            'client_secret': client_secret
+        }
+
+    @classmethod
+    def process_refresh_token_response(cls, response):
+        return simplejson.loads(response)
+
+    @classmethod
+    def refresh_token(cls, token):
+        request = Request(
+            cls.REFRESH_TOKEN_URL or cls.ACCESS_TOKEN_URL,
+            data=urlencode(cls.refresh_token_params(token)),
+            headers=cls.auth_headers()
+        )
+        return cls.process_refresh_token_response(
+            dsa_urlopen(request).read()
+        )
 
     def do_auth(self, access_token, *args, **kwargs):
         """Finish the auth process once the access_token was retrieved"""

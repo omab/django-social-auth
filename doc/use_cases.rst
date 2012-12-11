@@ -80,3 +80,23 @@ Some particular use cases are listed below.
 
    This view just expect the ``access_token`` as a GET parameter and the
    backend name in the URL (check django-social-auth URLs).
+
+
+4. Token refreshing
+
+   OAuth2 defines a mechanism to refresh the ``access_token`` once it expired,
+   not all the providers support it, and some providers implement it in some
+   way or another. Usually there's a ``refresh_token`` involved (a token that
+   identifies the user but it's only used to retrieve a new ``access_token``).
+
+   To refresh the token on a given social account just call the
+   ``refresh_token()`` in the ``UserSocialAuth`` instance, like this::
+
+     user = User.objects.get(...)
+     social = user.social_auth.filter(provider='google-oauth2')[0]
+     social.refresh_token()
+
+  At the moment just a few backends were tested against token refreshing
+  (Google OAuth2, Facebook and Stripe), probably others backends also support
+  it (if they follow the OAuth2 standard) with the default mechanism. Others
+  don't support it because the token is not supposed to expire.

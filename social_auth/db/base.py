@@ -21,16 +21,32 @@ class UserSocialAuthMixin(object):
         """Return associated user unicode representation"""
         return u'%s - %s' % (unicode(self.user), self.provider.title())
 
+    def get_backend(self):
+        # Make import here to avoid recursive imports :-/
+        from social_auth.backends import get_backends
+        return get_backends().get(self.provider)
+
     @property
     def tokens(self):
         """Return access_token stored in extra_data or None"""
-        # Make import here to avoid recursive imports :-/
-        from social_auth.backends import get_backends
-        backend = get_backends().get(self.provider)
+        backend = self.get_backend()
         if backend:
             return backend.AUTH_BACKEND.tokens(self)
         else:
             return {}
+
+    def refresh_token(self):
+        data = self.extra_data
+        if 'refresh_token' in data or 'access_token' in data:
+            backend = self.get_backend()
+            if hasattr(backend, 'refresh_token'):
+                token = data.get('refresh_token') or data.get('access_token')
+                response = backend.refresh_token(token)
+                self.extra_data.update(
+                    backend.AUTH_BACKEND.extra_data(self.user, self.uid,
+                                                    response)
+                )
+                self.save()
 
     def expiration_datetime(self):
         """Return provider session live seconds. Returns a timedelta ready to
