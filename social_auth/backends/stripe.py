@@ -36,11 +36,7 @@ class StripeAuth(BaseOAuth2):
     SCOPE_VAR_NAME = 'STRIPE_SCOPE'
     SETTINGS_KEY_NAME = 'STRIPE_APP_ID'
     SETTINGS_SECRET_NAME = 'STRIPE_APP_SECRET'
-    # Stripe changes the state parameter on some unclear way and doesn't send
-    # the redirect_state value if was defined in redirect_uri, they redirect to
-    # the URL defined in the app only
     REDIRECT_STATE = False
-    STATE_PARAMETER = False
 
     def process_error(self, data):
         if self.data.get('error'):
@@ -52,10 +48,13 @@ class StripeAuth(BaseOAuth2):
 
     def auth_params(self, state=None):
         client_id, client_secret = self.get_key_and_secret()
-        return {
+        params = {
             'response_type': self.RESPONSE_TYPE,
-            'client_id': client_id
+            'client_id': client_id,
         }
+        if state:
+            params['state'] = state
+        return params
 
     def auth_complete_params(self, state=None):
         client_id, client_secret = self.get_key_and_secret()
