@@ -8,12 +8,16 @@ OAuth2
 
 VKontakte uses OAuth2 for Authentication.
 
-- Register a new application at the `Vkontakte API`_, and
+- Register a new application at the `Vkontakte API`_,
 
 - fill ``Application Id`` and ``Application Secret`` values in the settings::
 
       VK_APP_ID = ''
       VK_API_SECRET = ''
+
+- Add ``'social_auth.backends.contrib.vkontakte.VKontakteOAuth2Backend'`` into your ``AUTHENTICATION_BACKENDS``.
+
+- Then you can start using ``{% url 'socialauth_begin' 'vkontakte-oauth2' %}`` in your templates
 
 - Also it's possible to define extra permissions with::
 
