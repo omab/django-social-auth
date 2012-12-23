@@ -165,6 +165,16 @@ class UserSocialAuthMixin(object):
         assoc.save()
 
     @classmethod
+    def remove_association(cls, server_url, handle):
+        from social_auth.models import Association
+        assocs = list(Association.objects.filter(
+            server_url=server_url, handle=handle))
+        assocs_exist = len(assocs) > 0
+        for assoc in assocs:
+            assoc.delete()
+        return assocs_exist
+
+    @classmethod
     def get_oid_associations(cls, server_url, handle=None):
         from social_auth.models import Association
         args = {'server_url': server_url}
