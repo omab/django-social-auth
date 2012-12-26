@@ -141,7 +141,7 @@ Configuration
     required decorator), a convenince query string can be added to your context
     for templates. On your login options page::
 
-        <a href={% url socialauth_begin 'twitter' %}?{{ redirect_querystring }}">...</a>
+        <a href="{% url socialauth_begin 'twitter' %}?{{ redirect_querystring }}">...</a>
 
     allows for a continuous login. Useful if multiple login options are
     presented.
