@@ -180,8 +180,10 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
 
     if request.session.get(PIPELINE_KEY):
         data = request.session.pop(PIPELINE_KEY)
-        idx, xargs, xkwargs = backend.from_session_dict(data, user=user,
-                                                        request=request,
+        kwargs = kwargs.copy()
+        if user:
+            kwargs['user'] = user
+        idx, xargs, xkwargs = backend.from_session_dict(data, request=request,
                                                         *args, **kwargs)
         if 'backend' in xkwargs and \
            xkwargs['backend'].name == backend.AUTH_BACKEND.name:
