@@ -57,6 +57,7 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
             qs = cls.objects.filter(id__ne=association_id)
         else:
             qs = cls.objects.filter(provider__ne=backend_name)
+        qs = qs.filter(user=user)
 
         if hasattr(user, 'has_usable_password'):
             valid_password = user.has_usable_password()
