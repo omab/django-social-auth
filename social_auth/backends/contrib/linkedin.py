@@ -10,7 +10,7 @@ from oauth2 import Token
 
 from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthCanceled, AuthUnknownError
+from social_auth.exceptions import AuthCanceled, AuthUnknownError
 
 
 LINKEDIN_SERVER = 'linkedin.com'
@@ -49,7 +49,6 @@ class LinkedinAuth(ConsumerBasedOAuth):
     AUTHORIZATION_URL = LINKEDIN_AUTHORIZATION_URL
     REQUEST_TOKEN_URL = LINKEDIN_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = LINKEDIN_ACCESS_TOKEN_URL
-    SERVER_URL = 'api.%s' % LINKEDIN_SERVER
     AUTH_BACKEND = LinkedinBackend
     SETTINGS_KEY_NAME = 'LINKEDIN_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'LINKEDIN_CONSUMER_SECRET'

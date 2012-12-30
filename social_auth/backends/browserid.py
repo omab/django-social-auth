@@ -10,7 +10,7 @@ from django.utils import simplejson
 
 from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
 from social_auth.utils import log, setting, dsa_urlopen
-from social_auth.backends.exceptions import AuthFailed, AuthMissingParameter
+from social_auth.exceptions import AuthFailed, AuthMissingParameter
 
 
 # BrowserID verification server
@@ -41,14 +41,9 @@ class BrowserIDBackend(SocialAuthBackend):
 
     def extra_data(self, user, uid, response, details):
         """Return users extra data"""
-        # BrowserID sends timestamp for expiration date, here we
-        # comvert it to the remaining seconds
-        expires = (response['expires'] / 1000) - \
-                  time.mktime(datetime.now().timetuple())
         return {
             'audience': response['audience'],
-            'issuer': response['issuer'],
-            setting('SOCIAL_AUTH_EXPIRATION', 'expires'): expires
+            'issuer': response['issuer']
         }
 
 

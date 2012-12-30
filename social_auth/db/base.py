@@ -1,15 +1,19 @@
 """Models mixins for Social Auth"""
 import base64
 import time
+import re
 from datetime import datetime, timedelta
 
 from openid.association import Association as OIDAssociation
 
 from social_auth.utils import setting, utc
 
+# django.contrib.auth and mongoengine.django.auth regex to validate usernames
+# '^[\w@.+-_]+$', we use the opposite to clean invalid characters
+CLEAN_USERNAME_REGEX = re.compile(r'[^\w.@+-_]+', re.UNICODE)
+
 
 class UserSocialAuthMixin(object):
-    User = None
     user = ''
     provider = ''
 
@@ -17,16 +21,32 @@ class UserSocialAuthMixin(object):
         """Return associated user unicode representation"""
         return u'%s - %s' % (unicode(self.user), self.provider.title())
 
+    def get_backend(self):
+        # Make import here to avoid recursive imports :-/
+        from social_auth.backends import get_backends
+        return get_backends().get(self.provider)
+
     @property
     def tokens(self):
         """Return access_token stored in extra_data or None"""
-        # Make import here to avoid recursive imports :-/
-        from social_auth.backends import get_backends
-        backend = get_backends().get(self.provider)
+        backend = self.get_backend()
         if backend:
             return backend.AUTH_BACKEND.tokens(self)
         else:
             return {}
+
+    def refresh_token(self):
+        data = self.extra_data
+        if 'refresh_token' in data or 'access_token' in data:
+            backend = self.get_backend()
+            if hasattr(backend, 'refresh_token'):
+                token = data.get('refresh_token') or data.get('access_token')
+                response = backend.refresh_token(token)
+                self.extra_data.update(
+                    backend.AUTH_BACKEND.extra_data(self.user, self.uid,
+                                                    response)
+                )
+                self.save()
 
     def expiration_datetime(self):
         """Return provider session live seconds. Returns a timedelta ready to
@@ -55,8 +75,31 @@ class UserSocialAuthMixin(object):
                 return timedelta(seconds=expires)
 
     @classmethod
+    def user_model(cls):
+        raise NotImplementedError('Implement in subclass')
+
+    @classmethod
     def username_max_length(cls):
         raise NotImplementedError('Implement in subclass')
+
+    @classmethod
+    def clean_username(cls, value):
+        return CLEAN_USERNAME_REGEX.sub('', value)
+
+    @classmethod
+    def allowed_to_disconnect(cls, user, backend_name, association_id=None):
+        if association_id is not None:
+            qs = cls.objects.exclude(id=association_id)
+        else:
+            qs = cls.objects.exclude(provider=backend_name)
+        qs = qs.filter(user=user)
+
+        if hasattr(user, 'has_usable_password'):
+            valid_password = user.has_usable_password()
+        else:
+            valid_password = True
+
+        return valid_password or qs.count() > 0
 
     @classmethod
     def simple_user_exists(cls, *args, **kwargs):
@@ -64,28 +107,29 @@ class UserSocialAuthMixin(object):
         Return True/False if a User instance exists with the given arguments.
         Arguments are directly passed to filter() manager method.
         """
-        return cls.User.objects.filter(*args, **kwargs).count() > 0
+        return cls.user_model().objects.filter(*args, **kwargs).count() > 0
 
     @classmethod
-    def create_user(cls, *args, **kwargs):
-        return cls.User.objects.create(*args, **kwargs)
+    def create_user(cls, username, email=None):
+        return cls.user_model().objects.create_user(username=username,
+                                                    email=email)
 
     @classmethod
     def get_user(cls, pk):
         try:
-            return cls.User.objects.get(pk=pk)
-        except cls.User.DoesNotExist:
+            return cls.user_model().objects.get(pk=pk)
+        except cls.user_model().DoesNotExist:
             return None
 
     @classmethod
     def get_user_by_email(cls, email):
-        return cls.User.objects.get(email=email)
+        return cls.user_model().objects.get(email=email)
 
     @classmethod
     def resolve_user_or_id(cls, user_or_id):
-        if isinstance(user_or_id, cls.User):
+        if isinstance(user_or_id, cls.user_model()):
             return user_or_id
-        return cls.User.objects.get(pk=user_or_id)
+        return cls.user_model().objects.get(pk=user_or_id)
 
     @classmethod
     def get_social_auth(cls, provider, uid):
@@ -119,6 +163,16 @@ class UserSocialAuthMixin(object):
         assoc.lifetime = association.lifetime
         assoc.assoc_type = association.assoc_type
         assoc.save()
+
+    @classmethod
+    def remove_association(cls, server_url, handle):
+        from social_auth.models import Association
+        assocs = list(Association.objects.filter(
+            server_url=server_url, handle=handle))
+        assocs_exist = len(assocs) > 0
+        for assoc in assocs:
+            assoc.delete()
+        return assocs_exist
 
     @classmethod
     def get_oid_associations(cls, server_url, handle=None):

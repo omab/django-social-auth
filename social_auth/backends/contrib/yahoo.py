@@ -24,7 +24,7 @@ from django.utils import simplejson
 
 from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthUnknownError
+from social_auth.exceptions import AuthUnknownError
 
 
 # Google OAuth base configuration
@@ -66,7 +66,6 @@ class YahooOAuth(ConsumerBasedOAuth):
     AUTHORIZATION_URL = AUTHORIZATION_URL
     REQUEST_TOKEN_URL = REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = ACCESS_TOKEN_URL
-    SERVER_URL = YAHOO_OAUTH_SERVER
     AUTH_BACKEND = YahooOAuthBackend
     SETTINGS_KEY_NAME = 'YAHOO_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'YAHOO_CONSUMER_SECRET'

@@ -1,4 +1,4 @@
-'''
+"""
 Odnoklassniki.ru OAuth2 and IFRAME application support
 If you are using OAuth2 authentication,
     * Take a look to:
@@ -15,17 +15,19 @@ elif you're building iframe application,
       listed in application registry
 Then setup your application according manual and use information from
 registration mail to set settings values.
-'''
+"""
+from urllib import urlencode, unquote
+from urllib2 import Request
+from hashlib import md5
+
 from django import forms
 from django.contrib.auth import authenticate
 from django.utils import simplejson
-from hashlib import md5
+
 from social_auth.backends import OAuthBackend, BaseOAuth2, USERNAME, \
                                  BaseAuth, SocialAuthBackend
-from social_auth.backends.exceptions import AuthFailed
+from social_auth.exceptions import AuthFailed
 from social_auth.utils import setting, log, dsa_urlopen, backend_setting
-from urllib import urlencode, unquote
-from urllib2 import Request
 
 
 ODNOKLASSNIKI_API_SERVER = 'http://api.odnoklassniki.ru/'
@@ -69,7 +71,6 @@ class OdnoklassnikiOAuth2(BaseOAuth2, OdnoklassnikiMixin):
     SETTINGS_KEY_NAME = 'ODNOKLASSNIKI_OAUTH2_CLIENT_KEY'
     SETTINGS_SECRET_NAME = 'ODNOKLASSNIKI_OAUTH2_CLIENT_SECRET'
     SETTINGS_PUBLIC_NAME = 'ODNOKLASSNIKI_OAUTH2_APP_KEY'
-    FORCE_STATE_CHECK = False
 
     def get_scope(self):
         return backend_setting(self, 'ODNOKLASSNIKI_OAUTH2_EXTRA_SCOPE', [])

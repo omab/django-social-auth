@@ -21,17 +21,17 @@ def get_username(details, user=None,
     else:
         username = uuid4().get_hex()
 
-    uuid_length = 16
+    uuid_length = setting('SOCIAL_AUTH_UUID_LENGTH', 16)
     max_length = UserSocialAuth.username_max_length()
     short_username = username[:max_length - uuid_length]
-    final_username = username[:max_length]
+    final_username = UserSocialAuth.clean_username(username[:max_length])
 
     # Generate a unique username for current user using username
     # as base but adding a unique hash at the end. Original
     # username is cut to avoid any field max_length.
     while user_exists(username=final_username):
         username = short_username + uuid4().get_hex()[:uuid_length]
-        final_username = username[:max_length]
+        final_username = UserSocialAuth.clean_username(username[:max_length])
 
     return {'username': final_username}
 
@@ -43,17 +43,20 @@ def create_user(backend, details, response, uid, username, user=None, *args,
         return {'user': user}
     if not username:
         return None
-    # NOTE: not return None because Django raises exception of strip email
-    email = details.get('email') or ''
+
     return {
-        'user': UserSocialAuth.create_user(username=username, email=email),
+        'user': UserSocialAuth.create_user(username=username,
+                                           email=details.get('email')),
         'is_new': True
     }
 
 
-def update_user_details(backend, details, response, user, is_new=False, *args,
-                        **kwargs):
+def update_user_details(backend, details, response, user=None, is_new=False,
+                        *args, **kwargs):
     """Update user details using data from provider."""
+    if user is None:
+        return
+
     changed = False  # flag to track changes
 
     for name, value in details.iteritems():

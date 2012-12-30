@@ -28,12 +28,11 @@ from social_auth.utils import setting, model_to_ctype, ctype_to_model, \
                               get_random_string, constant_time_compare, \
                               dsa_urlopen
 from social_auth.store import DjangoOpenIDStore
-from social_auth.backends.exceptions import StopPipeline, AuthException, \
-                                            AuthFailed, AuthCanceled, \
-                                            AuthUnknownError, AuthTokenError, \
-                                            AuthMissingParameter, \
-                                            AuthStateMissing, \
-                                            AuthStateForbidden
+from social_auth.exceptions import StopPipeline, AuthException, AuthFailed, \
+                                   AuthCanceled, AuthUnknownError, \
+                                   AuthTokenError, AuthMissingParameter, \
+                                   AuthStateMissing, AuthStateForbidden, \
+                                   NotAllowedToDisconnect
 from social_auth.backends.utils import build_consumer_oauth_request
 
 
@@ -81,6 +80,7 @@ class SocialAuthBackend(object):
     """A django.contrib.auth backend that authenticates the user based on
     a authentication provider response"""
     name = ''  # provider name, it's stored in database
+    supports_inactive_user = False
 
     def authenticate(self, *args, **kwargs):
         """Authenticate user using social credentials
@@ -185,7 +185,8 @@ class SocialAuthBackend(object):
 
     def get_user(self, user_id):
         """
-        Return user with given ID from the User model used by this backend
+        Return user with given ID from the User model used by this backend.
+        This is called by django.contrib.auth.middleware.
         """
         return UserSocialAuth.get_user(user_id)
 
@@ -204,17 +205,19 @@ class OAuthBackend(SocialAuthBackend):
     access_token is always stored.
     """
     EXTRA_DATA = None
+    ID_KEY = 'id'
 
     def get_user_id(self, details, response):
         """OAuth providers return an unique user id in response"""
-        return response['id']
+        return response[self.ID_KEY]
 
-    def extra_data(self, user, uid, response, details):
+    @classmethod
+    def extra_data(cls, user, uid, response, details=None):
         """Return access_token and extra defined names to store in
         extra_data field"""
         data = {'access_token': response.get('access_token', '')}
-        name = self.name.replace('-', '_').upper()
-        names = (self.EXTRA_DATA or []) + setting(name + '_EXTRA_DATA', [])
+        name = cls.name.replace('-', '_').upper()
+        names = (cls.EXTRA_DATA or []) + setting(name + '_EXTRA_DATA', [])
         for entry in names:
             if len(entry) == 2:
                 (name, alias), discard = entry, False
@@ -406,12 +409,17 @@ class BaseAuth(object):
         """Deletes current backend from user if associated.
         Override if extra operations are needed.
         """
-        if association_id:
-            UserSocialAuth.get_social_auth_for_user(user)\
-                            .get(id=association_id).delete()
+        name = self.AUTH_BACKEND.name
+        if UserSocialAuth.allowed_to_disconnect(user, name, association_id):
+            if association_id:
+                UserSocialAuth.get_social_auth_for_user(user)\
+                                .get(id=association_id).delete()
+            else:
+                UserSocialAuth.get_social_auth_for_user(user)\
+                                .filter(provider=name)\
+                                .delete()
         else:
-            UserSocialAuth.get_social_auth_for_user(user)\
-                            .filter(provider=self.AUTH_BACKEND.name).delete()
+            raise NotAllowedToDisconnect()
 
     def build_absolute_uri(self, path=None):
         """Build absolute URI for given path. Replace http:// schema with
@@ -492,15 +500,26 @@ class OpenIdAuth(BaseAuth):
             fetch_request = sreg.SRegRequest(optional=dict(SREG_ATTR).keys())
         openid_request.addExtension(fetch_request)
 
-        # Add PAPE Extension for max_auth_age, if configured
+        # Add PAPE Extension for if configured
+        preferred_policies = setting(
+            'SOCIAL_AUTH_OPENID_PAPE_PREFERRED_AUTH_POLICIES')
+        preferred_level_types = setting(
+            'SOCIAL_AUTH_OPENID_PAPE_PREFERRED_AUTH_LEVEL_TYPES')
         max_age = setting('SOCIAL_AUTH_OPENID_PAPE_MAX_AUTH_AGE')
         if max_age is not None:
             try:
-                openid_request.addExtension(
-                    pape.Request(max_auth_age=int(max_age))
-                )
+                max_age = int(max_age)
             except (ValueError, TypeError):
-                pass
+                max_age = None
+
+        if (max_age is not None or preferred_policies is not None
+            or preferred_level_types is not None):
+            pape_request = pape.Request(
+                preferred_auth_policies=preferred_policies,
+                max_auth_age=max_age,
+                preferred_auth_level_types=preferred_level_types
+            )
+            openid_request.addExtension(pape_request)
 
         return openid_request
 
@@ -518,11 +537,14 @@ class OpenIdAuth(BaseAuth):
 
     def openid_request(self, extra_params=None):
         """Return openid request"""
-        try:
-            return self.consumer().begin(url_add_parameters(self.openid_url(),
-                                                            extra_params))
-        except DiscoveryFailure, err:
-            raise AuthException(self, 'OpenID discovery error: %s' % err)
+        if not hasattr(self, '_openid_request'):
+            try:
+                self._openid_request = self.consumer().begin(
+                    url_add_parameters(self.openid_url(), extra_params)
+                )
+            except DiscoveryFailure, err:
+                raise AuthException(self, 'OpenID discovery error: %s' % err)
+        return self._openid_request
 
     def openid_url(self):
         """Return service provider URL.
@@ -537,6 +559,10 @@ class BaseOAuth(BaseAuth):
     """OAuth base class"""
     SETTINGS_KEY_NAME = ''
     SETTINGS_SECRET_NAME = ''
+    SCOPE_VAR_NAME = None
+    SCOPE_PARAMETER_NAME = 'scope'
+    DEFAULT_SCOPE = None
+    SCOPE_SEPARATOR = ' '
 
     def __init__(self, request, redirect):
         """Init method"""
@@ -557,6 +583,24 @@ class BaseOAuth(BaseAuth):
         return setting(cls.SETTINGS_KEY_NAME) and \
                setting(cls.SETTINGS_SECRET_NAME)
 
+    def get_scope(self):
+        """Return list with needed access scope"""
+        scope = self.DEFAULT_SCOPE or []
+        if self.SCOPE_VAR_NAME:
+            scope = scope + setting(self.SCOPE_VAR_NAME, [])
+        return scope
+
+    def get_scope_argument(self):
+        param = {}
+        scope = self.get_scope()
+        if scope:
+            param[self.SCOPE_PARAMETER_NAME] = self.SCOPE_SEPARATOR.join(scope)
+        return param
+
+    def user_data(self, access_token, *args, **kwargs):
+        """Loads user data from service. Implement in subclass"""
+        return {}
+
 
 class ConsumerBasedOAuth(BaseOAuth):
     """Consumer based mechanism OAuth authentication, fill the needed
@@ -565,30 +609,39 @@ class ConsumerBasedOAuth(BaseOAuth):
         AUTHORIZATION_URL       Authorization service url
         REQUEST_TOKEN_URL       Request token URL
         ACCESS_TOKEN_URL        Access token URL
-        SERVER_URL              Authorization server URL
     """
     AUTHORIZATION_URL = ''
     REQUEST_TOKEN_URL = ''
     ACCESS_TOKEN_URL = ''
-    SERVER_URL = ''
 
     def auth_url(self):
         """Return redirect url"""
         token = self.unauthorized_token()
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
-        self.request.session[name] = token.to_string()
+        if not isinstance(self.request.session.get(name), list):
+            self.request.session[name] = []
+        self.request.session[name].append(token.to_string())
+        self.request.session.modified = True
         return self.oauth_authorization_request(token).to_url()
 
     def auth_complete(self, *args, **kwargs):
         """Return user, might be logged in"""
+        # Multiple unauthorized tokens are supported (see #521)
         name = self.AUTH_BACKEND.name + 'unauthorized_token_name'
-        unauthed_token = self.request.session.get(name)
-        if not unauthed_token:
-            raise AuthTokenError('Missing unauthorized token')
-
-        token = Token.from_string(unauthed_token)
-        if token.key != self.data.get('oauth_token', 'no-token'):
-            raise AuthTokenError('Incorrect tokens')
+        token = None
+        unauthed_tokens = self.request.session.get(name) or []
+        if not unauthed_tokens:
+            raise AuthTokenError(self, 'Missing unauthorized token')
+        for unauthed_token in unauthed_tokens:
+            token = Token.from_string(unauthed_token)
+            if token.key == self.data.get('oauth_token', 'no-token'):
+                unauthed_tokens = list(set(unauthed_tokens) - \
+                                       set([unauthed_token]))
+                self.request.session[name] = unauthed_tokens
+                self.request.session.modified = True
+                break
+        else:
+            raise AuthTokenError(self, 'Incorrect tokens')
 
         try:
             access_token = self.access_token(token)
@@ -597,7 +650,10 @@ class ConsumerBasedOAuth(BaseOAuth):
                 raise AuthCanceled(self)
             else:
                 raise
+        return self.do_auth(access_token, *args, **kwargs)
 
+    def do_auth(self, access_token, *args, **kwargs):
+        """Finish the auth process once the access_token was retrieved"""
         data = self.user_data(access_token)
         if data is not None:
             data['access_token'] = access_token.to_string()
@@ -611,17 +667,23 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def unauthorized_token(self):
         """Return request for unauthorized token (first stage)"""
-        request = self.oauth_request(token=None, url=self.REQUEST_TOKEN_URL,
-                             extra_params=self.request_token_extra_arguments())
-        response = self.fetch_response(request)
-        return Token.from_string(response)
+        request = self.oauth_request(
+            token=None,
+            url=self.REQUEST_TOKEN_URL,
+            extra_params=self.request_token_extra_arguments()
+        )
+        return Token.from_string(self.fetch_response(request))
 
     def oauth_authorization_request(self, token):
         """Generate OAuth request to authorize token."""
-        return OAuthRequest.from_token_and_callback(token=token,
-                                        callback=self.redirect_uri,
-                                        http_url=self.AUTHORIZATION_URL,
-                                        parameters=self.auth_extra_arguments())
+        params = self.auth_extra_arguments() or {}
+        params.update(self.get_scope_argument())
+        return OAuthRequest.from_token_and_callback(
+            token=token,
+            callback=self.redirect_uri,
+            http_url=self.AUTHORIZATION_URL,
+            parameters=params
+        )
 
     def oauth_request(self, token, url, extra_params=None):
         """Generate OAuth request, setups callback url"""
@@ -639,10 +701,6 @@ class ConsumerBasedOAuth(BaseOAuth):
         """Return request for access token value"""
         request = self.oauth_request(token, self.ACCESS_TOKEN_URL)
         return Token.from_string(self.fetch_response(request))
-
-    def user_data(self, access_token, *args, **kwargs):
-        """Loads user data from service"""
-        raise NotImplementedError('Implement in subclass')
 
     @property
     def consumer(self):
@@ -662,84 +720,101 @@ class BaseOAuth2(BaseOAuth):
     """
     AUTHORIZATION_URL = None
     ACCESS_TOKEN_URL = None
-    SCOPE_SEPARATOR = ' '
+    REFRESH_TOKEN_URL = None
     RESPONSE_TYPE = 'code'
-    SCOPE_VAR_NAME = None
-    DEFAULT_SCOPE = None
     REDIRECT_STATE = True
+    STATE_PARAMETER = True
 
     def state_token(self):
         """Generate csrf token to include as state parameter."""
         return get_random_string(32)
 
-    def get_redirect_uri(self, state):
+    def get_redirect_uri(self, state=None):
         """Build redirect_uri with redirect_state parameter."""
         uri = self.redirect_uri
-        if self.REDIRECT_STATE:
+        if self.REDIRECT_STATE and state:
             uri = url_add_parameters(uri, {'redirect_state': state})
         return uri
 
-    def auth_url(self):
-        """Return redirect url"""
+    def auth_params(self, state=None):
         client_id, client_secret = self.get_key_and_secret()
-        state = self.state_token()
-        # Store state in session for further request validation. The state
-        # value is passed as state parameter (as specified in OAuth2 spec), but
-        # also added to redirect_uri, that way we can still verify the request
-        # if the provider doesn't implement the state parameter.
-        self.request.session[self.AUTH_BACKEND.name + '_state'] = state
-        args = {
+        params = {
             'client_id': client_id,
-            'state': state,
             'redirect_uri': self.get_redirect_uri(state)
         }
-
-        scope = self.get_scope()
-        if scope:
-            args['scope'] = self.SCOPE_SEPARATOR.join(self.get_scope())
+        if self.STATE_PARAMETER and state:
+            params['state'] = state
         if self.RESPONSE_TYPE:
-            args['response_type'] = self.RESPONSE_TYPE
+            params['response_type'] = self.RESPONSE_TYPE
+        return params
 
-        args.update(self.auth_extra_arguments())
+    def auth_url(self):
+        """Return redirect url"""
+        if self.STATE_PARAMETER or self.REDIRECT_STATE:
+            # Store state in session for further request validation. The state
+            # value is passed as state parameter (as specified in OAuth2 spec),
+            # but also added to redirect_uri, that way we can still verify the
+            # request if the provider doesn't implement the state parameter.
+            # Reuse token if any.
+            name = self.AUTH_BACKEND.name + '_state'
+            state = self.request.session.get(name) or self.state_token()
+            self.request.session[self.AUTH_BACKEND.name + '_state'] = state
+        else:
+            state = None
+
+        params = self.auth_params(state)
+        params.update(self.get_scope_argument())
+        params.update(self.auth_extra_arguments())
+
         if self.request.META.get('QUERY_STRING'):
             query_string = '&' + self.request.META['QUERY_STRING']
         else:
             query_string = ''
-        return self.AUTHORIZATION_URL + '?' + urlencode(args) + query_string
+        return self.AUTHORIZATION_URL + '?' + urlencode(params) + query_string
 
     def validate_state(self):
         """Validate state value. Raises exception on error, returns state
         value if valid."""
+        if not self.STATE_PARAMETER and not self.REDIRECT_STATE:
+            return None
         state = self.request.session.get(self.AUTH_BACKEND.name + '_state')
-        request_state = self.data.get('state') or \
-                        self.data.get('redirect_state')
-        if not request_state:
-            raise AuthMissingParameter(self, 'state')
-        elif not state:
-            raise AuthStateMissing(self, 'state')
-        elif not constant_time_compare(request_state, state):
-            raise AuthStateForbidden(self)
+        if state:
+            request_state = self.data.get('state') or \
+                            self.data.get('redirect_state')
+            if not request_state:
+                raise AuthMissingParameter(self, 'state')
+            elif not state:
+                raise AuthStateMissing(self, 'state')
+            elif not constant_time_compare(request_state, state):
+                raise AuthStateForbidden(self)
         return state
 
-    def auth_complete(self, *args, **kwargs):
-        """Completes loging process, must return user instance"""
-        if self.data.get('error'):
+    def process_error(self, data):
+        if data.get('error'):
             error = self.data.get('error_description') or self.data['error']
             raise AuthFailed(self, error)
 
-        state = self.validate_state()
+    def auth_complete_params(self, state=None):
         client_id, client_secret = self.get_key_and_secret()
-        params = {
+        return {
             'grant_type': 'authorization_code',  # request auth code
             'code': self.data.get('code', ''),  # server response code
             'client_id': client_id,
             'client_secret': client_secret,
             'redirect_uri': self.get_redirect_uri(state)
         }
-        headers = {'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'}
+
+    @classmethod
+    def auth_headers(cls):
+        return {'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'}
+
+    def auth_complete(self, *args, **kwargs):
+        """Completes loging process, must return user instance"""
+        self.process_error(self.data)
+        params = self.auth_complete_params(self.validate_state())
         request = Request(self.ACCESS_TOKEN_URL, data=urlencode(params),
-                          headers=headers)
+                          headers=self.auth_headers())
 
         try:
             response = simplejson.loads(dsa_urlopen(request).read())
@@ -751,25 +826,46 @@ class BaseOAuth2(BaseOAuth):
         except (ValueError, KeyError):
             raise AuthUnknownError(self)
 
-        if response.get('error'):
-            error = response.get('error_description') or response.get('error')
-            raise AuthFailed(self, error)
-        else:
-            data = self.user_data(response['access_token'], response)
-            response.update(data or {})
-            kwargs.update({
-                'auth': self,
-                'response': response,
-                self.AUTH_BACKEND.name: True
-            })
-            return authenticate(*args, **kwargs)
+        self.process_error(response)
+        return self.do_auth(response['access_token'], response=response,
+                            *args, **kwargs)
 
-    def get_scope(self):
-        """Return list with needed access scope"""
-        scope = self.DEFAULT_SCOPE or []
-        if self.SCOPE_VAR_NAME:
-            scope = scope + setting(self.SCOPE_VAR_NAME, [])
-        return scope
+    @classmethod
+    def refresh_token_params(cls, token):
+        client_id, client_secret = cls.get_key_and_secret()
+        return {
+            'refresh_token': token,
+            'grant_type': 'refresh_token',
+            'client_id': client_id,
+            'client_secret': client_secret
+        }
+
+    @classmethod
+    def process_refresh_token_response(cls, response):
+        return simplejson.loads(response)
+
+    @classmethod
+    def refresh_token(cls, token):
+        request = Request(
+            cls.REFRESH_TOKEN_URL or cls.ACCESS_TOKEN_URL,
+            data=urlencode(cls.refresh_token_params(token)),
+            headers=cls.auth_headers()
+        )
+        return cls.process_refresh_token_response(
+            dsa_urlopen(request).read()
+        )
+
+    def do_auth(self, access_token, *args, **kwargs):
+        """Finish the auth process once the access_token was retrieved"""
+        data = self.user_data(access_token, *args, **kwargs)
+        response = kwargs.get('response') or {}
+        response.update(data or {})
+        kwargs.update({
+            'auth': self,
+            'response': response,
+            self.AUTH_BACKEND.name: True
+        })
+        return authenticate(*args, **kwargs)
 
 
 # Backend loading was previously performed via the

@@ -27,7 +27,7 @@ ODNOKLASSNIKI_OAUTH2_CLIENT_SECRET = ''
 MAILRU_OAUTH2_CLIENT_KEY   		  = ''
 MAILRU_OAUTH2_APP_KEY      		  = ''
 MAILRU_OAUTH2_CLIENT_SECRET       = ''
-#SOCIAL_AUTH_USER_MODEL            = 'app.CustomUser'
+#SOCIAL_AUTH_USER_MODEL           = 'app.CustomUser'
 SOCIAL_AUTH_ERROR_KEY             = 'socialauth_error'
 GITHUB_APP_ID                     = ''
 GITHUB_API_SECRET                 = ''
@@ -38,6 +38,12 @@ DOUBAN_CONSUMER_SECRET            = ''
 YANDEX_OAUTH2_CLIENT_KEY          = ''
 YANDEX_OAUTH2_CLIENT_SECRET       = ''
 YANDEX_OAUTH2_API_URL             = 'https://api-yaru.yandex.ru/me/' # http://api.moikrug.ru/v1/my/ for Moi Krug
+DAILYMOTION_OAUTH2_KEY            = ''
+DAILYMOTION_OAUTH2_SECRET         = ''
+SHOPIFY_APP_API_KEY                 = ''
+SHOPIFY_SHARED_SECRET             = ''
+STOCKTWITS_CONSUMER_KEY           = ''
+STOCKTWITS_CONSUMER_SECRET        = ''
 
 # Backward compatibility
 YANDEX_APP_ID = YANDEX_OAUTH2_CLIENT_KEY
@@ -46,6 +52,8 @@ YANDEX_API_SECRET = YANDEX_OAUTH2_CLIENT_SECRET
 VK_APP_ID = VKONTAKTE_APP_ID
 VK_API_SECRET = VKONTAKTE_APP_SECRET
 # VKONTAKTE_APP_AUTH={'key':'iframe_app_secret_key', 'user_mode': 2, 'id':'iframe_app_id'}
+
+SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 
 SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.social_auth_user',

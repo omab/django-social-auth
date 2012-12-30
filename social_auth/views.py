@@ -5,19 +5,22 @@ Notes:
       on third party providers that (if using POST) won't be sending csrf
       token back.
 """
+from urllib2 import quote
+
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.db import IntegrityError
 
 from social_auth.utils import sanitize_redirect, setting, \
                               backend_setting, clean_partial_pipeline
-from social_auth.decorators import dsa_view
+from social_auth.decorators import dsa_view, disconnect_view
 
 
-DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
-                   setting('LOGIN_REDIRECT_URL')
+DEFAULT_REDIRECT = setting('SOCIAL_AUTH_LOGIN_REDIRECT_URL',
+                           setting('LOGIN_REDIRECT_URL'))
 LOGIN_ERROR_URL = setting('LOGIN_ERROR_URL', setting('LOGIN_URL'))
 PIPELINE_KEY = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
 
@@ -60,6 +63,7 @@ def associate_complete(request, backend, *args, **kwargs):
 
 @login_required
 @dsa_view()
+@disconnect_view
 def disconnect(request, backend, association_id=None):
     """Disconnects given backend from current logged in user."""
     backend.disconnect(request.user, association_id)
@@ -93,8 +97,15 @@ def auth_process(request, backend):
 def complete_process(request, backend, *args, **kwargs):
     """Authentication complete process"""
     # pop redirect value before the session is trashed on login()
-    redirect_value = request.session.get(REDIRECT_FIELD_NAME, '')
-    user = auth_complete(request, backend, *args, **kwargs)
+    redirect_value = request.session.get(REDIRECT_FIELD_NAME, '') or \
+                     request.REQUEST.get(REDIRECT_FIELD_NAME, '')
+    # Django 1.5 allow us to define custom User Model, so integrity errors
+    # can be raised.
+    try:
+        user = auth_complete(request, backend, *args, **kwargs)
+    except IntegrityError:
+        url = setting('SIGNUP_ERROR_URL', setting('LOGIN_ERROR_URL'))
+        return HttpResponseRedirect(url)
 
     if isinstance(user, HttpResponse):
         return user
@@ -102,6 +113,7 @@ def complete_process(request, backend, *args, **kwargs):
     if not user and request.user.is_authenticated():
         return HttpResponseRedirect(redirect_value)
 
+    msg = None
     if user:
         if getattr(user, 'is_active', True):
             # catch is_new flag before login() might reset the instance
@@ -143,13 +155,21 @@ def complete_process(request, backend, *args, **kwargs):
                                       'SOCIAL_AUTH_LOGIN_REDIRECT_URL') or \
                       DEFAULT_REDIRECT
         else:
+            msg = setting('SOCIAL_AUTH_INACTIVE_USER_MESSAGE', None)
             url = backend_setting(backend, 'SOCIAL_AUTH_INACTIVE_USER_URL',
                                   LOGIN_ERROR_URL)
     else:
         msg = setting('LOGIN_ERROR_MESSAGE', None)
-        if msg:
-            messages.error(request, msg)
         url = backend_setting(backend, 'LOGIN_ERROR_URL', LOGIN_ERROR_URL)
+    if msg:
+        messages.error(request, msg)
+
+    if redirect_value and redirect_value != url:
+        redirect_value = quote(redirect_value)
+        if '?' in url:
+            url += '&%s=%s' % (REDIRECT_FIELD_NAME, redirect_value)
+        else:
+            url += '?%s=%s' % (REDIRECT_FIELD_NAME, redirect_value)
     return HttpResponseRedirect(url)
 
 
@@ -160,8 +180,10 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
 
     if request.session.get(PIPELINE_KEY):
         data = request.session.pop(PIPELINE_KEY)
-        idx, xargs, xkwargs = backend.from_session_dict(data, user=user,
-                                                        request=request,
+        kwargs = kwargs.copy()
+        if user:
+            kwargs['user'] = user
+        idx, xargs, xkwargs = backend.from_session_dict(data, request=request,
                                                         *args, **kwargs)
         if 'backend' in xkwargs and \
            xkwargs['backend'].name == backend.AUTH_BACKEND.name:

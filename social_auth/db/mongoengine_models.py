@@ -3,6 +3,11 @@ MongoEngine models for Social Auth
 
 Requires MongoEngine 0.6.10
 """
+try:
+    from django.contrib.auth.hashers import UNUSABLE_PASSWORD
+except (ImportError, AttributeError):
+    UNUSABLE_PASSWORD = '!'
+
 from mongoengine import DictField, Document, IntField, ReferenceField, \
                         StringField
 from mongoengine.django.auth import User
@@ -14,7 +19,6 @@ from social_auth.db.base import UserSocialAuthMixin, AssociationMixin, \
 
 class UserSocialAuth(Document, UserSocialAuthMixin):
     """Social Auth association model"""
-    User = User
     user = ReferenceField(User)
     provider = StringField(max_length=32)
     uid = StringField(max_length=255, unique_with='provider')
@@ -32,7 +36,35 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
 
     @classmethod
     def username_max_length(cls):
-        return User.username.max_length
+        return UserSocialAuth.user_model().username.max_length
+
+    @classmethod
+    def user_model(cls):
+        return User
+
+    @classmethod
+    def create_user(cls, username, email=None):
+        # Empty string makes email regex validation fail
+        if email == '':
+            email = None
+        return cls.user_model().create_user(username=username,
+                                            password=UNUSABLE_PASSWORD,
+                                            email=email)
+
+    @classmethod
+    def allowed_to_disconnect(cls, user, backend_name, association_id=None):
+        if association_id is not None:
+            qs = cls.objects.filter(id__ne=association_id)
+        else:
+            qs = cls.objects.filter(provider__ne=backend_name)
+        qs = qs.filter(user=user)
+
+        if hasattr(user, 'has_usable_password'):
+            valid_password = user.has_usable_password()
+        else:
+            valid_password = True
+
+        return valid_password or qs.count() > 0
 
 
 class Nonce(Document, NonceMixin):

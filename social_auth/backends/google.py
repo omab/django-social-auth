@@ -23,7 +23,7 @@ from django.utils import simplejson
 from social_auth.utils import setting, dsa_urlopen
 from social_auth.backends import OpenIdAuth, ConsumerBasedOAuth, BaseOAuth2, \
                                  OAuthBackend, OpenIDBackend, USERNAME
-from social_auth.backends.exceptions import AuthFailed
+from social_auth.exceptions import AuthFailed
 
 
 # Google OAuth base configuration
@@ -71,7 +71,8 @@ class GoogleOAuth2Backend(GoogleOAuthBackend):
     name = 'google-oauth2'
     EXTRA_DATA = [
         ('refresh_token', 'refresh_token', True),
-        ('expires_in', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires_in', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
+        ('token_type', 'token_type', True)
     ]
 
     def get_user_id(self, details, response):
@@ -121,7 +122,6 @@ class BaseGoogleOAuth(ConsumerBasedOAuth):
     AUTHORIZATION_URL = AUTHORIZATION_URL
     REQUEST_TOKEN_URL = REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = ACCESS_TOKEN_URL
-    SERVER_URL = GOOGLE_OAUTH_SERVER
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from G service"""

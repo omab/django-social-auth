@@ -20,7 +20,7 @@ from django.utils import simplejson
 
 from social_auth.utils import setting, dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
-from social_auth.backends.exceptions import AuthUnknownError
+from social_auth.exceptions import AuthUnknownError
 
 
 # Live Connect configuration
@@ -63,7 +63,6 @@ class LiveBackend(OAuthBackend):
 class LiveAuth(BaseOAuth2):
     AUTHORIZATION_URL = LIVE_AUTHORIZATION_URL
     ACCESS_TOKEN_URL = LIVE_ACCESS_TOKEN_URL
-    SERVER_URL = LIVE_SERVER
     AUTH_BACKEND = LiveBackend
     SETTINGS_KEY_NAME = 'LIVE_CLIENT_ID'
     SETTINGS_SECRET_NAME = 'LIVE_CLIENT_SECRET'

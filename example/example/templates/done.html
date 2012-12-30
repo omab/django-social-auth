@@ -28,7 +28,12 @@
   {% for type, accounts in social_auth.associated.items %}
     {% for account in accounts %}
     <li>
-        <span class="disconnect"><a href={% url "socialauth_disconnect_individual" account.provider account.id %}>{{ account.provider|title }} (ID {{ account.id }})</a></span>
+      <span class="disconnect">
+        <form action="{% url "socialauth_disconnect_individual" account.provider account.id %}" method="post">
+          {% csrf_token %}
+          <a href="#">{{ account.provider|title }} (ID {{ account.id }})</a>
+        </form>
+      </span>
     </li>
     {% endfor %}
   {% endfor %}
@@ -111,4 +116,13 @@
 <div>
   <a rel="nofollow" class="logout" href="/logout/">Logout</a>
 </div>
+
+<script type="text/javascript">
+  $(function () {
+    $('.disconnect form a').on('click', function (e) {
+      e.preventDefault();
+      $(this).parent('form').submit();
+    });
+  });
+</script>
 {% endblock %}

@@ -9,8 +9,11 @@ Contents:
    oauth
    openid
 
+   angel
+   behance
    bitbucket
    browserid
+   disqus
    douban
    dropbox
    evernote
@@ -24,7 +27,12 @@ Contents:
    mailru
    mixcloud
    odnoklassnikiru
+   shopify
    skyrock
+   soundcloud
+   stocktwits
+   stripe
+   tripit
    twilio
    twitter
    vkontakte

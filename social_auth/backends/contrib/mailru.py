@@ -18,6 +18,7 @@ from urllib2 import Request, HTTPError
 from hashlib import md5
 
 from social_auth.backends import OAuthBackend, BaseOAuth2, USERNAME
+from social_auth.exceptions import AuthCanceled
 from social_auth.utils import setting, log, dsa_urlopen
 
 MAILRU_API_URL = 'http://www.appsmail.ru/platform/api'
@@ -64,12 +65,9 @@ class MailruOAuth2(BaseOAuth2):
 
     def auth_complete(self, *args, **kwargs):
         try:
-            auth_result = super(MailruOAuth2, self).auth_complete(*args,
-                                                                  **kwargs)
+            return super(MailruOAuth2, self).auth_complete(*args, **kwargs)
         except HTTPError:  # Mail.ru returns HTTPError 400 if cancelled
-            raise ValueError('Authentication cancelled')
-
-        return auth_result
+            raise AuthCanceled(self)
 
     def user_data(self, access_token, *args, **kwargs):
         """Return user data from Mail.ru REST API"""

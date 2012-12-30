@@ -1,10 +1,12 @@
 from os.path import abspath, dirname, basename, join
 
+
 try:
     import social_auth
 except ImportError:
     import sys
-    sys.path.insert(0, "..")
+    sys.path.insert(0, '..')
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -13,41 +15,47 @@ ROOT_PATH = abspath(dirname(__file__))
 PROJECT_NAME = basename(ROOT_PATH)
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('Matias', 'matiasaguirre@gmail.com'),
 )
+
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'test.db',
-    }
-}
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake'
+        'NAME': 'test.db'
     }
 }
 
 TIME_ZONE = 'America/Chicago'
 LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
-
 USE_I18N = True
 USE_L10N = True
-
+USE_TZ = True
 MEDIA_ROOT = ''
-ADMIN_MEDIA_PREFIX = '/admin-media/'
 MEDIA_URL = ''
+STATIC_ROOT = ''
 STATIC_URL = '/static/'
 
-SECRET_KEY = 't2eo^kd%k+-##ml3@_x__$j0(ps4p0q6eg*c4ttp9d2n(t!iol'
+STATICFILES_DIRS = (
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+SECRET_KEY = '_u6ym67ywnj0ugi2=6f-a_361i6o5elx91hftz$+klw)(*pqjw'
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+#     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -56,13 +64,16 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'example.middleware.ExampleSocialAuthExceptionMiddleware',
+    # Uncomment the next line for simple clickjacking protection:
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'example.urls'
 
+WSGI_APPLICATION = 'example.wsgi.application'
+
 TEMPLATE_DIRS = (
-    join(ROOT_PATH, 'templates')
+    join(ROOT_PATH, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -70,12 +81,36 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.staticfiles',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'django.contrib.admin',
     'social_auth',
     'app',
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
@@ -84,12 +119,14 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.google.GoogleOAuth2Backend',
     'social_auth.backends.google.GoogleBackend',
     'social_auth.backends.yahoo.YahooBackend',
+    'social_auth.backends.stripe.StripeBackend',
     'social_auth.backends.contrib.linkedin.LinkedinBackend',
     'social_auth.backends.contrib.skyrock.SkyrockBackend',
     'social_auth.backends.contrib.flickr.FlickrBackend',
     'social_auth.backends.contrib.instagram.InstagramBackend',
     'social_auth.backends.contrib.github.GithubBackend',
     'social_auth.backends.contrib.yandex.YandexBackend',
+    'social_auth.backends.contrib.disqus.DisqusBackend',
     'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     'social_auth.backends.contrib.foursquare.FoursquareBackend',
     'social_auth.backends.OpenIDBackend',
@@ -104,6 +141,10 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.odnoklassniki.OdnoklassnikiAppBackend',
     'social_auth.backends.contrib.vkontakte.VKontakteOAuth2Backend',
     'social_auth.backends.contrib.mailru.MailruBackend',
+    'social_auth.backends.contrib.dailymotion.DailymotionBackend',
+    'social_auth.backends.contrib.shopify.ShopifyBackend',
+    'social_auth.backends.contrib.stocktwits.StocktwitsBackend',
+    'social_auth.backends.contrib.behance.BehanceBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

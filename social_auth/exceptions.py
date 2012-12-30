@@ -6,6 +6,20 @@ class SocialAuthBaseException(ValueError):
     pass
 
 
+class WrongBackend(SocialAuthBaseException):
+    def __init__(self, backend_name):
+        self.backend_name = backend_name
+
+    def __unicode__(self):
+        return ugettext(u'Incorrect authentication service "%s"') % \
+                self.backend_name
+
+
+class NotAllowedToDisconnect(SocialAuthBaseException):
+    """User is not allowed to disconnect it's social account."""
+    pass
+
+
 class StopPipeline(SocialAuthBaseException):
     """Stop pipeline process exception.
     Raise this exception to stop the rest of the pipeline process.
@@ -76,3 +90,9 @@ class AuthStateForbidden(AuthException):
 class AuthAlreadyAssociated(AuthException):
     """A different user has already associated the target social account"""
     pass
+
+
+class AuthTokenRevoked(AuthException):
+    """User revoked the access_token in the provider."""
+    def __unicode__(self):
+        return u'User revoke access to the token'
