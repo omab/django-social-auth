@@ -6,8 +6,9 @@ using `LinkedIn fields selectors`_ just define this setting::
 
     LINKEDIN_EXTRA_FIELD_SELECTORS = [...]
 
-with the needed fields selectors, also define LINKEDIN_EXTRA_DATA properly, that
-way the values will be stored in ``UserSocialAuth.extra_data`` field.
+with the needed fields selectors, also define LINKEDIN_EXTRA_DATA properly as
+described in `OAuth <oauth.html>`_, that way the values will be stored in
+``UserSocialAuth.extra_data`` field.
 
 By default ``id``, ``first-name`` and ``last-name`` are requested and stored.
 
@@ -24,6 +25,21 @@ These are declared as a list by defining this setting::
 
     LINKEDIN_SCOPE = ['r_basicprofile', ...]
     
+For example, to request a user's email, headline, and industry from the
+Linkedin API and store the information in ``UserSocialAuth.extra_data``, you
+would add these settings::
+
+    # Add email to requested authorizations.
+    LINKEDIN_SCOPE = ['r_basicprofile', 'r_emailaddress', ...]
+    # Add the fields so they will be requested from linkedin.
+    LINKEDIN_EXTRA_FIELD_SELECTORS = ['email-address', 'headline', 'industry']
+    # Arrange to add the fields to UserSocialAuth.extra_data
+    LINKEDIN_EXTRA_DATA = [('id', 'id'),
+                           ('first-name', 'first_name'),
+                           ('last-name', 'last_name'),
+                           ('email-address', 'email_address'),
+                           ('headline', 'headline'),
+                           ('industry', 'industry')]
 
 .. _LinkedIn fields selectors: http://developer.linkedin.com/docs/DOC-1014
 .. _scope possibilities: https://developer.linkedin.com/documents/authentication#granting
