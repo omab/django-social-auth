@@ -58,3 +58,7 @@ def form2(request):
         backend = request.session[name]['backend']
         return redirect('socialauth_complete', backend=backend)
     return render_to_response('form2.html', {}, RequestContext(request))
+
+
+def close_login_popup(request):
+    return render_to_response('close_popup.html', {}, RequestContext(request))
