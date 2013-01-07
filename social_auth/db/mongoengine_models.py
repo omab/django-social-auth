@@ -43,13 +43,13 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
         return User
 
     @classmethod
-    def create_user(cls, username, email=None):
+    def create_user(cls, username, email=None, *args, **kwargs):
         # Empty string makes email regex validation fail
         if email == '':
             email = None
         return cls.user_model().create_user(username=username,
                                             password=UNUSABLE_PASSWORD,
-                                            email=email)
+                                            email=email, *args, **kwargs)
 
     @classmethod
     def allowed_to_disconnect(cls, user, backend_name, association_id=None):

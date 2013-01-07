@@ -110,9 +110,10 @@ class UserSocialAuthMixin(object):
         return cls.user_model().objects.filter(*args, **kwargs).count() > 0
 
     @classmethod
-    def create_user(cls, username, email=None):
+    def create_user(cls, username, email=None, *args, **kwargs):
         return cls.user_model().objects.create_user(username=username,
-                                                    email=email)
+                                                    email=email, *args,
+                                                    **kwargs)
 
     @classmethod
     def get_user(cls, pk):
