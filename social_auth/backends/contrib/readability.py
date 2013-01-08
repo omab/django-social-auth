@@ -61,9 +61,10 @@ class ReadabilityAuth(ConsumerBasedOAuth):
         except ValueError:
             return None
 
-    # def auth_complete(self, *args, **kwargs):
-    #     """Completes login process, must return user instance"""
-    #     return super(ReadabilityAuth, self).auth_complete(*args, **kwargs)
+    def auth_complete(self, *args, **kwargs):
+        """Completes login process, must return user instance"""
+    
+        return super(ReadabilityAuth, self).auth_complete(*args, **kwargs)
 
     @classmethod
     def enabled(cls):
