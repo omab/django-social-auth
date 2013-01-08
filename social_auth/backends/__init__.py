@@ -515,7 +515,7 @@ class OpenIdAuth(BaseAuth):
                 max_age = None
 
         if (max_age is not None or preferred_policies is not None
-            or preferred_level_types is not None):
+           or preferred_level_types is not None):
             pape_request = pape.Request(
                 preferred_auth_policies=preferred_policies,
                 max_auth_age=max_age,
@@ -637,7 +637,7 @@ class ConsumerBasedOAuth(BaseOAuth):
         for unauthed_token in unauthed_tokens:
             token = Token.from_string(unauthed_token)
             if token.key == self.data.get('oauth_token', 'no-token'):
-                unauthed_tokens = list(set(unauthed_tokens) - \
+                unauthed_tokens = list(set(unauthed_tokens) -
                                        set([unauthed_token]))
                 self.request.session[name] = unauthed_tokens
                 self.request.session.modified = True
