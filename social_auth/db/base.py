@@ -92,6 +92,7 @@ class UserSocialAuthMixin(object):
             qs = cls.objects.exclude(id=association_id)
         else:
             qs = cls.objects.exclude(provider=backend_name)
+        qs = qs.filter(user=user)
 
         if hasattr(user, 'has_usable_password'):
             valid_password = user.has_usable_password()
@@ -109,9 +110,10 @@ class UserSocialAuthMixin(object):
         return cls.user_model().objects.filter(*args, **kwargs).count() > 0
 
     @classmethod
-    def create_user(cls, username, email=None):
+    def create_user(cls, username, email=None, *args, **kwargs):
         return cls.user_model().objects.create_user(username=username,
-                                                    email=email)
+                                                    email=email, *args,
+                                                    **kwargs)
 
     @classmethod
     def get_user(cls, pk):
@@ -162,6 +164,16 @@ class UserSocialAuthMixin(object):
         assoc.lifetime = association.lifetime
         assoc.assoc_type = association.assoc_type
         assoc.save()
+
+    @classmethod
+    def remove_association(cls, server_url, handle):
+        from social_auth.models import Association
+        assocs = list(Association.objects.filter(
+            server_url=server_url, handle=handle))
+        assocs_exist = len(assocs) > 0
+        for assoc in assocs:
+            assoc.delete()
+        return assocs_exist
 
     @classmethod
     def get_oid_associations(cls, server_url, handle=None):

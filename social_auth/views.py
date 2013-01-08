@@ -12,6 +12,7 @@ from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.db import IntegrityError
 
 from social_auth.utils import sanitize_redirect, setting, \
                               backend_setting, clean_partial_pipeline
@@ -98,7 +99,13 @@ def complete_process(request, backend, *args, **kwargs):
     # pop redirect value before the session is trashed on login()
     redirect_value = request.session.get(REDIRECT_FIELD_NAME, '') or \
                      request.REQUEST.get(REDIRECT_FIELD_NAME, '')
-    user = auth_complete(request, backend, *args, **kwargs)
+    # Django 1.5 allow us to define custom User Model, so integrity errors
+    # can be raised.
+    try:
+        user = auth_complete(request, backend, *args, **kwargs)
+    except IntegrityError:
+        url = setting('SIGNUP_ERROR_URL', setting('LOGIN_ERROR_URL'))
+        return HttpResponseRedirect(url)
 
     if isinstance(user, HttpResponse):
         return user
@@ -173,8 +180,10 @@ def auth_complete(request, backend, user=None, *args, **kwargs):
 
     if request.session.get(PIPELINE_KEY):
         data = request.session.pop(PIPELINE_KEY)
-        idx, xargs, xkwargs = backend.from_session_dict(data, user=user,
-                                                        request=request,
+        kwargs = kwargs.copy()
+        if user:
+            kwargs['user'] = user
+        idx, xargs, xkwargs = backend.from_session_dict(data, request=request,
                                                         *args, **kwargs)
         if 'backend' in xkwargs and \
            xkwargs['backend'].name == backend.AUTH_BACKEND.name:

@@ -57,8 +57,12 @@ Each pipeline function will receive the following parameters:
         - current logged in user (if it's logged in, otherwise ``None``)
         - current request
 
-Each pipeline entry must return a ``dict`` or ``None``, any value in the
-``dict`` will be used in the ``kwargs`` argument for the next pipeline entry.
+Each pipeline entry can return a ``dict``, ``None`` or any form of
+``HttpResponse`` (that includes ``HttpResponseRedirect`` to). If a ``dict`` was
+returned, any value in the set will be merged into the ``kwargs`` argument for
+the next pipeline entry, ``None`` is taken as if ``{}`` was returned, and if an
+``HttpReponse`` instance was returned, it will halt the pipeline and the
+response will be returned to the user (check **Partial Pipeline** section below).
 
 The workflow will be cut if the exception ``social_auth.backends.exceptions.StopPipeline``
 is raised at any point.

@@ -55,11 +55,12 @@ class UserSocialAuth(models.Model, UserSocialAuthMixin):
 class Nonce(models.Model, NonceMixin):
     """One use numbers"""
     server_url = models.CharField(max_length=255)
-    timestamp = models.IntegerField()
+    timestamp = models.IntegerField(db_index=True)
     salt = models.CharField(max_length=40)
 
     class Meta:
         app_label = 'social_auth'
+        unique_together = ('server_url', 'timestamp', 'salt')
 
 
 class Association(models.Model, AssociationMixin):
@@ -67,12 +68,13 @@ class Association(models.Model, AssociationMixin):
     server_url = models.CharField(max_length=255)
     handle = models.CharField(max_length=255)
     secret = models.CharField(max_length=255)  # Stored base64 encoded
-    issued = models.IntegerField()
+    issued = models.IntegerField(db_index=True)
     lifetime = models.IntegerField()
     assoc_type = models.CharField(max_length=64)
 
     class Meta:
         app_label = 'social_auth'
+        unique_together = ('server_url', 'handle')
 
 
 def is_integrity_error(exc):

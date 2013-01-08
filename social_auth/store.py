@@ -18,6 +18,9 @@ class DjangoOpenIDStore(OpenIDStore):
         """Store new assocition if doesn't exist"""
         UserSocialAuth.store_association(server_url, association)
 
+    def removeAssociation(self, server_url, handle):
+        return UserSocialAuth.remove_association(server_url, handle)
+
     def getAssociation(self, server_url, handle=None):
         """Return stored assocition"""
         oid_associations = UserSocialAuth.get_oid_associations(server_url,

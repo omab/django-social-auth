@@ -59,6 +59,6 @@ class SocialAuthExceptionMiddleware(object):
     def get_redirect_uri(self, request, exception):
         if self.backend is not None:
             return backend_setting(self.backend,
-                                   'SOCIAL_AUTH_BACKEND_ERROR_URL',
-                                   settings.LOGIN_ERROR_URL)
+                                   'SOCIAL_AUTH_BACKEND_ERROR_URL') or \
+                                   settings.LOGIN_ERROR_URL
         return settings.LOGIN_ERROR_URL
