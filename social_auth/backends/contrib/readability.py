@@ -11,6 +11,7 @@ from urllib import urlencode
 from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.exceptions import AuthCanceled
 from social_auth.utils import setting
 
 # Readability configuration
@@ -63,8 +64,10 @@ class ReadabilityAuth(ConsumerBasedOAuth):
 
     def auth_complete(self, *args, **kwargs):
         """Completes login process, must return user instance"""
-    
-        return super(ReadabilityAuth, self).auth_complete(*args, **kwargs)
+        if 'error' in self.data:
+            raise AuthCanceled(self)
+        else:
+            return super(ReadabilityAuth, self).auth_complete(*args, **kwargs)
 
     @classmethod
     def enabled(cls):
