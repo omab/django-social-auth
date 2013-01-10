@@ -27,7 +27,8 @@ class ReadabilityBackend(OAuthBackend):
 
     EXTRA_DATA = [('date_joined', 'date_joined'),
                   ('kindle_email_address', 'kindle_email_address'),
-                  ('avatar_url', 'avatar_url')]
+                  ('avatar_url', 'avatar_url'),
+                  ('email_into_address', 'email_into_address')]
 
     def get_user_details(self, response):
         username = response['username']
