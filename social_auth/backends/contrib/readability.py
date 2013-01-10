@@ -3,10 +3,8 @@ Readability OAuth support.
 
 This contribution adds support for Readability OAuth service. The settings
 READABILITY_CONSUMER_KEY and READABILITY_CONSUMER_SECRET must be defined with
-the values given by Readability in the Connections page of your account settings.
-
-"""
-from urllib import urlencode
+the values given by Readability in the Connections page of your account
+settings."""
 
 from django.utils import simplejson
 
@@ -21,6 +19,7 @@ READABILITY_ACCESS_TOKEN_URL = 'https://%s/api/rest/v1/oauth/access_token/' % RE
 READABILITY_REQUEST_TOKEN_URL = 'https://%s/api/rest/v1/oauth/request_token/' % READABILITY_SERVER
 READABILITY_USER_DATA_URL = 'https://%s/api/rest/v1/users/_current' % READABILITY_SERVER
 
+
 class ReadabilityBackend(OAuthBackend):
     """Readability OAuth authentication backend"""
     name = 'readability'
@@ -33,7 +32,6 @@ class ReadabilityBackend(OAuthBackend):
     def get_user_details(self, response):
         username = response['username']
         first_name, last_name = response['first_name'], response['last_name']
-        date_joined = response['date_joined']
 
         return {USERNAME: username,
                 'first_name': first_name,
@@ -42,6 +40,7 @@ class ReadabilityBackend(OAuthBackend):
     def get_user_id(self, details, response):
         """Returns a unique username to use"""
         return response['username']
+
 
 class ReadabilityAuth(ConsumerBasedOAuth):
     """Readability OAuth authentication mechanism"""
@@ -73,7 +72,8 @@ class ReadabilityAuth(ConsumerBasedOAuth):
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
 
-        return setting('READABILITY_CONSUMER_KEY') and setting('READABILITY_CONSUMER_SECRET')
+        return setting('READABILITY_CONSUMER_KEY') \
+            and setting('READABILITY_CONSUMER_SECRET')
 
 BACKENDS = {
     'readability': ReadabilityAuth,
