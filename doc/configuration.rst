@@ -376,6 +376,22 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
   should work when using MySQL InnoDB which impose a 767 bytes limit (assuming
   UTF-8 encoding).
 
+  Same applies to ``Association`` and ``Nonce`` models since they have composed
+  keys by the unique constraints.
+
+  ``Nonce`` models has a ``unique_together`` constraint over
+  ``('server_url', 'timestamp', 'salt')``, salt has a max length of 40, so
+  ``server_url`` length must be tweaked using::
+
+    SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH = <int>
+
+
+  ``Association`` models has a ``unique_together`` constraint over
+  ``('server_url', 'handle')``, and both fields lengths can be tweaked by these
+  settings::
+
+    SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH = <int>
+    SOCIAL_AUTH_ASSOCIATION_HANDLE_LENGTH = <int>
 
 - Disconnect is an side-effect operation and should be protected against CSRF
   attacks, but for historical reasons it wasn't and by default it's kept that
