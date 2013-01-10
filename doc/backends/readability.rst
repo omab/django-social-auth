@@ -15,7 +15,6 @@ That's it!  By default you'll get back:
     username
     first_name
     last_name
-    full_name
 
 with EXTRA_DATA, you can get:
     
