@@ -38,7 +38,7 @@ class ReadabilityBackend(OAuthBackend):
         full_name = '%s %s' % (first_name, last_name)
 
         return {USERNAME: username,
-                'full_name': full_name,
+                'fullname': full_name,
                 'first_name': first_name,
                 'last_name': last_name}
 
