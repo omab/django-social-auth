@@ -73,6 +73,9 @@ hepochen_
 northisup_ (Adam Hitchcock)
   * DISQUS support
 
+kjoconnor_ (Kevin O'Connor)
+  * Readablity Support
+
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
@@ -95,3 +98,4 @@ northisup_ (Adam Hitchcock)
 .. _estebistec: https://github.com/estebistec
 .. _hepochen: https://github.com/hepochen
 .. _northisup: https://github.com/northisup
+.. _kjoconnor: https://github.com/kjoconnor
