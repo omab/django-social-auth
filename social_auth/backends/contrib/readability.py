@@ -51,8 +51,13 @@ class ReadabilityBackend(OAuthBackend):
         """
         token = super(ReadabilityBackend, cls).tokens(instance)
         if token and 'access_token' in token:
-            token = dict(tok.split('=')
-                            for tok in token['access_token'].split('&'))
+            token = dict(
+                filter(
+                    lambda x: x[0] in ['oauth_token', 'oauth_token_secret'],
+                    map(
+                        lambda x: x.split('='),
+                        s.split('&'))))
+
         return token
 
 
