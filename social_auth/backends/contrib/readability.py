@@ -56,7 +56,7 @@ class ReadabilityBackend(OAuthBackend):
                     lambda x: x[0] in ['oauth_token', 'oauth_token_secret'],
                     map(
                         lambda x: x.split('='),
-                        s.split('&'))))
+                        token.split('&'))))
 
         return token
 
