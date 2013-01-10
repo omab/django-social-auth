@@ -35,10 +35,7 @@ class ReadabilityBackend(OAuthBackend):
         first_name, last_name = response['first_name'], response['last_name']
         date_joined = response['date_joined']
 
-        full_name = '%s %s' % (first_name, last_name)
-
         return {USERNAME: username,
-                'fullname': full_name,
                 'first_name': first_name,
                 'last_name': last_name}
 
