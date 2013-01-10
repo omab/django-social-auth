@@ -28,6 +28,7 @@ Configuration
         'social_auth.backends.contrib.live.LiveBackend',
         'social_auth.backends.contrib.skyrock.SkyrockBackend',
         'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
+        'social_auth.backends.contrib.readability.ReadabilityBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
@@ -62,6 +63,8 @@ Configuration
     SKYROCK_CONSUMER_SECRET      = ''
     YAHOO_CONSUMER_KEY           = ''
     YAHOO_CONSUMER_SECRET        = ''
+    READABILITY_CONSUMER_SECRET  = ''
+    READABILITY_CONSUMER_SECRET  = ''
 
 
 - Setup login URLs::
