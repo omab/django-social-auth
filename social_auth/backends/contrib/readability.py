@@ -27,20 +27,21 @@ class ReadabilityBackend(OAuthBackend):
 
     EXTRA_DATA = [('date_joined', 'date_joined'),
                   ('kindle_email_address', 'kindle_email_address'),
-                  ('avatar_url', 'avatar_url'),
-                  ('email_into_address', 'email_into_address')]
+                  ('avatar_url', 'avatar_url')]
 
     def get_user_details(self, response):
         username = response['username']
         first_name, last_name = response['first_name'], response['last_name']
         date_joined = response['date_joined']
 
+        full_name = '%s %s' % (first_name, last_name)
+
         return {USERNAME: username,
-                'fullname': first_name + ' ' + last_name,
+                'full_name': full_name,
                 'first_name': first_name,
                 'last_name': last_name}
 
-    def get_user_id(self, response):
+    def get_user_id(self, details, response):
         """Returns a unique username to use"""
         return response['username']
 
