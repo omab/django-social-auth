@@ -1,4 +1,5 @@
 from uuid import uuid4
+from django.template.defaultfilters import slugify
 
 from social_auth.utils import setting
 from social_auth.models import UserSocialAuth
@@ -31,7 +32,7 @@ def get_username(details, user=None,
     # username is cut to avoid any field max_length.
     while user_exists(username=final_username):
         username = short_username + uuid4().get_hex()[:uuid_length]
-        final_username = UserSocialAuth.clean_username(username[:max_length])
+        final_username = UserSocialAuth.clean_username(slugify(username[:max_length]))
 
     return {'username': final_username}
 
