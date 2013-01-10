@@ -41,6 +41,20 @@ class ReadabilityBackend(OAuthBackend):
         """Returns a unique username to use"""
         return response['username']
 
+    @classmethod
+    def tokens(cls, instance):
+        """Return the tokens needed to authenticate the access to any API the
+        service might provide. Readability uses a pair of OAuthToken consisting of
+        an oauth_token and oauth_token_secret.
+
+        instance must be a UserSocialAuth instance.
+        """
+        token = super(ReadabilityBackend, cls).tokens(instance)
+        if token and 'access_token' in token:
+            token = dict(tok.split('=')
+                            for tok in token['access_token'].split('&'))
+        return token
+
 
 class ReadabilityAuth(ConsumerBasedOAuth):
     """Readability OAuth authentication mechanism"""
