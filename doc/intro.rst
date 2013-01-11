@@ -51,6 +51,7 @@ credentials, some features are:
     * `Twilio`_
     * `Weibo OAuth2`_
     * `Yandex OpenId`_
+    * `Readability OAuth`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -97,3 +98,4 @@ credentials, some features are:
 .. _Twilio: https://www.twilio.com/user/account/connect/apps
 .. _Weibo OAuth2: http://open.weibo.com/wiki/Oauth2
 .. _Yandex OpenId: http://openid.yandex.ru/
+.. _Readability OAuth: http://www.readability.com/developers/api
