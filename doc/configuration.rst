@@ -405,6 +405,14 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
   And ensure that any call to `/disconnect/foobar/` or `/disconnect/foobar/id/`
   is done using POST.
 
+- For those that prefer slugged usernames, the `get_username` pipeline can
+  apply slugify from django tools by defining this setting::
+
+    SOCIAL_AUTH_SLUGIFY_USERNAMES = True
+
+  The feature is disabled by default to keep backward compatibility and to not
+  force this option on projects where Unicode usernames are a valid choice.
+
 
 Notes
 -----
