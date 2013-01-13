@@ -106,21 +106,24 @@ function openPopup(url) {
 </div>
 
 <br/>
+
+{% if social_auth.backends.oauth2 %}
 <div>
-    <h3>Login in pop-up window:</h3>
-        <ul>
-            {% with social_auth.backends.oauth2|first as first_name %}
-                <li>Some OAuth2 backend: <a rel="nofollow" href="javascript:openPopup('{% url "socialauth_begin" first_name %}'); return void(0);">{{ first_name|title }}</a></li>
-            {% endwith %}
-        </ul>
+  <h3>Login in pop-up window:</h3>
+  <ul>
+    {% with social_auth.backends.oauth2|first as first_name %}
+      <li>Some OAuth2 backend: <a rel="nofollow" href="javascript:openPopup('{% url "socialauth_begin" first_name %}'); return void(0);">{{ first_name|title }}</a></li>
+    {% endwith %}
+  </ul>
 </div>
+{% endif %}
 
 <div>
   <h3>Login using other authentication systems:</h3>
   	<ul>
-        <li><a rel="nofollow" href="{% url "fb_app" %}">Facebook Canvas Application</a></li>
+      <li><a rel="nofollow" href="{% url "fb_app" %}">Facebook Canvas Application</a></li>
   		<li><a rel="nofollow" href="{% url "socialauth_begin" "vkontakte" %}">VKontakte OpenAPI</a></li>
-        <li><a rel="nofollow" href="{% url "vk_app" %}">VKontakte IFrame application</a></li>
+      <li><a rel="nofollow" href="{% url "vk_app" %}">VKontakte IFrame application</a></li>
   		<li><a rel="nofollow" href="{% url "ok_app_info" %}">Odnoklassniki IFRAME application</a></li>
 	</ul>
 </div>
