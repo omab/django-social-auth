@@ -1,6 +1,10 @@
 """URLs module"""
-from django.conf.urls.defaults import patterns, url
-
+try: 
+    from django.conf.urls import patterns, url 
+except ImportError: 
+    # for Django version less then 1.4
+    from django.conf.urls.defaults import patterns, url
+    
 from social_auth.views import auth, complete, disconnect
 
 
