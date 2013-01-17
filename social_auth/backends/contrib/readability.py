@@ -15,7 +15,7 @@ from social_auth.utils import setting
 # Readability configuration
 READABILITY_SERVER = 'www.readability.com'
 READABILITY_API = 'https://%s/api/rest/v1' % READABILITY_SERVER
-READABILITY_AUTHORIZATION_URL = '%s/v1/oauth/authorize/' % READABILITY_API
+READABILITY_AUTHORIZATION_URL = '%s/oauth/authorize/' % READABILITY_API
 READABILITY_ACCESS_TOKEN_URL = '%s/oauth/access_token/' % READABILITY_API
 READABILITY_REQUEST_TOKEN_URL = '%s/oauth/request_token/' % READABILITY_API
 READABILITY_USER_DATA_URL = '%s/users/_current' % READABILITY_API
