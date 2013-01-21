@@ -4,16 +4,26 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+from django.conf import settings
+
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'UserSocialAuth'
+        USER_MODEL = getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None) or \
+                     getattr(settings, 'AUTH_USER_MODEL', None) or \
+                     'auth.User'
+        UID_LENGTH = getattr(settings, 'SOCIAL_AUTH_UID_LENGTH', 255)
+        NONCE_SERVER_URL_LENGTH = getattr(settings, 'SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH', 255)
+        ASSOCIATION_SERVER_URL_LENGTH = getattr(settings, 'SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH', 255)
+        ASSOCIATION_HANDLE_LENGTH = getattr(settings, 'SOCIAL_AUTH_ASSOCIATION_HANDLE_LENGTH', 255)
+
         db.create_table('social_auth_usersocialauth', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='social_auth', to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='social_auth', to=orm[USER_MODEL])),
             ('provider', self.gf('django.db.models.fields.CharField')(max_length=32)),
-            ('uid', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('uid', self.gf('django.db.models.fields.CharField')(max_length=UID_LENGTH)),
             ('extra_data', self.gf('social_auth.fields.JSONField')(default='{}')),
         ))
         db.send_create_signal('social_auth', ['UserSocialAuth'])
@@ -24,7 +34,7 @@ class Migration(SchemaMigration):
         # Adding model 'Nonce'
         db.create_table('social_auth_nonce', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('server_url', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('server_url', self.gf('django.db.models.fields.CharField')(max_length=NONCE_SERVER_URL_LENGTH)),
             ('timestamp', self.gf('django.db.models.fields.IntegerField')()),
             ('salt', self.gf('django.db.models.fields.CharField')(max_length=40)),
         ))
@@ -33,8 +43,8 @@ class Migration(SchemaMigration):
         # Adding model 'Association'
         db.create_table('social_auth_association', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('server_url', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('handle', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('server_url', self.gf('django.db.models.fields.CharField')(max_length=ASSOCIATION_SERVER_URL_LENGTH)),
+            ('handle', self.gf('django.db.models.fields.CharField')(max_length=ASSOCIATION_HANDLE_LENGTH)),
             ('secret', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('issued', self.gf('django.db.models.fields.IntegerField')()),
             ('lifetime', self.gf('django.db.models.fields.IntegerField')()),
