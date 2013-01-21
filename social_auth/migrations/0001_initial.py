@@ -7,18 +7,19 @@ from django.db import models
 from django.conf import settings
 
 
+USER_MODEL = getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None) or \
+             getattr(settings, 'AUTH_USER_MODEL', None) or \
+             'auth.User'
+UID_LENGTH = getattr(settings, 'SOCIAL_AUTH_UID_LENGTH', 255)
+NONCE_SERVER_URL_LENGTH = getattr(settings, 'SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH', 255)
+ASSOCIATION_SERVER_URL_LENGTH = getattr(settings, 'SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH', 255)
+ASSOCIATION_HANDLE_LENGTH = getattr(settings, 'SOCIAL_AUTH_ASSOCIATION_HANDLE_LENGTH', 255)
+
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'UserSocialAuth'
-        USER_MODEL = getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None) or \
-                     getattr(settings, 'AUTH_USER_MODEL', None) or \
-                     'auth.User'
-        UID_LENGTH = getattr(settings, 'SOCIAL_AUTH_UID_LENGTH', 255)
-        NONCE_SERVER_URL_LENGTH = getattr(settings, 'SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH', 255)
-        ASSOCIATION_SERVER_URL_LENGTH = getattr(settings, 'SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH', 255)
-        ASSOCIATION_HANDLE_LENGTH = getattr(settings, 'SOCIAL_AUTH_ASSOCIATION_HANDLE_LENGTH', 255)
-
         db.create_table('social_auth_usersocialauth', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='social_auth', to=orm[USER_MODEL])),
@@ -107,18 +108,18 @@ class Migration(SchemaMigration):
         'social_auth.association': {
             'Meta': {'object_name': 'Association'},
             'assoc_type': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
-            'handle': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'handle': ('django.db.models.fields.CharField', [], {'max_length': str(ASSOCIATION_HANDLE_LENGTH)}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'issued': ('django.db.models.fields.IntegerField', [], {}),
             'lifetime': ('django.db.models.fields.IntegerField', [], {}),
             'secret': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'server_url': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+            'server_url': ('django.db.models.fields.CharField', [], {'max_length': str(ASSOCIATION_SERVER_URL_LENGTH)})
         },
         'social_auth.nonce': {
             'Meta': {'object_name': 'Nonce'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'salt': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
-            'server_url': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'server_url': ('django.db.models.fields.CharField', [], {'max_length': str(NONCE_SERVER_URL_LENGTH)}),
             'timestamp': ('django.db.models.fields.IntegerField', [], {})
         },
         'social_auth.usersocialauth': {
@@ -126,8 +127,8 @@ class Migration(SchemaMigration):
             'extra_data': ('social_auth.fields.JSONField', [], {'default': "'{}'"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'provider': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
-            'uid': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'social_auth'", 'to': "orm['auth.User']"})
+            'uid': ('django.db.models.fields.CharField', [], {'max_length': str(UID_LENGTH)}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'social_auth'", 'to': "orm['" + USER_MODEL + "']"})
         }
     }
 
