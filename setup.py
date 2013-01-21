@@ -15,6 +15,7 @@ implements a common interface to define new authentication providers from
 third parties.
 """
 
+
 def long_description():
     """Return long description from README.rst if it's present
     because it doesn't get installed."""
@@ -33,9 +34,14 @@ setup(name='django-social-auth',
       keywords='django, openid, oauth, social auth, application',
       url='https://github.com/omab/django-social-auth',
       packages=['social_auth',
+                'social_auth.management',
+                'social_auth.management.commands',
                 'social_auth.backends',
                 'social_auth.backends.contrib',
-                'social_auth.backends.pipeline'],
+                'social_auth.backends.pipeline',
+                'social_auth.migrations',
+                'social_auth.db'],
+      package_data={'social_auth': ['locale/*/LC_MESSAGES/*']},
       long_description=long_description(),
       install_requires=['django>=1.2.5',
                         'oauth2>=1.5.167',

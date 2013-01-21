@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block script %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://login.persona.org/include.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+function openPopup(url) {
+    var w = 700;
+    var h = 500;
+    var left = 100;
+    var top = 100;
+
+    var settings = 'height=' + h + ',width=' + w + ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=yes,directories=no,status=yes';
+    url += "?next={% url 'login_popup_close' %}";
+
+    window.open(url, name, settings)
+}
+
+</script>
+
+{% endblock %}
+
+{% block heading %}Login using any of the following methods{% endblock %}
+
+{% block content %}
+<div>
+  <h3>Login using <a href="http://oauth.net/" title="OAuth">OAuth</a> from:</h3>
+  <ul>
+  {% for name in social_auth.backends.oauth %}
+    <li><a rel="nofollow" href="{% url "socialauth_begin" name %}">{{ name|title }}</a></li>
+  {% endfor %}
+  </ul>
+</div>
+
+<div>
+  <h3>Login using <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-10" title="OAuth2">OAuth2</a> from:</h3>
+  <ul>
+  {% for name in social_auth.backends.oauth2 %}
+    <li><a rel="nofollow" href="{% url "socialauth_begin" name %}">{{ name|title }}</a></li>
+  {% endfor %}
+  </ul>
+</div>
+
+<div>
+  <h3>Login using <a href="http://openid.net/" title="OpenId">OpenId</a> from:</h3>
+  <ul>
+  {% for name in social_auth.backends.openid %}
+    <li>
+    {% if name != "livejournal" and name != "openid" %}
+      <a rel="nofollow" href="{% url "socialauth_begin" name %}">{{ name|title }}</a>
+    {% else %}
+      {% if name == "livejournal" %}
+      <form action="{% url "socialauth_begin" "livejournal" %}" method="post">{% csrf_token %}
+        <div>
+          <label for="openid_lj_user">LiveJournal user:</label>
+          <input id="openid_lj_user" type="text" value="" name="openid_lj_user" />
+          <input type="submit" value="Login"/>
+        </div>
+      </form>
+      {% else %}
+        {% if name == "openid" %}
+        <form action="{% url "socialauth_begin" "openid" %}" method="post">{% csrf_token %}
+          <div>
+            <label for="openid_identifier">Other provider</label>
+            <input id="openid_identifier" type="text" value="" name="openid_identifier" />
+            <input type="submit" value="Login" />
+          </div>
+          <p class="helptext">Like your personal <a href="https://www.myopenid.com/" title="My OpenId">myopenid</a></p>
+        </form>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+</div>
+
+<div>
+  <h3>Login using <a href="https://login.persona.org/" title="BrowserID">BrowserID</a>:</h3>
+  <form method="post" action="{% url "socialauth_complete" "browserid" %}">
+    <input type="hidden" name="assertion" value="" />
+    <a rel="nofollow" id="browserid" href="#">BrowserID</a>
+    <script type="text/javascript">
+      $(function () {
+        $('#browserid').click(function (e) {
+          e.preventDefault();
+          var self = $(this);
+
+          navigator.id.get(function (assertion) {
+            if (assertion) {
+              self.parent('form')
+                    .find('input[type=hidden]')
+                      .attr('value', assertion)
+                    .end()
+                    .submit();
+            } else {
+              alert('Some error occurred');
+            }
+          });
+        });
+      });
+    </script>
+  </form>
+</div>
+
+<br/>
+
+{% if social_auth.backends.oauth2 %}
+<div>
+  <h3>Login in pop-up window:</h3>
+  <ul>
+    {% with social_auth.backends.oauth2|first as first_name %}
+      <li>Some OAuth2 backend: <a rel="nofollow" href="javascript:openPopup('{% url "socialauth_begin" first_name %}'); return void(0);">{{ first_name|title }}</a></li>
+    {% endwith %}
+  </ul>
+</div>
+{% endif %}
+
+<div>
+  <h3>Login using other authentication systems:</h3>
+  	<ul>
+      <li><a rel="nofollow" href="{% url "fb_app" %}">Facebook Canvas Application</a></li>
+  		<li><a rel="nofollow" href="{% url "socialauth_begin" "vkontakte" %}">VKontakte OpenAPI</a></li>
+      <li><a rel="nofollow" href="{% url "vk_app" %}">VKontakte IFrame application</a></li>
+  		<li><a rel="nofollow" href="{% url "ok_app_info" %}">Odnoklassniki IFRAME application</a></li>
+	</ul>
+</div>
+{% endblock %}

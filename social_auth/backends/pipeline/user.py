@@ -1,57 +1,45 @@
 from uuid import uuid4
 
-from django.conf import settings
+from django.template.defaultfilters import slugify
 
-from social_auth.models import User
-from social_auth.backends.pipeline import USERNAME, USERNAME_MAX_LENGTH, warn_setting
-from social_auth.signals import socialauth_not_registered, \
-                                socialauth_registered, \
+from social_auth.utils import setting
+from social_auth.models import UserSocialAuth
+from social_auth.backends import USERNAME
+from social_auth.signals import socialauth_registered, \
                                 pre_update
 
 
-def get_username(details, user=None, *args, **kwargs):
+def get_username(details, user=None,
+                 user_exists=UserSocialAuth.simple_user_exists,
+                 *args, **kwargs):
     """Return an username for new user. Return current user username
     if user was given.
     """
     if user:
         return {'username': user.username}
 
-    warn_setting('SOCIAL_AUTH_FORCE_RANDOM_USERNAME', 'get_username')
-    warn_setting('SOCIAL_AUTH_DEFAULT_USERNAME', 'get_username')
-    warn_setting('SOCIAL_AUTH_UUID_LENGTH', 'get_username')
-    warn_setting('SOCIAL_AUTH_USERNAME_FIXER', 'get_username')
-
-    if getattr(settings, 'SOCIAL_AUTH_FORCE_RANDOM_USERNAME', False):
-        username = uuid4().get_hex()
-    elif details.get(USERNAME):
-        username = details[USERNAME]
-    elif hasattr(settings, 'SOCIAL_AUTH_DEFAULT_USERNAME'):
-        username = settings.SOCIAL_AUTH_DEFAULT_USERNAME
-        if callable(username):
-            username = username()
+    if details.get(USERNAME):
+        username = unicode(details[USERNAME])
     else:
         username = uuid4().get_hex()
 
-    uuid_lenght = getattr(settings, 'SOCIAL_AUTH_UUID_LENGTH', 16)
-    username_fixer = getattr(settings, 'SOCIAL_AUTH_USERNAME_FIXER',
-                             lambda u: u)
+    uuid_length = setting('SOCIAL_AUTH_UUID_LENGTH', 16)
+    max_length = UserSocialAuth.username_max_length()
+    do_slugify = setting('SOCIAL_AUTH_SLUGIFY_USERNAMES', False)
+    short_username = username[:max_length - uuid_length]
+    final_username = UserSocialAuth.clean_username(username[:max_length])
+    if do_slugify:
+        final_username = slugify(final_username)
 
-    short_username = username[:USERNAME_MAX_LENGTH - uuid_lenght]
-    final_username = None
+    # Generate a unique username for current user using username
+    # as base but adding a unique hash at the end. Original
+    # username is cut to avoid any field max_length.
+    while user_exists(username=final_username):
+        username = short_username + uuid4().get_hex()[:uuid_length]
+        final_username = UserSocialAuth.clean_username(username[:max_length])
+        if do_slugify:
+            final_username = slugify(final_username)
 
-    while True:
-        final_username = username_fixer(username)[:USERNAME_MAX_LENGTH]
-
-        try:
-            User.objects.get(username=final_username)
-        except User.DoesNotExist:
-            break
-        else:
-            # User with same username already exists, generate a unique
-            # username for current user using username as base but adding
-            # a unique hash at the end. Original username is cut to avoid
-            # the field max_length.
-            username = short_username + uuid4().get_hex()[:uuid_lenght]
     return {'username': final_username}
 
 
@@ -63,39 +51,30 @@ def create_user(backend, details, response, uid, username, user=None, *args,
     if not username:
         return None
 
-    warn_setting('SOCIAL_AUTH_CREATE_USERS', 'create_user')
-
-    if not getattr(settings, 'SOCIAL_AUTH_CREATE_USERS', True):
-        # Send signal for cases where tracking failed registering is useful.
-        socialauth_not_registered.send(sender=backend.__class__,
-                                       uid=uid,
-                                       response=response,
-                                       details=details)
-        return None
-
-    email = details.get('email')
     return {
-        'user': User.objects.create_user(username=username, email=email),
+        'user': UserSocialAuth.create_user(username=username,
+                                           email=details.get('email')),
         'is_new': True
     }
 
 
-def update_user_details(backend, details, response, user, is_new=False, *args,
-                        **kwargs):
+def update_user_details(backend, details, response, user=None, is_new=False,
+                        *args, **kwargs):
     """Update user details using data from provider."""
+    if user is None:
+        return
+
     changed = False  # flag to track changes
 
-    warn_setting('SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', 'update_user_details')
-
-    # check if values update should be left to signals handlers only
-    if not getattr(settings, 'SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False):
-        for name, value in details.iteritems():
-            # do not update username, it was already generated
-            if name == USERNAME:
-                continue
-            if value and value != getattr(user, name, None):
-                setattr(user, name, value)
-                changed = True
+    for name, value in details.iteritems():
+        # do not update username, it was already generated
+        # do not update configured fields if user already existed
+        if name in (USERNAME, 'id', 'pk') or (not is_new and
+           name in setting('SOCIAL_AUTH_PROTECTED_USER_FIELDS', [])):
+            continue
+        if value and value != getattr(user, name, None):
+            setattr(user, name, value)
+            changed = True
 
     # Fire a pre-update signal sending current backend instance,
     # user instance (created or retrieved from database), service

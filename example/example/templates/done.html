@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block script %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://login.persona.org/include.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block heading %}Logged in!{% endblock %}
+
+{% block content %}
+<div>
+  <h3>User data:</h3>
+  <table>
+    <tr class="odd"><th>Id:</th> <td>{{ user.id }}</td></tr>
+    <tr class="even"><th>Username:</th> <td>{{ user.username }}</td></tr>
+    <tr class="odd"><th>Email:</th> <td>{{ user.email|default:"Not provided" }}</td></tr>
+    <tr class="even"><th>First name:</th> <td>{{ user.first_name|default:"Not provided" }}</td></tr>
+    <tr class="odd"><th>Last name:</th> <td>{{ user.last_name|default:"Not provided" }}</td></tr>
+    <tr class="even"><th>Last login backend:</th> <td>{{ last_login }}</td></tr>
+  </table>
+</div>
+
+<div>
+{% if social_auth.associated %}
+  <h3>Disconnect accounts</h3>
+  <ul>
+  {% for type, accounts in social_auth.associated.items %}
+    {% for account in accounts %}
+    <li>
+      <span class="disconnect">
+        <form action="{% url "socialauth_disconnect_individual" account.provider account.id %}" method="post">
+          {% csrf_token %}
+          <a href="#">{{ account.provider|title }} (ID {{ account.id }})</a>
+        </form>
+      </span>
+    </li>
+    {% endfor %}
+  {% endfor %}
+  </ul>
+{% endif %}
+
+  <h3>Associate new <a href="http://oauth.net/" title="OAuth">OAuth</a> credentials:</h3>
+  <ul>
+  {% for name in social_auth.backends.oauth %}
+    <li><a rel="nofollow" href="{% url "socialauth_begin" name %}">{{ name|title }}</a></li>
+  {% endfor %}
+  </ul>
+
+  <h3>Associate new <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-10" title="OAuth2">OAuth2</a> credentials:</h3>
+  <ul>
+  {% for name in social_auth.backends.oauth2 %}
+    <li><a rel="nofollow" href="{% url "socialauth_begin" name %}">{{ name|title }}</a></li>
+  {% endfor %}
+  </ul>
+
+  <h3>Associate new <a href="http://openid.net/" title="OpenId">OpenId</a> credentials:</h3>
+  <ul>
+  {% for name in social_auth.backends.openid %}
+    <li>
+    {% if name != "livejournal" and name != "openid" %}
+      <a rel="nofollow" href="{% url "socialauth_begin" name %}">{{ name|title }}</a>
+    {% else %}
+      {% if name == "livejournal" %}
+      <form action="{% url "socialauth_begin" "livejournal" %}" method="post">{% csrf_token %}
+        <div>
+          <label for="openid_lj_user">LiveJournal user:</label>
+          <input id="openid_lj_user" type="text" value="" name="openid_lj_user" />
+          <input type="submit" value="Login"/>
+        </div>
+      </form>
+      {% else %}
+        {% if name == "openid" %}
+        <form action="{% url "socialauth_begin" "openid" %}" method="post">{% csrf_token %}
+          <div>
+            <label for="openid_identifier">Other provider</label>
+            <input id="openid_identifier" type="text" value="" name="openid_identifier" />
+            <input type="submit" value="Login" />
+          </div>
+          <p class="helptext">Like your personal <a href="https://www.myopenid.com/" title="My OpenId">myopenid</a></p>
+        </form>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+
+  <h3>Associate new <a href="https://login.persona.org/" title="BrowserID">BrowserID</a>:</h3>
+  <form method="post" action="{% url "socialauth_complete" "browserid" %}">
+    <input type="hidden" name="assertion" value="" />
+    <a rel="nofollow" id="browserid" href="#">BrowserID</a>
+    <script type="text/javascript">
+      $(function () {
+        $('#browserid').click(function (e) {
+          e.preventDefault();
+          var self = $(this);
+
+          navigator.id.get(function (assertion) {
+            if (assertion) {
+              self.parent('form')
+                    .find('input[type=hidden]')
+                      .attr('value', assertion)
+                    .end()
+                    .submit();
+            } else {
+              alert('Some error occurred');
+            }
+          });
+        });
+      });
+    </script>
+  </form>
+</div>
+
+<div>
+  <a rel="nofollow" class="logout" href="/logout/">Logout</a>
+</div>
+
+<script type="text/javascript">
+  $(function () {
+    $('.disconnect form a').on('click', function (e) {
+      e.preventDefault();
+      $(this).parent('form').submit();
+    });
+  });
+</script>
+{% endblock %}

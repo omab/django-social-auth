@@ -5,38 +5,44 @@ This contribution adds support for GitHub OAuth service. The settings
 GITHUB_APP_ID and GITHUB_API_SECRET must be defined with the values
 given by GitHub application registration process.
 
+GITHUB_ORGANIZATION is an optional setting that will allow you to constrain
+authentication to a given GitHub organization.
+
 Extended permissions are supported by defining GITHUB_EXTENDED_PERMISSIONS
 setting, it must be a list of values to request.
 
 By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
-import logging
-logger = logging.getLogger(__name__)
+from urllib import urlencode
+from urllib2 import HTTPError
 
-import cgi
-import urllib
-
-from django.conf import settings
 from django.utils import simplejson
-from django.contrib.auth import authenticate
+from django.conf import settings
 
-from social_auth.backends import BaseOAuth, OAuthBackend, USERNAME
+from social_auth.utils import setting, dsa_urlopen
+from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 
 
 # GitHub configuration
+GITHUB_AUTHORIZATION_URL = 'https://github.com/login/oauth/authorize'
+GITHUB_ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token'
+GITHUB_USER_DATA_URL = 'https://api.github.com/user'
+
+# GitHub organization configuration
+GITHUB_ORGANIZATION_MEMBER_OF_URL = 'https://api.github.com/orgs/{org}/members/{username}'
+
 GITHUB_SERVER = 'github.com'
-GITHUB_AUTHORIZATION_URL = 'https://%s/login/oauth/authorize' % GITHUB_SERVER
-GITHUB_ACCESS_TOKEN_URL = 'https://%s/login/oauth/access_token' % GITHUB_SERVER
-GITHUB_API_URL = 'https://api.%s' % GITHUB_SERVER
-EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class GithubBackend(OAuthBackend):
     """Github OAuth authentication backend"""
     name = 'github'
     # Default extra data to store
-    EXTRA_DATA = [('id', 'id'), ('expires', EXPIRES_NAME)]
+    EXTRA_DATA = [
+        ('id', 'id'),
+        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+    ]
 
     def get_user_details(self, response):
         """Return user details from Github account"""
@@ -44,60 +50,48 @@ class GithubBackend(OAuthBackend):
                 'email': response.get('email') or '',
                 'first_name': response.get('name')}
 
-class GithubAuth(BaseOAuth):
-    """Github OAuth mechanism"""
+
+class GithubAuth(BaseOAuth2):
+    """Github OAuth2 mechanism"""
+    AUTHORIZATION_URL = GITHUB_AUTHORIZATION_URL
+    ACCESS_TOKEN_URL = GITHUB_ACCESS_TOKEN_URL
     AUTH_BACKEND = GithubBackend
+    SETTINGS_KEY_NAME = 'GITHUB_APP_ID'
+    SETTINGS_SECRET_NAME = 'GITHUB_API_SECRET'
+    SCOPE_SEPARATOR = ','
+    # Look at http://developer.github.com/v3/oauth/
+    SCOPE_VAR_NAME = 'GITHUB_EXTENDED_PERMISSIONS'
 
-    def auth_url(self):
-        """Returns redirect url"""
-        args = {'client_id': settings.GITHUB_APP_ID,
-                'redirect_uri': self.redirect_uri}
-        if hasattr(settings, 'GITHUB_EXTENDED_PERMISSIONS'):
-            args['scope'] = ','.join(settings.GITHUB_EXTENDED_PERMISSIONS)
-        args.update(self.auth_extra_arguments())
-        return GITHUB_AUTHORIZATION_URL + '?' + urllib.urlencode(args)
+    GITHUB_ORGANIZATION = getattr(settings, 'GITHUB_ORGANIZATION', None)
 
-    def auth_complete(self, *args, **kwargs):
-        """Returns user, might be logged in"""
-        if 'code' in self.data:
-            url = GITHUB_ACCESS_TOKEN_URL + '?' + \
-                  urllib.urlencode({'client_id': settings.GITHUB_APP_ID,
-                                'redirect_uri': self.redirect_uri,
-                                'client_secret': settings.GITHUB_API_SECRET,
-                                'code': self.data['code']})
-            response = cgi.parse_qs(urllib.urlopen(url).read())
-            if response.get('error'):
-                error = self.data.get('error') or 'unknown error'
-                raise ValueError('Authentication error: %s' % error)
-            access_token = response['access_token'][0]
-            data = self.user_data(access_token)
-            if data is not None:
-                if 'error' in data:
-                    error = self.data.get('error') or 'unknown error'
-                    raise ValueError('Authentication error: %s' % error)
-                data['access_token'] = access_token
-            kwargs.update({'response': data, GithubBackend.name: True})
-            return authenticate(*args, **kwargs)
-        else:
-            error = self.data.get('error') or 'unknown error'
-            raise ValueError('Authentication error: %s' % error)
-
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
-        params = {'access_token': access_token}
-        url = GITHUB_API_URL + '/user?' + urllib.urlencode(params)
+        url = GITHUB_USER_DATA_URL + '?' + urlencode({'access_token': access_token})
+
         try:
-            return simplejson.load(urllib.urlopen(url))
+            data = simplejson.load(dsa_urlopen(url))
         except ValueError:
-            return None
+            data = None
 
-    @classmethod
-    def enabled(cls):
-        """Return backend enabled status by checking basic settings"""
-        return all(hasattr(settings, name) for name in
-                        ('GITHUB_APP_ID',
-                         'GITHUB_API_SECRET'))
+        # if we have a github organization defined, test that the current users is
+        # a member of that organization.
+        if data and self.GITHUB_ORGANIZATION:
+            member_url = GITHUB_ORGANIZATION_MEMBER_OF_URL.format(
+                org=self.GITHUB_ORGANIZATION,
+                username=data.get('login')
+            )
 
+            try:
+                response = dsa_urlopen(member_url)
+            except HTTPError:
+                data = None
+            else:
+                # if the user is a member of the organization, response code will be 204
+                # see: http://developer.github.com/v3/orgs/members/#response-if-requester-is-an-organization-member-and-user-is-a-member
+                if not response.code == 204:
+                    data = None
+
+        return data
 
 # Backend definition
 BACKENDS = {

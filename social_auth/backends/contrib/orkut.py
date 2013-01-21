@@ -10,14 +10,9 @@ can be specified by defining ORKUT_EXTRA_DATA setting.
 OAuth settings ORKUT_CONSUMER_KEY and ORKUT_CONSUMER_SECRET are needed
 to enable this service support.
 """
-import logging
-logger = logging.getLogger(__name__)
-
-import urllib
-
-from django.conf import settings
 from django.utils import simplejson
 
+from social_auth.utils import setting, dsa_urlopen
 from social_auth.backends import OAuthBackend, USERNAME
 from social_auth.backends.google import BaseGoogleOAuth
 
@@ -54,12 +49,12 @@ class OrkutAuth(BaseGoogleOAuth):
     SETTINGS_KEY_NAME = 'ORKUT_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'ORKUT_CONSUMER_SECRET'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from Orkut service"""
         fields = ORKUT_DEFAULT_DATA
-        if hasattr(settings, 'ORKUT_EXTRA_DATA'):
-            fields += ',' + settings.ORKUT_EXTRA_DATA
-        scope = ORKUT_SCOPE + getattr(settings, 'ORKUT_EXTRA_SCOPE', [])
+        if setting('ORKUT_EXTRA_DATA'):
+            fields += ',' + setting('ORKUT_EXTRA_DATA')
+        scope = ORKUT_SCOPE + setting('ORKUT_EXTRA_SCOPE', [])
         params = {'method': 'people.get',
                   'id': 'myself',
                   'userId': '@me',
@@ -67,7 +62,7 @@ class OrkutAuth(BaseGoogleOAuth):
                   'fields': fields,
                   'scope': ' '.join(scope)}
         request = self.oauth_request(access_token, ORKUT_REST_ENDPOINT, params)
-        response = urllib.urlopen(request.to_url()).read()
+        response = dsa_urlopen(request.to_url()).read()
         try:
             return simplejson.loads(response)['data']
         except (ValueError, KeyError):
@@ -75,7 +70,7 @@ class OrkutAuth(BaseGoogleOAuth):
 
     def oauth_request(self, token, url, extra_params=None):
         extra_params = extra_params or {}
-        scope = ORKUT_SCOPE + getattr(settings, 'ORKUT_EXTRA_SCOPE', [])
+        scope = ORKUT_SCOPE + setting('ORKUT_EXTRA_SCOPE', [])
         extra_params['scope'] = ' '.join(scope)
         return super(OrkutAuth, self).oauth_request(token, url, extra_params)
 

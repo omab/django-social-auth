@@ -5,6 +5,7 @@ import urllib
 import urlparse
 import unittest
 from sgmllib import SGMLParser
+from django.conf import settings
 
 from django.test.client import Client
 from django.core.urlresolvers import reverse
@@ -28,6 +29,40 @@ class SocialAuthTestsCase(unittest.TestCase):
         self.jar = None
         self.client = Client(**client_kwargs)
         super(SocialAuthTestsCase, self).__init__(*args, **kwargs)
+
+    def setUp(self):
+        from social_auth import backends
+        self.old_PIPELINE = backends.PIPELINE
+        backends.PIPELINE = (
+                'social_auth.backends.pipeline.social.social_auth_user',
+                'social_auth.backends.pipeline.associate.associate_by_email',
+                'social_auth.backends.pipeline.user.get_username',
+                'social_auth.backends.pipeline.user.create_user',
+                'social_auth.backends.pipeline.social.associate_user',
+                'social_auth.backends.pipeline.social.load_extra_data',
+                'social_auth.backends.pipeline.user.update_user_details',
+                )
+        super(SocialAuthTestsCase, self).setUp()
+
+    def tearDown(self):
+        from social_auth import backends
+        backends.PIPELINE = self.old_PIPELINE
+        super(SocialAuthTestsCase, self).tearDown()
+
+    def test_backend_cache(self):
+        """Ensure that the backend for the testcase gets cached."""
+        try:
+            self.name
+        except AttributeError:
+            pass
+        else:
+            if self.name not in settings.SOCIAL_AUTH_ENABLED_BACKENDS:
+                # this backend is not enabled (for example, google-openid/google-oauth2)
+                return
+            from social_auth import backends
+            backends.BACKENDS = {}
+            self.client.get(self.reverse('socialauth_begin', self.name))
+            self.assertTrue(self.name in backends.BACKENDSCACHE)
 
     def get_content(self, url, data=None, use_cookies=False):
         """Return content for given url, if data is not None, then a POST

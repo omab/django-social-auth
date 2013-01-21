@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block heading %}<a href="http://www.vkontakte.ru">VKontakte</a> login{% endblock %}
+
+{% block content %}
+
+<script src="http://vkontakte.ru/js/api/openapi.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	var vkAppId = {{ VK_APP_ID|default:"null" }};
+
+	if (vkAppId)
+  		VK.init({ apiId: vkAppId });
+
+	function authVK() {
+		if (!vkAppId) {
+			alert ("Please specify VKontakte APP ID in your local settings file");
+			return false;
+		}
+		
+		VK.Auth.login(function(response) {
+			var params = "";
+			if (response.session) {
+				params = "first_name=" + encodeURI(response.session.user.first_name) + "&last_name=" + encodeURI(response.session.user.last_name);
+				params += "&nickname=" + encodeURI(response.session.user.nickname) + "&id=" + encodeURI(response.session.user.id);
+			}
+			window.location = "{{ VK_COMPLETE_URL }}?" + params;
+
+		});
+
+		return false;
+	}
+	
+</script>
+
+<p>
+    <a href="javascript:void(0);" onclick="authVK();">Click to authorize</a>
+</p>
+{% endblock %}

@@ -1,11 +1,9 @@
-import logging
-logger = logging.getLogger(__name__)
-
-import urllib
+from urllib import urlencode
 
 from django.utils import simplejson
 
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.utils import dsa_urlopen
 
 
 FOURSQUARE_SERVER = 'foursquare.com'
@@ -23,7 +21,7 @@ class FoursquareBackend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Foursquare account"""
         firstName = response['response']['user']['firstName']
-        lastName = response['response']['user']['lastName']
+        lastName = response['response']['user'].get('lastName', '')
         email = response['response']['user']['contact']['email']
 
         return {USERNAME: firstName + ' ' + lastName,
@@ -36,17 +34,16 @@ class FoursquareAuth(BaseOAuth2):
     """Foursquare OAuth mechanism"""
     AUTHORIZATION_URL = FOURSQUARE_AUTHORIZATION_URL
     ACCESS_TOKEN_URL = FOURSQUARE_ACCESS_TOKEN_URL
-    SERVER_URL = FOURSQUARE_SERVER
     AUTH_BACKEND = FoursquareBackend
     SETTINGS_KEY_NAME = 'FOURSQUARE_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'FOURSQUARE_CONSUMER_SECRET'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
-        params = {'oauth_token': access_token,}
-        url = FOURSQUARE_CHECK_AUTH + '?' + urllib.urlencode(params)
+        params = {'oauth_token': access_token}
+        url = FOURSQUARE_CHECK_AUTH + '?' + urlencode(params)
         try:
-            return simplejson.load(urllib.urlopen(url))
+            return simplejson.load(dsa_urlopen(url))
         except ValueError:
             return None
 

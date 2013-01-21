@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Django Social Auth</title>
+    <meta name="description" content="Django Social Auth is an easy to setup social authentication/registration mechanism for Django projects." />
+    <meta name="keywords" content="django, django login, django auth, django facebook, django twitter, django openid, django oauth, social auth, openid, oauth, twitter, facebook, google, yahoo, myopenid, python" />
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <style type="text/css">
+      body {background-color: #eee; padding: 10px 20px; font-family: sans-serif; color: #333;}
+      h1, h2, h3 {margin: 0; padding: 0;}
+      h1 {font-size: 1.8em; border-bottom: 1px solid #bbb; width: 95%;}
+      h2 {font-size: 1.3em; border-bottom: 1px solid #ddd; width: 85%;}
+      h3 {font-size: 1.2em;}
+      a, a:visited {color: #459FDA; text-decoration: none;}
+      a:hover {text-decoration: underline;}
+      a img {border: 0;}
+      input[type="text"] {border: 1px solid #ccc; padding: 3px; width: 300px;}
+      input[type="submit"] {padding: 2px 20px; margin-left: -5px;}
+      label {display: block;}
+      th {text-align: left; padding-right: 25px; font-weight: normal;}
+      th, td {padding: 5px 15px;}
+      tr.even {background-color: #ddd;}
+      #heading {margin-top: 2.3em;}
+      #content {padding: 0 20px;}
+      .helptext {font-size: 0.9em; color: #aaa; margin: 0; padding: 0;}
+      .description {font-size: 1.0em; color: #333;}
+      a.logout, span.disconnect a, .error {color: #c00;}
+      .error {padding-left: 30px;}
+      #forkme {position: absolute; top: 0; right: 0;}
+      pre {display: inline;}
+    </style>
+
+    {% block script %}{% endblock %}
+  </head>
+  <body>
+    <h1>Django Social Auth (v{{ version }})</h1>
+    <p class="description">
+      Django Social Auth is an easy to setup social authentication/registration mechanism for Django projects.
+    </p>
+    <p>Check the documentation on <a href="https://github.com/omab/django-social-auth#readme" title="docs">Github</a></p>
+
+    <h2 id="heading">{% block heading %}{% endblock %}</h2>
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <div id="content">
+      {% block content %}{% endblock %}
+    </div>
+
+    <div><a id="forkme" href="http://github.com/omab/django-social-auth"><img src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" /></a></div>
+  </body>
+</html>

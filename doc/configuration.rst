@@ -8,7 +8,7 @@ Configuration
         'social_auth'
     )
 
-- Add desired authentication backends to AUTHENTICATION_BACKENDS_ setting::
+- Add desired authentication backends to Django's AUTHENTICATION_BACKENDS_ setting::
 
     AUTHENTICATION_BACKENDS = (
         'social_auth.backends.twitter.TwitterBackend',
@@ -17,32 +17,27 @@ Configuration
         'social_auth.backends.google.GoogleOAuth2Backend',
         'social_auth.backends.google.GoogleBackend',
         'social_auth.backends.yahoo.YahooBackend',
+        'social_auth.backends.browserid.BrowserIDBackend',
         'social_auth.backends.contrib.linkedin.LinkedinBackend',
+        'social_auth.backends.contrib.disqus.DisqusBackend',
         'social_auth.backends.contrib.livejournal.LiveJournalBackend',
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.contrib.foursquare.FoursquareBackend',
         'social_auth.backends.contrib.github.GithubBackend',
+        'social_auth.backends.contrib.vkontakte.VKontakteBackend',
+        'social_auth.backends.contrib.live.LiveBackend',
+        'social_auth.backends.contrib.skyrock.SkyrockBackend',
+        'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
+        'social_auth.backends.contrib.readability.ReadabilityBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )
 
-- The application will try to import custom backends from the sources defined in::
-
-    SOCIAL_AUTH_IMPORT_BACKENDS = (
-        'myproy.social_auth_extra_services',
-    )
-
-  This way it's easier to add new providers, check the already defined ones
-  in ``social_auth.backends`` for examples.
-
   Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
   or Django won't pick them when trying to authenticate the user.
 
-- Define desired backends for your site::
-
-    SOCIAL_AUTH_ENABLED_BACKENDS = ('google', 'google-oauth', 'facebook', ...)
-
-  All backends are enabled by default.
+  Don't miss ``django.contrib.auth.backends.ModelBackend`` if using ``django.auth``
+  user model or users won't be able to login.
 
 - Setup needed OAuth keys (see OAuth_ section for details)::
 
@@ -60,6 +55,17 @@ Configuration
     GOOGLE_OAUTH2_CLIENT_SECRET  = ''
     FOURSQUARE_CONSUMER_KEY      = ''
     FOURSQUARE_CONSUMER_SECRET   = ''
+    VK_APP_ID                    = ''
+    VK_API_SECRET                = ''
+    LIVE_CLIENT_ID               = ''
+    LIVE_CLIENT_SECRET           = ''
+    SKYROCK_CONSUMER_KEY         = ''
+    SKYROCK_CONSUMER_SECRET      = ''
+    YAHOO_CONSUMER_KEY           = ''
+    YAHOO_CONSUMER_SECRET        = ''
+    READABILITY_CONSUMER_SECRET  = ''
+    READABILITY_CONSUMER_SECRET  = ''
+
 
 - Setup login URLs::
 
@@ -86,19 +92,16 @@ Configuration
 
     SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
 
-  In case of authentication error, the message can be stored in session
-  if the following setting is defined::
+  Users will be redirected to ``LOGIN_ERROR_URL`` in case of error or user
+  cancellation on some backends. This URL can be override by this setting::
 
-    SOCIAL_AUTH_ERROR_KEY = 'social_errors'
-
-  This defines the desired session key where last error message should be
-  stored. It's disabled by default.
+    SOCIAL_AUTH_BACKEND_ERROR_URL = '/new-error-url/'
 
 - Configure authentication and association complete URL names to avoid
   possible clashes::
 
-    SOCIAL_AUTH_COMPLETE_URL_NAME  = 'complete'
-    SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'associate_complete'
+    SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
+    SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 
 - Add URLs entries::
 
@@ -114,10 +117,43 @@ Configuration
 
     TEMPLATE_CONTEXT_PROCESSORS = (
         ...
+        'social_auth.context_processors.social_auth_by_name_backends',
+        'social_auth.context_processors.social_auth_backends',
         'social_auth.context_processors.social_auth_by_type_backends',
+        'social_auth.context_processors.social_auth_login_redirect',
     )
 
-   check `social_auth.context_processors`.
+  * ``social_auth_by_name_backends``:
+    Adds a ``social_auth`` dict where each key is a provider name and its value
+    is a UserSocialAuth instance if user has associated an account with that
+    provider, otherwise ``None``.
+
+  * ``social_auth_backends``:
+    Adds a ``social_auth`` dict with keys are ``associated``, ``not_associated`` and
+    ``backends``. ``associated`` key is a list of ``UserSocialAuth`` instances
+    associated with current user. ``not_associated`` is a list of providers names
+    that the current user doesn't have any association yet. ``backends`` holds
+    the list of backend names supported.
+
+  * ``social_auth_by_type_backends``:
+    Simiar to ``social_auth_backends`` but each value is grouped by backend type
+    ``openid``, ``oauth2`` and ``oauth``.
+
+  * ``social_auth_login_redirect``:
+    For man in the middle redirects (ie authenticating via a login
+    required decorator), a convenince query string can be added to your context
+    for templates. On your login options page::
+
+        <a href="{% url socialauth_begin 'twitter' %}?{{ redirect_querystring }}">...</a>
+
+    allows for a continuous login. Useful if multiple login options are
+    presented.
+
+  Check ``social_auth.context_processors`` for details.
+
+  **Note**:
+  ``social_auth_backends`` and ``social_auth_by_type_backends`` don't play nice
+  together.
 
 - Sync database to create needed models::
 
@@ -132,11 +168,6 @@ Configuration
     import random
     SOCIAL_AUTH_DEFAULT_USERNAME = lambda: random.choice(['Darth Vader', 'Obi-Wan Kenobi', 'R2-D2', 'C-3PO', 'Yoda'])
 
-  or::
-
-    from django.template.defaultfilter import slugify
-    SOCIAL_AUTH_USERNAME_FIXER = lambda u: slugify(u)
-
   in case your user layout needs to purify username on some weird way.
 
   Final user name will have a random UUID-generated suffix in case it's already
@@ -148,6 +179,12 @@ Configuration
   to avoid such behavior::
 
     SOCIAL_AUTH_EXTRA_DATA = False
+
+- The update_user_details pipeline processor will set certain fields on user
+  objects, such as ``email``. Set this to a list of fields you only want to
+  set for newly created users:
+
+    SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email',]
 
   Also more extra values will be stored if defined, details about this setting
   are listed below on OpenId and OAuth sections.
@@ -192,12 +229,6 @@ Configuration
 
       SOCIAL_AUTH_CREATE_USERS = False
 
-  Also, it's possible to associate user accounts that share the same email
-  address if the user entry is unique (that means that if the email is not used
-  by more than one account). This behavior is disabled by default unless::
-
-      SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
-
 - You can send extra parameters on auth process by defining settings per
   provider, example to request Facebook to show Mobile authorization page,
   define::
@@ -208,10 +239,195 @@ Configuration
 
       <uppercase backend name>_AUTH_EXTRA_ARGUMENTS = {...}
 
+  You can override the arguments defined in the settings with GET parameters.
+
+- Also, you can send extra parameters on request token process by defining
+  settings per provider in the same way explained above but with this other
+  suffix::
+
+      <uppercase backend name>_REQUEST_TOKEN_EXTRA_ARGUMENTS = {...}
+
 - By default the application doesn't make redirects to different domains, to
   disable this behavior::
 
       SOCIAL_AUTH_SANITIZE_REDIRECTS = False
+
+- Inactive users can be redirected to a different page if this setting is
+  defined::
+
+      SOCIAL_AUTH_INACTIVE_USER_URL = '...'
+
+  Defaults to ``LOGIN_ERROR_URL``.
+
+- This set of exceptions were introduced to describe the situations a bit more
+  than the old ``ValueError`` usually raised::
+
+    AuthException           - Base exception class
+    AuthFailed              - Authentication failed for some reason
+    AuthCanceled            - Authentication was canceled by the user
+    AuthUnknownError        - An unknown error stoped the authentication
+                              process
+    AuthTokenError          - Unauthorized or access token error, it was
+                              invalid, impossible to authenticate or user
+                              removed permissions to it.
+    AuthMissingParameter    - A needed parameter to continue the process was
+                              missing, usually raised by the services that
+                              need some POST data like myOpenID
+    AuthAlreadyAssociated   - A different user has already associated
+                              the social account that the current user
+                              is trying to associate.
+
+  These are a subclass of ``ValueError`` to keep backward compatibility.
+
+- When your project is behind a reverse proxy that uses HTTPS the redirect URIs
+  can became with the wrong schema (``http://`` instead of ``https://``), and
+  might cause errors with the auth process, to force HTTPS in the final URIs
+  define this setting::
+
+    SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
+
+- The name of the last backend used to login is stored as a string in the
+  session under the key ``social_auth_last_login_backend``, the key can be
+  customized by defining this setting::
+
+    SOCIAL_AUTH_LAST_LOGIN = 'social_auth_last_login_backend'
+
+- Any ``urllib2.urlopen`` call will be performed with the default timeout
+  value, to change it without affecting the global socket timeout define this
+  setting (the value specifies timeout seconds)::
+
+    SOCIAL_AUTH_URLOPEN_TIMEOUT = 30
+
+  ``urllib2.urlopen`` uses ``socket.getdefaulttimeout()`` value by default, so
+  setting ``socket.setdefaulttimeout(...)`` will affect ``urlopen`` when this
+  setting is not defined, otherwise this setting takes precedence. Also this
+  might affect other places in Django.
+
+  ``timeout`` argument was introduced in python 2.6 according to `urllib2
+  documentation`_
+
+
+- `OpenID PAPE`_ extension support by defining::
+
+    SOCIAL_AUTH_OPENID_PAPE_MAX_AUTH_AGE = <int value>
+
+  Otherwise the extension is not used.
+
+Some settings can be tweak by backend by adding the backend name prefix (all
+uppercase and replace ``-`` with ``_``), here's the supported settings so far::
+
+        LOGIN_ERROR_URL
+        SOCIAL_AUTH_BACKEND_ERROR_URL
+        SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL
+        SOCIAL_AUTH_DISCONNECT_REDIRECT_URL
+        SOCIAL_AUTH_NEW_USER_REDIRECT_URL
+        SOCIAL_AUTH_LOGIN_REDIRECT_URL
+        SOCIAL_AUTH_INACTIVE_USER_URL
+
+- The ORM models can be replaced by providing the name of an alternate module
+  for the ``SOCIAL_AUTH_MODELS`` setting. The default is
+  ``'social_auth.db.django_models'``, which defines the Django ORM models that
+  were originally defined to implement Social Auth's storage. The app provides
+  an example alternate based on `MongoEngine`_. You can use it by setting::
+
+    SOCIAL_AUTH_MODELS = 'social_auth.db.mongoengine_models'
+
+  Make sure you've followed the instructions for `MongoEngine Django
+  integration`_, as you're now utilizing that user model.
+
+  The `MongoEngine_` backend was developed and tested with version 0.6.10 of
+  `MongoEngine_`.
+
+  Alternate storage models implementations currently follow a tight pattern of
+  models that behave near or identical to Django ORM models. It is currently
+  not decoupled from this pattern by any abstraction layer. If you would like
+  to implement your own alternate, please see the
+  ``social_auth.db.django_models`` and ``social_auth.db.mongoengine_models``
+  modules for guidance.
+
+- A base middleware is provided that handles ``SocialAuthBaseException`` by
+  providing a message to the user via the Django messages framework, and then
+  responding with a redirect to a URL defined by one of the middleware methods.
+  The base middleware is ``social_auth.middleware.SocialAuthExceptionMiddleware``.
+  The two methods to override when subclassing are::
+
+    get_message(request, exception)
+    get_redirect_uri(request, exception)
+
+  By default, the message is the exception message and the URL for the redirect
+  is the location specified by the ``LOGIN_ERROR_URL`` configuration setting.
+
+  If a valid backend was detected by ``dsa_view()`` decorator, it will be
+  available at ``request.social_auth_backend`` and ``process_exception()`` will
+  use it to build a backend-dependent redirect URL.
+
+  Exception processing is disabled if any of this settings is defined with
+  a ``True`` value::
+
+    <backend name>_SOCIAL_AUTH_RAISE_EXCEPTIONS = True
+    SOCIAL_AUTH_RAISE_EXCEPTIONS = True
+    DEBUG = True
+
+
+- Some databases impose limitations to indexes columns (like MySQL InnoDB),
+  these limitations won't play nice on `UserSocialAuth provider-uid` key. To
+  avoid such error define::
+
+    SOCIAL_AUTH_UID_LENGTH = <int>
+
+  Which will be used to define the field `uid` `max_length`. A value of 223
+  should work when using MySQL InnoDB which impose a 767 bytes limit (assuming
+  UTF-8 encoding).
+
+  Same applies to ``Association`` and ``Nonce`` models since they have composed
+  keys by the unique constraints.
+
+  ``Nonce`` models has a ``unique_together`` constraint over
+  ``('server_url', 'timestamp', 'salt')``, salt has a max length of 40, so
+  ``server_url`` length must be tweaked using::
+
+    SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH = <int>
+
+
+  ``Association`` models has a ``unique_together`` constraint over
+  ``('server_url', 'handle')``, and both fields lengths can be tweaked by these
+  settings::
+
+    SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH = <int>
+    SOCIAL_AUTH_ASSOCIATION_HANDLE_LENGTH = <int>
+
+- Disconnect is an side-effect operation and should be protected against CSRF
+  attacks, but for historical reasons it wasn't and by default it's kept that
+  way. To force CSRF protection define::
+
+    SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
+
+  And ensure that any call to `/disconnect/foobar/` or `/disconnect/foobar/id/`
+  is done using POST.
+
+- For those that prefer slugged usernames, the `get_username` pipeline can
+  apply slugify from django tools by defining this setting::
+
+    SOCIAL_AUTH_SLUGIFY_USERNAMES = True
+
+  The feature is disabled by default to keep backward compatibility and to not
+  force this option on projects where Unicode usernames are a valid choice.
+
+
+Notes
+-----
+
+Since Django 1.3 the URL templatetag ``{% url socialauth_begin ... %}`` syntax
+is deprecated in favor the new format where the URL name is quoted (using
+single quotes). See the `release notes`_ for details.
+
+The new syntax is not enforced yet but will be on Django 1.5 (current trunk),
+and it's also available by importing ``url`` tag from ``future`` module doing::
+
+    {% load url from future %}
+
+In case of experiencing issues similar to `#303`_, check the tag being used and
+its syntax.
 
 
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
@@ -223,3 +439,9 @@ Configuration
 .. _login_required: http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/decorators.py#L39
 .. _User Profiles: http://www.djangobook.com/en/1.0/chapter12/#cn222
 .. _OAuth: http://oauth.net/
+.. _MongoEngine: http://mongoengine.org
+.. _MongoEngine Django integration: http://mongoengine-odm.readthedocs.org/en/latest/django.html
+.. _urllib2 documentation: http://docs.python.org/library/urllib2.html#urllib2.urlopen
+.. _release notes: https://docs.djangoproject.com/en/1.3/releases/1.3/#changes-to-url-and-ssi
+.. _#303: https://github.com/omab/django-social-auth/issues/303
+.. _OpenID PAPE: http://openid.net/specs/openid-provider-authentication-policy-extension-1_0.html

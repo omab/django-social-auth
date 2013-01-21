@@ -3,15 +3,14 @@ Linkedin OAuth support
 
 No extra configurations are needed to make this work.
 """
-import logging
-logger = logging.getLogger(__name__)
-
 from xml.etree import ElementTree
 from xml.parsers.expat import ExpatError
 
-from django.conf import settings
+from oauth2 import Token
 
+from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.exceptions import AuthCanceled, AuthUnknownError
 
 
 LINKEDIN_SERVER = 'linkedin.com'
@@ -37,11 +36,12 @@ class LinkedinBackend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Linkedin account"""
         first_name, last_name = response['first-name'], response['last-name']
+        email = response.get('email-address', '')
         return {USERNAME: first_name + last_name,
                 'fullname': first_name + ' ' + last_name,
                 'first_name': first_name,
                 'last_name': last_name,
-                'email': ''}
+                'email': email}
 
 
 class LinkedinAuth(ConsumerBasedOAuth):
@@ -49,17 +49,19 @@ class LinkedinAuth(ConsumerBasedOAuth):
     AUTHORIZATION_URL = LINKEDIN_AUTHORIZATION_URL
     REQUEST_TOKEN_URL = LINKEDIN_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = LINKEDIN_ACCESS_TOKEN_URL
-    SERVER_URL = 'api.%s' % LINKEDIN_SERVER
     AUTH_BACKEND = LinkedinBackend
     SETTINGS_KEY_NAME = 'LINKEDIN_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'LINKEDIN_CONSUMER_SECRET'
+    SCOPE_VAR_NAME = 'LINKEDIN_SCOPE'
+    SCOPE_SEPARATOR = '+'
 
-    def user_data(self, access_token):
+    def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
         fields_selectors = LINKEDIN_FIELD_SELECTORS + \
-                           getattr(settings, 'LINKEDIN_EXTRA_FIELD_SELECTORS',
-                                   [])
-        url = LINKEDIN_CHECK_AUTH + ':(%s)' % ','.join(fields_selectors)
+                           setting('LINKEDIN_EXTRA_FIELD_SELECTORS', [])
+        # use set() over fields_selectors since LinkedIn fails when values are
+        # duplicated
+        url = LINKEDIN_CHECK_AUTH + ':(%s)' % ','.join(set(fields_selectors))
         request = self.oauth_request(access_token, url)
         raw_xml = self.fetch_response(request)
         try:
@@ -67,9 +69,41 @@ class LinkedinAuth(ConsumerBasedOAuth):
         except (ExpatError, KeyError, IndexError):
             return None
 
-    @classmethod
-    def enabled(cls):
-        return True
+    def auth_complete(self, *args, **kwargs):
+        """Complete auth process. Check LinkedIn error response."""
+        oauth_problem = self.request.GET.get('oauth_problem')
+        if oauth_problem:
+            if oauth_problem == 'user_refused':
+                raise AuthCanceled(self, '')
+            else:
+                raise AuthUnknownError(self, 'LinkedIn error was %s' %
+                                                    oauth_problem)
+        return super(LinkedinAuth, self).auth_complete(*args, **kwargs)
+
+    def get_scope(self):
+        """Return list with needed access scope"""
+        scope = []
+        if self.SCOPE_VAR_NAME:
+            scope = setting(self.SCOPE_VAR_NAME, [])
+        else:
+            scope = []
+        return scope
+
+    def unauthorized_token(self):
+        """Makes first request to oauth. Returns an unauthorized Token."""
+        request_token_url = self.REQUEST_TOKEN_URL
+        scope = self.get_scope()
+        if scope:
+            qs = 'scope=' + self.SCOPE_SEPARATOR.join(scope)
+            request_token_url = request_token_url + '?' + qs
+
+        request = self.oauth_request(
+            token=None,
+            url=request_token_url,
+            extra_params=self.request_token_extra_arguments()
+        )
+        response = self.fetch_response(request)
+        return Token.from_string(response)
 
 
 def to_dict(xml):

@@ -33,6 +33,14 @@ anonymous values will be used if not configured as described in their
 
       GOOGLE_OAUTH_EXTRA_SCOPE = [...]
 
+- Supply a list of Google Apps account domain strings to be checked. The default (empty list) allows all domains.  If a list is provided and a user attempts to sign in with a Google account that is not in the list, then a ValueError will be raised and the user will be redirected to your login error page::
+
+    GOOGLE_WHITE_LISTED_DOMAINS = ['mygoogleappsdomain.com']
+
+- Supply a list of Google Apps or Gmail email strings to be checked::
+
+    GOOGLE_WHITE_LISTED_EMAILS = ['me@mygoogleappsdomain.com', 'you@gmail.com']
+
 Check which applications can be included in their `Google Data Protocol Directory`_
 
 
@@ -62,7 +70,26 @@ To enable OAuth2 support:
 
       GOOGLE_OAUTH_EXTRA_SCOPE = [...]
 
+- optional support for static and unique Google Profile ID identifiers instead of
+  using the e-mail address for account association can be enabled with::
+
+      GOOGLE_OAUTH2_USE_UNIQUE_USER_ID = True
+
 Check which applications can be included in their `Google Data Protocol Directory`_
+
+
+Google OpenID
+-------------
+
+Configurable settings:
+
+- Supply a list of Google Apps account domain strings to be checked::
+
+    GOOGLE_WHITE_LISTED_DOMAINS = ['mygoogleappsdomain.com']
+
+- Supply a list of Google Apps or Gmail email strings to be checked::
+
+    GOOGLE_WHITE_LISTED_EMAILS = ['me@mygoogleappsdomain.com', 'you@gmail.com']
 
 
 Orkut

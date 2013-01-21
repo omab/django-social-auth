@@ -1,20 +1,32 @@
-from django.conf import settings
-
+from social_auth.utils import setting
 from social_auth.tests.base import SocialAuthTestsCase, FormParserByID, \
                                    RefreshParser
+from django.test.utils import override_settings
 
 
 class TwitterTestCase(SocialAuthTestsCase):
+
+    name = 'twitter'
+
     def setUp(self, *args, **kwargs):
         super(TwitterTestCase, self).setUp(*args, **kwargs)
-        self.user = getattr(settings, 'TEST_TWITTER_USER', None)
-        self.passwd = getattr(settings, 'TEST_TWITTER_PASSWORD', None)
+        self.user = setting('TEST_TWITTER_USER')
+        self.passwd = setting('TEST_TWITTER_PASSWORD')
         # check that user and password are setup properly
         self.assertTrue(self.user)
         self.assertTrue(self.passwd)
 
 
 class TwitterTestLogin(TwitterTestCase):
+    @override_settings(SOCIAL_AUTH_PIPELINE = (
+        'social_auth.backends.pipeline.social.social_auth_user',
+        'social_auth.backends.pipeline.associate.associate_by_email',
+        'social_auth.backends.pipeline.user.get_username',
+        'social_auth.backends.pipeline.misc.save_status_to_session',
+        'social_auth.backends.pipeline.social.associate_user',
+        'social_auth.backends.pipeline.social.load_extra_data',
+        'social_auth.backends.pipeline.user.update_user_details',
+        ))
     def test_login_succeful(self):
         response = self.client.get(self.reverse('socialauth_begin', 'twitter'))
         # social_auth must redirect to service page
@@ -23,7 +35,7 @@ class TwitterTestLogin(TwitterTestCase):
         # Open first redirect page, it contains user login form because
         # we don't have cookie to send to twitter
         login_content = self.get_content(response['Location'])
-        parser = FormParserByID('login_form')
+        parser = FormParserByID('oauth_form')
         parser.feed(login_content)
         auth = {'session[username_or_email]': self.user,
                 'session[password]': self.passwd}
@@ -57,5 +69,5 @@ class TwitterTestLogin(TwitterTestCase):
         response = self.client.get(self.make_relative(parser.value))
         self.assertEqual(response.status_code, 302)
         location = self.make_relative(response['Location'])
-        login_redirect = getattr(settings, 'LOGIN_REDIRECT_URL', '')
+        login_redirect = setting('LOGIN_REDIRECT_URL')
         self.assertTrue(location == login_redirect)

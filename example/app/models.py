@@ -15,12 +15,3 @@ class CustomUser(models.Model):
 
     def is_authenticated(self):
         return True
-
-
-from social_auth.signals import pre_update
-from social_auth.backends.facebook import FacebookBackend
-
-def facebook_extra_values(sender, user, response, details, **kwargs):
-    return False
-
-pre_update.connect(facebook_extra_values, sender=FacebookBackend)

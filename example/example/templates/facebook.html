@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block script %}
+    <script type="text/javascript">
+    function startConnect(){
+        FB.login(function(response) {
+            if (response.authResponse) {
+                window.location = window.location +
+                        '?access_token=' + response.authResponse.accessToken +
+                        '&expires=' + response.authResponse.expiresIn +
+                        '&signed_request=' + response.authResponse.signedRequest;
+            }
+
+        }, {scope: "{{ app_scope }}" })
+    }
+    </script>
+{% endblock %}
+
+{% block heading %}Facebook Canvas Application Authentication{% endblock %}
+{% block content %}
+    {% if user.is_anonymous %}
+        {% if warning %}
+            <p>You are using GET request to this page, and this is not something Facebook usually does.
+            To make a real test you need to do following:
+            </p>
+            <ol>
+                <li>Create your canvas application at <a href="https://developers.facebook.com/apps">Facebook</a>.</li>
+                <li>In Facebook application settings specify your canvas URL <b>mysite.com</b>/fb (current default). </li>
+                <li>Setup your Django Social Auth settings like you usually do for Facebook authentication (FACEBOOK_APP_ID etc).</li>
+                <li>Launch manage.py via sudo ./manage.py <b>mysite.com</b>:80 for browser to be able to load it when Facebook calls canvas URL.</li>
+                <li>Open your Facebook page via apps.facebook.com/<b>app_namespace</b> or better via www.facebook.com/pages/<b>user-name</b>/<b>user-id</b>?sk=app_<b>app-id</b></li>
+                <li>After that you will see this page in a right way and will able to connect to application and login automatically after connection.</li>
+            </ol>
+        {% else %}
+            <p>You are a guest in this Facebook application.</p>
+            <a href="#" onclick="startConnect(); return false;">Click to connect and authenticate</a>
+        {% endif %}
+    {% else %}
+            <p>Authenticated successfully as {{ user }}</p>
+            <a href="{% url done %}">Done</a>
+    {% endif %}
+
+    <div id="fb-root"></div>
+        <script type="text/javascript">
+        window.fbAsyncInit = function() {
+            FB.init({appId: {{ fb_app_id }}, status: true, cookie: true, xfbml: true, oauth: true});
+
+    window.setTimeout(function() {
+        FB.Canvas.setAutoResize();
+    }, 250);
+};
+
+    (function() {
+        var e = document.createElement('script'); e.async = true;
+        e.src = document.location.protocol +
+                '//connect.facebook.net/ru_RU/all.js';
+        document.getElementById('fb-root').appendChild(e);
+    }());
+    </script>
+{% endblock %}

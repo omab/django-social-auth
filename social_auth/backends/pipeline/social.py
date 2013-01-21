@@ -1,26 +1,23 @@
-from django.conf import settings
-from django.db.utils import IntegrityError
+from django.utils.translation import ugettext
 
-from social_auth.models import User, UserSocialAuth
-from social_auth.backends.pipeline import warn_setting
+from social_auth.models import UserSocialAuth, SOCIAL_AUTH_MODELS_MODULE
+from social_auth.exceptions import AuthAlreadyAssociated
 
 
 def social_auth_user(backend, uid, user=None, *args, **kwargs):
     """Return UserSocialAuth account for backend/uid pair or None if it
     doesn't exists.
 
-    Raise ValueError if UserSocialAuth entry belongs to another user.
+    Raise AuthAlreadyAssociated if UserSocialAuth entry belongs to another
+    user.
     """
-    try:
-        social_user = UserSocialAuth.objects.select_related('user')\
-                                            .get(provider=backend.name,
-                                                 uid=uid)
-    except UserSocialAuth.DoesNotExist:
-        social_user = None
-
+    social_user = UserSocialAuth.get_social_auth(backend.name, uid)
     if social_user:
         if user and social_user.user != user:
-            raise ValueError('Account already in use.', social_user)
+            msg = ugettext('This %(provider)s account is already in use.')
+            raise AuthAlreadyAssociated(backend, msg % {
+                'provider': backend.name
+            })
         elif not user:
             user = social_user.user
     return {'social_user': social_user, 'user': user}
@@ -31,10 +28,14 @@ def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
     if social_user:
         return None
 
+    if not user:
+        return {}
+
     try:
-        social = UserSocialAuth.objects.create(user=user, uid=uid,
-                                               provider=backend.name)
-    except IntegrityError:
+        social = UserSocialAuth.create_social_auth(user, uid, backend.name)
+    except Exception, e:
+        if not SOCIAL_AUTH_MODELS_MODULE.is_integrity_error(e):
+            raise
         # Protect for possible race condition, those bastard with FTL
         # clicking capabilities, check issue #131:
         #   https://github.com/omab/django-social-auth/issues/131
@@ -44,15 +45,19 @@ def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
         return {'social_user': social, 'user': social.user}
 
 
-def load_extra_data(backend, details, response, social_user, uid, user,
+def load_extra_data(backend, details, response, uid, user, social_user=None,
                     *args, **kwargs):
     """Load extra data from provider and store it on current UserSocialAuth
     extra_data field.
     """
-    warn_setting('SOCIAL_AUTH_EXTRA_DATA', 'load_extra_data')
-
-    if getattr(settings, 'SOCIAL_AUTH_EXTRA_DATA', True):
+    social_user = social_user or \
+                  UserSocialAuth.get_social_auth(backend.name, uid)
+    if social_user:
         extra_data = backend.extra_data(user, uid, response, details)
         if extra_data and social_user.extra_data != extra_data:
-            social_user.extra_data = extra_data
+            if social_user.extra_data:
+                social_user.extra_data.update(extra_data)
+            else:
+                social_user.extra_data = extra_data
             social_user.save()
+        return {'social_user': social_user}
