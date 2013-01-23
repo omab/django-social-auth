@@ -90,7 +90,6 @@ class SocialClient(Client):
             DumbResponse(simplejson.dumps(user))
         ]
 
-        # Request Meta
         factory = RequestFactory()
         request = factory.post('', {'code': 'dummy','redirect_state': 'dummy'})
 
@@ -108,7 +107,7 @@ class SocialClient(Client):
 
         request.session.save()
    
-        # Set the cookie to represent the session.
+        # Set the cookie for this session.
         session_cookie = settings.SESSION_COOKIE_NAME
         self.cookies[session_cookie] = request.session.session_key
         cookie_data = {
