@@ -29,11 +29,10 @@ class NoBackendError(Exception):
 
 class SocialClient(Client):
     """
-    Test client to login a user/register a user.
-    Does so by mocking/monky patching the backend's
-    api posts/responses.
+    Test client to login/register a user
+    Does so by mocking api posts/responses.
 
-    right-now this only supports facebook.
+    Only supports facebook.
     """
 
     backends = ['facebook',]
@@ -93,11 +92,9 @@ class SocialClient(Client):
 
         # Request Meta
         factory = RequestFactory()
-        frequest = factory.get('', code='dummy')
-        frequest.session = {}
+        request = factory.post('', {'code': 'dummy','redirect_state': 'dummy'})
 
         engine = import_module(settings.SESSION_ENGINE)
-        request = HttpRequest()
         if self.session:
             request.session = self.session
         else:
@@ -105,8 +102,6 @@ class SocialClient(Client):
 
         request.user = AnonymousUser()
         request.session['facebook_state'] = 'dummy'
-        request.REQUEST = {'code': 'dummy','redirect_state': 'dummy'}
-        request.META = frequest.META
 
         # make it happen.
         redirect = complete(request, backend)
