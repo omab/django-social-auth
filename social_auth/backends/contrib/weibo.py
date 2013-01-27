@@ -59,7 +59,7 @@ class WeiboAuth(BaseOAuth2):
     REDIRECT_STATE = False
 
     def user_data(self, access_token, *args, **kwargs):
-        uid = args[0]['uid']
+        uid = kwargs.get('response', {}).get('uid')
         data = {'access_token': access_token, 'uid': uid}
         url = 'https://api.weibo.com/2/users/show.json?' + urlencode(data)
         try:
