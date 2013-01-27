@@ -247,6 +247,14 @@ Configuration
 
       <uppercase backend name>_REQUEST_TOKEN_EXTRA_ARGUMENTS = {...}
 
+- If you want to store extra parameters from POST or GET in session, like it
+  was made for ``next`` parameter, define this setting:
+
+    SOCIAL_AUTH_FIELDS_STORED_IN_SESSION = ['foo',]
+
+  In this case ``foo`` field's value will be stored when user follows this link
+  ``<a href="{% url socialauth_begin 'github' %}?foo=bar">...</a>``.
+
 - By default the application doesn't make redirects to different domains, to
   disable this behavior::
 
