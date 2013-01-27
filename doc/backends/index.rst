@@ -31,6 +31,7 @@ Contents:
    shopify
    skyrock
    soundcloud
+   stackoverflow
    stocktwits
    stripe
    tripit
