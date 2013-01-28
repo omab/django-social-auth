@@ -93,6 +93,7 @@ class FacebookAuth(BaseOAuth2):
 
         try:
             response = dsa_urlopen(url)
+            data = simplejson.load(response)
         except ValueError:
             extra = {'access_token': sanitize_log_data(access_token)}
             log('error', 'Could not load user data from Facebook.',
@@ -103,7 +104,6 @@ class FacebookAuth(BaseOAuth2):
                 exc_info=True, extra=extra)
             raise AuthTokenError(self)
         else:
-            data = simplejson.load(response)
             log('debug', 'Found user data for token %s',
                 sanitize_log_data(access_token), extra={'data': data})
         return data
