@@ -96,6 +96,7 @@ class DoubanAuth2(BaseOAuth2):
     AUTH_BACKEND = DoubanBackend2
     SETTINGS_KEY_NAME = 'DOUBAN2_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'DOUBAN2_CONSUMER_SECRET'
+    REDIRECT_STATE = False
 
     def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
