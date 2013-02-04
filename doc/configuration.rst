@@ -323,6 +323,13 @@ Configuration
   ``timeout`` argument was introduced in python 2.6 according to `urllib2
   documentation`_
 
+
+- `OpenID PAPE`_ extension support by defining::
+
+    SOCIAL_AUTH_OPENID_PAPE_MAX_AUTH_AGE = <int value>
+
+  Otherwise the extension is not used.
+
 Some settings can be tweak by backend by adding the backend name prefix (all
 uppercase and replace ``-`` with ``_``), here's the supported settings so far::
 
@@ -396,3 +403,4 @@ its syntax.
 .. _urllib2 documentation: http://docs.python.org/library/urllib2.html#urllib2.urlopen
 .. _release notes: https://docs.djangoproject.com/en/1.3/releases/1.3/#changes-to-url-and-ssi
 .. _#303: https://github.com/omab/django-social-auth/issues/303
+.. _OpenID PAPE: http://openid.net/specs/openid-provider-authentication-policy-extension-1_0.html

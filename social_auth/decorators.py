@@ -55,8 +55,11 @@ def dsa_view(redirect_name=None):
                     url = process(request, backend, e)
 
                 if not url:
-                    url = backend_setting(backend, 'SOCIAL_AUTH_BACKEND_ERROR_URL',
-                                        LOGIN_ERROR_URL)
+                    url = backend_setting(
+                        backend,
+                        'SOCIAL_AUTH_BACKEND_ERROR_URL',
+                        LOGIN_ERROR_URL
+                    )
                 return HttpResponseRedirect(url)
         return wrapper
     return dec

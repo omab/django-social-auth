@@ -16,6 +16,7 @@ from time import time
 
 from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, \
                                  BaseOAuth2, USERNAME
+from social_auth.backends.exceptions import AuthTokenRevoked, AuthException
 from social_auth.utils import setting, log, dsa_urlopen
 
 
@@ -159,6 +160,14 @@ class VKontakteOAuth2(BaseOAuth2):
                   'uids': response.get('user_id')}
 
         data = vkontakte_api('users.get', params)
+
+        if data.get('error'):
+            error = data['error']
+            msg = error.get('error_msg', 'Unknown error')
+            if error.get('error_code') == 5:
+                raise AuthTokenRevoked(self, msg)
+            else:
+                raise AuthException(self, msg)
 
         if data:
             data = data.get('response')[0]

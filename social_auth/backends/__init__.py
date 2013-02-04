@@ -14,12 +14,11 @@ from urllib import urlencode
 
 from openid.consumer.consumer import Consumer, SUCCESS, CANCEL, FAILURE
 from openid.consumer.discover import DiscoveryFailure
-from openid.extensions import sreg, ax
+from openid.extensions import sreg, ax, pape
 
 from oauth2 import Consumer as OAuthConsumer, Token, Request as OAuthRequest
 
 from django.contrib.auth import authenticate
-from django.contrib.auth.backends import ModelBackend
 from django.utils import simplejson
 from django.utils.importlib import import_module
 
@@ -78,7 +77,7 @@ PIPELINE = setting('SOCIAL_AUTH_PIPELINE', (
            ))
 
 
-class SocialAuthBackend(ModelBackend):
+class SocialAuthBackend(object):
     """A django.contrib.auth backend that authenticates the user based on
     a authentication provider response"""
     name = ''  # provider name, it's stored in database
@@ -186,7 +185,8 @@ class SocialAuthBackend(ModelBackend):
 
     def get_user(self, user_id):
         """
-        Return user with given ID from the User model used by this backend
+        Return user with given ID from the User model used by this backend.
+        This is called by django.contrib.auth.middleware.
         """
         return UserSocialAuth.get_user(user_id)
 
@@ -492,6 +492,16 @@ class OpenIdAuth(BaseAuth):
         else:
             fetch_request = sreg.SRegRequest(optional=dict(SREG_ATTR).keys())
         openid_request.addExtension(fetch_request)
+
+        # Add PAPE Extension for max_auth_age, if configured
+        max_age = setting('SOCIAL_AUTH_OPENID_PAPE_MAX_AUTH_AGE')
+        if max_age is not None:
+            try:
+                openid_request.addExtension(
+                    pape.Request(max_auth_age=int(max_age))
+                )
+            except (ValueError, TypeError):
+                pass
 
         return openid_request
 
