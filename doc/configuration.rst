@@ -414,6 +414,14 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
   force this option on projects where Unicode usernames are a valid choice.
 
 
+- If you want to use the full email address as the ``username``, define this setting::
+
+    SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+
+  Make sure you don't use the ``SOCIAL_AUTH_SLUGIFY_USERNAMES = True`` option
+  described above, as the ``@`` sign will be removed.
+
+
 Notes
 -----
 

@@ -18,14 +18,18 @@ def get_username(details, user=None,
     if user:
         return {'username': user.username}
 
-    if details.get(USERNAME):
+    email_as_username = setting('SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL', False)
+    uuid_length = setting('SOCIAL_AUTH_UUID_LENGTH', 16)
+    do_slugify = setting('SOCIAL_AUTH_SLUGIFY_USERNAMES', False)
+
+    if email_as_username and details.get('email'):
+        username = details['email']
+    elif details.get(USERNAME):
         username = unicode(details[USERNAME])
     else:
         username = uuid4().get_hex()
 
-    uuid_length = setting('SOCIAL_AUTH_UUID_LENGTH', 16)
     max_length = UserSocialAuth.username_max_length()
-    do_slugify = setting('SOCIAL_AUTH_SLUGIFY_USERNAMES', False)
     short_username = username[:max_length - uuid_length]
     final_username = UserSocialAuth.clean_username(username[:max_length])
     if do_slugify:
@@ -36,10 +40,10 @@ def get_username(details, user=None,
     # username is cut to avoid any field max_length.
     while user_exists(username=final_username):
         username = short_username + uuid4().get_hex()[:uuid_length]
-        final_username = UserSocialAuth.clean_username(username[:max_length])
+        username = username[:max_length]
+        final_username = UserSocialAuth.clean_username(username)
         if do_slugify:
             final_username = slugify(final_username)
-
     return {'username': final_username}
 
 
