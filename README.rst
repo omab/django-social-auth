@@ -151,9 +151,9 @@ Some bits were derived from others' work and copyrighted by:
 .. _django-twitter-oauth: https://github.com/henriklied/django-twitter-oauth
 .. _django-openid-auth: https://launchpad.net/django-openid-auth
 .. _Read the Docs: http://django-social-auth.readthedocs.org/
-.. _Google OpenID: http://code.google.com/apis/accounts/docs/OpenID.html
-.. _Google OAuth: http://code.google.com/apis/accounts/docs/OAuth.html
-.. _Google OAuth2: http://code.google.com/apis/accounts/docs/OAuth2.html
+.. _Google OpenID: https://developers.google.com/accounts/docs/OpenID
+.. _Google OAuth: https://developers.google.com/accounts/docs/OAuth
+.. _Google OAuth2: https://developers.google.com/accounts/docs/OAuth2
 .. _Yahoo OpenID: http://openid.yahoo.com/
 .. _OpenId: http://openid.net/
 .. _myOpenID: https://www.myopenid.com/
