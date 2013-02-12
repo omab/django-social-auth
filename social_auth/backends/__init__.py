@@ -659,6 +659,9 @@ class ConsumerBasedOAuth(BaseOAuth):
 
     def do_auth(self, access_token, *args, **kwargs):
         """Finish the auth process once the access_token was retrieved"""
+        if isinstance(access_token, basestring):
+            access_token = Token.from_string(access_token)
+
         data = self.user_data(access_token)
         if data is not None:
             data['access_token'] = access_token.to_string()
