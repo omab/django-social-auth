@@ -5,6 +5,7 @@ Requires MongoEngine 0.6.10
 """
 try:
     from django.contrib.auth.hashers import UNUSABLE_PASSWORD
+    _ = UNUSABLE_PASSWORD  # to quiet flake
 except (ImportError, AttributeError):
     UNUSABLE_PASSWORD = '!'
 
@@ -37,6 +38,10 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
     @classmethod
     def username_max_length(cls):
         return UserSocialAuth.user_model().username.max_length
+
+    @classmethod
+    def email_max_length(cls):
+        return UserSocialAuth.user_model().email.max_length
 
     @classmethod
     def user_model(cls):

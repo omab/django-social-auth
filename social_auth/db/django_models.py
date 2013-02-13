@@ -53,9 +53,17 @@ class UserSocialAuth(models.Model, UserSocialAuthMixin):
 
     @classmethod
     def username_max_length(cls):
-        username_field = getattr(UserSocialAuth.user_model(), 'USERNAME_FIELD', 'username')
-        field = UserSocialAuth.user_model()._meta.get_field(username_field)
-        return field.max_length
+        return cls._field_length('USERNAME_FIELD', 'username')
+
+    @classmethod
+    def email_max_length(cls):
+        return cls._field_length('EMAIL_FIELD', 'email')
+
+    @classmethod
+    def _field_length(self, setting_name, default_name):
+        model = UserSocialAuth.user_model()
+        field_name = getattr(model, setting_name, default_name)
+        return model._meta.get_field(field_name).max_length
 
     @classmethod
     def user_model(cls):

@@ -83,6 +83,10 @@ class UserSocialAuthMixin(object):
         raise NotImplementedError('Implement in subclass')
 
     @classmethod
+    def email_max_length(cls):
+        raise NotImplementedError('Implement in subclass')
+
+    @classmethod
     def clean_username(cls, value):
         return CLEAN_USERNAME_REGEX.sub('', value)
 
