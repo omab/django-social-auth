@@ -14,10 +14,7 @@ TEMPLATE_DEBUG = DEBUG
 ROOT_PATH = abspath(dirname(__file__))
 PROJECT_NAME = basename(ROOT_PATH)
 
-ADMINS = (
-    ('Matias', 'matiasaguirre@gmail.com'),
-)
-
+ADMINS = ()
 MANAGERS = ADMINS
 
 DATABASES = {
