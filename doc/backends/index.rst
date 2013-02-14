@@ -32,6 +32,7 @@ Contents:
    skyrock
    soundcloud
    stackoverflow
+   steam
    stocktwits
    stripe
    tripit
