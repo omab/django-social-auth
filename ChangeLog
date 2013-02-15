@@ -1,10 +1,13 @@
+ChangeLog
+=========
+
 0.7.20 / 2013-02-12
-===================
+-------------------
 
   * Convert access_token into a Token instance on OAuth backends
 
 0.7.19 / 2013-02-08
-===================
+-------------------
 
   * Add option to use email address as username. Closes #597
   * Updating Google OpenID, OAuth and OAuth2 documentation links.
@@ -23,7 +26,7 @@
   * Remove repeated v1 in readability path.
 
 0.7.18 / 2013-01-15
-===================
+-------------------
 
   * Check for social_auth.backends.oauth2 before using it. Closes #574
   * Merge pull request #577 from Troytft/patch-1
@@ -70,18 +73,18 @@
   * Get auth extra arguments from setting too
 
 0.7.17 / 2013-01-05
-===================
+-------------------
 
   * Add management commands to setup.py conf. Closes #564
   * Avoid AttributeError on backend_setting call. Closes #561
 
 0.7.16 / 2013-01-04
-===================
+-------------------
 
   * Merge branch 'master' of github.com:omab/django-social-auth
 
 0.7.15 / 2013-01-04
-===================
+-------------------
 
   * Merge pull request #558 from krvss/master
   * Merge pull request #559 from theJohnnyBrown/linkedin-docs-example
@@ -92,7 +95,7 @@
   * Added support for constraining authentication to a GitHub organization.
 
 0.7.14 / 2012-12-28
-===================
+-------------------
   * Merge branch 'master' of github.com:omab/django-social-auth
   * Add user to kwargs only if not None (avoid overwriting saved value with None)
   * Filter associations QS by user
@@ -100,7 +103,7 @@
   * Update doc/configuration.rst
 
 0.7.13 / 2012-12-24
-===================
+-------------------
 
   * Merge pull request #554 from sheppard/master
   * Merge branch 'master' of github.com:omab/django-social-auth
@@ -115,12 +118,12 @@
   * Deal with IntegrityError when signing up a django 1.5 custom model user
 
 0.7.12 / 2012-12-16
-===================
+-------------------
 
   * Merge branch 'master' of github.com:omab/django-social-auth
 
 0.7.11 / 2012-12-16
-===================
+-------------------
 
   * Merge pull request #548 from alexey-sveshnikov/patch-1
   * Update doc/backends/vkontakte.rst
@@ -168,7 +171,7 @@
   * Ignore fabfile.py
 
 0.7.10 / 2012-11-14
-===================
+-------------------
 
   * PEP8
   * Merge pull request #529 from sbshetty01/master
@@ -194,7 +197,7 @@
   * Merge pull request #519 from dgouldin/master
 
 0.7.9 / 2012-11-11
-===================
+-------------------
 
   * Adding TripIt backend.
   * Link fix
@@ -230,7 +233,7 @@
   * Fix shopify import
 
 0.7.8 / 2012-11-01
-===================
+-------------------
 
   * Merge pull request #508 from scheeser/master
   * Add support for setting additional PAPE settings on the OpenID request.
@@ -264,7 +267,7 @@
   * fix weibo backend: if no name in userinfo will get a error
 
 0.7.7 / 2012-10-11
-===================
+-------------------
 
   * Merge branch 'master' of github.com:omab/django-social-auth
   * Update twitter credentials api path. Closes #485
@@ -279,7 +282,7 @@
   * Use set over LinkedIn scopes to avoid error. Closes #471
 
 0.7.6 / 2012-09-24
-===================
+-------------------
 
   * Code simplifications and doc about OpenID PAPE extension usage. Refs #469
   * Merge pull request #469 from maxgrosse/master
@@ -298,22 +301,22 @@
   * update docs for douban support
   * PEP8 and endline format
   * Merge pull request #459 from vicalloy/master
-  * * fix bug for weibo
-  * * bug fix
-  * + add OAuth2.0 for douban
+    - fix bug for weibo
+    - bug fix
+    - add OAuth2.0 for douban
   * PEP8 and doc stylings. Refs #456
   * Merge pull request #456 from jammons/master
   * Merge pull request #453 from stefanw/extra-args-per-request
   * Use self.data instead of self.request.GET to access parameters
   * Adding new scope parameter to LinkedIn library.
-  * Override *_AUTH_EXTRA_ARGUMENTS with GET request parameters
+  * Override \*_AUTH_EXTRA_ARGUMENTS with GET request parameters
   * Merge pull request #451 from betonimig/master
   * Update social_auth/backends/__init__.py
   * Merge pull request #449 from krvss/master
   * VKontakte IFrame application authentication
 
 0.7.5 / 2012-08-22
-==================
+------------------
 
   * Make the pipeline raise import and not-callable errors. Refs #376
   * Merge branch 'master' of github.com:omab/django-social-auth
@@ -324,7 +327,7 @@
   * Allow exception processors to redirect to arbitrary URLs
 
 0.7.2 / 2012-07-28
-==================
+------------------
 
   * Merge branch 'timeouts'. Closes #420
   * Merge pull request #421 from estebistec/master
@@ -344,6 +347,7 @@
   * Support django 1.4 emtpy value in LazyDict. Closes #409
   * Validate that current backend matches partial pipeline data. Closes #408
   * Better parameter name
+
 2012-06-16  Kulbir <ksinghsandhu@gmail.com>
 
   * doc/backends/twilio.md, social_auth/backends/contrib/twilio.py: added
