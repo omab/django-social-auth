@@ -1,3 +1,27 @@
+0.7.20 / 2013-02-12
+===================
+
+  * Convert access_token into a Token instance on OAuth backends
+
+0.7.19 / 2013-02-08
+===================
+
+  * Add option to use email address as username. Closes #597
+  * Updating Google OpenID, OAuth and OAuth2 documentation links.
+  * remove unnecessary South documentation, fix typos
+  * Fix rst indention
+  * Add description of ``SOCIAL_AUTH_FIELDS_STORED_IN_SESSION``
+  * Use named kwargs to access arguments in user_data. Closes #587
+  * Added stackoverflow backend
+  * - Support for custom user model (django 1.5)
+  * Add saving extra data from POST or GET to session
+  * Added zip_safe option to setup.py
+  * Add tests to setup.py
+  * Update models section with fields lengths settings in south migrations. Refs #579
+  * Use fields lenght settings in south migrations. Closes #579
+  * Updated changelog. Closes #580
+  * Remove repeated v1 in readability path.
+
 0.7.18 / 2013-01-15
 ===================
 
