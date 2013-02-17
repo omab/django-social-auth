@@ -24,14 +24,12 @@ from social_auth.utils import setting, log, dsa_urlopen
 MAILRU_API_URL = 'http://www.appsmail.ru/platform/api'
 MAILRU_OAUTH2_SCOPE = ['']
 
-EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
-
 
 class MailruBackend(OAuthBackend):
     """Mail.ru authentication backend"""
     name = 'mailru-oauth2'
     EXTRA_DATA = [('refresh_token', 'refresh_token'),
-                  ('expires_in', EXPIRES_NAME)]
+                  ('expires_in', 'expires')]
 
     def get_user_id(self, details, response):
         """Return user unique id provided by Mail.ru"""

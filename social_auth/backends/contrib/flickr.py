@@ -17,7 +17,6 @@ except ImportError:
 
 from oauth2 import Token
 
-from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
 
 
@@ -35,7 +34,7 @@ class FlickrBackend(OAuthBackend):
     EXTRA_DATA = [
         ('id', 'id'),
         ('username', 'username'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):

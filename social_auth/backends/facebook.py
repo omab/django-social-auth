@@ -55,7 +55,7 @@ class FacebookBackend(OAuthBackend):
     # Default extra data to store
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):
@@ -269,7 +269,7 @@ class FacebookAppAuth(FacebookAuth):
     def auth_html(self):
         app_id = backend_setting(self, self.SETTINGS_KEY_NAME)
         ctx = {
-            'FACEBOOK_APP_ID':  app_id,
+            'FACEBOOK_APP_ID': app_id,
             'FACEBOOK_EXTENDED_PERMISSIONS': ','.join(
                 backend_setting(self, self.SCOPE_VAR_NAME)
             ),

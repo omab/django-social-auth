@@ -24,7 +24,7 @@ class YammerBackend(OAuthBackend):
     name = 'yammer'
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
+        ('expires', 'expires'),
         ('mugshot_url', 'mugshot_url')
     ]
 

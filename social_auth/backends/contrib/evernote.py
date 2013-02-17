@@ -50,7 +50,7 @@ class EvernoteBackend(OAuthBackend):
         ('access_token', 'access_token'),
         ('oauth_token', 'oauth_token'),
         ('edam_noteStoreUrl', 'store_url'),
-        ('edam_expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('edam_expires', 'expires')
     ]
 
     def get_user_details(self, response):

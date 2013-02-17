@@ -2,11 +2,13 @@
 Stackoverflow OAuth support.
 
 This contribution adds support for Stackoverflow OAuth service. The settings
-STACKOVERFLOW_CLIENT_ID, STACKOVERFLOW_CLIENT_SECRET and STACKOVERFLOW_CLIENT_SECRET
-must be defined with the values given by Stackoverflow application registration process.
+STACKOVERFLOW_CLIENT_ID, STACKOVERFLOW_CLIENT_SECRET and
+STACKOVERFLOW_CLIENT_SECRET must be defined with the values given by
+Stackoverflow application registration process.
 
-Extended permissions are supported by defining STACKOVERFLOW_EXTENDED_PERMISSIONS
-setting, it must be a list of values to request.
+Extended permissions are supported by defining
+STACKOVERFLOW_EXTENDED_PERMISSIONS setting, it must be a list of values
+to request.
 
 By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
@@ -20,7 +22,7 @@ from StringIO import StringIO
 from django.utils import simplejson
 from django.conf import settings
 
-from social_auth.utils import setting, dsa_urlopen
+from social_auth.utils import dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.exceptions import AuthUnknownError, AuthCanceled
 
@@ -40,7 +42,7 @@ class StackoverflowBackend(OAuthBackend):
     # Default extra data to store
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):

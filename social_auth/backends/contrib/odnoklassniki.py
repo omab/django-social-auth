@@ -27,18 +27,17 @@ from django.utils import simplejson
 from social_auth.backends import OAuthBackend, BaseOAuth2, USERNAME, \
                                  BaseAuth, SocialAuthBackend
 from social_auth.exceptions import AuthFailed
-from social_auth.utils import setting, log, dsa_urlopen, backend_setting
+from social_auth.utils import log, dsa_urlopen, backend_setting
 
 
 ODNOKLASSNIKI_API_SERVER = 'http://api.odnoklassniki.ru/'
-EXPIRES_NAME = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class OdnoklassnikiBackend(OAuthBackend):
     '''Odnoklassniki authentication backend'''
     name = 'odnoklassniki'
     EXTRA_DATA = [('refresh_token', 'refresh_token'),
-                  ('expires_in', EXPIRES_NAME)]
+                  ('expires_in', 'expires')]
 
     def get_user_id(self, details, response):
         '''Return user unique id provided by Odnoklassniki'''

@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from openid.association import Association as OIDAssociation
 
-from social_auth.utils import setting, utc
+from social_auth.utils import utc
 
 # django.contrib.auth and mongoengine.django.auth regex to validate usernames
 # '^[\w@.+-_]+$', we use the opposite to clean invalid characters
@@ -56,10 +56,9 @@ class UserSocialAuthMixin(object):
         timedelta is inferred from current time (using UTC timezone). None is
         returned if there's no value stored or it's invalid.
         """
-        name = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
-        if self.extra_data and name in self.extra_data:
+        if self.extra_data and 'expires' in self.extra_data:
             try:
-                expires = int(self.extra_data.get(name))
+                expires = int(self.extra_data['expires'])
             except (ValueError, TypeError):
                 return None
 

@@ -121,7 +121,7 @@ class VKontakteOAuth2Backend(OAuthBackend):
 
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_id(self, details, response):
@@ -132,7 +132,7 @@ class VKontakteOAuth2Backend(OAuthBackend):
         """Return user details from Vkontakte account"""
         return {
             USERNAME: response.get('screen_name'),
-            'email':  '',
+            'email': '',
             'first_name': response.get('first_name'),
             'last_name': response.get('last_name')
         }

@@ -26,13 +26,13 @@ class ShopifyBackend(OAuthBackend):
     EXTRA_DATA = [
         ('shop', 'shop'),
         ('website', 'website'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):
         """Use the shopify store name as the username"""
         return {
-            USERNAME: unicode(response.get('shop', '')\
+            USERNAME: unicode(response.get('shop', '')
                                       .replace('.myshopify.com', ''))
         }
 

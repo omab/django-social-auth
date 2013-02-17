@@ -65,7 +65,7 @@ class YaruBackend(OAuthBackend):
     name = 'yaru'
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):
@@ -82,7 +82,7 @@ class YaruBackend(OAuthBackend):
 
         return {
             USERNAME: get_username_from_url(response.get('links')),
-            'email':  response.get('email', ''),
+            'email': response.get('email', ''),
             'first_name': first_name,
             'last_name': last_name,
         }

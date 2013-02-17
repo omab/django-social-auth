@@ -28,7 +28,7 @@ class DropboxBackend(OAuthBackend):
     # Default extra data to store
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):

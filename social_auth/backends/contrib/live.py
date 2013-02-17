@@ -18,7 +18,7 @@ from urllib import urlencode
 
 from django.utils import simplejson
 
-from social_auth.utils import setting, dsa_urlopen
+from social_auth.utils import dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.exceptions import AuthUnknownError
 
@@ -38,7 +38,7 @@ class LiveBackend(OAuthBackend):
         ('id', 'id'),
         ('access_token', 'access_token'),
         ('reset_token', 'reset_token'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
+        ('expires', 'expires'),
         ('email', 'email'),
         ('first_name', 'first_name'),
         ('last_name', 'last_name'),
@@ -54,10 +54,10 @@ class LiveBackend(OAuthBackend):
         except KeyError:
             email = ''
 
-        return {USERNAME:     response.get('name'),
-                'email':      email,
+        return {USERNAME: response.get('name'),
+                'email': email,
                 'first_name': response.get('first_name'),
-                'last_name':  response.get('last_name')}
+                'last_name': response.get('last_name')}
 
 
 class LiveAuth(BaseOAuth2):
