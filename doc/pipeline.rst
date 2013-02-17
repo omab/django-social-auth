@@ -1,7 +1,7 @@
 Authentication Pipeline
 =======================
 
-The final process of the authentication workflow is handled by a operations
+The final process of the authentication workflow is handled by an operations
 pipeline where custom functions can be added or default items can be removed to
 provide a custom behavior.
 
@@ -23,17 +23,17 @@ The default pipeline is composed by::
     )
 
 Email association (``associate_by_email`` pipeline entry) is disabled by
-default for security reasons, take for instance this scenario:
+default for security reasons. Take for instance this scenario:
 
-    1. User A registered using ``django-social-auth`` and we got email address
+    1. User A registers using ``django-social-auth`` and we get email address
        ``foo@bar.com``.
     2. User B goes to provider XXX and registers using ``foo@bar.com``
        (provider XXX doesn't validate emails).
-    3. User B goes to your site and logins using its XXX account using
+    3. User B goes to your site and logs in using its XXX account using
        ``django-social-auth``.
-    4. User B got access to User A account.
+    4. User B gets access to User A account.
 
-If this doesn't concern for you site, just defined ``SOCIAL_AUTH_PIPELINE``
+If this isn't a concern for your site, just define ``SOCIAL_AUTH_PIPELINE``
 like the one shown above and uncomment the line for ``associate_by_email``.
 
 But it's possible to override it by defining the setting
@@ -58,7 +58,7 @@ Each pipeline function will receive the following parameters:
         - current request
 
 Each pipeline entry can return a ``dict``, ``None`` or any form of
-``HttpResponse`` (that includes ``HttpResponseRedirect`` to). If a ``dict`` was
+``HttpResponse`` (that includes ``HttpResponseRedirect`` too). If a ``dict`` was
 returned, any value in the set will be merged into the ``kwargs`` argument for
 the next pipeline entry, ``None`` is taken as if ``{}`` was returned, and if an
 ``HttpReponse`` instance was returned, it will halt the pipeline and the
@@ -68,7 +68,7 @@ The workflow will be cut if the exception ``social_auth.backends.exceptions.Stop
 is raised at any point.
 
 If any function returns something else beside a ``dict`` or ``None``, the
-workflow will be cut and the value returned immediately, this is useful to
+workflow will be cut and the value returned immediately. This is useful to
 return ``HttpReponse`` instances like ``HttpResponseRedirect``.
 
 
@@ -76,7 +76,7 @@ Partial Pipeline
 ----------------
 
 It's possible to cut the pipeline process to return to the user asking for more
-data and resume the process later, to accomplish this add the entry
+data and resume the process later. To accomplish this, add the entry
 ``social_auth.backends.pipeline.misc.save_status_to_session`` (or a similar
 implementation) to the pipeline setting before any entry that returns an
 ``HttpResponse`` instance::
@@ -90,14 +90,14 @@ implementation) to the pipeline setting before any entry that returns an
 
 When it's time to resume the process just redirect the user to
 ``/complete/<backend>/`` view. By default the pipeline will be resumed in the
-next entry after ``save_status_to_session`` but this can be modified by setting
+next entry after ``save_status_to_session``, but this can be modified by setting
 the following setting to the import path of the pipeline entry to resume
 processing::
 
     SOCIAL_AUTH_PIPELINE_RESUME_ENTRY = 'social_auth.backends.pipeline.misc.save_status_to_session'
 
-``save_status_to_session`` saves needed data into user session, the key can be
-defined by ``SOCIAL_AUTH_PARTIAL_PIPELINE_KEY`` which default value is
+``save_status_to_session`` saves needed data into user session. The key can be
+defined by ``SOCIAL_AUTH_PARTIAL_PIPELINE_KEY``, which default value is
 ``partial_pipeline``::
 
     SOCIAL_AUTH_PARTIAL_PIPELINE_KEY = 'partial_pipeline'

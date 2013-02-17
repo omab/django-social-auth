@@ -78,14 +78,14 @@ Some particular use cases are listed below.
             login(request, user)
         return redirect('/')
 
-   This view just expect the ``access_token`` as a GET parameter and the
+   This view just expects the ``access_token`` as a GET parameter and the
    backend name in the URL (check django-social-auth URLs).
 
 
 4. Token refreshing
 
-   OAuth2 defines a mechanism to refresh the ``access_token`` once it expired,
-   not all the providers support it, and some providers implement it in some
+   OAuth2 defines a mechanism to refresh the ``access_token`` once it expires.
+   Not all the providers support it, and some providers implement it in some
    way or another. Usually there's a ``refresh_token`` involved (a token that
    identifies the user but it's only used to retrieve a new ``access_token``).
 
@@ -97,6 +97,6 @@ Some particular use cases are listed below.
      social.refresh_token()
 
   At the moment just a few backends were tested against token refreshing
-  (Google OAuth2, Facebook and Stripe), probably others backends also support
+  (Google OAuth2, Facebook and Stripe). Other backends probably also support
   it (if they follow the OAuth2 standard) with the default mechanism. Others
   don't support it because the token is not supposed to expire.

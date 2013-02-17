@@ -38,7 +38,7 @@ a workaround fit to avoid it.
 Server date time
 ----------------
 
-Bad date in the server might cause errors in the auth process on some services
+A bad date in the server might cause errors in the auth process on some services
 like Twitter (probably all OAuth1.0 since timestamp is passed in the parameters
 to request a token).
 
