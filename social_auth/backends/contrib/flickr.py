@@ -17,7 +17,7 @@ except ImportError:
 
 from oauth2 import Token
 
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 
 
 # Flickr configuration
@@ -39,7 +39,7 @@ class FlickrBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Flickr account"""
-        return {USERNAME: response.get('id'),
+        return {'username': response.get('id'),
                 'email': '',
                 'first_name': response.get('fullname')}
 

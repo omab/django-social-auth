@@ -8,7 +8,7 @@ from urlparse import parse_qs
 from django.utils import simplejson
 from django.utils.datastructures import MergeDict
 
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.exceptions import AuthCanceled
 from social_auth.utils import dsa_urlopen, setting
 
@@ -39,7 +39,7 @@ class YammerBackend(OAuthBackend):
         email = response['user']['contact']['email_addresses'][0]['address']
         mugshot_url = response['user']['mugshot_url']
         return {
-            USERNAME: username,
+            'username': username,
             'email': email,
             'fullname': full_name,
             'first_name': first_name,

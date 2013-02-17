@@ -8,7 +8,7 @@ from google.appengine.api import users
 from django.contrib.auth import authenticate
 from django.core.urlresolvers import reverse
 
-from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
+from social_auth.backends import SocialAuthBackend, BaseAuth
 from social_auth.exceptions import AuthException
 
 
@@ -25,7 +25,7 @@ class GAEBackend(SocialAuthBackend):
     def get_user_details(self, response):
         """Return user basic information (id and email only)."""
         user = users.get_current_user()
-        return {USERNAME: user.user_id(),
+        return {'username': user.user_id(),
                 'email': user.email(),
                 'fullname': '',
                 'first_name': '',

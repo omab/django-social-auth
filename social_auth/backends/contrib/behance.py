@@ -10,7 +10,7 @@ setting, it must be a list of values to request.
 
 By default username and access_token are stored in extra_data field.
 """
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 
 
 # Behance configuration
@@ -33,7 +33,7 @@ class BehanceBackend(OAuthBackend):
         """Return user details from Behance account"""
         user = response['user']
         return {
-            USERNAME: user['username'],
+            'username': user['username'],
             'last_name': user['last_name'],
             'first_name': user['first_name'],
             'fullname': user['display_name'],

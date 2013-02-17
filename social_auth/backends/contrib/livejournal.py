@@ -6,7 +6,7 @@ username.livejournal.com. Username is retrieved from the identity url.
 """
 import urlparse
 
-from social_auth.backends import OpenIDBackend, OpenIdAuth, USERNAME
+from social_auth.backends import OpenIDBackend, OpenIdAuth
 from social_auth.exceptions import AuthMissingParameter
 
 
@@ -22,8 +22,8 @@ class LiveJournalBackend(OpenIDBackend):
     def get_user_details(self, response):
         """Generate username from identity url"""
         values = super(LiveJournalBackend, self).get_user_details(response)
-        values[USERNAME] = values.get(USERNAME) or \
-                           urlparse.urlsplit(response.identity_url)\
+        values['username'] = values.get('username') or \
+                             urlparse.urlsplit(response.identity_url)\
                                    .netloc.split('.', 1)[0]
         return values
 

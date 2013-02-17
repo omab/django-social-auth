@@ -14,7 +14,7 @@ from urllib import urlencode
 
 from django.utils import simplejson
 
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import dsa_urlopen
 
 
@@ -37,7 +37,7 @@ class AngelBackend(OAuthBackend):
         last_name = response['name'].split(' ')[-1]
         email = response['email']
         return {
-            USERNAME: username,
+            'username': username,
             'first_name': first_name,
             'last_name': last_name,
             'email': email,

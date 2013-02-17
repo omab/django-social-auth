@@ -15,7 +15,7 @@ from urllib2 import HTTPError
 from django.contrib.auth import authenticate
 
 from social_auth.utils import setting
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.exceptions import AuthFailed, AuthCanceled
 
 
@@ -32,7 +32,7 @@ class ShopifyBackend(OAuthBackend):
     def get_user_details(self, response):
         """Use the shopify store name as the username"""
         return {
-            USERNAME: unicode(response.get('shop', '')
+            'username': unicode(response.get('shop', '')
                                       .replace('.myshopify.com', ''))
         }
 

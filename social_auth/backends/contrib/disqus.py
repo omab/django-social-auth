@@ -1,5 +1,5 @@
 from django.utils import simplejson
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import dsa_urlopen, backend_setting
 from urllib import urlencode
 
@@ -34,7 +34,7 @@ class DisqusBackend(OAuthBackend):
         rr = response.get('response', {})
 
         return {
-            USERNAME: rr.get('username', ''),
+            'username': rr.get('username', ''),
             'user_id': response.get('user_id', ''),
             'email': rr.get('email', ''),
             'name': rr.get('name', ''),

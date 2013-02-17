@@ -21,7 +21,7 @@ from django.utils import simplejson
 from django.conf import settings
 
 from social_auth.utils import dsa_urlopen
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 
 
 # GitHub configuration
@@ -47,7 +47,7 @@ class GithubBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Github account"""
-        return {USERNAME: response.get('login'),
+        return {'username': response.get('login'),
                 'email': response.get('email') or '',
                 'first_name': response.get('name')}
 

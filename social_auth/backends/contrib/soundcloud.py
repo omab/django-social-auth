@@ -17,7 +17,7 @@ from urllib import urlencode
 from django.utils import simplejson
 
 from social_auth.utils import dsa_urlopen
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 
 
 # SoundCloud configuration
@@ -50,7 +50,7 @@ class SoundcloudBackend(OAuthBackend):
         else:
             last_name = ''
 
-        return {USERNAME: response.get('username'),
+        return {'username': response.get('username'),
                 'email': response.get('email') or '',
                 'fullname': fullname,
                 'first_name': first_name,

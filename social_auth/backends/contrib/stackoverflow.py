@@ -23,7 +23,7 @@ from django.utils import simplejson
 from django.conf import settings
 
 from social_auth.utils import dsa_urlopen
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.exceptions import AuthUnknownError, AuthCanceled
 
 
@@ -47,7 +47,7 @@ class StackoverflowBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Stackoverflow account"""
-        return {USERNAME: response.get('link').split('/')[-1],
+        return {'username': response.get('link').split('/')[-1],
                 'full_name': response.get('display_name')}
 
 

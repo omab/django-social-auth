@@ -4,7 +4,6 @@ from django.template.defaultfilters import slugify
 
 from social_auth.utils import setting
 from social_auth.models import UserSocialAuth
-from social_auth.backends import USERNAME
 from social_auth.signals import socialauth_registered, \
                                 pre_update
 
@@ -24,8 +23,8 @@ def get_username(details, user=None,
 
     if email_as_username and details.get('email'):
         username = details['email']
-    elif details.get(USERNAME):
-        username = unicode(details[USERNAME])
+    elif details.get('username'):
+        username = unicode(details['username'])
     else:
         username = uuid4().get_hex()
 
@@ -81,7 +80,7 @@ def update_user_details(backend, details, response, user=None, is_new=False,
     for name, value in details.iteritems():
         # do not update username, it was already generated
         # do not update configured fields if user already existed
-        if name in (USERNAME, 'id', 'pk') or (not is_new and
+        if name in ('username', 'id', 'pk') or (not is_new and
            name in setting('SOCIAL_AUTH_PROTECTED_USER_FIELDS', [])):
             continue
         if value and value != getattr(user, name, None):

@@ -59,10 +59,6 @@ SREG_ATTR = [
 OPENID_ID_FIELD = 'openid_identifier'
 SESSION_NAME = 'openid'
 
-# key for username in user details dict used around, see get_user_details
-# method
-USERNAME = 'username'
-
 PIPELINE = setting('SOCIAL_AUTH_PIPELINE', (
                 'social_auth.backends.pipeline.social.social_auth_user',
                 # Removed by default since it can be a dangerouse behavior that
@@ -160,7 +156,7 @@ class SocialAuthBackend(object):
 
     def get_user_details(self, response):
         """Must return user details in a know internal struct:
-            {USERNAME: <username if any>,
+            {'username': <username if any>,
              'email': <user email if any>,
              'fullname': <user full name if any>,
              'first_name': <user first name if any>,
@@ -270,7 +266,7 @@ class OpenIDBackend(SocialAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from an OpenID request"""
-        values = {USERNAME: '', 'email': '', 'fullname': '',
+        values = {'username': '', 'email': '', 'fullname': '',
                   'first_name': '', 'last_name': ''}
         # update values using SimpleRegistration or AttributeExchange
         # values
@@ -295,8 +291,8 @@ class OpenIDBackend(SocialAuthBackend):
             'fullname': fullname,
             'first_name': first_name,
             'last_name': last_name,
-            USERNAME: values.get(USERNAME) or
-                      (first_name.title() + last_name.title())
+            'username': values.get('username') or
+                        (first_name.title() + last_name.title())
         })
         return values
 

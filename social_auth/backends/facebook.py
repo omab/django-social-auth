@@ -24,7 +24,7 @@ from django.contrib.auth import authenticate
 from django.http import HttpResponse
 from django.template import TemplateDoesNotExist, RequestContext, loader
 
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import sanitize_log_data, backend_setting, setting,\
     log, dsa_urlopen
 from social_auth.exceptions import AuthException, AuthCanceled, AuthFailed,\
@@ -60,7 +60,7 @@ class FacebookBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Facebook account"""
-        return {USERNAME: response.get('username', response.get('name')),
+        return {'username': response.get('username', response.get('name')),
                 'email': response.get('email', ''),
                 'fullname': response.get('name', ''),
                 'first_name': response.get('first_name', ''),

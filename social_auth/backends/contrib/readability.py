@@ -8,7 +8,7 @@ settings."""
 
 from django.utils import simplejson
 
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 from social_auth.exceptions import AuthCanceled
 from social_auth.utils import setting
 
@@ -33,8 +33,7 @@ class ReadabilityBackend(OAuthBackend):
     def get_user_details(self, response):
         username = response['username']
         first_name, last_name = response['first_name'], response['last_name']
-
-        return {USERNAME: username,
+        return {'username': username,
                 'first_name': first_name,
                 'last_name': last_name}
 

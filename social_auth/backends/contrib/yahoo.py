@@ -22,7 +22,7 @@ AuthUnknownError - if user data retrieval fails (guid or profile)
 
 from django.utils import simplejson
 
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 from social_auth.exceptions import AuthUnknownError
 
 
@@ -54,7 +54,7 @@ class YahooOAuthBackend(OAuthBackend):
             email = response.get('emails')[0]['handle']
         else:
             email = ''
-        return {USERNAME: response.get('nickname'),
+        return {'username': response.get('nickname'),
                 'email': email,
                 'fullname': '%s %s' % (fname, lname),
                 'first_name': fname,

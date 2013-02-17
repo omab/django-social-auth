@@ -19,7 +19,7 @@ from urllib import urlencode
 from django.utils import simplejson
 
 from social_auth.utils import dsa_urlopen
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.exceptions import AuthUnknownError
 
 
@@ -54,7 +54,7 @@ class LiveBackend(OAuthBackend):
         except KeyError:
             email = ''
 
-        return {USERNAME: response.get('name'),
+        return {'username': response.get('name'),
                 'email': email,
                 'first_name': response.get('first_name'),
                 'last_name': response.get('last_name')}
