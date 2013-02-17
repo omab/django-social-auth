@@ -156,12 +156,12 @@ Custom User Model
     is_authenticated():
         ...
 
-  These are needed to ensure a better ``django-auth`` integration, in other case
+  These are needed to ensure a better ``django-auth`` integration, otherwise
   `login_required`_ won't be usable. A warning is displayed if any of these are
   missing. By default `auth.User`_ is used.
 
-  Check example application for implementation details, but first, please take
-  a look to `User Profiles`_, it might be what you were looking for.
+  Check the example application for implementation details, but first, please take
+  a look at `User Profiles`_. It might be what you are looking for.
 
 
 ORMs
@@ -194,7 +194,7 @@ Tweaking Some Fields Length
 
 Some databases impose limitations to indexes columns (like MySQL InnoDB),
 these limitations won't play nice on some `UserSocialAuth` fields. To avoid
-such error define some of the following settings.
+such errors, define some of the following settings.
 
 - Provider UID::
 
@@ -251,13 +251,7 @@ Username Generation
   The feature is disabled by default to keep backward compatibility and to not
   force this option on projects where Unicode usernames are a valid choice.
 
-<<<<<<< HEAD
-  These are needed to ensure a better ``django-auth`` integration, otherwise
-  `login_required`_ won't be usable. A warning is displayed if any of these are
-  missing. By default `auth.User`_ is used.
-=======
 - If you want to use the full email address as the ``username``, define this setting::
->>>>>>> upstream/master
 
     SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 
