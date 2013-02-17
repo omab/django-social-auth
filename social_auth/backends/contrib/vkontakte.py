@@ -15,7 +15,7 @@ from hashlib import md5
 from time import time
 
 from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, \
-                                 BaseOAuth2, USERNAME
+                                 BaseOAuth2
 from social_auth.exceptions import AuthTokenRevoked, AuthException
 from social_auth.utils import setting, log, dsa_urlopen
 
@@ -49,7 +49,7 @@ class VKontakteBackend(SocialAuthBackend):
         if isinstance(nickname, (list, tuple, )):
             nickname = nickname[0]
         return {
-            USERNAME: nickname,
+            'username': nickname,
             'email': '',
             'fullname': '',
             'first_name': response.get('first_name')[0]
@@ -121,7 +121,7 @@ class VKontakteOAuth2Backend(OAuthBackend):
 
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_id(self, details, response):
@@ -131,8 +131,8 @@ class VKontakteOAuth2Backend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Vkontakte account"""
         return {
-            USERNAME: response.get('screen_name'),
-            'email':  '',
+            'username': response.get('screen_name'),
+            'email': '',
             'first_name': response.get('first_name'),
             'last_name': response.get('last_name')
         }

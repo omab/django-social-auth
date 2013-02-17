@@ -11,8 +11,8 @@ stored in extra_data field, check OAuthBackend class for details on how to
 extend it.
 """
 from django.utils import simplejson
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
-from social_auth.utils import setting, dsa_urlopen
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
+from social_auth.utils import dsa_urlopen
 
 # Bitbucket configuration
 BITBUCKET_SERVER = 'bitbucket.org/api/1.0'
@@ -30,7 +30,7 @@ class BitbucketBackend(OAuthBackend):
     name = 'bitbucket'
     EXTRA_DATA = [
         ('username', 'username'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
+        ('expires', 'expires'),
         ('email', 'email'),
         ('first_name', 'first_name'),
         ('last_name', 'last_name')
@@ -38,7 +38,7 @@ class BitbucketBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Bitbucket account"""
-        return {USERNAME: response.get('username'),
+        return {'username': response.get('username'),
                 'email': response.get('email'),
                 'fullname': ' '.join((response.get('first_name'),
                                       response.get('last_name'))),

@@ -17,21 +17,19 @@ from urllib import urlencode, unquote
 from urllib2 import Request, HTTPError
 from hashlib import md5
 
-from social_auth.backends import OAuthBackend, BaseOAuth2, USERNAME
+from social_auth.backends import OAuthBackend, BaseOAuth2
 from social_auth.exceptions import AuthCanceled
 from social_auth.utils import setting, log, dsa_urlopen
 
 MAILRU_API_URL = 'http://www.appsmail.ru/platform/api'
 MAILRU_OAUTH2_SCOPE = ['']
 
-EXPIRES_NAME = getattr(settings, 'SOCIAL_AUTH_EXPIRATION', 'expires')
-
 
 class MailruBackend(OAuthBackend):
     """Mail.ru authentication backend"""
     name = 'mailru-oauth2'
     EXTRA_DATA = [('refresh_token', 'refresh_token'),
-                  ('expires_in', EXPIRES_NAME)]
+                  ('expires_in', 'expires')]
 
     def get_user_id(self, details, response):
         """Return user unique id provided by Mail.ru"""
@@ -40,7 +38,7 @@ class MailruBackend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Mail.ru request"""
         values = {
-            USERNAME: unquote(response['nick']),
+            'username': unquote(response['nick']),
             'email': unquote(response['email']),
             'first_name': unquote(response['first_name']),
             'last_name': unquote(response['last_name'])

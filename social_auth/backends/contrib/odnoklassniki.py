@@ -24,21 +24,20 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.utils import simplejson
 
-from social_auth.backends import OAuthBackend, BaseOAuth2, USERNAME, \
-                                 BaseAuth, SocialAuthBackend
+from social_auth.backends import OAuthBackend, BaseOAuth2, BaseAuth, \
+                                 SocialAuthBackend
 from social_auth.exceptions import AuthFailed
-from social_auth.utils import setting, log, dsa_urlopen, backend_setting
+from social_auth.utils import log, dsa_urlopen, backend_setting
 
 
 ODNOKLASSNIKI_API_SERVER = 'http://api.odnoklassniki.ru/'
-EXPIRES_NAME = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class OdnoklassnikiBackend(OAuthBackend):
     '''Odnoklassniki authentication backend'''
     name = 'odnoklassniki'
     EXTRA_DATA = [('refresh_token', 'refresh_token'),
-                  ('expires_in', EXPIRES_NAME)]
+                  ('expires_in', 'expires')]
 
     def get_user_id(self, details, response):
         '''Return user unique id provided by Odnoklassniki'''
@@ -47,7 +46,7 @@ class OdnoklassnikiBackend(OAuthBackend):
     def get_user_details(self, response):
         '''Return user details from Odnoklassniki request'''
         return {
-            USERNAME: response['uid'],
+            'username': response['uid'],
             'email': '',
             'fullname': unquote(response['name']),
             'first_name': unquote(response['first_name']),
@@ -202,12 +201,11 @@ class OdnoklassnikiAppBackend(SocialAuthBackend):
                             if key in response['extra_data_list']])
 
     def get_user_details(self, response):
-        return {USERNAME: response['uid'],
+        return {'username': response['uid'],
                 'email': '',
                 'fullname': unquote(response['name']),
                 'first_name': unquote(response['first_name']),
-                'last_name': unquote(response['last_name'])
-                }
+                'last_name': unquote(response['last_name'])}
 
 
 class OdnoklassnikiApp(BaseAuth, OdnoklassnikiMixin):

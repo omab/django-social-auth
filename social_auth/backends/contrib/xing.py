@@ -10,7 +10,7 @@ from urllib import urlencode
 
 from django.utils import simplejson
 
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 from social_auth.exceptions import AuthCanceled, AuthUnknownError
 
 
@@ -36,7 +36,7 @@ class XingBackend(OAuthBackend):
         """Return user details from Xing account"""
         first_name, last_name = response['first_name'], response['last_name']
         email = response.get('email', '')
-        return {USERNAME: first_name + last_name,
+        return {'username': first_name + last_name,
                 'fullname': first_name + ' ' + last_name,
                 'first_name': first_name,
                 'last_name': last_name,

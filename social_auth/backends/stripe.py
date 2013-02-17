@@ -5,7 +5,7 @@ This backend adds support for Stripe OAuth2 service. The settings
 STRIPE_APP_ID and STRIPE_API_SECRET must be defined with the values
 given by Stripe application registration process.
 """
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.exceptions import AuthFailed, AuthCanceled
 
 
@@ -24,7 +24,7 @@ class StripeBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Stripe account"""
-        return {USERNAME: response.get('stripe_user_id'),
+        return {'username': response.get('stripe_user_id'),
                 'email': ''}
 
 

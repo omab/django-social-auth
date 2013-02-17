@@ -10,7 +10,7 @@ User screen name is used to generate username.
 """
 from xml.dom import minidom
 
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 
 
 TRIPIT_CHECK_AUTH = 'https://api.tripit.com/v1/get/profile'
@@ -28,7 +28,7 @@ class TripItBackend(OAuthBackend):
         except ValueError:
             first_name = response['name']
             last_name = ''
-        return {USERNAME: response['screen_name'],
+        return {'username': response['screen_name'],
                 'email': response['email'],
                 'fullname': response['name'],
                 'first_name': first_name,
@@ -59,9 +59,9 @@ class TripItAuth(ConsumerBasedOAuth):
                 'public_display_name')[0].childNodes[0].data,
             'screen_name': dom.getElementsByTagName(
                 'screen_name')[0].childNodes[0].data,
-            'email': dom.getElementsByTagName(
-                'is_primary')[0].parentNode.getElementsByTagName(
-                'address')[0].childNodes[0].data,
+            'email': dom.getElementsByTagName('is_primary')[0]
+                            .parentNode.getElementsByTagName('address')[0]
+                                .childNodes[0].data,
         }
 
 # Backend definition

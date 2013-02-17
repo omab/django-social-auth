@@ -13,7 +13,7 @@ to enable this service support.
 from django.utils import simplejson
 
 from social_auth.utils import setting, dsa_urlopen
-from social_auth.backends import OAuthBackend, USERNAME
+from social_auth.backends import OAuthBackend
 from social_auth.backends.google import BaseGoogleOAuth
 
 
@@ -36,7 +36,7 @@ class OrkutBackend(OAuthBackend):
         except (KeyError, IndexError):
             emails = ''
 
-        return {USERNAME: response['displayName'],
+        return {'username': response['displayName'],
                 'email': emails,
                 'fullname': response['displayName'],
                 'first_name': response['name']['givenName'],

@@ -11,8 +11,8 @@ from django.utils import simplejson
 from urllib import urlencode
 from urlparse import urlparse, urlsplit
 
-from social_auth.backends import OpenIDBackend, OpenIdAuth, USERNAME, \
-                                 OAuthBackend, BaseOAuth2
+from social_auth.backends import OpenIDBackend, OpenIdAuth, OAuthBackend, \
+                                 BaseOAuth2
 
 from social_auth.utils import setting, log, dsa_urlopen
 
@@ -42,9 +42,8 @@ class YandexBackend(OpenIDBackend):
     def get_user_details(self, response):
         """Generate username from identity url"""
         values = super(YandexBackend, self).get_user_details(response)
-        values[USERNAME] = values.get(USERNAME) or\
-                           urlsplit(response.identity_url)\
-                           .path.strip('/')
+        values['username'] = values.get('username') or \
+                             urlsplit(response.identity_url).path.strip('/')
 
         values['email'] = values.get('email', '')
 
@@ -65,7 +64,7 @@ class YaruBackend(OAuthBackend):
     name = 'yaru'
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):
@@ -81,8 +80,8 @@ class YaruBackend(OAuthBackend):
             first_name = name
 
         return {
-            USERNAME: get_username_from_url(response.get('links')),
-            'email':  response.get('email', ''),
+            'username': get_username_from_url(response.get('links')),
+            'email': response.get('email', ''),
             'first_name': first_name,
             'last_name': last_name,
         }

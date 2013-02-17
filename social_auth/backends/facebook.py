@@ -24,7 +24,7 @@ from django.contrib.auth import authenticate
 from django.http import HttpResponse
 from django.template import TemplateDoesNotExist, RequestContext, loader
 
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import sanitize_log_data, backend_setting, setting,\
     log, dsa_urlopen
 from social_auth.exceptions import AuthException, AuthCanceled, AuthFailed,\
@@ -55,12 +55,12 @@ class FacebookBackend(OAuthBackend):
     # Default extra data to store
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):
         """Return user details from Facebook account"""
-        return {USERNAME: response.get('username', response.get('name')),
+        return {'username': response.get('username', response.get('name')),
                 'email': response.get('email', ''),
                 'fullname': response.get('name', ''),
                 'first_name': response.get('first_name', ''),
@@ -269,7 +269,7 @@ class FacebookAppAuth(FacebookAuth):
     def auth_html(self):
         app_id = backend_setting(self, self.SETTINGS_KEY_NAME)
         ctx = {
-            'FACEBOOK_APP_ID':  app_id,
+            'FACEBOOK_APP_ID': app_id,
             'FACEBOOK_EXTENDED_PERMISSIONS': ','.join(
                 backend_setting(self, self.SCOPE_VAR_NAME)
             ),

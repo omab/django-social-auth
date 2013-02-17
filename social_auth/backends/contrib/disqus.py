@@ -1,7 +1,6 @@
 from django.utils import simplejson
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import dsa_urlopen, backend_setting
-from social_auth.utils import setting
 from urllib import urlencode
 
 
@@ -20,7 +19,7 @@ class DisqusBackend(OAuthBackend):
         ('user_id', 'user_id'),
         ('email', 'email'),
         ('email_hash', 'emailHash'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires')),
+        ('expires', 'expires'),
         ('location', 'location'),
         ('meta', 'response'),
         ('name', 'name'),
@@ -35,7 +34,7 @@ class DisqusBackend(OAuthBackend):
         rr = response.get('response', {})
 
         return {
-            USERNAME: rr.get('username', ''),
+            'username': rr.get('username', ''),
             'user_id': response.get('user_id', ''),
             'email': rr.get('email', ''),
             'name': rr.get('name', ''),
@@ -43,7 +42,8 @@ class DisqusBackend(OAuthBackend):
 
     def extra_data(self, user, uid, response, details):
         meta_response = dict(response, **response.get('response', {}))
-        return super(DisqusBackend, self).extra_data(user, uid, meta_response, details)
+        return super(DisqusBackend, self).extra_data(user, uid, meta_response,
+                                                     details)
 
 
 class DisqusAuth(BaseOAuth2):

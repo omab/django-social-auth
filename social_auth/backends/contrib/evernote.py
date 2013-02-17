@@ -13,7 +13,7 @@ except ImportError:
 
 from oauth2 import Token
 from social_auth.utils import setting
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 from social_auth.exceptions import AuthCanceled
 
 
@@ -50,13 +50,13 @@ class EvernoteBackend(OAuthBackend):
         ('access_token', 'access_token'),
         ('oauth_token', 'oauth_token'),
         ('edam_noteStoreUrl', 'store_url'),
-        ('edam_expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('edam_expires', 'expires')
     ]
 
     def get_user_details(self, response):
         """Return user details from Evernote account"""
         return {
-            USERNAME: response['edam_userId'],
+            'username': response['edam_userId'],
             'email': '',
         }
 

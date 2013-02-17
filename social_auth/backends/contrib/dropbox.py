@@ -11,7 +11,7 @@ field, check OAuthBackend class for details on how to extend it.
 from django.utils import simplejson
 
 from social_auth.utils import setting
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 
 
 # Dropbox configuration
@@ -28,12 +28,12 @@ class DropboxBackend(OAuthBackend):
     # Default extra data to store
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):
         """Return user details from Dropbox account"""
-        return {USERNAME: str(response.get('uid')),
+        return {'username': str(response.get('uid')),
                 'email': response.get('email'),
                 'first_name': response.get('display_name')}
 

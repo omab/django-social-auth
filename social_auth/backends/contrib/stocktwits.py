@@ -1,7 +1,7 @@
 from urllib import urlencode
 from django.utils import simplejson
 
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import dsa_urlopen
 
 STOCKTWITS_SERVER = 'api.stocktwits.com'
@@ -26,7 +26,7 @@ class StocktwitsBackend(OAuthBackend):
         except:
             first_name = response['user']['name']
             last_name = ''
-        return {USERNAME: response['user']['username'],
+        return {'username': response['user']['username'],
                 'email': '',  # not supplied
                 'fullname': response['user']['name'],
                 'first_name': first_name,

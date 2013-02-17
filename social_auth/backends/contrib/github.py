@@ -20,8 +20,8 @@ from urllib2 import HTTPError
 from django.utils import simplejson
 from django.conf import settings
 
-from social_auth.utils import setting, dsa_urlopen
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.utils import dsa_urlopen
+from social_auth.backends import BaseOAuth2, OAuthBackend
 
 
 # GitHub configuration
@@ -30,7 +30,8 @@ GITHUB_ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token'
 GITHUB_USER_DATA_URL = 'https://api.github.com/user'
 
 # GitHub organization configuration
-GITHUB_ORGANIZATION_MEMBER_OF_URL = 'https://api.github.com/orgs/{org}/members/{username}'
+GITHUB_ORGANIZATION_MEMBER_OF_URL = \
+        'https://api.github.com/orgs/{org}/members/{username}'
 
 GITHUB_SERVER = 'github.com'
 
@@ -41,12 +42,12 @@ class GithubBackend(OAuthBackend):
     # Default extra data to store
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):
         """Return user details from Github account"""
-        return {USERNAME: response.get('login'),
+        return {'username': response.get('login'),
                 'email': response.get('email') or '',
                 'first_name': response.get('name')}
 
@@ -66,15 +67,17 @@ class GithubAuth(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
-        url = GITHUB_USER_DATA_URL + '?' + urlencode({'access_token': access_token})
+        url = GITHUB_USER_DATA_URL + '?' + urlencode({
+            'access_token': access_token
+        })
 
         try:
             data = simplejson.load(dsa_urlopen(url))
         except ValueError:
             data = None
 
-        # if we have a github organization defined, test that the current users is
-        # a member of that organization.
+        # if we have a github organization defined, test that the current users
+        # is a member of that organization.
         if data and self.GITHUB_ORGANIZATION:
             member_url = GITHUB_ORGANIZATION_MEMBER_OF_URL.format(
                 org=self.GITHUB_ORGANIZATION,
@@ -86,8 +89,9 @@ class GithubAuth(BaseOAuth2):
             except HTTPError:
                 data = None
             else:
-                # if the user is a member of the organization, response code will be 204
-                # see: http://developer.github.com/v3/orgs/members/#response-if-requester-is-an-organization-member-and-user-is-a-member
+                # if the user is a member of the organization, response code
+                # will be 204, see:
+                #   http://developer.github.com/v3/orgs/members/#response-if-requester-is-an-organization-member-and-user-is-a-member
                 if not response.code == 204:
                     data = None
 

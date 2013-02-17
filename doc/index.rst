@@ -18,7 +18,6 @@ Contents:
    pipeline
    deprecated
 
-   signals
    tokens
    contributions
    testing

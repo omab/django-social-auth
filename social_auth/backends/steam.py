@@ -5,7 +5,7 @@ import urllib2
 
 from django.utils import simplejson
 
-from social_auth.backends import OpenIdAuth, OpenIDBackend, USERNAME
+from social_auth.backends import OpenIdAuth, OpenIDBackend
 from social_auth.exceptions import AuthFailed
 from social_auth.utils import setting
 
@@ -34,7 +34,7 @@ class SteamBackend(OpenIDBackend):
         else:
             if len(player['response']['players']) > 0:
                 player = player['response']['players'][0]
-                details = {USERNAME: player.get('personaname'),
+                details = {'username': player.get('personaname'),
                            'email': '',
                            'fullname': '',
                            'first_name': '',
