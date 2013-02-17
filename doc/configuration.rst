@@ -329,7 +329,7 @@ uppercase and replace ``-`` with ``_``), here's the supported settings so far::
 Exceptions
 ----------
 
-- This set of exceptions were introduced to describe the situations a bit more
+- This set of exceptions was introduced to describe the situations a bit more
   than the old ``ValueError`` usually raised::
 
     SocialAuthBaseException - Base class for all social auth exceptions
@@ -363,7 +363,7 @@ Exceptions
     AuthTokenRevoked        - Raised when the user revoked the access_token in
                               the provider
 
-  These are a subclass of ``ValueError`` to keep backward compatibility.
+  These are subclasses of ``ValueError`` to keep backward compatibility.
 
 
 Exceptions Middleware
@@ -423,7 +423,7 @@ Template Context Processors
     ``openid``, ``oauth2`` and ``oauth``.
 
   * ``social_auth_login_redirect``:
-    For man in the middle redirects (ie authenticating via a login
+    For man-in-the-middle redirects (ie authenticating via a login
     required decorator), a convenince query string can be added to your context
     for templates. On your login options page::
 
@@ -457,12 +457,12 @@ Miscellaneous Settings
 
     SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email',]
 
-  Also more extra values will be stored if defined, details about this setting
-  are listed below on OpenId and OAuth sections.
+  Also more extra values will be stored if defined. Details about this setting
+  are listed below in the OpenId and OAuth sections.
 
-- Some providers return the time that the access token will live, the value is
+- Some providers return the time that the access token will live, and the value is
   stored in ``UserSocialAuth.extra_data`` under the key ``expires``. By default
-  the current user session is set to expire if this value is present, this
+  the current user session is set to expire if this value is present. This
   behavior can be disabled by setting::
 
     SOCIAL_AUTH_SESSION_EXPIRATION = False
@@ -476,7 +476,7 @@ Miscellaneous Settings
 
       SOCIAL_AUTH_FIELDS_STORED_IN_SESSION = ['foo',]
 
-  In this case ``foo`` field's value will be stored when user follows this link
+  In this case the ``foo`` field's value will be stored when user follows this link
   ``<a href="{% url socialauth_begin 'github' %}?foo=bar">...</a>``.
 
 - `OpenID PAPE`_ extension support by defining::
