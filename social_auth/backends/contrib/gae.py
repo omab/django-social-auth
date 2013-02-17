@@ -1,5 +1,11 @@
 """
 Google App Engine support using User API
+
+This backend is for use of django-social-auth on top
+of Google's App Engine PaaS.
+
+This backend directly uses Google's User API that
+is available on the App Engine platform.
 """
 from __future__ import absolute_import
 
@@ -57,5 +63,5 @@ class GAEAuth(BaseAuth):
 
 # Backend definition
 BACKENDS = {
-    'gae': GAEAuth,
+    'google-appengine': GAEAuth,
 }
