@@ -1,13 +1,13 @@
 Tokens
 ------
 
-Almost every service covered provide some kind of API that is protected with
+Almost every service covered provides some kind of API that is protected with
 ``access_token`` or token pairs (like `Twitter OAuth keys`_). These tokens are
 gathered by the authentication mechanism and stored in
 ``UserSocialAuth.extra_data``.
 
-``UserSocialAuth`` has a property named ``tokens`` to easilly access this
-useful values, it will return a dictionary containing the tokens values.
+``UserSocialAuth`` has a property named ``tokens`` to easily access these
+useful values, which returns a dictionary containing the token values.
 A simple usage example::
 
     >>> from pprint import pprint

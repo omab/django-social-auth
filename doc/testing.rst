@@ -1,16 +1,16 @@
 Testing
 =======
-Django-social-auth aims to be a fully tested project, some partial test are
-present at the moment and others are being worked.
+Django-social-auth aims to be a fully tested project. Some partial tests are
+present at the moment and others are being worked on.
 
 To test the application just run::
 
     ./manage.py test social_auth
 
-This will run a bunch of tests, so far only login process is tested, more
+This will run a bunch of tests. So far only the login process is tested, but more
 will come eventually.
 
-User accounts on the different sites are needed to run tests, configure the
+User accounts on the different sites are needed to run tests, so configure the
 credentials in the following way::
 
     TEST_TWITTER_USER = 'testing_account'
@@ -25,7 +25,7 @@ credentials in the following way::
     TEST_GOOGLE_PASSWORD = 'password_for_testing_account'
 
 
-There's support for Selenium_ tests too on root contrib directory. To run
+There's support for Selenium_ tests too in the root contrib directory. To run,
 install selenium::
 
     $ pip install selenium

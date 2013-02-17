@@ -1,7 +1,7 @@
 Signals
 =======
 A ``pre_update`` signal is sent when user data is about to be updated with new
-values from authorization service provider, this apply to new users and already
+values from an authorization service provider. This applies to new users and already
 existent ones. This is useful to update custom user fields or `User Profiles`_,
 for example, to store user gender, location, etc. Example::
 
@@ -15,7 +15,7 @@ for example, to store user gender, location, etc. Example::
     pre_update.connect(facebook_extra_values, sender=FacebookBackend)
 
 New data updating is made automatically but could be disabled and left only to
-signal handler if this setting value is set to True::
+a signal handler if this setting value is set to True::
 
     SOCIAL_AUTH_CHANGE_SIGNAL_ONLY = False
 

@@ -34,7 +34,7 @@ Configuration
     )
 
   Take into account that backends **must** be defined in AUTHENTICATION_BACKENDS_
-  or Django won't pick them when trying to authenticate the user.
+  or Django won't pick them up when trying to authenticate the user.
 
   Don't miss ``django.contrib.auth.backends.ModelBackend`` if using ``django.auth``
   user model or users won't be able to login.
@@ -168,9 +168,9 @@ Configuration
     import random
     SOCIAL_AUTH_DEFAULT_USERNAME = lambda: random.choice(['Darth Vader', 'Obi-Wan Kenobi', 'R2-D2', 'C-3PO', 'Yoda'])
 
-  in case your user layout needs to purify username on some weird way.
+  in case your user layout needs to purify usernames in some weird way.
 
-  Final user name will have a random UUID-generated suffix in case it's already
+  The final user name will have a random UUID-generated suffix in case it's already
   taken. The UUID token max length can be changed with the setting::
 
     SOCIAL_AUTH_UUID_LENGTH = 16
@@ -218,7 +218,7 @@ Configuration
     is_authenticated():
         ...
 
-  These are needed to ensure a better ``django-auth`` integration, in other case
+  These are needed to ensure a better ``django-auth`` integration, otherwise
   `login_required`_ won't be usable. A warning is displayed if any of these are
   missing. By default `auth.User`_ is used.
 
