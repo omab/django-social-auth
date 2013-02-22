@@ -36,6 +36,7 @@ Contents:
    stocktwits
    stripe
    tripit
+   tumblr
    twilio
    twitter
    vkontakte
