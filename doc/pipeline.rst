@@ -106,4 +106,4 @@ Check the `example application`_ to check a basic usage.
 
 
 .. _django-social-auth: https://github.com/omab/django-social-auth
-.. _example application: https://github.com/omab/django-social-auth/blob/master/example/local_settings.py.template#L23
+.. _example application: https://github.com/omab/django-social-auth/blob/master/example/example/local_settings.py.template#L23
