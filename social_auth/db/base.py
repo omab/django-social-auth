@@ -109,6 +109,7 @@ class UserSocialAuthMixin(object):
         """
         Return True/False if a User instance exists with the given arguments.
         Arguments are directly passed to filter() manager method.
+        TODO: consider how to ensure case-insensitive email matching
         """
         return cls.user_model().objects.filter(*args, **kwargs).count() > 0
 
@@ -127,7 +128,8 @@ class UserSocialAuthMixin(object):
 
     @classmethod
     def get_user_by_email(cls, email):
-        return cls.user_model().objects.get(email=email)
+        "Case insensitive search"
+        return cls.user_model().objects.get(email__iexact=email)
 
     @classmethod
     def resolve_user_or_id(cls, user_or_id):
