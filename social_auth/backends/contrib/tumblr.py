@@ -11,12 +11,16 @@ Then update your settings values using registration information
 ref:
 https://github.com/gkmngrgn/django-tumblr-auth
 """
-
-from oauth2 import Request as OAuthRequest, Token as OAuthToken, SignatureMethod_HMAC_SHA1
 from urllib import urlopen
+
+from oauth2 import Request as OAuthRequest, Token as OAuthToken, \
+                   SignatureMethod_HMAC_SHA1
+
 from django.utils import simplejson
+
 from social_auth.backends import ConsumerBasedOAuth
 from social_auth.backends import OAuthBackend
+
 
 TUMBLR_SERVER = 'www.tumblr.com'
 TUMBLR_AUTHORIZATION_URL = 'http://%s/oauth/authorize' % TUMBLR_SERVER
@@ -34,17 +38,12 @@ class TumblrBackend(OAuthBackend):
     def get_user_details(self, response):
         # http://www.tumblr.com/docs/en/api/v2#user-methods
         user_info = response['response']['user']
-
-        data = {
-            'username': user_info['name'],
-        }
-
+        data = {'username': user_info['name']}
         blogs = user_info['blogs']
         for blog in blogs:
             if blog['primary']:
                 data['fullname'] = blog['title']
                 break
-
         return data
 
     @classmethod
@@ -56,22 +55,21 @@ class TumblrBackend(OAuthBackend):
 
         instance must be a UserSocialAuth instance.
         """
-
         token = super(TumblrBackend, cls).tokens(instance)
         if token and 'access_token' in token:
-            token = dict(tok.split('=') for tok in token['access_token'].split('&'))
-
+            token = dict(tok.split('=')
+                            for tok in token['access_token'].split('&'))
         return token
 
 
 class TumblrAuth(ConsumerBasedOAuth):
+    AUTH_BACKEND = TumblrBackend
     AUTHORIZATION_URL = TUMBLR_AUTHORIZATION_URL
     REQUEST_TOKEN_URL = TUMBLR_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = TUMBLR_ACCESS_TOKEN_URL
     SERVER_URL = TUMBLR_SERVER
     SETTINGS_KEY_NAME = 'TUMBLR_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'TUMBLR_CONSUMER_SECRET'
-    AUTH_BACKEND = TumblrBackend
 
     def user_data(self, access_token):
         request = self.oauth_request(access_token, TUMBLR_CHECK_AUTH)
@@ -99,19 +97,19 @@ class TumblrAuth(ConsumerBasedOAuth):
         if 'oauth_verifier' in self.data:
             params['oauth_verifier'] = self.data['oauth_verifier']
 
-        request = OAuthRequest.from_consumer_and_token(self.consumer, token=token, http_url=url, parameters=params)
+        request = OAuthRequest.from_consumer_and_token(self.consumer,
+                                                       token=token,
+                                                       http_url=url,
+                                                       parameters=params)
         request.sign_request(SignatureMethod_HMAC_SHA1(), self.consumer, token)
-
         return request
 
     def fetch_response(self, request):
         """Executes request and fetchs service response"""
-
         response = urlopen(request.to_url())
-
         return response.read()
 
 
 BACKENDS = {
-    'tumblr': TumblrAuth,
+    'tumblr': TumblrAuth
 }
