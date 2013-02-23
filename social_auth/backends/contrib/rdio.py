@@ -1,13 +1,14 @@
 import urllib
 
-from django.utils import simplejson
 from oauth2 import Request as OAuthRequest, SignatureMethod_HMAC_SHA1
+
+from django.utils import simplejson
+
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, BaseOAuth2
 from social_auth.utils import dsa_urlopen
 
 
 class RdioBaseBackend(OAuthBackend):
-
     def get_user_id(self, details, response):
         return response['key']
 
@@ -22,8 +23,7 @@ class RdioBaseBackend(OAuthBackend):
 
 class RdioOAuth1Backend(RdioBaseBackend):
     """Rdio OAuth authentication backend"""
-    name = 'rdio_oauth1'
-
+    name = 'rdio-oauth1'
     EXTRA_DATA = [
         ('key', 'rdio_id'),
         ('icon', 'rdio_icon_url'),
@@ -42,8 +42,7 @@ class RdioOAuth1Backend(RdioBaseBackend):
 
 
 class RdioOAuth2Backend(RdioBaseBackend):
-    name = 'rdio_oauth2'
-
+    name = 'rdio-oauth2'
     EXTRA_DATA = [
         ('key', 'rdio_id'),
         ('icon', 'rdio_icon_url'),
@@ -61,10 +60,8 @@ class RdioOAuth1(ConsumerBasedOAuth):
     AUTHORIZATION_URL = 'https://www.rdio.com/oauth/authorize'
     ACCESS_TOKEN_URL = 'http://api.rdio.com/oauth/access_token'
     RDIO_API_BASE = 'http://api.rdio.com/1/'
-
     SETTINGS_KEY_NAME = 'RDIO_OAUTH1_KEY'
     SETTINGS_SECRET_NAME = 'RDIO_OAUTH1_SECRET'
-
 
     def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
@@ -119,6 +116,6 @@ class RdioOAuth2(BaseOAuth2):
 
 # Backend definition
 BACKENDS = {
-    'rdio_oauth1': RdioOAuth1,
-    'rdio_oauth2': RdioOAuth2,
+    'rdio-oauth1': RdioOAuth1,
+    'rdio-oauth2': RdioOAuth2
 }
