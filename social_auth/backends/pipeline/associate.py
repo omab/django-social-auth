@@ -17,7 +17,7 @@ def associate_by_email(details, user=None, *args, **kwargs):
         # objects are returned
         # Allow case-insensitive match, since real-world email address is case-insensitive
         try:
-            return {'user': UserSocialAuth.get_user_by_email(email__iexact=email)}
+            return {'user': UserSocialAuth.get_user_by_email(email=email)}
         except MultipleObjectsReturned:
             raise AuthException(kwargs['backend'], 'Not unique email address.')
         except ObjectDoesNotExist:
