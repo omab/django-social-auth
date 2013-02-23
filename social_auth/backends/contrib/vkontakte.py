@@ -15,8 +15,8 @@ from hashlib import md5
 from time import time
 
 from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, \
-                                 BaseOAuth2, USERNAME
-from social_auth.backends.exceptions import AuthTokenRevoked, AuthException
+                                 BaseOAuth2
+from social_auth.exceptions import AuthTokenRevoked, AuthException
 from social_auth.utils import setting, log, dsa_urlopen
 
 
@@ -45,9 +45,11 @@ class VKontakteBackend(SocialAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from VKontakte request"""
-        nickname = response.get('nickname') or ''
+        nickname = response.get('nickname') or response['id']
+        if isinstance(nickname, (list, tuple, )):
+            nickname = nickname[0]
         return {
-            USERNAME: response['id'] if len(nickname) == 0 else nickname,
+            'username': nickname,
             'email': '',
             'fullname': '',
             'first_name': response.get('first_name')[0]
@@ -119,7 +121,7 @@ class VKontakteOAuth2Backend(OAuthBackend):
 
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_id(self, details, response):
@@ -129,8 +131,8 @@ class VKontakteOAuth2Backend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Vkontakte account"""
         return {
-            USERNAME: response.get('screen_name'),
-            'email':  '',
+            'username': response.get('screen_name'),
+            'email': '',
             'first_name': response.get('first_name'),
             'last_name': response.get('last_name')
         }
@@ -140,7 +142,6 @@ class VKontakteOAuth2(BaseOAuth2):
     """Vkontakte OAuth mechanism"""
     AUTHORIZATION_URL = VK_AUTHORIZATION_URL
     ACCESS_TOKEN_URL = VK_ACCESS_TOKEN_URL
-    SERVER_URL = VK_SERVER
     AUTH_BACKEND = VKontakteOAuth2Backend
     SETTINGS_KEY_NAME = 'VK_APP_ID'
     SETTINGS_SECRET_NAME = 'VK_API_SECRET'

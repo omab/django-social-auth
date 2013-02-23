@@ -7,7 +7,7 @@ from re import sub
 from django.contrib.auth import authenticate
 from django.conf import settings
 
-from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
+from social_auth.backends import SocialAuthBackend, BaseAuth
 
 
 TWILIO_SERVER = 'https://www.twilio.com'
@@ -25,7 +25,7 @@ class TwilioBackend(SocialAuthBackend):
         parameters."""
         # /complete/twilio/?AccountSid=ACc65ea16c9ebd4d4684edf814995b27e
         account_sid = response['AccountSid']
-        return {USERNAME: account_sid,
+        return {'username': account_sid,
                 'email': '',
                 'fullname': '',
                 'first_name': '',

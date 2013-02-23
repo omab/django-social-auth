@@ -5,13 +5,13 @@ Installation
 ------------
 Dependencies
 ------------
-Dependencies that **must** be meet to use the application:
+Dependencies that **must** be met to use the application:
 
 - OpenId_ support depends on python-openid_
 
 - OAuth_ support depends on python-oauth2_
 
-- Several backends demands application registration on their corresponding
+- Several backends demand application registration on their corresponding
   sites.
 
 

@@ -3,53 +3,48 @@
 
 {% block script %}
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-<script src="https://browserid.org/include.js" type="text/javascript"></script>
+<script src="https://login.persona.org/include.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+function openPopup(url) {
+    var w = 700;
+    var h = 500;
+    var left = 100;
+    var top = 100;
+
+    var settings = 'height=' + h + ',width=' + w + ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=yes,directories=no,status=yes';
+    url += "?next={% url 'login_popup_close' %}";
+
+    window.open(url, name, settings)
+}
+
+</script>
+
 {% endblock %}
 
-{% block heading %}Logged in!{% endblock %}
+{% block heading %}Login using any of the following methods{% endblock %}
 
 {% block content %}
 <div>
-  <h3>User data:</h3>
-  <table>
-    <tr class="odd"><th>Id:</th> <td>{{ user.id }}</td></tr>
-    <tr class="even"><th>Username:</th> <td>{{ user.username }}</td></tr>
-    <tr class="odd"><th>Email:</th> <td>{{ user.email|default:"Not provided" }}</td></tr>
-    <tr class="even"><th>First name:</th> <td>{{ user.first_name|default:"Not provided" }}</td></tr>
-    <tr class="odd"><th>Last name:</th> <td>{{ user.last_name|default:"Not provided" }}</td></tr>
-    <tr class="even"><th>Last login backend:</th> <td>{{ last_login }}</td></tr>
-  </table>
-</div>
-
-<div>
-{% if social_auth.associated %}
-  <h3>Disconnect accounts</h3>
-  <ul>
-  {% for type, accounts in social_auth.associated.items %}
-    {% for account in accounts %}
-    <li>
-        <span class="disconnect"><a href={% url "socialauth_disconnect_individual" account.provider account.id %}>{{ account.provider|title }} (ID {{ account.id }})</a></span>
-    </li>
-    {% endfor %}
-  {% endfor %}
-  </ul>
-{% endif %}
-
-  <h3>Associate new <a href="http://oauth.net/" title="OAuth">OAuth</a> credentials:</h3>
+  <h3>Login using <a href="http://oauth.net/" title="OAuth">OAuth</a> from:</h3>
   <ul>
   {% for name in social_auth.backends.oauth %}
     <li><a rel="nofollow" href="{% url "socialauth_begin" name %}">{{ name|title }}</a></li>
   {% endfor %}
   </ul>
+</div>
 
-  <h3>Associate new <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-10" title="OAuth2">OAuth2</a> credentials:</h3>
+<div>
+  <h3>Login using <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-10" title="OAuth2">OAuth2</a> from:</h3>
   <ul>
   {% for name in social_auth.backends.oauth2 %}
     <li><a rel="nofollow" href="{% url "socialauth_begin" name %}">{{ name|title }}</a></li>
   {% endfor %}
   </ul>
+</div>
 
-  <h3>Associate new <a href="http://openid.net/" title="OpenId">OpenId</a> credentials:</h3>
+<div>
+  <h3>Login using <a href="http://openid.net/" title="OpenId">OpenId</a> from:</h3>
   <ul>
   {% for name in social_auth.backends.openid %}
     <li>
@@ -80,8 +75,10 @@
     </li>
   {% endfor %}
   </ul>
+</div>
 
-  <h3>Associate new <a href="https://browserid.org/" title="BrowserID">BrowserID</a>:</h3>
+<div>
+  <h3>Login using <a href="https://login.persona.org/" title="BrowserID">BrowserID</a>:</h3>
   <form method="post" action="{% url "socialauth_complete" "browserid" %}">
     <input type="hidden" name="assertion" value="" />
     <a rel="nofollow" id="browserid" href="#">BrowserID</a>
@@ -108,7 +105,26 @@
   </form>
 </div>
 
+<br/>
+
+{% if social_auth.backends.oauth2 %}
 <div>
-  <a rel="nofollow" class="logout" href="/logout/">Logout</a>
+  <h3>Login in pop-up window:</h3>
+  <ul>
+    {% with social_auth.backends.oauth2|first as first_name %}
+      <li>Some OAuth2 backend: <a rel="nofollow" href="javascript:openPopup('{% url "socialauth_begin" first_name %}'); return void(0);">{{ first_name|title }}</a></li>
+    {% endwith %}
+  </ul>
+</div>
+{% endif %}
+
+<div>
+  <h3>Login using other authentication systems:</h3>
+  	<ul>
+      <li><a rel="nofollow" href="{% url "fb_app" %}">Facebook Canvas Application</a></li>
+  		<li><a rel="nofollow" href="{% url "socialauth_begin" "vkontakte" %}">VKontakte OpenAPI</a></li>
+      <li><a rel="nofollow" href="{% url "vk_app" %}">VKontakte IFrame application</a></li>
+  		<li><a rel="nofollow" href="{% url "ok_app_info" %}">Odnoklassniki IFRAME application</a></li>
+	</ul>
 </div>
 {% endblock %}

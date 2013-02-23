@@ -18,13 +18,14 @@ Contents:
    pipeline
    deprecated
 
-   signals
    tokens
    contributions
    testing
    use_cases
    miscellaneous
    bugs
+
+   changelog
 
    copyrights
 

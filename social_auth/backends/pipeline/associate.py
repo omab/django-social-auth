@@ -1,7 +1,7 @@
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 from social_auth.models import UserSocialAuth
-from social_auth.backends.exceptions import AuthException
+from social_auth.exceptions import AuthException
 
 
 def associate_by_email(details, user=None, *args, **kwargs):
@@ -15,8 +15,9 @@ def associate_by_email(details, user=None, *args, **kwargs):
         # try to associate accounts registered with the same email address,
         # only if it's a single object. AuthException is raised if multiple
         # objects are returned
+        # Allow case-insensitive match, since real-world email address is case-insensitive
         try:
-            return {'user': UserSocialAuth.get_user_by_email(email=email)}
+            return {'user': UserSocialAuth.get_user_by_email(email__iexact=email)}
         except MultipleObjectsReturned:
             raise AuthException(kwargs['backend'], 'Not unique email address.')
         except ObjectDoesNotExist:

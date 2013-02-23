@@ -11,7 +11,7 @@ class for details on how to extend it.
 """
 from django.utils import simplejson
 
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 
 
 # Skyrock configuration
@@ -34,7 +34,7 @@ class SkyrockBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Skyrock account"""
-        return {USERNAME: response['username'],
+        return {'username': response['username'],
                 'email': response['email'],
                 'fullname': response['firstname'] + ' ' + response['name'],
                 'first_name': response['firstname'],
@@ -46,7 +46,6 @@ class SkyrockAuth(ConsumerBasedOAuth):
     AUTHORIZATION_URL = SKYROCK_AUTHORIZATION_URL
     REQUEST_TOKEN_URL = SKYROCK_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = SKYROCK_ACCESS_TOKEN_URL
-    SERVER_URL = SKYROCK_SERVER
     AUTH_BACKEND = SkyrockBackend
     SETTINGS_KEY_NAME = 'SKYROCK_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'SKYROCK_CONSUMER_SECRET'

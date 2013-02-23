@@ -16,7 +16,7 @@ from urllib import urlencode
 
 from django.utils import simplejson
 
-from social_auth.backends import OAuthBackend, USERNAME, BaseOAuth2
+from social_auth.backends import OAuthBackend, BaseOAuth2
 from social_auth.utils import dsa_urlopen
 
 
@@ -44,7 +44,7 @@ class WeiboBackend(OAuthBackend):
         """Return user details from Weibo. API URL is:
         https://api.weibo.com/2/users/show.json/?uid=<UID>&access_token=<TOKEN>
         """
-        return {USERNAME: response.get("name", ""),
+        return {'username': response.get("name", ""),
                 'first_name': response.get('screen_name', '')}
 
 
@@ -53,14 +53,13 @@ class WeiboAuth(BaseOAuth2):
     AUTHORIZATION_URL = WEIBO_AUTHORIZATION_URL
     REQUEST_TOKEN_URL = WEIBO_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = WEIBO_ACCESS_TOKEN_URL
-    SERVER_URL = WEIBO_SERVER
     AUTH_BACKEND = WeiboBackend
     SETTINGS_KEY_NAME = 'WEIBO_CLIENT_KEY'
     SETTINGS_SECRET_NAME = 'WEIBO_CLIENT_SECRET'
     REDIRECT_STATE = False
 
     def user_data(self, access_token, *args, **kwargs):
-        uid = args[0]['uid']
+        uid = kwargs.get('response', {}).get('uid')
         data = {'access_token': access_token, 'uid': uid}
         url = 'https://api.weibo.com/2/users/show.json?' + urlencode(data)
         try:

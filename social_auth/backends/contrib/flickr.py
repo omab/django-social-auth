@@ -17,8 +17,7 @@ except ImportError:
 
 from oauth2 import Token
 
-from social_auth.utils import setting
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 
 
 # Flickr configuration
@@ -35,12 +34,12 @@ class FlickrBackend(OAuthBackend):
     EXTRA_DATA = [
         ('id', 'id'),
         ('username', 'username'),
-        ('expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires', 'expires')
     ]
 
     def get_user_details(self, response):
         """Return user details from Flickr account"""
-        return {USERNAME: response.get('id'),
+        return {'username': response.get('id'),
                 'email': '',
                 'first_name': response.get('fullname')}
 
@@ -50,7 +49,6 @@ class FlickrAuth(ConsumerBasedOAuth):
     AUTHORIZATION_URL = FLICKR_AUTHORIZATION_URL
     REQUEST_TOKEN_URL = FLICKR_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = FLICKR_ACCESS_TOKEN_URL
-    SERVER_URL = FLICKR_SERVER
     AUTH_BACKEND = FlickrBackend
     SETTINGS_KEY_NAME = 'FLICKR_APP_ID'
     SETTINGS_SECRET_NAME = 'FLICKR_API_SECRET'

@@ -13,13 +13,6 @@ You can view this app's documentation on `Read the Docs`_ too.
 .. contents:: Table of Contents
 
 
-Demo
-----
-
-There's a demo at http://social.matiasaguirre.net/.
-Note: It lacks some backends' support at the moment.
-
-
 Features
 --------
 
@@ -39,6 +32,7 @@ credentials. Some features are:
 
   Some contributions added support for:
 
+    * `DISQUS OAuth`_
     * `LiveJournal OpenID`_
     * `Orkut OAuth`_
     * `Linkedin OAuth`_
@@ -61,6 +55,9 @@ credentials. Some features are:
     * `Twilio`_
     * `Weibo OAuth2`_
     * `Yandex OpenId`_
+    * `Shopify OAuth2`_
+    * `StockTwits OAuth2`_
+    * `Stackoverflow OAuth2`_
 
 - Basic user data population and signaling to allows custom fields values
   from providers' responses
@@ -72,10 +69,26 @@ credentials. Some features are:
 - Extensible pipeline to handle authentication/association mechanism
 
 
+Demo
+----
+
+There's a demo at http://social.matiasaguirre.net/.
+Note: It lacks some backends' support at the moment.
+
+
+Contact
+-------
+
+Join the `django-social-auth discussion list`_ and bring any questions or suggestions
+that would improve this application.
+
+Also join the IRC channel ``#django-social-auth`` on Freenode server.
+
+
 Documentation
 -------------
 
-Extensive documentaion at `Read the Docs`_.
+Extensive documentation at `Read the Docs`_.
 
 
 Dependencies
@@ -138,14 +151,15 @@ Some bits were derived from others' work and copyrighted by:
 .. _django-twitter-oauth: https://github.com/henriklied/django-twitter-oauth
 .. _django-openid-auth: https://launchpad.net/django-openid-auth
 .. _Read the Docs: http://django-social-auth.readthedocs.org/
-.. _Google OpenID: http://code.google.com/apis/accounts/docs/OpenID.html
-.. _Google OAuth: http://code.google.com/apis/accounts/docs/OAuth.html
-.. _Google OAuth2: http://code.google.com/apis/accounts/docs/OAuth2.html
+.. _Google OpenID: https://developers.google.com/accounts/docs/OpenID
+.. _Google OAuth: https://developers.google.com/accounts/docs/OAuth
+.. _Google OAuth2: https://developers.google.com/accounts/docs/OAuth2
 .. _Yahoo OpenID: http://openid.yahoo.com/
 .. _OpenId: http://openid.net/
 .. _myOpenID: https://www.myopenid.com/
 .. _Twitter OAuth: http://dev.twitter.com/pages/oauth_faq
 .. _Facebook OAuth: http://developers.facebook.com/docs/authentication/
+.. _DISQUS OAuth: http://disqus.com/api/docs/auth/
 .. _LiveJournal OpenID: http://www.livejournal.com/support/faqbrowse.bml?faqid=283
 .. _Orkut OAuth:  http://code.google.com/apis/orkut/docs/rest/developers_guide_protocol.html#Authenticating
 .. _Linkedin OAuth: https://www.linkedin.com/secure/developer
@@ -168,9 +182,13 @@ Some bits were derived from others' work and copyrighted by:
 .. _Twilio: https://www.twilio.com/user/account/connect/apps
 .. _Weibo OAuth2: http://open.weibo.com/wiki/Oauth2
 .. _Yandex OpenId: http://openid.yandex.ru/
+.. _Shopify OAuth2: http://api.shopify.com/authentication.html
+.. _StockTwits OAuth2: http://stocktwits.com/developers/docs/authentication
 .. _auth.User: http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/models.py#L186
 .. _python-openid: http://pypi.python.org/pypi/python-openid/
 .. _python-oauth2: https://github.com/simplegeo/python-oauth2
 .. _OAuth: http://oauth.net/
 .. _pypi: http://pypi.python.org/pypi/django-social-auth/
 .. _github: https://github.com/omab/django-social-auth
+.. _django-social-auth discussion list: https://groups.google.com/forum/?fromgroups#!forum/django-social-auth
+.. _Stackoverflow OAuth2: http://api.stackexchange.com/

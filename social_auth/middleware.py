@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-
-
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect
 
-from social_auth.backends.exceptions import AuthException
+from social_auth.exceptions import SocialAuthBaseException
+from social_auth.utils import setting, backend_setting, get_backend_name
 
 
 class SocialAuthExceptionMiddleware(object):
@@ -18,33 +17,48 @@ class SocialAuthExceptionMiddleware(object):
     This middleware can be extended by overriding the get_message or
     get_redirect_uri methods, which each accept request and exception.
     """
-
     def process_exception(self, request, exception):
-        if isinstance(exception, AuthException):
-            if hasattr(exception.backend, 'AUTH_BACKEND'):
-                backend_name = exception.backend.AUTH_BACKEND.name
-            else:
-                backend_name = exception.backend.name
+        self.backend = self.get_backend(request, exception)
+        if self.raise_exception(request, exception):
+            return
 
+        if isinstance(exception, SocialAuthBaseException):
+            backend_name = get_backend_name(self.backend)
             message = self.get_message(request, exception)
             url = self.get_redirect_uri(request, exception)
 
             if request.user.is_authenticated():
                 # Ensure that messages are added to authenticated users only,
                 # otherwise this fails
-                messages.error(
-                    request,
-                    message,
-                    extra_tags=u'social-auth {0}'.format(backend_name)
-                )
+                if backend_name:
+                    extra_tags = u'social-auth %s' % backend_name
+                else:
+                    extra_tags = ''
+                messages.error(request, message, extra_tags=extra_tags)
             else:
-                url = url + ('?' in url and '&' or '?') \
-                          + u'message={0}&backend={1}'.format(message,
-                                                             backend_name)
+                url += ('?' in url and '&' or '?') + 'message=' + message
+                if backend_name:
+                    url += '&backend=' + backend_name
             return redirect(url)
+
+    def get_backend(self, request, exception):
+        if not hasattr(self, 'backend'):
+            self.backend = getattr(request, 'backend', None) or \
+                           getattr(exception, 'backend', None)
+        return self.backend
+
+    def raise_exception(self, request, exception):
+        backend = self.backend
+        return backend and \
+               backend_setting(backend, 'SOCIAL_AUTH_RAISE_EXCEPTIONS') or \
+               setting('DEBUG')
 
     def get_message(self, request, exception):
         return unicode(exception)
 
     def get_redirect_uri(self, request, exception):
+        if self.backend is not None:
+            return backend_setting(self.backend,
+                                   'SOCIAL_AUTH_BACKEND_ERROR_URL') or \
+                                   settings.LOGIN_ERROR_URL
         return settings.LOGIN_ERROR_URL

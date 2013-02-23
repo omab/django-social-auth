@@ -17,8 +17,7 @@ except ImportError:
 
 from oauth2 import Token
 
-from social_auth.utils import setting
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 
 
 # Fitbit configuration
@@ -27,7 +26,6 @@ FITBIT_REQUEST_TOKEN_URL = '%s/oauth/request_token' % FITBIT_SERVER
 FITBIT_AUTHORIZATION_URL = '%s/oauth/authorize' % FITBIT_SERVER
 FITBIT_ACCESS_TOKEN_URL = '%s/oauth/access_token' % FITBIT_SERVER
 FITBIT_USERINFO = 'http://api.fitbit.com/1/user/-/profile.json'
-EXPIRES_NAME = setting('SOCIAL_AUTH_EXPIRATION', 'expires')
 
 
 class FitbitBackend(OAuthBackend):
@@ -36,7 +34,7 @@ class FitbitBackend(OAuthBackend):
     # Default extra data to store
     EXTRA_DATA = [('id', 'id'),
                   ('username', 'username'),
-                  ('expires', EXPIRES_NAME)]
+                  ('expires', 'expires')]
 
     def get_user_id(self, details, response):
         """
@@ -47,7 +45,7 @@ class FitbitBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Fitbit account"""
-        return {USERNAME: response.get('id'),
+        return {'username': response.get('id'),
                 'email': '',
                 'first_name': response.get('fullname')}
 
@@ -57,7 +55,6 @@ class FitbitAuth(ConsumerBasedOAuth):
     AUTHORIZATION_URL = FITBIT_AUTHORIZATION_URL
     REQUEST_TOKEN_URL = FITBIT_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = FITBIT_ACCESS_TOKEN_URL
-    SERVER_URL = FITBIT_SERVER
     AUTH_BACKEND = FitbitBackend
     SETTINGS_KEY_NAME = 'FITBIT_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'FITBIT_CONSUMER_SECRET'

@@ -12,6 +12,11 @@ Github works similar to Facebook (OAuth).
 
 - Also it's possible to define extra permissions with::
 
-     GITHUB_EXTENDED_PERMISSIONS = [...]
+      GITHUB_EXTENDED_PERMISSIONS = [...]
+
+- Optional ``GitHub Organization``, which if set will allow you to constrain
+  authentication to a given GitHub organization::
+
+      GITHUB_ORGANIZATION = ''
 
 .. _GitHub Developers: https://github.com/settings/applications/new

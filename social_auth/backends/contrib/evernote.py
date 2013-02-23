@@ -13,8 +13,8 @@ except ImportError:
 
 from oauth2 import Token
 from social_auth.utils import setting
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME, \
-                                 exceptions
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
+from social_auth.exceptions import AuthCanceled
 
 
 if setting('EVERNOTE_DEBUG', False):
@@ -50,13 +50,13 @@ class EvernoteBackend(OAuthBackend):
         ('access_token', 'access_token'),
         ('oauth_token', 'oauth_token'),
         ('edam_noteStoreUrl', 'store_url'),
-        ('edam_expires', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('edam_expires', 'expires')
     ]
 
     def get_user_details(self, response):
         """Return user details from Evernote account"""
         return {
-            USERNAME: response['edam_userId'],
+            'username': response['edam_userId'],
             'email': '',
         }
 
@@ -69,7 +69,6 @@ class EvernoteAuth(ConsumerBasedOAuth):
     AUTHORIZATION_URL = EVERNOTE_AUTHORIZATION_URL
     REQUEST_TOKEN_URL = EVERNOTE_REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = EVERNOTE_ACCESS_TOKEN_URL
-    SERVER_URL = '%s' % EVERNOTE_SERVER
     AUTH_BACKEND = EvernoteBackend
     SETTINGS_KEY_NAME = 'EVERNOTE_CONSUMER_KEY'
     SETTINGS_SECRET_NAME = 'EVERNOTE_CONSUMER_SECRET'
@@ -83,7 +82,7 @@ class EvernoteAuth(ConsumerBasedOAuth):
         except HTTPError, e:
             # Evernote returns a 401 error when AuthCanceled
             if e.code == 401:
-                raise exceptions.AuthCanceled(self)
+                raise AuthCanceled(self)
             else:
                 raise
 

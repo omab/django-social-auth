@@ -22,8 +22,8 @@ from django.utils import simplejson
 
 from social_auth.utils import setting, dsa_urlopen
 from social_auth.backends import OpenIdAuth, ConsumerBasedOAuth, BaseOAuth2, \
-                                 OAuthBackend, OpenIDBackend, USERNAME
-from social_auth.backends.exceptions import AuthFailed
+                                 OAuthBackend, OpenIDBackend
+from social_auth.exceptions import AuthFailed
 
 
 # Google OAuth base configuration
@@ -59,7 +59,7 @@ class GoogleOAuthBackend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Orkut account"""
         email = response.get('email', '')
-        return {USERNAME: email.split('@', 1)[0],
+        return {'username': email.split('@', 1)[0],
                 'email': email,
                 'fullname': '',
                 'first_name': '',
@@ -71,7 +71,8 @@ class GoogleOAuth2Backend(GoogleOAuthBackend):
     name = 'google-oauth2'
     EXTRA_DATA = [
         ('refresh_token', 'refresh_token', True),
-        ('expires_in', setting('SOCIAL_AUTH_EXPIRATION', 'expires'))
+        ('expires_in', 'expires'),
+        ('token_type', 'token_type', True)
     ]
 
     def get_user_id(self, details, response):
@@ -84,7 +85,7 @@ class GoogleOAuth2Backend(GoogleOAuthBackend):
 
     def get_user_details(self, response):
         email = response.get('email', '')
-        return {USERNAME: email.split('@', 1)[0],
+        return {'username': email.split('@', 1)[0],
                 'email': email,
                 'fullname': response.get('name', ''),
                 'first_name': response.get('given_name', ''),
@@ -121,7 +122,6 @@ class BaseGoogleOAuth(ConsumerBasedOAuth):
     AUTHORIZATION_URL = AUTHORIZATION_URL
     REQUEST_TOKEN_URL = REQUEST_TOKEN_URL
     ACCESS_TOKEN_URL = ACCESS_TOKEN_URL
-    SERVER_URL = GOOGLE_OAUTH_SERVER
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from G service"""

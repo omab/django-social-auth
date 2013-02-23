@@ -1,5 +1,322 @@
+ChangeLog
+=========
+
+0.7.20 / 2013-02-12
+-------------------
+
+  * Convert access_token into a Token instance on OAuth backends
+
+0.7.19 / 2013-02-08
+-------------------
+
+  * Add option to use email address as username. Closes #597
+  * Updating Google OpenID, OAuth and OAuth2 documentation links.
+  * remove unnecessary South documentation, fix typos
+  * Fix rst indention
+  * Add description of ``SOCIAL_AUTH_FIELDS_STORED_IN_SESSION``
+  * Use named kwargs to access arguments in user_data. Closes #587
+  * Added stackoverflow backend
+  * - Support for custom user model (django 1.5)
+  * Add saving extra data from POST or GET to session
+  * Added zip_safe option to setup.py
+  * Add tests to setup.py
+  * Update models section with fields lengths settings in south migrations. Refs #579
+  * Use fields lenght settings in south migrations. Closes #579
+  * Updated changelog. Closes #580
+  * Remove repeated v1 in readability path.
+
+0.7.18 / 2013-01-15
+-------------------
+
+  * Check for social_auth.backends.oauth2 before using it. Closes #574
+  * Merge pull request #577 from Troytft/patch-1
+  * Update social_auth/urls.py
+  * Update social_auth/urls.py
+  * Add migrations to setup.py conf. Refs #410
+  * South migrations for recent indexes/constraints. Closes #410
+  * Run slugify only if enabled by setting. Refs #569
+  * Merge pull request #569 from appel268576/master
+  * PEP8
+  * Merge pull request #571 from kjoconnor/readability
+  * Merge pull request #572 from fmarier/new_browserid_urls
+  * Update BrowserID/Persona URLs
+  * Fixing
+  * Adding comments
+  * Fixing variable name
+  * Fixing tokens
+  * Overriding tokens method ala Twitter
+  * PEP8/pyflakes fixes
+  * added slugify to ensure that users from Linkedin / Facebook have clean usernames
+  * fullname isn't working
+  * fullname isn't working
+  * DSA expects it as fullname
+  * Adding docs
+  * Adding email_into_address to extra_data
+  * Adding myself
+  * Adding to backends index
+  * Adding to example
+  * Adding to example
+  * Updating docs
+  * Adding to docs
+  * Merge remote-tracking branch 'upstream/master' into readability
+  * Missing an argument, fixing extra_data
+  * Readability also returns email_into_address
+  * Tweak association and nonce models fields lengths. Refs #539
+  * Should be an else there
+  * auth_complete?
+  * Hrmm
+  * Merge branch 'master' of git://github.com/omab/django-social-auth into readability
+  * PEP8
+  * Fix loop
+  * Clear docs about pipeline return values
+  * Add extra arguments to create_user. Closes #565
+  * Get auth extra arguments from setting too
+
+0.7.17 / 2013-01-05
+-------------------
+
+  * Add management commands to setup.py conf. Closes #564
+  * Avoid AttributeError on backend_setting call. Closes #561
+
+0.7.16 / 2013-01-04
+-------------------
+
+  * Merge branch 'master' of github.com:omab/django-social-auth
+
+0.7.15 / 2013-01-04
+-------------------
+
+  * Merge pull request #558 from krvss/master
+  * Merge pull request #559 from theJohnnyBrown/linkedin-docs-example
+  * add some more info to the linkedin backend docs
+  * Simple example of authentication using popups.
+  * Merge pull request #556 from ashchristopher/master
+  * Merge remote-tracking branch 'upstream/master'
+  * Added support for constraining authentication to a GitHub organization.
+
+0.7.14 / 2012-12-28
+-------------------
+  * Merge branch 'master' of github.com:omab/django-social-auth
+  * Add user to kwargs only if not None (avoid overwriting saved value with None)
+  * Filter associations QS by user
+  * Merge pull request #555 from juanpex/patch-1
+  * Update doc/configuration.rst
+
+0.7.13 / 2012-12-24
+-------------------
+
+  * Merge pull request #554 from sheppard/master
+  * Merge branch 'master' of github.com:omab/django-social-auth
+  * Merge branch 'master' of github.com:omab/django-social-auth
+  * Clean Nonces and Associations commands. Refs #410
+  * Merge pull request #549 from gfronza/master
+  * Merge pull request #551 from sbshetty01/master
+  * Merge pull request #552 from fmr/fix/instagram_missing_fullname
+  * Adding readability
+  * Use correct key to retrieve full name
+  * Added missing removeAssociation method
+  * Deal with IntegrityError when signing up a django 1.5 custom model user
+
+0.7.12 / 2012-12-16
+-------------------
+
+  * Merge branch 'master' of github.com:omab/django-social-auth
+
+0.7.11 / 2012-12-16
+-------------------
+
+  * Merge pull request #548 from alexey-sveshnikov/patch-1
+  * Update doc/backends/vkontakte.rst
+  * Enable state support for Stripe backend. Closes #547
+  * allowed_to_disconnect should only consider socialauths for the specified user
+  * Protect disconnect with CSRF (disabled by default). Closes #160
+  * Merge branch 'master' of github.com:omab/django-social-auth
+  * Check for next in request.REQUEST for those cases that POST directly to /complete/foobar/ view. Closes #455
+  * Merge pull request #546 from seansay/douban_refresh_token
+  * added refresh_token extra_data to douban oauth 2 support
+  * Merge branch 'token_refresh'
+  * OAuth2 token refresh support. Closes #492
+  * Merge pull request #545 from martey/readme-fixes
+  * Fix Google Groups link.
+  * Fix spelling error.
+  * Soundcloud docs and PEP8. Refs #544
+  * Behance docs. Refs #543
+  * Merge pull request #543 from estebistec/behance
+  * Merge pull request #544 from bluszcz/master
+  * Adds support for SoundCloud
+  * Add behance authentication backend
+  * Support unicode characters when cleaning username. Closes #540
+  * Add setting to make uid field length configurable. Refs #539
+  * Pass next parameter if the user is not redirected to next
+  * PEP8
+  * Merge pull request #537 from 9688/master
+  * Merge pull request #535 from NorthIsUp/disqusauth
+  * Merge pull request #538 from Morgul/master
+  * Removed incorrect use of the assertion expiration as the session expiration.
+  * Merge branch 'master' of https://github.com/9688/django-social-auth
+  * Merge branch 'master' of https://github.com/9688/django-social-auth
+  * Merge branch 'master' of https://github.com/9688/django-social-auth
+  * Authorization of applications of Facebook Canvas. The FACEBOOK_APP_AUTH setup, if truth then Canvas authorization is added. The FACEBOOK_APP_NAMESPACE setup is added - sets the application name if that isn't specified FACEBOOK_APP_ID is used. For authorization url http://<my host>/complete/facebook/
+  * removed public key from request as it is not needed
+  * added disqus.rst
+  * Authorization of applications of Facebook Canvas. The FACEBOOK_APP_AUTH setup, if truth then Canvas authorization is added. The FACEBOOK_APP_NAMESPACE setup is added - sets the application name if that isn't specified FACEBOOK_APP_ID is used. For authorization url http://<my host>/complete/facebook/
+  * added disqus
+  * Fix evernote exceptions import. Closes #531
+  * Restore UUID length setting. Closes #532
+  * Mention mailing list and IRC channel on README.rst
+  * Mention how server datetime might cause errors on some backends. Refs #522
+  * Restore login url path
+  * Remove html valid badges
+  * Updated example app to django 1.4
+  * Ignore fabfile.py
+
+0.7.10 / 2012-11-14
+-------------------
+
+  * PEP8
+  * Merge pull request #529 from sbshetty01/master
+  * #500 #507 #524 #224 Fixed create_user and disconnect for mongoengine
+  * Merge pull request #528 from barracel/master
+  * Fix do_auth() call passing extra parameters. Refs #525
+  * Removed the use of 'or' because it made impossible the use of reverse_lazy in SOCIAL_AUTH_LOGIN_REDIRECT_URL setting
+  * Link missing backends doc
+  * Merge branch 'master' of git://github.com/henward0/django-social-auth into henward0
+  * Added angel.rst to backend/docs
+  * Restore file ending line
+  * Merge pull request #527 from bradbeattie/master
+  * Extending error messages
+  * PEP8 on angel backend
+  * Merge branch 'master' of github.com:omab/django-social-auth
+  * Refactor exception handling/processing. Deprecate exception processors setting in favor of middleware.
+  * Merge pull request #526 from henward0/master
+  * Added Angel List support to contrib
+  * Override create_user() and mimic mongoengine functionality. Refs #524
+  * Fix create_user call on mongoengine. Closes #524
+  * Ensure state parameter definion (if required). Closes #483
+  * Multiple unathorized tokens supported. Closes #521
+  * Merge pull request #519 from dgouldin/master
+
+0.7.9 / 2012-11-11
+-------------------
+
+  * Adding TripIt backend.
+  * Link fix
+  * Stripe backend
+  * Remove ununsed attribute
+  * Split auth url and complete process in smaller methods
+  * Fix exception instances. Refs #518
+  * Small doc about register-by-access-token feature
+  * Separate auth process to single method on OAuth
+  * Small code cleanup on mailru backend
+  * PEP8. Refs #517
+  * Merged StockTwits OAuth backend. Closes #517
+  * Xing backend. Closes #506
+  * Ignore local settings file
+  * Make scope available for OAuth1 and OAuth2 backends
+  * VK backend doc update to reflect settings names. Closes #493
+  * Disconnect only valid users. Closes #224
+  * Fixes to keep python2.5 support. Closes #481
+  * Clean username using default regex from django/mongoengine. Closes #484
+  * Use case update. Closes #505
+  * Simplify and apply PEP8 on yammer backends. Refs #514
+  * Merge pull request #514 from mrmch/master
+  * Merge pull request #511 from dhendo/master
+  * Merge pull request #512 from pygeek/patch-1
+  * Avoid evaluating user if create_user was omitted. Refs #513
+  * Flag inactive user support
+  * Update social_auth/backends/pipeline/social.py
+  * Merged upstream
+  * Cache openid request instance. Refs #509
+  * Properly default to None on mongoengine, leave email for django backend (django 1.3 requires email on creating a user). Refs #500, #507
+  * Removed dummy email, default email to blank
+  * Simpler user model definition and save only valid fields. Closes #510
+  * Fix shopify import
+
+0.7.8 / 2012-11-01
+-------------------
+
+  * Merge pull request #508 from scheeser/master
+  * Add support for setting additional PAPE settings on the OpenID request.
+  * Ensure the session is set-up no matter which order the calls come in. Return a temporary email address for the user, or no account will be created.
+  * PEP8 and small cleanup on Shopify backend. Refs #503
+  * Merge pull request #503 from dhendo/master
+  * Added shopify support
+  * updated yammer staging to use _STAGING_ settings
+  * Merge pull request #502 from tadeo/master
+  * Update doc/configuration.rst
+  * Update doc/backends/oauth.rst
+  * Don't pass email if not defined. Closes #500
+  * yammer staging
+  * Small code cleanup and PEP8 on dailymotion backend
+  * adding yammer staging
+  * still trying to get shit tow ork
+  * trying to pull mugshot_url
+  * latest bug fix
+  * Merge pull request #499 from amirouche/dailymotion
+  * using a copy of data now
+  * added a backend for dailymotion
+  * working auth and pulling basic user data
+  * updated auth url for yammer
+  * updates
+  * updated yammer oauth, time to test
+  * adding yammer oauth
+  * Merge branch 'master' of github.com:omab/django-social-auth
+  * Catch token-revoke error in vkontakte backend. Closes #494
+  * Merge pull request #491 from vicalloy/master
+  * bug fix:social_auth/middleware.py if message is unicode will get a error
+  * fix weibo backend: if no name in userinfo will get a error
+
+0.7.7 / 2012-10-11
+-------------------
+
+  * Merge branch 'master' of github.com:omab/django-social-auth
+  * Update twitter credentials api path. Closes #485
+  * Docstring
+  * Merge branch 'master' of github.com:krvss/django-social-auth
+  * Merge pull request #477 from rda-dev/master
+  * Yandex raise "400 error: redirect_uri_mismatch" when redirect_state appending to redirect_uri
+  * Merge pull request #475 from garrypolley/master
+  * SocialAuthBackend only authenticates, not need to inherit from ModelBackend
+  * Merge pull request #472 from vicalloy/master
+  * add username to EXTRA_DATA for douban and weibo backends
+  * Use set over LinkedIn scopes to avoid error. Closes #471
+
+0.7.6 / 2012-09-24
+-------------------
+
+  * Code simplifications and doc about OpenID PAPE extension usage. Refs #469
+  * Merge pull request #469 from maxgrosse/master
+  * Merge pull request #468 from vicalloy/master
+  * OpenID.PAPE.max_auth_age configurable from settings
+  * OpenID: Using PAPE extension with max_auth_age=0
+  * modified:   backends/contrib/douban.py old douban api is not standard OAuth2.0 I added some special processing for douban. It seems that douban has fix it. I removed related code.
+  * Merge pull request #463 from CodeTag/master
+  * Merge pull request #464 from mrmch/master
+  * changed associate_complete to check redirect_value first before backend_setting
+  * Fixes documentation grammar error
+  * Merge pull request #9 from adw0rd/master
+  * Return a list of nicknames instead one nickname in backends.contrib.VKontakteBackend [https://github.com/adw0rd/django-social-auth/issues/1] Fixed
+  * Doc and endline formats
+  * Merge pull request #460 from seansay/master
+  * update docs for douban support
+  * PEP8 and endline format
+  * Merge pull request #459 from vicalloy/master
+    - fix bug for weibo
+    - bug fix
+    - add OAuth2.0 for douban
+  * PEP8 and doc stylings. Refs #456
+  * Merge pull request #456 from jammons/master
+  * Merge pull request #453 from stefanw/extra-args-per-request
+  * Use self.data instead of self.request.GET to access parameters
+  * Adding new scope parameter to LinkedIn library.
+  * Override \*_AUTH_EXTRA_ARGUMENTS with GET request parameters
+  * Merge pull request #451 from betonimig/master
+  * Update social_auth/backends/__init__.py
+  * Merge pull request #449 from krvss/master
+  * VKontakte IFrame application authentication
+
 0.7.5 / 2012-08-22
-==================
+------------------
 
   * Make the pipeline raise import and not-callable errors. Refs #376
   * Merge branch 'master' of github.com:omab/django-social-auth
@@ -10,7 +327,7 @@
   * Allow exception processors to redirect to arbitrary URLs
 
 0.7.2 / 2012-07-28
-==================
+------------------
 
   * Merge branch 'timeouts'. Closes #420
   * Merge pull request #421 from estebistec/master
@@ -30,6 +347,7 @@
   * Support django 1.4 emtpy value in LazyDict. Closes #409
   * Validate that current backend matches partial pipeline data. Closes #408
   * Better parameter name
+
 2012-06-16  Kulbir <ksinghsandhu@gmail.com>
 
   * doc/backends/twilio.md, social_auth/backends/contrib/twilio.py: added
