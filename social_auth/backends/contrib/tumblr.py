@@ -12,14 +12,11 @@ ref:
 https://github.com/gkmngrgn/django-tumblr-auth
 """
 
-from oauth.oauth import OAuthToken as Token
-from oauth.oauth import OAuthRequest
-from oauth.oauth import OAuthSignatureMethod_HMAC_SHA1 as SignatureMethod_HMAC_SHA1
+from oauth2 import Request as OAuthRequest, Token as OAuthToken, SignatureMethod_HMAC_SHA1
 from urllib import urlopen
 from django.utils import simplejson
 from social_auth.backends import ConsumerBasedOAuth
 from social_auth.backends import OAuthBackend
-from social_auth.backends import USERNAME
 
 TUMBLR_SERVER = 'www.tumblr.com'
 TUMBLR_AUTHORIZATION_URL = 'http://%s/oauth/authorize' % TUMBLR_SERVER
@@ -32,14 +29,14 @@ class TumblrBackend(OAuthBackend):
     name = 'tumblr'
 
     def get_user_id(self, details, response):
-        return details[USERNAME]
+        return details['username']
 
     def get_user_details(self, response):
         # http://www.tumblr.com/docs/en/api/v2#user-methods
         user_info = response['response']['user']
 
         data = {
-            USERNAME: user_info['name'],
+            'username': user_info['name'],
         }
 
         blogs = user_info['blogs']
@@ -89,7 +86,7 @@ class TumblrAuth(ConsumerBasedOAuth):
         request = self.oauth_request(token=None, url=self.REQUEST_TOKEN_URL)
         response = self.fetch_response(request)
 
-        return Token.from_string(response)
+        return OAuthToken.from_string(response)
 
     def oauth_request(self, token, url, extra_params=None):
         params = {
