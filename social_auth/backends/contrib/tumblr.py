@@ -17,7 +17,6 @@ from urllib import urlopen
 from django.utils import simplejson
 from social_auth.backends import ConsumerBasedOAuth
 from social_auth.backends import OAuthBackend
-from social_auth.backends import USERNAME
 
 TUMBLR_SERVER = 'www.tumblr.com'
 TUMBLR_AUTHORIZATION_URL = 'http://%s/oauth/authorize' % TUMBLR_SERVER
@@ -30,14 +29,14 @@ class TumblrBackend(OAuthBackend):
     name = 'tumblr'
 
     def get_user_id(self, details, response):
-        return details[USERNAME]
+        return details['username']
 
     def get_user_details(self, response):
         # http://www.tumblr.com/docs/en/api/v2#user-methods
         user_info = response['response']['user']
 
         data = {
-            USERNAME: user_info['name'],
+            'username': user_info['name'],
         }
 
         blogs = user_info['blogs']
