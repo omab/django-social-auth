@@ -12,9 +12,7 @@ ref:
 https://github.com/gkmngrgn/django-tumblr-auth
 """
 
-from oauth.oauth import OAuthToken as Token
-from oauth.oauth import OAuthRequest
-from oauth.oauth import OAuthSignatureMethod_HMAC_SHA1 as SignatureMethod_HMAC_SHA1
+from oauth2 import Request as OAuthRequest, Token as OAuthToken, SignatureMethod_HMAC_SHA1
 from urllib import urlopen
 from django.utils import simplejson
 from social_auth.backends import ConsumerBasedOAuth
@@ -89,7 +87,7 @@ class TumblrAuth(ConsumerBasedOAuth):
         request = self.oauth_request(token=None, url=self.REQUEST_TOKEN_URL)
         response = self.fetch_response(request)
 
-        return Token.from_string(response)
+        return OAuthToken.from_string(response)
 
     def oauth_request(self, token, url, extra_params=None):
         params = {
