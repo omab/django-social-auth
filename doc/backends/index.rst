@@ -27,6 +27,7 @@ Contents:
    mailru
    mixcloud
    odnoklassnikiru
+   rdio
    readability
    shopify
    skyrock
