@@ -2,9 +2,11 @@
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
+
 from django.db import models
 
 from django.conf import settings
+from social_auth.utils import custom_user_frozen_models
 
 
 USER_MODEL = getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None) or \
@@ -131,5 +133,6 @@ class Migration(SchemaMigration):
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'social_auth'", 'to': "orm['" + USER_MODEL + "']"})
         }
     }
+    models.update(custom_user_frozen_models())
 
     complete_apps = ['social_auth']
