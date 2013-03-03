@@ -16,7 +16,7 @@ from time import time
 
 from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, \
                                  BaseOAuth2
-from social_auth.exceptions import AuthTokenRevoked, AuthException
+from social_auth.exceptions import AuthTokenRevoked, AuthException, AuthCanceled, AuthFailed
 from social_auth.utils import setting, log, dsa_urlopen
 
 
@@ -88,7 +88,7 @@ class VKontakteAuth(BaseAuth):
 
         if not 'id' in self.request.GET or \
            not app_cookie in self.request.COOKIES:
-            raise ValueError('VKontakte authentication is not completed')
+            raise AuthCanceled(self)
 
         cookie_dict = dict(item.split('=') for item in
                                 self.request.COOKIES[app_cookie].split('&'))
@@ -98,7 +98,7 @@ class VKontakteAuth(BaseAuth):
         hash = md5(check_str + setting('VKONTAKTE_APP_SECRET')).hexdigest()
 
         if hash != cookie_dict['sig'] or int(cookie_dict['expire']) < time():
-            raise ValueError('VKontakte authentication failed: invalid hash')
+            raise AuthFailed('VKontakte authentication failed: invalid hash')
         else:
             kwargs.update({
                 'auth': self,
