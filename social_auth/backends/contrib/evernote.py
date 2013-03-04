@@ -53,6 +53,15 @@ class EvernoteBackend(OAuthBackend):
         ('edam_expires', 'expires')
     ]
 
+    @classmethod
+    def extra_data(cls, user, uid, response, details=None):
+        data = super(EvernoteBackend, cls).extra_data(user, uid, response, details)
+        # Evernote returns expiration timestamp in miliseconds, so it needs to
+        # be normalized.
+        if 'expires' in data:
+            data['expires'] = unicode(int(data['expires']) / 1000)
+        return data
+
     def get_user_details(self, response):
         """Return user details from Evernote account"""
         return {
