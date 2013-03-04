@@ -72,6 +72,7 @@ except ImportError:  # django < 1.4
 
 try:
     from django.utils.functional import empty
+    empty  # placate pyflakes
 except ImportError:  # django < 1.4
     empty = None
 
