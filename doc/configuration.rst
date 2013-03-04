@@ -486,6 +486,26 @@ Miscellaneous Settings
   Otherwise the extension is not used.
 
 
+Linking in your templates
+-------------------------
+
+Not at configuration actually. To link your clients to start the process, just
+add this to your template::
+
+    {% url "socialauth_begin" "backend-name" %}
+
+Backend name can be found on ``BACKENDS`` attribute in the backend module. The
+same URL works for association accounts for logged in users.
+
+For social account disconnection, there are two URLs, one to disconnect all
+social accounts for a given backend (not really useful IMO)::
+
+    {% url "socialauth_disconnect" "backend-name" %}
+
+Or to disconnect individual accounts::
+
+    {% url "socialauth_disconnect_individual" "backend-name" backend-id %}
+
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
 .. _Login URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-url
 .. _Login redirect URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-redirect-url
