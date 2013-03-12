@@ -52,3 +52,8 @@ The following settings are deprecated in favor of pipeline functions.
 
 - Exceptions handling setting ``SOCIAL_AUTH_PROCESS_EXCEPTIONS`` is deprecated
   in favor of ``SocialAuthExceptionMiddleware`` subclassing.
+
+
+- The old signals ``pre_update`` and ``socialauth_registered`` are deprecated.
+  Instead implement pipeline methods to accomplish the old functionality done
+  by the signal handlers (or to fire any signal you want).
