@@ -64,7 +64,7 @@ the next pipeline entry, ``None`` is taken as if ``{}`` was returned, and if an
 ``HttpReponse`` instance was returned, it will halt the pipeline and the
 response will be returned to the user (check **Partial Pipeline** section below).
 
-The workflow will be cut if the exception ``social_auth.backends.exceptions.StopPipeline``
+The workflow will be cut if the exception ``social_auth.exceptions.StopPipeline``
 is raised at any point.
 
 If any function returns something else beside a ``dict`` or ``None``, the
