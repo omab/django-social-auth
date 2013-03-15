@@ -221,6 +221,7 @@ class OAuthBackend(SocialAuthBackend):
                 name, alias, discard = entry
             elif len(entry) == 1:
                 name = alias = entry
+                discard = False
             else:  # ???
                 continue
 
