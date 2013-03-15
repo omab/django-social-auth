@@ -11,7 +11,7 @@ Angel uses OAuth v2 for Authentication
 
 - extra scopes can be defined by using::
 
-    ANGEL_AUTH_EXTRA_ARGUMENTS = {'scope': 'email messages'}
+    ANGEL_AUTH_EXTRA_ARGUMENTS = {'scope': 'email message'}
 
 *Note:*
 Angel List does not currently support returning 'state' variable.
