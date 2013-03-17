@@ -29,8 +29,6 @@ DAILYMOTION_ACCESS_TOKEN_URL = 'https://%s/oauth/token' % DAILYMOTION_SERVER
 #       oauth/authenticate uses their previous selection, barring revocation.
 DAILYMOTION_AUTHORIZATION_URL = 'https://%s/oauth/authorize' % \
                                     DAILYMOTION_SERVER
-DAILYMOTION_CHECK_AUTH = 'https://%s/1.1/account/verify_credentials.json' % \
-                                    DAILYMOTION_SERVER
 DAILYMOTION_CHECK_AUTH = 'https://%s/me/?access_token=' % DAILYMOTION_SERVER
 
 
@@ -60,7 +58,7 @@ class DailymotionAuth(BaseOAuth2):
     def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
         try:
-            data = dsa_urlopen(DAILYMOTION_SERVER + access_token).read()
+            data = dsa_urlopen(DAILYMOTION_CHECK_AUTH + access_token).read()
             return simplejson.loads(data)
         except (ValueError, HTTPError):
             return None
