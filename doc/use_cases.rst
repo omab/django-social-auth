@@ -71,3 +71,42 @@ At the moment just a few backends were tested against token refreshing
 (Google OAuth2, Facebook and Stripe). Other backends probably also support
 it (if they follow the OAuth2 standard) with the default mechanism. Others
 don't support it because the token is not supposed to expire.
+
+
+Combining associate_user and load_extra_data functions in the pipeline
+----------------------------------------------------------------------
+
+Two functions under backends.pipeline.social module, ``associate_user`` and ``load_extra_data`` are commonly used back to back in the ``SOCIAL_AUTH_PIPELINE``. Both of these modules hit the database for associating the social_user and loading extra data for this social_user. If you want to combine these two functions in order to decrease number of database visits, you can use this function::
+
+    def social_associate_and_load_data(backend, details, response, uid, user,
+                                       social_user=None, *args, **kwargs):
+        """
+        The combination of associate_user and load_extra_data functions
+        of django-social-auth. The reason for combining these two pipeline
+        functions is decreasing the number of database visits.
+        """
+        if not social_user and user:
+            try:
+                social_user = UserSocialAuth.create_social_auth(user,
+                                                                uid,
+                                                                backend.name)
+            except Exception, e:
+                if not SOCIAL_AUTH_MODELS_MODULE.is_integrity_error(e):
+                    raise
+                # Protect for possible race condition, those bastard with FTL
+                # clicking capabilities, check issue #131:
+                #   https://github.com/omab/django-social-auth/issues/131
+                social_data = social_auth_user(backend, uid, user,
+                                               social_user=social_user,
+                                               *args, **kwargs)
+                social_user = social_data['social_user']
+
+        extra_data = backend.extra_data(user, uid, response, details)
+        if extra_data and social_user.extra_data != extra_data:
+            if social_user.extra_data:
+                social_user.extra_data.update(extra_data)
+            else:
+                social_user.extra_data = extra_data
+            social_user.save()
+        return {'social_user': social_user}
+
