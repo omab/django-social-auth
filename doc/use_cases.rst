@@ -76,7 +76,11 @@ don't support it because the token is not supposed to expire.
 Combining associate_user and load_extra_data functions in the pipeline
 ----------------------------------------------------------------------
 
-Two functions under backends.pipeline.social module, ``associate_user`` and ``load_extra_data`` are commonly used back to back in the ``SOCIAL_AUTH_PIPELINE``. Both of these modules hit the database for associating the social_user and loading extra data for this social_user. If you want to combine these two functions in order to decrease number of database visits, you can use this function::
+Two functions under backends.pipeline.social module, ``associate_user`` and
+``load_extra_data`` are commonly used back to back in the ``SOCIAL_AUTH_PIPELINE``.
+Both of these modules hit the database for associating the social_user and 
+loading extra data for this social_user. If you want to combine these two functions
+in order to decrease number of database visits, you can use this function::
 
     def social_associate_and_load_data(backend, details, response, uid, user,
                                        social_user=None, *args, **kwargs):
