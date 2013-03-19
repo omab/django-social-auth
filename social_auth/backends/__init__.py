@@ -535,7 +535,8 @@ class OpenIdAuth(BaseAuth):
         """Return true if openid request will be handled with redirect or
         HTML content will be returned.
         """
-        return self.openid_request().shouldSendRedirect()
+        return self.openid_request(self.auth_extra_arguments())\
+                        .shouldSendRedirect()
 
     def openid_request(self, extra_params=None):
         """Return openid request"""
