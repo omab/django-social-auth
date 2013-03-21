@@ -15,7 +15,7 @@ MENDELEY_ACCESS_TOKEN_URL = 'http://api.%s/oauth/access_token/' % \
 MENDELEY_AUTHORIZATION_URL = 'http://api.%s/oauth/authorize/' % \
                                     MENDELEY_SERVER
 MENDELEY_CHECK_AUTH = 'http://api.%s/oapi/profiles/info/' % MENDELEY_SERVER
-# fields selectors to retrieve extra user data
+
 MENDELEY_FIELD_SELECTORS = ['profile_id', 'name', 'bio']
 
 
@@ -51,7 +51,7 @@ class MendeleyAuth(ConsumerBasedOAuth):
 
     def user_data(self, access_token, *args, **kwargs):
         """Return user data provided"""
-        url = MENDELEY_CHECK_AUTH + 'me/' #% ','.join(set(fields_selectors))
+        url = MENDELEY_CHECK_AUTH + 'me/'
         request = self.oauth_request(access_token, url)
         data = simplejson.loads(self.fetch_response(request))
         data.update(data['main'])
