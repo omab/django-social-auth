@@ -21,6 +21,7 @@ Contents:
    tokens
    contributions
    testing
+   testing_tools
    use_cases
    miscellaneous
    bugs
