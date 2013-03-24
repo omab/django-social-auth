@@ -75,6 +75,8 @@ def _ignore_field(name, is_new=False):
 
 def mongoengine_orm_maxlength_truncate(backend, details, user=None,
                                        is_new=False, *args, **kwargs):
+    """Truncate any value in details that corresponds with a field in the user
+    model. Add this entry to the pipeline before update_user_details"""
     if user is None:
         return
     out = {}
@@ -90,6 +92,8 @@ def mongoengine_orm_maxlength_truncate(backend, details, user=None,
 
 def django_orm_maxlength_truncate(backend, details, user=None, is_new=False,
                                   *args, **kwargs):
+    """Truncate any value in details that corresponds with a field in the user
+    model. Add this entry to the pipeline before update_user_details"""
     if user is None:
         return
     out = {}
