@@ -67,6 +67,42 @@ def create_user(backend, details, response, uid, username, user=None, *args,
     }
 
 
+def _ignore_field(name, is_new=False):
+    return name in ('username', 'id', 'pk') or \
+           (not is_new and
+                name in setting('SOCIAL_AUTH_PROTECTED_USER_FIELDS', []))
+
+
+def mongoengine_orm_maxlength_truncate(backend, details, user=None,
+                                       is_new=False, *args, **kwargs):
+    if user is None:
+        return
+    out = {}
+    names = list(user._fields.keys())
+    for name, value in details.iteritems():
+        if name in names and not _ignore_field(name, is_new):
+            max_length = user._fields[name].max_length
+            if max_length and len(value) > max_length:
+                value = value[:max_length]
+        out[name] = value
+    return {'details': out}
+
+
+def django_orm_maxlength_truncate(backend, details, user=None, is_new=False,
+                                  *args, **kwargs):
+    if user is None:
+        return
+    out = {}
+    names = user._meta.get_all_field_names()
+    for name, value in details.iteritems():
+        if name in names and not _ignore_field(name, is_new):
+            max_length = user._meta.get_field(name).max_length
+            if max_length and len(value) > max_length:
+                value = value[:max_length]
+        out[name] = value
+    return {'details': out}
+
+
 def update_user_details(backend, details, response, user=None, is_new=False,
                         *args, **kwargs):
     """Update user details using data from provider."""
@@ -76,14 +112,12 @@ def update_user_details(backend, details, response, user=None, is_new=False,
     changed = False  # flag to track changes
 
     for name, value in details.iteritems():
-        # do not update username, it was already generated
-        # do not update configured fields if user already existed
-        if name in ('username', 'id', 'pk') or (not is_new and
-           name in setting('SOCIAL_AUTH_PROTECTED_USER_FIELDS', [])):
-            continue
-        if value and value != getattr(user, name, None):
-            setattr(user, name, value)
-            changed = True
+        # do not update username, it was already generated, do not update
+        # configured fields if user already existed
+        if not _ignore_field(name, is_new):
+            if value and value != getattr(user, name, None):
+                setattr(user, name, value)
+                changed = True
 
     if changed:
         user.save()
