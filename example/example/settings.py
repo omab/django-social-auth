@@ -145,6 +145,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.behance.BehanceBackend',
     'social_auth.backends.contrib.readability.ReadabilityBackend',
     'social_auth.backends.steam.SteamBackend',
+    'social_auth.backends.reddit.RedditBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

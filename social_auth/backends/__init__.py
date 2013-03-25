@@ -857,9 +857,7 @@ class BaseOAuth2(BaseOAuth):
             data=urlencode(cls.refresh_token_params(token)),
             headers=cls.auth_headers()
         )
-        return cls.process_refresh_token_response(
-            dsa_urlopen(request).read()
-        )
+        return cls.process_refresh_token_response(dsa_urlopen(request).read())
 
     def do_auth(self, access_token, *args, **kwargs):
         """Finish the auth process once the access_token was retrieved"""
