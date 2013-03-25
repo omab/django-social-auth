@@ -7,7 +7,9 @@ To enable Twitter these two keys are needed. Further documentation at
 
 - Register a new application at `Twitter App Creation`_,
 
-- check the **Allow this application to be used to Sign in with Twitter** checkbox. If you don't check this box, Twitter will force your user to login every time.
+- check the **Allow this application to be used to Sign in with Twitter**
+  checkbox. If you don't check this box, Twitter will force your user to login
+  every time.
 
 - fill **Consumer Key** and **Consumer Secret** values::
 
