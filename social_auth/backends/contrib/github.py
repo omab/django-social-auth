@@ -82,7 +82,9 @@ class GithubAuth(BaseOAuth2):
             member_url = GITHUB_ORGANIZATION_MEMBER_OF_URL.format(
                 org=self.GITHUB_ORGANIZATION,
                 username=data.get('login')
-            )
+            ) + '?' + urlencode({
+                'access_token': access_token
+            })
 
             try:
                 response = dsa_urlopen(member_url)
