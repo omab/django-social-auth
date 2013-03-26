@@ -29,6 +29,7 @@ Contents:
    odnoklassnikiru
    rdio
    readability
+   reddit
    shopify
    skyrock
    soundcloud
