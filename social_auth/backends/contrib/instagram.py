@@ -15,6 +15,21 @@ INSTAGRAM_CHECK_AUTH = 'https://api.instagram.com/v1/users/self'
 class InstagramBackend(OAuthBackend):
     name = 'instagram'
 
+    @classmethod
+    def extra_data(cls, user, uid, response, details=None):
+        """Return access_token and extra defined names to store in
+        extra_data field"""
+        data = {
+            'access_token': response.get('access_token', ''),
+        }
+
+        try:
+            data['username'] = response['user']['username']
+        except KeyError:
+            pass
+
+        return data
+
     def get_user_id(self, details, response):
         return response['user']['id']
 
