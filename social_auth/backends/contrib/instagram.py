@@ -19,14 +19,12 @@ class InstagramBackend(OAuthBackend):
     def extra_data(cls, user, uid, response, details=None):
         """Return access_token and extra defined names to store in
         extra_data field"""
-
-        data = super(InstagramBackend, cls).extra_data(user, uid, response, details)
-
+        data = super(InstagramBackend, cls).extra_data(user, uid, response,
+                                                       details)
         try:
             data['username'] = response['user']['username']
         except KeyError:
             pass
-
         return data
 
     def get_user_id(self, details, response):
