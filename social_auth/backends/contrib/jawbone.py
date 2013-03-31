@@ -1,9 +1,8 @@
-from urllib2 import Request, urlopen, HTTPError
-from urllib import urlencode
+from urllib2 import Request, urlopen
 
 from django.utils import simplejson
 
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
 
 
 # Jawbone configuration
@@ -20,15 +19,15 @@ class JawboneBackend(OAuthBackend):
         return response['data']['xid']
 
     def get_user_details(self, response):
-        """Return user details from Jawbone account. Jawbone does not collect emails"""
+        """Return user details from Jawbone account.
+        Jawbone does not collect emails."""
         firstName = response['data'].get('first', '')
         lastName = response['data'].get('last', '')
         dob = response['data'].get('dob', '')
         gender = response['data'].get('gender', '')
         height = response['data'].get('height', '')
         weight = response['data'].get('weight', '')
-
-        return {USERNAME: firstName + ' ' + lastName,
+        return {'username': firstName + ' ' + lastName,
                 'first_name': firstName,
                 'last_name': lastName,
                 'dob': dob,
@@ -51,9 +50,8 @@ class JawboneAuth(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
-        url = JAWBONE_CHECK_AUTH
         headers = {'Authorization': 'Bearer ' + access_token}
-        request = Request(url, headers=headers)
+        request = Request(JAWBONE_CHECK_AUTH, headers=headers)
         try:
             return simplejson.load(urlopen(request))
         except ValueError:
@@ -62,5 +60,5 @@ class JawboneAuth(BaseOAuth2):
 
 # Backend definition
 BACKENDS = {
-    'jawbone': JawboneAuth,
-    }
+    'jawbone': JawboneAuth
+}
