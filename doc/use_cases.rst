@@ -89,28 +89,19 @@ in order to decrease number of database visits, you can use this function::
         of django-social-auth. The reason for combining these two pipeline
         functions is decreasing the number of database visits.
         """
-        if not social_user and user:
-            try:
-                social_user = UserSocialAuth.create_social_auth(user,
-                                                                uid,
-                                                                backend.name)
-            except Exception, e:
-                if not SOCIAL_AUTH_MODELS_MODULE.is_integrity_error(e):
-                    raise
-                # Protect for possible race condition, those bastard with FTL
-                # clicking capabilities, check issue #131:
-                #   https://github.com/omab/django-social-auth/issues/131
-                social_data = social_auth_user(backend, uid, user,
-                                               social_user=social_user,
-                                               *args, **kwargs)
-                social_user = social_data['social_user']
-
         extra_data = backend.extra_data(user, uid, response, details)
-        if extra_data and social_user.extra_data != extra_data:
-            if social_user.extra_data:
-                social_user.extra_data.update(extra_data)
-            else:
-                social_user.extra_data = extra_data
+        created = False
+        if not social_user and user:
+            social_user, created = UserSocialAuth.objects.get_or_create(
+                user_id=user.id,
+                provider=backend.name,
+                uid=uid,
+                defaults={'extra_data': extra_data})
+
+        if not created and extra_data and social_user.extra_data != extra_data:
+            social_user.extra_data.update(extra_data)
             social_user.save()
         return {'social_user': social_user}
+
+
 
