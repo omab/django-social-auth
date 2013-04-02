@@ -1,5 +1,5 @@
 Jawbone
-=======
+=========
 Jawbone uses OAuth v2 for Authentication
 
 - Register a new application at the `Jawbone UP Platform`_, and
