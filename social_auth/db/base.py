@@ -102,21 +102,27 @@ class UserSocialAuthMixin(object):
         return valid_password or qs.count() > 0
 
     @classmethod
+    def username_field(cls, values):
+        user_model = cls.user_model()
+        if hasattr(user_model, 'USERNAME_FIELD'):
+            # Django 1.5 custom user model, 'username' is just for internal
+            # use, doesn't imply that the model should have an username field
+            values[user_model.USERNAME_FIELD] = values.pop('username')
+        return values
+
+    @classmethod
     def simple_user_exists(cls, *args, **kwargs):
         """
         Return True/False if a User instance exists with the given arguments.
         Arguments are directly passed to filter() manager method.
         TODO: consider how to ensure case-insensitive email matching
         """
+        kwargs = cls.username_field(kwargs)
         return cls.user_model().objects.filter(*args, **kwargs).count() > 0
 
     @classmethod
     def create_user(cls, *args, **kwargs):
-        user_model = cls.user_model()
-        if hasattr(user_model, 'USERNAME_FIELD'):
-            # Django 1.5 custom user model, 'username' is just for internal
-            # use, doesn't imply that the model should have an username field
-            kwargs[user_model.USERNAME_FIELD] = kwargs.pop('username')
+        kwargs = cls.username_field(kwargs)
         return cls.user_model().objects.create_user(*args, **kwargs)
 
     @classmethod
