@@ -8,7 +8,6 @@ from urllib2 import urlopen
 from cgi import parse_qsl
 
 from collections import defaultdict
-from datetime import timedelta, tzinfo
 
 from django.conf import settings
 from django.db.models import Model
@@ -39,26 +38,6 @@ except ImportError:  # django < 1.4
 
 
 try:
-    from django.utils.timezone import utc as django_utc
-except ImportError:  # django < 1.4
-    class UTC(tzinfo):
-        """UTC implementation taken from django 1.4."""
-        def __repr__(self):
-            return '<UTC>'
-
-        def utcoffset(self, dt):
-            return timedelta(0)
-
-        def tzname(self, dt):
-            return 'UTC'
-
-        def dst(self, dt):
-            return timedelta(0)
-
-    django_utc = UTC()
-
-
-try:
     from django.utils.crypto import constant_time_compare as ct_compare
 except ImportError:  # django < 1.4
     def ct_compare(val1, val2):
@@ -79,7 +58,6 @@ except ImportError:  # django < 1.4
 
 get_random_string = random_string
 constant_time_compare = ct_compare
-utc = django_utc
 
 
 def sanitize_log_data(secret, data=None, leave_characters=4):

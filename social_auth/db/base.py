@@ -6,8 +6,6 @@ from datetime import datetime, timedelta
 
 from openid.association import Association as OIDAssociation
 
-from social_auth.utils import utc
-
 # django.contrib.auth and mongoengine.django.auth regex to validate usernames
 # '^[\w@.+-_]+$', we use the opposite to clean invalid characters
 CLEAN_USERNAME_REGEX = re.compile(r'[^\w.@+-_]+', re.UNICODE)
@@ -62,15 +60,14 @@ class UserSocialAuthMixin(object):
             except (ValueError, TypeError):
                 return None
 
-            now = datetime.now()
-            now_timestamp = time.mktime(now.timetuple())
+            now = datetime.utcnow()
 
             # Detect if expires is a timestamp
-            if expires > now_timestamp:  # expires is a datetime
-                return datetime.utcfromtimestamp(expires) \
-                               .replace(tzinfo=utc) - \
-                       now.replace(tzinfo=utc)
-            else:  # expires is a timedelta
+            if expires > time.mktime(now.timetuple()):
+                # expires is a datetime
+                return datetime.fromtimestamp(expires) - now
+            else:
+                # expires is a timedelta
                 return timedelta(seconds=expires)
 
     @classmethod
