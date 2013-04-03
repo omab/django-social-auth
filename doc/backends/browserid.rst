@@ -14,7 +14,7 @@ Include a similar snippet in your page to make BrowserId_ work::
     <script src="https://browserid.org/include.js" type="text/javascript"></script>
 
     <!-- Define a form to send the POST data -->
-    <form method="post" action="{% url socialauth_complete "browserid" %}">
+    <form method="post" action="{% url 'socialauth_complete' "browserid" %}">
         <input type="hidden" name="assertion" value="" />
         <a rel="nofollow" id="browserid" href="#">BrowserID</a>
     </form>

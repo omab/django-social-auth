@@ -427,7 +427,7 @@ Template Context Processors
     required decorator), a convenince query string can be added to your context
     for templates. On your login options page::
 
-        <a href="{% url socialauth_begin 'twitter' %}?{{ redirect_querystring }}">...</a>
+        <a href="{% url 'socialauth_begin' 'twitter' %}?{{ redirect_querystring }}">...</a>
 
     allows for a continuous login. Useful if multiple login options are
     presented.
@@ -477,7 +477,7 @@ Miscellaneous Settings
       SOCIAL_AUTH_FIELDS_STORED_IN_SESSION = ['foo',]
 
   In this case the ``foo`` field's value will be stored when user follows this link
-  ``<a href="{% url socialauth_begin 'github' %}?foo=bar">...</a>``.
+  ``<a href="{% url 'socialauth_begin' 'github' %}?foo=bar">...</a>``.
 
 - `OpenID PAPE`_ extension support by defining::
 

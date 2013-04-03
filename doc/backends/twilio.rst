@@ -16,7 +16,7 @@ twilio-backend
 
 - Usage example::
 
-    <a href="{% url socialauth_begin 'twilio' %}">Enter using Twilio</a>
+    <a href="{% url 'socialauth_begin' 'twilio' %}">Enter using Twilio</a>
 
 
 .. _Twilio Connect API: https://www.twilio.com/user/account/connect/apps

@@ -21,7 +21,7 @@ documentation at `Douban Services & API`_:
 - Add ``'social_auth.backends.contrib.douban.DoubanBackend'``
   into your ``AUTHENTICATION_BACKENDS``.
 
-- Then you can start using ``{% url socialauth_begin 'douban' %}`` in your
+- Then you can start using ``{% url 'socialauth_begin' 'douban' %}`` in your
   templates
 
 
@@ -42,7 +42,7 @@ can find documentation at `Douban Developers`_:
 - Add ``'social_auth.backends.contrib.douban.DoubanBackend2'``
   into your ``AUTHENTICATION_BACKENDS``.
 
-- Then you can start using ``{% url socialauth_begin 'douban2' %}`` in your
+- Then you can start using ``{% url 'socialauth_begin' 'douban2' %}`` in your
   templates.
 
 .. _Douban Services & API: http://www.douban.com/service/
