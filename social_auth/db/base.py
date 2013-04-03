@@ -111,10 +111,13 @@ class UserSocialAuthMixin(object):
         return cls.user_model().objects.filter(*args, **kwargs).count() > 0
 
     @classmethod
-    def create_user(cls, username, email=None, *args, **kwargs):
-        return cls.user_model().objects.create_user(username=username,
-                                                    email=email, *args,
-                                                    **kwargs)
+    def create_user(cls, *args, **kwargs):
+        user_model = cls.user_model()
+        if hasattr(user_model, 'USERNAME_FIELD'):
+            # Django 1.5 custom user model, 'username' is just for internal
+            # use, doesn't imply that the model should have an username field
+            kwargs[user_model.USERNAME_FIELD] = kwargs.pop('username')
+        return cls.user_model().objects.create_user(*args, **kwargs)
 
     @classmethod
     def get_user(cls, pk):

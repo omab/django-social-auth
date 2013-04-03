@@ -60,8 +60,7 @@ def create_user(backend, details, response, uid, username, user=None, *args,
         email = ''
 
     return {
-        'user': UserSocialAuth.create_user(username=username,
-                                           email=email),
+        'user': UserSocialAuth.create_user(username=username, email=email),
         'original_email': original_email,
         'is_new': True
     }
