@@ -102,6 +102,16 @@ class UserSocialAuthMixin(object):
         return valid_password or qs.count() > 0
 
     @classmethod
+    def user_username(cls, user):
+        if hasattr(user, 'USERNAME_FIELD'):
+            # Django 1.5 custom user model, 'username' is just for internal
+            # use, doesn't imply that the model should have an username field
+            field_name = user.USERNAME_FIELD
+        else:
+            field_name = 'username'
+        return getattr(user, field_name)
+
+    @classmethod
     def username_field(cls, values):
         user_model = cls.user_model()
         if hasattr(user_model, 'USERNAME_FIELD'):

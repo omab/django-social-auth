@@ -13,7 +13,7 @@ def get_username(details, user=None,
     if user was given.
     """
     if user:
-        return {'username': user.username}
+        return {'username': UserSocialAuth.user_username(user)}
 
     email_as_username = setting('SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL', False)
     uuid_length = setting('SOCIAL_AUTH_UUID_LENGTH', 16)
