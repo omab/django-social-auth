@@ -50,8 +50,7 @@ class SocialAuthExceptionMiddleware(object):
     def raise_exception(self, request, exception):
         backend = self.backend
         return backend and \
-               backend_setting(backend, 'SOCIAL_AUTH_RAISE_EXCEPTIONS') or \
-               setting('DEBUG')
+               backend_setting(backend, 'SOCIAL_AUTH_RAISE_EXCEPTIONS') 
 
     def get_message(self, request, exception):
         return unicode(exception)
