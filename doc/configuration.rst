@@ -390,7 +390,6 @@ Exceptions Middleware
 
     <backend name>_SOCIAL_AUTH_RAISE_EXCEPTIONS = True
     SOCIAL_AUTH_RAISE_EXCEPTIONS = True
-    DEBUG = True
 
 
 Template Context Processors
