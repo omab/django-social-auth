@@ -104,8 +104,6 @@ def complete_process(request, backend, *args, **kwargs):
     # pop redirect value before the session is trashed on login()
     redirect_value = request.session.get(REDIRECT_FIELD_NAME, '') or \
                      request.REQUEST.get(REDIRECT_FIELD_NAME, '')
-    # Django 1.5 allow us to define custom User Model, so integrity errors
-    # can be raised.
     user = auth_complete(request, backend, *args, **kwargs)
 
     if isinstance(user, HttpResponse):
