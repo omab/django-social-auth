@@ -12,7 +12,6 @@ from django.contrib.auth import login, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-from django.db import IntegrityError
 
 from social_auth.utils import sanitize_redirect, setting, \
                               backend_setting, clean_partial_pipeline
@@ -107,11 +106,7 @@ def complete_process(request, backend, *args, **kwargs):
                      request.REQUEST.get(REDIRECT_FIELD_NAME, '')
     # Django 1.5 allow us to define custom User Model, so integrity errors
     # can be raised.
-    try:
-        user = auth_complete(request, backend, *args, **kwargs)
-    except IntegrityError:
-        url = setting('SIGNUP_ERROR_URL', setting('LOGIN_ERROR_URL'))
-        return HttpResponseRedirect(url)
+    user = auth_complete(request, backend, *args, **kwargs)
 
     if isinstance(user, HttpResponse):
         return user
