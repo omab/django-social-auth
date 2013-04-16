@@ -6,10 +6,14 @@ No extra configurations are needed to make this work.
 from xml.etree import ElementTree
 from xml.parsers.expat import ExpatError
 
+from urllib import urlencode
+from urllib2 import Request
 from oauth2 import Token
 
-from social_auth.utils import setting
-from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
+from django.utils import simplejson
+
+from social_auth.utils import setting, dsa_urlopen
+from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, BaseOAuth2
 from social_auth.exceptions import AuthCanceled, AuthUnknownError
 
 
@@ -42,6 +46,23 @@ class LinkedinBackend(OAuthBackend):
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email}
+
+
+class LinkedinOAuth2Backend(LinkedinBackend):
+    """Linkedin OAuth2 authentication backend"""
+    name = 'linkedin-oauth2'
+
+    EXTRA_DATA = [('id', 'id'),
+                  ('firstName', 'first_name'),
+                  ('lastName', 'last_name')]
+
+    def get_user_details(self, response):
+        first_name, last_name = response['firstName'], response['lastName']
+        return {'username': first_name + last_name,
+                'fullname': first_name + ' ' + last_name,
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': response.get('emailAddress', '')}
 
 
 class LinkedinAuth(ConsumerBasedOAuth):
@@ -106,6 +127,28 @@ class LinkedinAuth(ConsumerBasedOAuth):
         return Token.from_string(response)
 
 
+class LinkedinOAuth2(BaseOAuth2):
+    AUTH_BACKEND = LinkedinOAuth2Backend
+    AUTHORIZATION_URL = 'https://www.linkedin.com/uas/oauth2/authorization'
+    ACCESS_TOKEN_URL = 'https://www.linkedin.com/uas/oauth2/accessToken'
+    SETTINGS_KEY_NAME = 'LINKEDIN_CONSUMER_KEY'
+    SETTINGS_SECRET_NAME = 'LINKEDIN_CONSUMER_SECRET'
+    SCOPE_VAR_NAME = 'LINKEDIN_SCOPE'
+    REDIRECT_STATE = False
+
+    def user_data(self, access_token, *args, **kwargs):
+        """Return user data provided"""
+        fields_selectors = LINKEDIN_FIELD_SELECTORS + \
+                           setting('LINKEDIN_EXTRA_FIELD_SELECTORS', [])
+        url = LINKEDIN_CHECK_AUTH + ':(%s)' % ','.join(set(fields_selectors))
+        data = {'oauth2_access_token': access_token, 'format': 'json'}
+        request = Request(url + '?' + urlencode(data))
+        try:
+            return simplejson.loads(dsa_urlopen(request).read())
+        except (ExpatError, KeyError, IndexError):
+            return None
+
+
 def to_dict(xml):
     """Convert XML structure to dict recursively, repeated keys entries
     are returned as in list containers."""
@@ -127,4 +170,5 @@ def to_dict(xml):
 # Backend definition
 BACKENDS = {
     'linkedin': LinkedinAuth,
+    'linkedin-oauth2': LinkedinOAuth2,
 }
