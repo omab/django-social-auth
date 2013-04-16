@@ -9,18 +9,28 @@ try:
 except (ImportError, AttributeError):
     UNUSABLE_PASSWORD = '!'
 
+from django.utils.importlib import import_module
+
 from mongoengine import DictField, Document, IntField, ReferenceField, \
                         StringField
-from mongoengine.django.auth import User
 from mongoengine.queryset import OperationError
 
+from social_auth.utils import setting
 from social_auth.db.base import UserSocialAuthMixin, AssociationMixin, \
                                 NonceMixin
 
 
+USER_MODEL_MODULE, USER_MODEL_NAME = (
+    setting('SOCIAL_AUTH_USER_MODEL') or
+    setting('AUTH_USER_MODEL') or
+    'mongoengine.django.auth.User'
+).rsplit('.', 1)
+USER_MODEL = getattr(import_module(USER_MODEL_MODULE), USER_MODEL_NAME)
+
+
 class UserSocialAuth(Document, UserSocialAuthMixin):
     """Social Auth association model"""
-    user = ReferenceField(User, dbref=True)
+    user = ReferenceField(USER_MODEL, dbref=True)
     provider = StringField(max_length=32)
     uid = StringField(max_length=255, unique_with='provider')
     extra_data = DictField()
@@ -45,7 +55,7 @@ class UserSocialAuth(Document, UserSocialAuthMixin):
 
     @classmethod
     def user_model(cls):
-        return User
+        return USER_MODEL
 
     @classmethod
     def create_user(cls, *args, **kwargs):
