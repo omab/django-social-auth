@@ -31,7 +31,7 @@ Application Setup
         'social_auth.backends.contrib.orkut.OrkutBackend',
         'social_auth.backends.contrib.foursquare.FoursquareBackend',
         'social_auth.backends.contrib.github.GithubBackend',
-        'social_auth.backends.contrib.vkontakte.VKontakteBackend',
+        'social_auth.backends.contrib.vk.VKOAuth2Backend',
         'social_auth.backends.contrib.live.LiveBackend',
         'social_auth.backends.contrib.skyrock.SkyrockBackend',
         'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
