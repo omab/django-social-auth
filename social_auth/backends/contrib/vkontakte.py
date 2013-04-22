@@ -244,7 +244,8 @@ class VKAppAuth(VKOAuth2):
             if not int(is_user):
                 return (True, None)
 
-        data = {'response': self.user_profile(user_id), 'user_id': user_id}
+        data = self.user_profile(user_id)
+        data['user_id'] = user_id
 
         return (True, authenticate(*args, **{'auth': self,
             'request': self.request,
