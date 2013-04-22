@@ -1,7 +1,7 @@
-VKontakte
+VK.com
 =========
 
-VKontakte auth service supported.
+VK.com auth service supported.
 
 OAuth2
 ------
@@ -15,46 +15,43 @@ VKontakte uses OAuth2 for Authentication.
       VK_APP_ID = ''
       VK_API_SECRET = ''
 
-- Add ``'social_auth.backends.contrib.vkontakte.VKontakteOAuth2Backend'`` into your ``AUTHENTICATION_BACKENDS``.
+- Add ``'social_auth.backends.contrib.vk.VKOAuth2Backend'`` into your ``AUTHENTICATION_BACKENDS``.
 
-- Then you can start using ``{% url 'socialauth_begin' 'vkontakte-oauth2' %}`` in your templates
+- Then you can start using ``{% url 'socialauth_begin' 'vk-oauth' %}`` in your templates
 
 - Also it's possible to define extra permissions with::
 
      VK_EXTRA_SCOPE = [...]
 
-  See the `names of the privileges VKontakte`_.
+  See the `VK.com list of permissions`_.
 
 
 OpenAPI
 -------
 
-You can also use VKontakte's own OpenAPI to log in, but you need to provide
+You can also use VK.com's own OpenAPI to log in, but you need to provide
 HTML template with JavaScript code to authenticate. See ``vkontakte.html`` in
 templates folder for details.
+
+IFrame Applications
+-------------------
 
 To support authentication for VKontakte applications:
 
 - Fill ``Application ID`` and ``Application Secret`` settings::
 
-    VKONTAKTE_APP_ID = <APP ID>
-    VKONTAKTE_APP_SECRET = <APP SECRET>
+    VKAPP_APP_ID = <APP ID>
+    VKAPP_API_SECRET = <APP SECRET>
 
-- Create your IFrame application at VKontakte.
+- Create your IFrame application at vk.com.
 
 - In application settings specify your IFrame URL ``mysite.com/vk`` (current
   default).
 
-- Because VKontakte IFrame uses different application ID, you have to specify
-  it and secret key in VKONTAKTE_APP_AUTH setting::
+- You may need to also provide VKAPP_USER_MODE setting (0 by default)
 
-    VKONTAKTE_APP_AUTH = {
-        'key': <iframe app secret key>,
-        'user_mode': 2,
-        'id': <iframe app id>
-    }
+  * ``VKAPP_USER_MODE`` values:
 
-  * ``user_mode`` values:
     - ``0``: there will be no check whether a user connected to your
       application or not
     - ``1``: ``Django-social-auth`` will check ``is_app_user`` parameter
@@ -65,7 +62,7 @@ To support authentication for VKontakte applications:
 - To test, launch the server using ``sudo ./manage.py mysite.com:80`` for
   browser to be able to load it when VKontakte calls IFrame URL.
 
-- Open your VKontakte application page via http://vk.com/app<app_id>
+- Open your VK.com application page via http://vk.com/app<app_id>
 
 - Now you are able to connect to application and login automatically after
   connection when visiting application page.
@@ -73,6 +70,6 @@ To support authentication for VKontakte applications:
 For more details see `authentication for VKontakte applications`_
 
 .. _Vkontakte OAuth: http://vk.com/developers.php?oid=-1&p=%D0%90%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F_%D1%81%D0%B0%D0%B9%D1%82%D0%BE%D0%B2
-.. _names of the privileges VKontakte: http://vk.com/developers.php?oid=-1&p=%D0%9F%D1%80%D0%B0%D0%B2%D0%B0_%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9
+.. _VK.com list of permissions: http://vk.com/developers.php?oid=-1&p=%D0%9F%D1%80%D0%B0%D0%B2%D0%B0_%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9
 .. _Vkontakte API: http://vk.com/developers.php
 .. _authentication for VKontakte applications: http://www.ikrvss.ru/2011/11/08/django-social-auh-and-vkontakte-application/
