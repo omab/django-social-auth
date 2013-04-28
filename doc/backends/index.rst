@@ -41,6 +41,6 @@ Contents:
    tumblr
    twilio
    twitter
-   vkontakte
+   vk
    weibo
    yahoo
