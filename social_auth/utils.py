@@ -13,6 +13,7 @@ from django.conf import settings
 from django.db.models import Model
 from django.contrib.contenttypes.models import ContentType
 from django.utils.functional import SimpleLazyObject
+from django.utils.importlib import import_module
 
 
 try:
@@ -258,6 +259,12 @@ def custom_user_frozen_models():
     else:
         extra_model = {}
     return extra_model
+
+
+def module_member(name):
+    mod, member = name.rsplit('.', 1)
+    module = import_module(mod)
+    return getattr(module, member)
 
 
 if __name__ == '__main__':

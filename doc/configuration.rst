@@ -251,6 +251,11 @@ Username Generation
   The feature is disabled by default to keep backward compatibility and to not
   force this option on projects where Unicode usernames are a valid choice.
 
+  If Django ``slugify`` function doesn't fit your project, it always possible
+  to override it by defining this setting::
+
+    SOCIAL_AUTH_SLUGIFY_FUNCTION = 'import.path.to.your.slugify'
+
 - If you want to use the full email address as the ``username``, define this setting::
 
     SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
