@@ -36,6 +36,7 @@ Application Setup
         'social_auth.backends.contrib.skyrock.SkyrockBackend',
         'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
         'social_auth.backends.contrib.readability.ReadabilityBackend',
+        'social_auth.backends.contrib.fedora.FedoraBackend',
         'social_auth.backends.OpenIDBackend',
         'django.contrib.auth.backends.ModelBackend',
     )

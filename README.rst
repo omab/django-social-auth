@@ -58,6 +58,7 @@ credentials. Some features are:
     * `Shopify OAuth2`_
     * `StockTwits OAuth2`_
     * `Stackoverflow OAuth2`_
+    * `Fedora OpenID`_
 
 - Basic user data population and signaling to allows custom fields values
   from providers' responses
@@ -192,3 +193,4 @@ Some bits were derived from others' work and copyrighted by:
 .. _github: https://github.com/omab/django-social-auth
 .. _django-social-auth discussion list: https://groups.google.com/forum/?fromgroups#!forum/django-social-auth
 .. _Stackoverflow OAuth2: http://api.stackexchange.com/
+.. _Fedora OpenID: https://fedoraproject.org/wiki/OpenID
