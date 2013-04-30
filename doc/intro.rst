@@ -53,6 +53,7 @@ credentials. Some features are:
     * `Yandex OpenId`_
     * `Readability OAuth`_
     * `Stackoverflow OAuth2`_
+    * `Fedora OpenID`_
 
 - Basic user data population and signaling, to allows custom fields values
   from providers response
@@ -101,3 +102,4 @@ credentials. Some features are:
 .. _Yandex OpenId: http://openid.yandex.ru/
 .. _Readability OAuth: http://www.readability.com/developers/api
 .. _Stackoverflow OAuth2: http://api.stackexchange.com/
+.. _Fedora OpenID: https://fedoraproject.org/wiki/OpenID

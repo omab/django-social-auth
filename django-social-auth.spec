@@ -37,7 +37,7 @@ mechanism for Django projects.
 
 This application provides user registration and login using social sites
 supporting OpenID, OAuth and OAuth2 such as Google, Yahoo, Twitter, Facebook,
-LiveJournal, Orkut, LinkedIn, Foursquare, GitHub, DropBox, Flickr.
+LiveJournal, Orkut, LinkedIn, Foursquare, GitHub, DropBox, Flickr, Fedora.
 
 %package docs
 Summary:        Documentation for %{name}
