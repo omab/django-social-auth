@@ -17,6 +17,7 @@ Contents:
    douban
    dropbox
    evernote
+   exacttarget
    facebook
    flickr
    github

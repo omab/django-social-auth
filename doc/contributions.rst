@@ -80,6 +80,10 @@ uruz_ (Alexey Boriskin)
   * Odnoklassniki.ru iframe applications support
   * VK.com backend improvements
 
+dhendo_ (David Henderson)
+  * Shopify support
+  * ExactTarget support
+
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez
@@ -104,3 +108,4 @@ uruz_ (Alexey Boriskin)
 .. _northisup: https://github.com/northisup
 .. _kjoconnor: https://github.com/kjoconnor
 .. _uruz: https://github.com/uruz
+.. _dhendo: https://github.com/dhendo
