@@ -1,9 +1,9 @@
-from urllib2 import Request, urlopen, HTTPError
-from urllib import urlencode
+from urllib2 import Request, urlopen
 
 from django.utils import simplejson
 
-from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
+from social_auth.backends import BaseOAuth2, OAuthBackend
+from social_auth.exceptions import AuthCanceled, AuthUnknownError
 
 
 # Jawbone configuration
@@ -20,7 +20,7 @@ class JawboneBackend(OAuthBackend):
         return response['data']['xid']
 
     def get_user_details(self, response):
-        """Return user details from Jawbone account. Jawbone does not collect emails"""
+        """Return user details from Jawbone account"""
         firstName = response['data'].get('first', '')
         lastName = response['data'].get('last', '')
         dob = response['data'].get('dob', '')
@@ -28,7 +28,7 @@ class JawboneBackend(OAuthBackend):
         height = response['data'].get('height', '')
         weight = response['data'].get('weight', '')
 
-        return {USERNAME: firstName + ' ' + lastName,
+        return {'username': firstName + ' ' + lastName,
                 'first_name': firstName,
                 'last_name': lastName,
                 'dob': dob,
@@ -48,6 +48,7 @@ class JawboneAuth(BaseOAuth2):
     SCOPE_SEPARATOR = ' '
     # Look at http://developer.github.com/v3/oauth/
     SCOPE_VAR_NAME = 'JAWBONE_EXTENDED_PERMISSIONS'
+    REDIRECT_STATE = False
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
@@ -59,8 +60,17 @@ class JawboneAuth(BaseOAuth2):
         except ValueError:
             return None
 
+    def process_error(self, data):
+        error = self.request.GET.get('error', '')
+        if error:
+            if error == 'access_denied':
+                raise AuthCanceled(self)
+            else:
+                raise AuthUnknownError(self, 'Jawbone error was %s' % error)
+        return super(JawboneAuth, self).process_error(data)
+
 
 # Backend definition
 BACKENDS = {
     'jawbone': JawboneAuth,
-    }
+}
