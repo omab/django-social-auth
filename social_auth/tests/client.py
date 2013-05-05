@@ -35,8 +35,9 @@ class SocialClient(Client):
     Only supports facebook.
     """
 
+    @patch('social_auth.backends.facebook.FacebookAuth.enabled')
     @patch('social_auth.utils.urlopen')
-    def login(self, user, mock_urlopen, backend='facebook'):
+    def login(self, user, mock_urlopen, mock_facebook_enabled, backend='facebook'):
         """
         Login or Register a facebook user.
 
@@ -125,7 +126,8 @@ class SocialClient(Client):
         mock_urlopen.side_effect = [
             DumbResponse(r) for r in backends[backend]
         ]
-
+        # make it work when no FACEBOOK_APP_ID declared
+        mock_facebook_enabled.return_value = True
         factory = RequestFactory()
         request = factory.post('', {'code': 'dummy',
             'redirect_state': 'dummy'})
