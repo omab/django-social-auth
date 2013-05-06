@@ -1,15 +1,18 @@
 Testing Tools
 =============
 
-django social auth provides an extension of Django's test client, SocialClient. SocialClient provides the ability for a unit test to authenticate a user through facebook. All calls to facebook are mocked. This is helpful for performing integration tests of the authentication pipeline or accessing a view that requires a user to be logged in.
+django social auth provides an extension of Django's test client, SocialClient.
+SocialClient provides the ability for a unit test to authenticate a user
+through facebook. All calls to facebook are mocked. This is helpful for 
+performing integration tests of the authentication pipeline or accessing 
+a view that requires a user to be logged in.
 
 Example:
 
 .. code-block:: python
 
     from django.test import TestCase
-    from social_auth.tests import SocialClient
-
+    from social_auth.tests.client import SocialClient
 
     class SomeTestClass(TestCase):
 
