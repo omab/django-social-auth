@@ -144,7 +144,9 @@ class UserSocialAuthMixin(object):
 
     @classmethod
     def get_user_by_email(cls, email):
-        "Case insensitive search"
+        """Case insensitive search"""
+        # Do case-insensitive match, since real-world email address is
+        # case-insensitive.
         return cls.user_model().objects.get(email__iexact=email)
 
     @classmethod
