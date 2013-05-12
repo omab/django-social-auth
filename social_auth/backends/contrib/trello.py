@@ -9,7 +9,8 @@ and put into settings.py
 from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
-from social_auth.utils import dsa_urlopen
+from social_auth.utils import dsa_urlopen, backend_setting
+from urllib import urlencode
 
 
 TRELLO_REQUEST_TOKEN_URL = 'https://trello.com/1/OAuthGetRequestToken'
@@ -64,9 +65,10 @@ class TrelloAuth(ConsumerBasedOAuth):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
+        token = access_token.key
         params = {
-            'token': access_token,
-            'key': backend_setting(self, self.SETTINGS_SECRET_NAME)
+            'token': token,
+            'key': backend_setting(self, self.SETTINGS_KEY_NAME)
         }
         url = TRELLO_USER_DETAILS_URL + '?' + urlencode(params)
         try:
