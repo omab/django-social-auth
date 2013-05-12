@@ -1,3 +1,10 @@
+'''
+Obtain 
+TRELLO_CONSUMER_KEY & TRELLO_CONSUMER_SECRET atfrom https://trello.com/1/appKey/generate
+and put into settings.py
+
+'''
+
 from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
