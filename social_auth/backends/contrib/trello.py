@@ -1,9 +1,10 @@
-'''
-Obtain 
-TRELLO_CONSUMER_KEY & TRELLO_CONSUMER_SECRET atfrom https://trello.com/1/appKey/generate
+"""
+Obtain
+TRELLO_CONSUMER_KEY & TRELLO_CONSUMER_SECRET
+at https://trello.com/1/appKey/generate
 and put into settings.py
 
-'''
+"""
 
 from django.utils import simplejson
 
