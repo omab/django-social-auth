@@ -25,14 +25,24 @@ class TrelloBackend(OAuthBackend):
     EXTRA_DATA = [
         ('username', 'username'),
         ('email', 'email'),
-        ('name', 'fullName'),
+        ('fullName', 'full_name'),
     ]
 
     def get_user_details(self, response):
         """Return user details from Trello account"""
+        name_arr = response.get('fullName').split()
+        first_name = None
+        last_name = None
+
+        if len(name_arr) > 0:
+            first_name = name_arr[0]
+        if len(name_arr) > 1:
+            last_name = name_arr[1]
+
         return {'username': response.get('username'),
                 'email': response.get('email'),
-                'name': response.get('name')}
+                'first_name': first_name,
+                'last_name': last_name}
 
     def get_user_id(self, details, response):
         """Return the user id, Trello only provides username as a unique
