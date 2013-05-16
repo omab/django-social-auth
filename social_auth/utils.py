@@ -60,8 +60,10 @@ except ImportError:  # django < 1.4
 get_random_string = random_string
 constant_time_compare = ct_compare
 
+LEAVE_CHARS = getattr(settings, 'SOCIAL_AUTH_LOG_SANITIZE_LEAVE_CHARS', 4)
 
-def sanitize_log_data(secret, data=None, leave_characters=4):
+
+def sanitize_log_data(secret, data=None, leave_characters=LEAVE_CHARS):
     """
     Clean private/secret data from log statements and other data.
 
