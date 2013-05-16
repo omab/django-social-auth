@@ -141,6 +141,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.mailru.MailruBackend',
     'social_auth.backends.contrib.dailymotion.DailymotionBackend',
     'social_auth.backends.contrib.shopify.ShopifyBackend',
+    'social_auth.backends.contrib.exacttarget.ExactTargetBackend',
     'social_auth.backends.contrib.stocktwits.StocktwitsBackend',
     'social_auth.backends.contrib.behance.BehanceBackend',
     'social_auth.backends.contrib.readability.ReadabilityBackend',
