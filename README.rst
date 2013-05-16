@@ -193,5 +193,5 @@ Some bits were derived from others' work and copyrighted by:
 .. _github: https://github.com/omab/django-social-auth
 .. _django-social-auth discussion list: https://groups.google.com/forum/?fromgroups#!forum/django-social-auth
 .. _Stackoverflow OAuth2: http://api.stackexchange.com/
-.. _ExactTarget: http://code.exacttarger.com/
+.. _ExactTarget: http://code.exacttarget.com/
 
