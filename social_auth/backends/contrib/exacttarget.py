@@ -35,13 +35,13 @@ class ExactTargetBackend(OAuthBackend):
         data = {
             'email': details.get('email'),
             'id': details.get('id'),
-            # OAuth token, for use with legacy SOAP API calls
-            # https://code.exacttarget.com/devcenter/getting-started/hubexchange-apps/oauth-and-soap-api
+            # OAuth token, for use with legacy SOAP API calls:
+            #   http://bit.ly/13pRHfo
             'internalOauthToken': details.get('internalOauthToken'),
-            'oauthToken': details.get('oauthToken'),  # Token for use with the Application ClientID for the FUEL API
-            # If the token has expired, use the FUEL API to get a new token -
-            # see https://code.exacttarget.com/devcenter/fuel-api-family/auth and
-            # https://code.exacttarget.com/question/oauthtoken-vs-internaloauthtoken - set legacy=1!!
+            # Token for use with the Application ClientID for the FUEL API
+            'oauthToken': details.get('oauthToken'),
+            # If the token has expired, use the FUEL API to get a new token see
+            # http://bit.ly/10v1K5l and http://bit.ly/11IbI6F - set legacy=1
             'refreshToken': details.get('refreshToken'),
         }
 
