@@ -195,4 +195,4 @@ Some bits were derived from others' work and copyrighted by:
 .. _django-social-auth discussion list: https://groups.google.com/forum/?fromgroups#!forum/django-social-auth
 .. _Stackoverflow OAuth2: http://api.stackexchange.com/
 .. _Fedora OpenID: https://fedoraproject.org/wiki/OpenID
-.. _ExactTarget: http://code.exacttarget.com/
+.. _Exacttarget HubExchange: http://code.exacttarget.com/
