@@ -25,7 +25,7 @@ class StopPipeline(SocialAuthBaseException):
     Raise this exception to stop the rest of the pipeline process.
     """
     def __unicode__(self):
-        return u'Stop pipeline'
+        return ugettext(u'Stop pipeline')
 
 
 class AuthException(SocialAuthBaseException):
@@ -48,21 +48,21 @@ class AuthFailed(AuthException):
 class AuthCanceled(AuthException):
     """Auth process was canceled by user."""
     def __unicode__(self):
-        return u'Authentication process canceled'
+        return ugettext(u'Authentication process canceled')
 
 
 class AuthUnknownError(AuthException):
     """Unknown auth process error."""
     def __unicode__(self):
-        msg = super(AuthUnknownError, self).__unicode__()
-        return u'An unknown error happened while authenticating %s' % msg
+        err = u'An unknown error happened while authenticating %s'
+        return ugettext(err) % super(AuthUnknownError, self).__unicode__()
 
 
 class AuthTokenError(AuthException):
     """Auth token error."""
     def __unicode__(self):
         msg = super(AuthTokenError, self).__unicode__()
-        return u'Token error: %s' % msg
+        return ugettext(u'Token error: %s') % msg
 
 
 class AuthMissingParameter(AuthException):
@@ -72,19 +72,19 @@ class AuthMissingParameter(AuthException):
         super(AuthMissingParameter, self).__init__(backend, *args, **kwargs)
 
     def __unicode__(self):
-        return u'Missing needed parameter %s' % self.parameter
+        return ugettext(u'Missing needed parameter %s') % self.parameter
 
 
 class AuthStateMissing(AuthException):
     """State parameter is incorrect."""
     def __unicode__(self):
-        return u'Session value state missing.'
+        return ugettext(u'Session value state missing.')
 
 
 class AuthStateForbidden(AuthException):
     """State parameter is incorrect."""
     def __unicode__(self):
-        return u'Wrong state parameter given.'
+        return ugettext(u'Wrong state parameter given.')
 
 
 class AuthAlreadyAssociated(AuthException):
@@ -95,4 +95,4 @@ class AuthAlreadyAssociated(AuthException):
 class AuthTokenRevoked(AuthException):
     """User revoked the access_token in the provider."""
     def __unicode__(self):
-        return u'User revoke access to the token'
+        return ugettext(u'User revoke access to the token')
