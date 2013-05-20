@@ -4,6 +4,13 @@ TRELLO_CONSUMER_KEY & TRELLO_CONSUMER_SECRET
 at https://trello.com/1/appKey/generate
 and put into settings.py
 
+Also you can put something like 
+TRELLO_AUTH_EXTRA_ARGUMENTS = {
+    'name': '7WebPages Time Tracker',
+    'expiration': 'never'
+}
+
+into settings.py
 """
 
 from django.utils import simplejson
