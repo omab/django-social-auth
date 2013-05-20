@@ -53,6 +53,7 @@ credentials. Some features are:
     * `Fitbit OAuth`_
     * `Instagram OAuth2`_
     * `Twilio`_
+    * `Trello OAuth`_
     * `Weibo OAuth2`_
     * `Yandex OpenId`_
     * `Shopify OAuth2`_
@@ -182,6 +183,7 @@ Some bits were derived from others' work and copyrighted by:
 .. _Fitbit OAuth: https://wiki.fitbit.com/display/API/OAuth+Authentication+in+the+Fitbit+API
 .. _Instagram OAuth2: http://instagram.com/developer/authentication/
 .. _Twilio: https://www.twilio.com/user/account/connect/apps
+.. _Trello: https://trello.com/docs/gettingstarted/index.html#getting-an-application-key
 .. _Weibo OAuth2: http://open.weibo.com/wiki/Oauth2
 .. _Yandex OpenId: http://openid.yandex.ru/
 .. _Shopify OAuth2: http://api.shopify.com/authentication.html
