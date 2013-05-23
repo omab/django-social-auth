@@ -4,6 +4,7 @@ from south.db import db
 from south.v2 import SchemaMigration
 
 from django.db import models
+from django.db.models.loading import get_model
 
 from django.conf import settings
 from social_auth.utils import custom_user_frozen_models
@@ -12,6 +13,14 @@ from social_auth.utils import custom_user_frozen_models
 USER_MODEL = getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None) or \
              getattr(settings, 'AUTH_USER_MODEL', None) or \
              'auth.User'
+
+if USER_MODEL != 'auth.User':
+    # In case of having a proxy model defined as USER_MODEL
+    # We use auth.User instead to prevent migration errors
+    # Since proxy models aren't present in migrations
+    if get_model(*USER_MODEL.split('.'))._meta.proxy:
+        USER_MODEL = 'auth.User'
+
 UID_LENGTH = getattr(settings, 'SOCIAL_AUTH_UID_LENGTH', 255)
 NONCE_SERVER_URL_LENGTH = getattr(settings, 'SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH', 255)
 ASSOCIATION_SERVER_URL_LENGTH = getattr(settings, 'SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH', 255)
