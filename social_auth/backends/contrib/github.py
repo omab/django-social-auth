@@ -49,7 +49,7 @@ class GithubBackend(OAuthBackend):
         """Return user details from Github account"""
         return {'username': response.get('login'),
                 'email': response.get('email') or '',
-                'first_name': response.get('name')}
+                'first_name': response.get('name') or ''}
 
 
 class GithubAuth(BaseOAuth2):
