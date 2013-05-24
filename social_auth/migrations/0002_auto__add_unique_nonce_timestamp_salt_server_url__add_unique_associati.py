@@ -5,12 +5,11 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 from django.conf import settings
-from social_auth.utils import custom_user_frozen_models
+from social_auth.utils import get_custom_user_model_for_migrations, \
+    custom_user_frozen_models
 
 
-USER_MODEL = getattr(settings, 'SOCIAL_AUTH_USER_MODEL', None) or \
-             getattr(settings, 'AUTH_USER_MODEL', None) or \
-             'auth.User'
+USER_MODEL = get_custom_user_model_for_migrations()
 UID_LENGTH = getattr(settings, 'SOCIAL_AUTH_UID_LENGTH', 255)
 NONCE_SERVER_URL_LENGTH = getattr(settings, 'SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH', 255)
 ASSOCIATION_SERVER_URL_LENGTH = getattr(settings, 'SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH', 255)
@@ -110,5 +109,5 @@ class Migration(SchemaMigration):
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'social_auth'", 'to': "orm['" + USER_MODEL + "']"})
         }
     }
-    models.update(custom_user_frozen_models())
+    models.update(custom_user_frozen_models(USER_MODEL))
     complete_apps = ['social_auth']
