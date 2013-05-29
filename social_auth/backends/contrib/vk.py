@@ -15,7 +15,8 @@ from time import time
 
 from social_auth.backends import SocialAuthBackend, OAuthBackend, BaseAuth, \
                                  BaseOAuth2
-from social_auth.exceptions import AuthTokenRevoked, AuthException, AuthCanceled, AuthFailed
+from social_auth.exceptions import AuthTokenRevoked, AuthException, \
+                                   AuthCanceled, AuthFailed
 from social_auth.utils import setting, log, dsa_urlopen
 
 
@@ -30,7 +31,8 @@ VK_API_URL = 'https://api.vk.com/method/'
 VK_SERVER_API_URL = 'http://api.vk.com/api.php'
 VK_API_VERSION = '3.0'
 
-LOCAL_HTML = setting('VK_LOCAL_HTML', setting('VKONTAKTE_LOCAL_HTML', 'vkontakte.html'))
+LOCAL_HTML = setting('VK_LOCAL_HTML', setting('VKONTAKTE_LOCAL_HTML',
+                                              'vkontakte.html'))
 
 
 class VKOpenAPIBackend(SocialAuthBackend):
@@ -135,8 +137,10 @@ class VKOAuth2Backend(OAuthBackend):
             'last_name': response.get('last_name')
         }
 
+
 class VKApplicationBackend(VKOAuth2Backend):
     name = 'vk-app'
+
 
 class VKOAuth2(BaseOAuth2):
     """VK OAuth mechanism"""
@@ -200,8 +204,8 @@ class VKAppAuth(VKOAuth2):
         if access_token:
             data['access_token'] = access_token
 
-        profiles = vk_api('getProfiles', data, is_app=True).get('response', None)
-
+        profiles = vk_api('getProfiles', data, is_app=True).get('response',
+                                                                None)
         return profiles[0] if profiles else None
 
     def is_app_user(self, user_id, access_token=None):
@@ -226,9 +230,11 @@ class VKAppAuth(VKOAuth2):
 
         # Verify signature, if present
         if auth_key:
-            check_key = md5('_'.join([setting(self.SETTINGS_KEY_NAME),
-                                  self.request.REQUEST.get('viewer_id'),
-                                  setting(self.SETTINGS_SECRET_NAME)])).hexdigest()
+            check_key = md5('_'.join([
+                setting(self.SETTINGS_KEY_NAME),
+                self.request.REQUEST.get('viewer_id'),
+                setting(self.SETTINGS_SECRET_NAME)
+            ])).hexdigest()
 
             if check_key != auth_key:
                 raise ValueError('VK authentication failed: invalid '
@@ -256,7 +262,8 @@ class VKAppAuth(VKOAuth2):
 def vk_api(method, data, is_app=False):
     """Calls VK OpenAPI method
         https://vk.com/apiclub,
-        https://vk.com/pages.php?o=-1&p=%C2%FB%EF%EE%EB%ED%E5%ED%E8%E5%20%E7%E0%EF%F0%EE%F1%EE%E2%20%EA%20API
+        https://vk.com/pages.php?o=-1&p=%C2%FB%EF%EE%EB%ED%E5%ED%E8%E5%20%E7'
+                                        %E0%EF%F0%EE%F1%EE%E2%20%EA%20API
     """
 
     # We need to perform server-side call if no access_token

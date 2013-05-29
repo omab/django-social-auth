@@ -10,10 +10,10 @@ from django.conf import settings
 from social_auth.models import UserSocialAuth
 from social_auth.views import complete as social_complete
 from social_auth.utils import setting
-from social_auth.backends.contrib.vkontakte import VKontakteOAuth2Backend, vkontakte_api
+from social_auth.backends.contrib.vk import VKOAuth2Backend, vk_api
 
 def is_complete_authentication(request):
-    return request.user.is_authenticated() and VKontakteOAuth2Backend.__name__ in request.session.get(BACKEND_SESSION_KEY, '')
+    return request.user.is_authenticated() and VKOAuth2Backend.__name__ in request.session.get(BACKEND_SESSION_KEY, '')
 
 def get_access_token(user):
     key = str(user.id)
@@ -23,7 +23,7 @@ def get_access_token(user):
     if access_token is None:
         try:
             social_user = user.social_user if hasattr(user, 'social_user') \
-                                           else UserSocialAuth.objects.get(user=user.id, provider=VKontakteOAuth2Backend.name)
+                                           else UserSocialAuth.objects.get(user=user.id, provider=VKOAuth2Backend.name)
         except UserSocialAuth.DoesNotExist:
             return None
 
@@ -43,7 +43,7 @@ def vkontakte_decorator(func):
         # User must me logged via VKontakte backend in order to ensure we talk about the same person
         if not is_complete_authentication(request):
             try:
-                user = social_complete(request, VKontakteOAuth2Backend.name)
+                user = social_complete(request, VKOAuth2Backend.name)
             except (ValueError, AttributeError):
                 pass # no matter if failed
 
