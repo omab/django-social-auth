@@ -25,6 +25,7 @@ credentials. Some features are:
     * OpenId_ like myOpenID_
     * `Twitter OAuth`_
     * `Facebook OAuth`_
+    * `Amazon OAuth2`_
 
   Some contributions added support for:
 
@@ -103,3 +104,4 @@ credentials. Some features are:
 .. _Readability OAuth: http://www.readability.com/developers/api
 .. _Stackoverflow OAuth2: http://api.stackexchange.com/
 .. _Fedora OpenID: https://fedoraproject.org/wiki/OpenID
+.. _Amazon OAuth2: http://login.amazon.com/

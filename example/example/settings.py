@@ -148,6 +148,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.fedora.FedoraBackend',
     'social_auth.backends.steam.SteamBackend',
     'social_auth.backends.reddit.RedditBackend',
+    'social_auth.backends.amazon.AmazonBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

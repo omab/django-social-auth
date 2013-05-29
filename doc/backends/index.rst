@@ -9,6 +9,7 @@ Contents:
    oauth
    openid
 
+   amazon
    angel
    behance
    bitbucket
