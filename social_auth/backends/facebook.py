@@ -236,7 +236,7 @@ class FacebookAppAuth(FacebookAuth):
     uses_redirect = False
 
     def auth_complete(self, *args, **kwargs):
-        if not self.application_auth():
+        if not self.application_auth() and 'error' not in self.data:
             return HttpResponse(self.auth_html())
 
         access_token = None
