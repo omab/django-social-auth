@@ -144,6 +144,10 @@ class SocialAuthBackend(object):
                 out.update(result)
             else:
                 return result
+
+        # clean the partial pipeline at the end of the process
+        if 'request' in kwargs:
+            clean_partial_pipeline(kwargs['request'])
         return out
 
     def extra_data(self, user, uid, response, details):
