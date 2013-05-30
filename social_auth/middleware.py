@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-from django.contrib import messages
+from django.contrib.messages.api import error, MessageFailure
 from django.shortcuts import redirect
 
 from social_auth.exceptions import SocialAuthBaseException
@@ -31,8 +31,8 @@ class SocialAuthExceptionMiddleware(object):
                 tags.append(backend_name)
 
             try:
-                messages.error(request, message, extra_tags=' '.join(tags))
-            except messages.MessageFailure:  # messages app is not installed
+                error(request, message, extra_tags=' '.join(tags))
+            except MessageFailure:  # messages app is not installed
                 url += ('?' in url and '&' or '?') + 'message=' + message
                 if backend_name:
                     url += '&backend=' + backend_name
