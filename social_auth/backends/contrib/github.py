@@ -22,6 +22,7 @@ from django.conf import settings
 
 from social_auth.utils import dsa_urlopen
 from social_auth.backends import BaseOAuth2, OAuthBackend
+from social_auth.exceptions import AuthFailed
 
 
 # GitHub configuration
@@ -92,11 +93,10 @@ class GithubAuth(BaseOAuth2):
                 data = None
             else:
                 # if the user is a member of the organization, response code
-                # will be 204, see:
-                #   http://developer.github.com/v3/orgs/members/#response-if-requester-is-an-organization-member-and-user-is-a-member
-                if not response.code == 204:
-                    data = None
-
+                # will be 204, see http://bit.ly/ZS6vFl
+                if response.code != 204:
+                    raise AuthFailed('User doesn\'t belong to the '
+                                     'organization')
         return data
 
 # Backend definition
