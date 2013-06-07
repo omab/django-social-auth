@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from __future__ import unicode_literals
+from unittest import skipUnless
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test.testcases import LiveServerTestCase, SimpleTestCase
@@ -35,13 +36,13 @@ class OdnoklassnikiLiveTest(LiveServerTestCase):
         raise NotImplementedError('This method is part of interface, but should be implemented in subclass')
 
 class BaseOdnoklassnikiAppTest(OdnoklassnikiLiveTest):
+    @skipUnless(hasattr(settings, 'ODNOKLASSNIKI_APP_ID'), 
+                "You need to have ODNOKLASSNIKI_APP_ID in settings to test iframe app")
+    @skipUnless(hasattr(settings, 'ODNOKLASSNIKI_SANDBOX_DEV_USERNAME'),
+                "You need to have ODNOKLASSNIKI_SANDBOX_DEV_USERNAME in settings to test iframe app")
+    @skipUnless(hasattr(settings, 'ODNOKLASSNIKI_SANDBOX_DEV_PASSWORD'),
+                "You need to have ODNOKLASSNIKI_SANDBOX_DEV_PASSWORD in settings to test iframe app")
     def setUp(self):
-        self.assertTrue(hasattr(settings, 'ODNOKLASSNIKI_APP_ID'), 
-                        "You need to have ODNOKLASSNIKI_APP_ID in settings to test iframe app")
-        self.assertTrue(hasattr(settings, 'ODNOKLASSNIKI_SANDBOX_DEV_USERNAME'),
-                        "You need to have ODNOKLASSNIKI_SANDBOX_DEV_USERNAME in settings to test iframe app")
-        self.assertTrue(hasattr(settings, 'ODNOKLASSNIKI_SANDBOX_DEV_PASSWORD'),
-                        "You need to have ODNOKLASSNIKI_SANDBOX_DEV_PASSWORD in settings to test iframe app")
         self.app_id = settings.ODNOKLASSNIKI_APP_ID
         self.dev_username = settings.ODNOKLASSNIKI_SANDBOX_DEV_USERNAME
         self.dev_password = settings.ODNOKLASSNIKI_SANDBOX_DEV_PASSWORD
@@ -95,13 +96,13 @@ class OdnoklassnikiAppTestExtraData(BaseOdnoklassnikiAppTest):
         self.assertTrue(all([field in social_user.extra_data for field in ('gender', 'birthday', 'age')]))
 
 class OdnoklassnikiOAuthTest(OdnoklassnikiLiveTest):
+    @skipUnless(hasattr(settings, "ODNOKLASSNIKI_OAUTH2_CLIENT_KEY"),
+                "You need to have ODNOKLASSNIKI_OAUTH2_CLIENT_KEY in settings to test odnoklassniki OAuth")
+    @skipUnless(hasattr(settings, "ODNOKLASSNIKI_TEST_USERNAME"),
+                "You need to have ODNOKLASSNIKI_TEST_USERNAME in settings to test odnoklassniki OAuth")
+    @skipUnless(hasattr(settings, "ODNOKLASSNIKI_TEST_PASSWORD"),
+                "You need to have ODNOKLASSNIKI_TEST_PASSWORD in settings to test odnoklassniki OAuth")
     def setUp(self):
-        self.assertTrue(hasattr(settings, 'ODNOKLASSNIKI_OAUTH2_CLIENT_KEY'), 
-                        "You need to have ODNOKLASSNIKI_OAUTH2_CLIENT_KEY in settings to test odnoklassniki OAuth")
-        self.assertTrue(hasattr(settings, 'ODNOKLASSNIKI_TEST_USERNAME'),
-                        "You need to have ODNOKLASSNIKI_TEST_USERNAME in settings to test odnoklassniki OAuth")
-        self.assertTrue(hasattr(settings, 'ODNOKLASSNIKI_TEST_PASSWORD'),
-                        "You need to have ODNOKLASSNIKI_TEST_PASSWORD in settings to test odnoklassniki OAuth")
         self.username = settings.ODNOKLASSNIKI_TEST_USERNAME
         self.password = settings.ODNOKLASSNIKI_TEST_PASSWORD
         self.get_odnoklassniki_name()
