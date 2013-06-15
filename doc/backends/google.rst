@@ -78,6 +78,26 @@ To enable OAuth2 support:
 Check which applications can be included in their `Google Data Protocol Directory`_
 
 
+Google OAut2 Offline Mode
+-------------------------
+
+This setting is needed in order to get a refresh token from while using Google
+OAut2 backend::
+
+    GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'access_type': 'offline'}
+
+This will add a ``refresh_token`` entry in the ``UserSocialAuth.extra_data``
+attribute of the related association. With this token it's possible to refresh
+the ``access_token`` at any time by calling::
+
+    user_social_auth.refresh_token()
+
+You can get the ``user_social_auth`` instance with a code similar to this::
+
+    user = User.objects.get(pk=...)
+    user_social_auth = user.social_auth.get(provider="google-oauth2")
+
+
 Google OpenID
 -------------
 
