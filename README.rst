@@ -130,6 +130,20 @@ or::
 
     $ cd django-social-auth
     $ sudo python setup.py install
+    
+    
+    
+Support
+---------------------
+
+If you're having problems with using the project, use the support forum at CodersClan.
+
+.. image:: http://www.codersclan.net/graphics/getSupport_github4.png
+    :width: 100px
+    :height: 100px
+    :scale: 10
+    :target: http://codersclan.net/forum/index.php?repo_id=7
+
 
 
 Copyrights and Licence
