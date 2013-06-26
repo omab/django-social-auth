@@ -34,6 +34,8 @@ VK_API_VERSION = '3.0'
 LOCAL_HTML = setting('VK_LOCAL_HTML', setting('VKONTAKTE_LOCAL_HTML',
                                               'vkontakte.html'))
 
+USE_APP_AUTH = setting('VKAPP_APP_ID', False)
+
 
 class VKOpenAPIBackend(SocialAuthBackend):
     """VK OpenAPI authentication backend"""
@@ -298,6 +300,5 @@ def vk_api(method, data, is_app=False):
 # Backend definition
 BACKENDS = {
     'vk-openapi': VKOpenAPIAuth,
-    'vk-oauth': VKOAuth2,
-    'vk-app': VKAppAuth
+    'vk-oauth': VKOAuth2 if not USE_APP_AUTH else VKAppAuth,
 }

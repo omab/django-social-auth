@@ -35,9 +35,8 @@
             <ol>
                 <li>Create your IFrame application at <a href="https://http://vk.com/apps.php?act=add">VKontakte</a>.</li>
                 <li>In your application settings specify your IFrame URL <b>mysite.com</b>/vk (current default). </li>
-                <li>Because VKontakte IFrame uses other app ID than OAuth/OpenAPI authentication one, you have to specify it and its secret key in VKONTAKTE_APP_AUTH setting:</li>
-                <li><b>VKONTAKTE_APP_AUTH={'key':'iframe_app_secret_key', 'user_mode': 2, 'id':'iframe_app_id'}</b></li></li>
-                <li><b>user_mode</b> values</li>
+                <li>Because VK IFrame uses other app ID than OAuth/OpenAPI authentication one, you have to specify it and its secret key in VKAPP_* settings:</li>
+                <li>VKAPP_APP_ID=<b>'iframe_app_id'</b>, VKAPP_API_SECRET=<b>'iframe_app_secret_key'</b>, VKAPP_USER_MODE = <b>'user_mode'</b></li></li>                <li><b>user_mode</b> values</li>
                 <ol>
                     <li>if 0 there will be no check whether a user connected to your application or not</li>
                     <li>if 1 DSA will check is_app_user parameter VKontakte sends when user opens app page one time</li>
