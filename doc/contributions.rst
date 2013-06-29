@@ -116,3 +116,4 @@ gardaud_ (Guillaume Ardaud)
 .. _uruz: https://github.com/uruz
 .. _abompard: https://github.com/abompard
 .. _dhendo: https://github.com/dhendo
+.. _gardaud: https://github.com/gardaud
