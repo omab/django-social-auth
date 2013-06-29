@@ -1,8 +1,10 @@
 """Models mixins for Social Auth"""
 import base64
+import httplib
 import time
 import re
 from datetime import datetime, timedelta
+from urllib import urlencode
 
 from openid.association import Association as OIDAssociation
 
@@ -32,6 +34,24 @@ class UserSocialAuthMixin(object):
             return backend.AUTH_BACKEND.tokens(self)
         else:
             return {}
+
+    def revoke(self, force=True):
+        """
+        Attempts to revoke permissions for provider.
+        If revoking the given provider is not supported, will return an error
+        string if force=False, or raise an exception if force=True.
+        """
+        if not 'access_token' in self.tokens:
+            return 'ERROR: No access token found!'
+
+        token = self.tokens['access_token']
+
+        if hasattr(self.get_backend(), 'revoke'):
+            return self.get_backend().revoke(token, self.uid)
+
+        if force:
+            raise NotImplementedError('Revoke not implemented for this provider.')
+        return 'Revoke not implemented for this provider.'
 
     def refresh_token(self):
         data = self.extra_data

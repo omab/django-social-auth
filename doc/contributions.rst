@@ -87,6 +87,9 @@ dhendo_ (David Henderson)
   * Shopify support
   * ExactTarget support
 
+gardaud_ (Guillaume Ardaud)
+  * Option to revoke providers' tokens on disconnect.
+
 .. _caioariede: https://github.com/caioariede
 .. _krvss: https://github.com/krvss
 .. _jezdez: https://github.com/jezdez

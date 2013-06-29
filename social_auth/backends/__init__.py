@@ -418,12 +418,17 @@ class BaseAuth(object):
         name = self.AUTH_BACKEND.name
         if UserSocialAuth.allowed_to_disconnect(user, name, association_id):
             if association_id:
+                if setting('SOCIAL_AUTH_REVOKE_TOKENS_ON_DISCONNECT'):
+                    UserSocialAuth.get_social_auth_for_user(user)\
+                                    .get(id=association_id).revoke(force=False)
                 UserSocialAuth.get_social_auth_for_user(user)\
                                 .get(id=association_id).delete()
             else:
-                UserSocialAuth.get_social_auth_for_user(user)\
-                                .filter(provider=name)\
-                                .delete()
+                usersocialauths = UserSocialAuth.get_social_auth_for_user(user)\
+                                .filter(provider=name)
+                if setting('SOCIAL_AUTH_REVOKE_TOKENS_ON_DISCONNECT'):
+                    map(lambda x: x.revoke(force=False), usersocialauths)
+                map(lambda x: x.delete(), usersocialauths)
         else:
             raise NotAllowedToDisconnect()
 
