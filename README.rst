@@ -61,6 +61,7 @@ credentials. Some features are:
     * `Stackoverflow OAuth2`_
     * `Fedora OpenID`_
     * `Exacttarget HubExchange`_
+    * `Appsfuel OAuth2`_
 
 - Basic user data population and signaling to allows custom fields values
   from providers' responses
@@ -212,3 +213,4 @@ Some bits were derived from others' work and copyrighted by:
 .. _Stackoverflow OAuth2: http://api.stackexchange.com/
 .. _Fedora OpenID: https://fedoraproject.org/wiki/OpenID
 .. _Exacttarget HubExchange: http://code.exacttarget.com/
+.. _Appsfuel OAuth2: http://docs.appsfuel.com/api_reference#api_reference

@@ -11,6 +11,7 @@ Contents:
 
    amazon
    angel
+   appsfuel
    behance
    bitbucket
    browserid
