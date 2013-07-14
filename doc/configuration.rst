@@ -490,6 +490,13 @@ Miscellaneous Settings
 
   Otherwise the extension is not used.
 
+- If you want to revoke a provider's tokens on disconnect, define this setting::
+
+    SOCIAL_AUTH_REVOKE_TOKENS_ON_DISCONNECT = True
+
+  Currently only handled for Facebook and Google-OAuth2. Some providers (e.g. Twitter)
+  do not support revoking tokens from your app at all.
+
 
 Linking in your templates
 -------------------------
@@ -510,6 +517,9 @@ social accounts for a given backend (not really useful IMO)::
 Or to disconnect individual accounts::
 
     {% url "socialauth_disconnect_individual" "backend-name" backend-id %}
+
+You can set SOCIAL_AUTH_REVOKE_TOKENS_ON_DISCONNECT to True if you wish to revoke
+tokens on disconnect (only some backends support this).
 
 .. _Model Manager: http://docs.djangoproject.com/en/dev/topics/db/managers/#managers
 .. _Login URL: http://docs.djangoproject.com/en/dev/ref/settings/?from=olddocs#login-url
