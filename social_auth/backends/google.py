@@ -13,8 +13,6 @@ APIs console https://code.google.com/apis/console/ Identity option.
 
 OpenID also works straightforward, it doesn't need further configurations.
 """
-import httplib
-
 from urllib import urlencode
 from urllib2 import Request
 
@@ -193,7 +191,8 @@ class GoogleOAuth2(BaseOAuth2):
     AUTH_BACKEND = GoogleOAuth2Backend
     AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth'
     ACCESS_TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
-    BASE_GOOGLE_URL = 'accounts.google.com'
+    REVOKE_TOKEN_URL = 'https://accounts.google.com/o/oauth2/revoke'
+    REVOKE_TOKEN_METHOD = 'GET'
     SETTINGS_KEY_NAME = _OAUTH2_KEY_NAME
     SETTINGS_SECRET_NAME = 'GOOGLE_OAUTH2_CLIENT_SECRET'
     SCOPE_VAR_NAME = 'GOOGLE_OAUTH_EXTRA_SCOPE'
@@ -205,19 +204,12 @@ class GoogleOAuth2(BaseOAuth2):
         return googleapis_profile(GOOGLEAPIS_PROFILE, access_token)
 
     @classmethod
-    def revoke(cls, token, uid):
-        path = '/o/oauth2/revoke?token={0}'.format(token)
+    def revoke_token_params(cls, token, uid):
+        return {'token': token}
 
-        c = httplib.HTTPSConnection(cls.BASE_GOOGLE_URL)
-        headers = {'Content-type': 'application/json'}
-        c.request('GET', path, None, headers)
-        resp = c.getresponse()
-        content = resp.read()
-
-        if resp.status == 200:
-            return True
-        else:
-            return content
+    @classmethod
+    def revoke_token_headers(cls, token, uid):
+        return {'Content-type': 'application/json'}
 
 
 def googleapis_email(url, params):

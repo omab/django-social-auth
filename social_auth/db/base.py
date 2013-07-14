@@ -1,12 +1,11 @@
 """Models mixins for Social Auth"""
 import base64
-import httplib
 import time
 import re
 from datetime import datetime, timedelta
-from urllib import urlencode
 
 from openid.association import Association as OIDAssociation
+
 
 # django.contrib.auth and mongoengine.django.auth regex to validate usernames
 # '^[\w@.+-_]+$', we use the opposite to clean invalid characters
@@ -35,23 +34,16 @@ class UserSocialAuthMixin(object):
         else:
             return {}
 
-    def revoke(self, force=True):
-        """
-        Attempts to revoke permissions for provider.
-        If revoking the given provider is not supported, will return an error
-        string if force=False, or raise an exception if force=True.
-        """
-        if not 'access_token' in self.tokens:
-            return 'ERROR: No access token found!'
-
-        token = self.tokens['access_token']
-
-        if hasattr(self.get_backend(), 'revoke'):
-            return self.get_backend().revoke(token, self.uid)
-
-        if force:
-            raise NotImplementedError('Revoke not implemented for this provider.')
-        return 'Revoke not implemented for this provider.'
+    def revoke_token(self, drop_token=True):
+        """Attempts to revoke permissions for provider."""
+        if 'access_token' in self.tokens:
+            success = self.get_backend().revoke_token(
+                self.tokens['access_token'],
+                self.uid
+            )
+            if success and drop_token:
+                self.extra_data.pop('access_token', None)
+                self.save()
 
     def refresh_token(self):
         data = self.extra_data

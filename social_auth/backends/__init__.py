@@ -417,18 +417,20 @@ class BaseAuth(object):
         """
         name = self.AUTH_BACKEND.name
         if UserSocialAuth.allowed_to_disconnect(user, name, association_id):
+            do_revoke = setting('SOCIAL_AUTH_REVOKE_TOKENS_ON_DISCONNECT')
+            filter_args = {}
+
             if association_id:
-                if setting('SOCIAL_AUTH_REVOKE_TOKENS_ON_DISCONNECT'):
-                    UserSocialAuth.get_social_auth_for_user(user)\
-                                    .get(id=association_id).revoke(force=False)
-                UserSocialAuth.get_social_auth_for_user(user)\
-                                .get(id=association_id).delete()
+                filter_args['id'] = association_id
             else:
-                usersocialauths = UserSocialAuth.get_social_auth_for_user(user)\
-                                .filter(provider=name)
-                if setting('SOCIAL_AUTH_REVOKE_TOKENS_ON_DISCONNECT'):
-                    map(lambda x: x.revoke(force=False), usersocialauths)
-                map(lambda x: x.delete(), usersocialauths)
+                filter_args['provider'] = name
+            instances = UserSocialAuth.get_social_auth_for_user(user)\
+                                      .filter(**filter_args)
+
+            if do_revoke:
+                for instance in instances:
+                    instance.revoke_token(drop_token=False)
+            instances.delete()
         else:
             raise NotAllowedToDisconnect()
 
@@ -736,6 +738,8 @@ class BaseOAuth2(BaseOAuth):
     AUTHORIZATION_URL = None
     ACCESS_TOKEN_URL = None
     REFRESH_TOKEN_URL = None
+    REVOKE_TOKEN_URL = None
+    REVOKE_TOKEN_METHOD = 'POST'
     RESPONSE_TYPE = 'code'
     REDIRECT_STATE = True
     STATE_PARAMETER = True
@@ -867,6 +871,39 @@ class BaseOAuth2(BaseOAuth):
             headers=cls.auth_headers()
         )
         return cls.process_refresh_token_response(dsa_urlopen(request).read())
+
+    @classmethod
+    def revoke_token_params(cls, token, uid):
+        return None
+
+    @classmethod
+    def revoke_token_headers(cls, token, uid):
+        return None
+
+    @classmethod
+    def process_revoke_token_response(cls, response):
+        return response.code == 200
+
+    @classmethod
+    def revoke_token(cls, token, uid):
+        if not cls.REVOKE_TOKEN_URL:
+            return
+        url = cls.REVOKE_TOKEN_URL.format(token=token, uid=uid)
+        params = cls.revoke_token_params(token, uid) or {}
+        headers = cls.revoke_token_headers(token, uid) or {}
+        data = None
+
+        if cls.REVOKE_TOKEN_METHOD == 'GET':
+            url = '{}?{}'.format(url, urlencode(params))
+        else:
+            data = urlencode(params)
+
+        request = Request(url, data=data, headers=headers)
+        if cls.REVOKE_TOKEN_URL.lower() not in ('get', 'post'):
+            # Patch get_method to return the needed method
+            request.get_method = lambda: cls.REVOKE_TOKEN_METHOD
+        response = dsa_urlopen(request)
+        return cls.process_revoke_token_response(response)
 
     def do_auth(self, access_token, *args, **kwargs):
         """Finish the auth process once the access_token was retrieved"""
