@@ -140,7 +140,9 @@ class UserSocialAuthMixin(object):
         TODO: consider how to ensure case-insensitive email matching
         """
         kwargs = cls.username_field(kwargs)
-        return cls.user_model().objects.filter(*args, **kwargs).exists()
+        # Use count() > 0 since mongoengine doesn't support .exists(),
+        # Check issue #728
+        return cls.user_model().objects.filter(*args, **kwargs).count() > 0
 
     @classmethod
     def create_user(cls, *args, **kwargs):
