@@ -49,14 +49,17 @@ class GithubBackend(OAuthBackend):
     def get_user_details(self, response):
         """Return user details from Github account"""
         name = response.get('name') or ''
-        user_details = {'username': response.get('login'),
-                        'email': response.get('email') or '',
-                        'first_name': name}
-        # GitHub doesn't separate first and last names. Let's try.
-        name_parts = name.split(' ')
-        if len(name_parts) == 2:
-            user_details['first_name'], user_details['last_name'] = name_parts
-        return user_details
+        details = {'username': response.get('login'),
+                   'email': response.get('email') or ''}
+        try:
+            # GitHub doesn't separate first and last names. Let's try.
+            first_name, last_name = name.split(' ', 1)
+        except ValueError:
+            details['first_name'] = name
+        else:
+            details['first_name'] = first_name
+            details['last_name'] = last_name
+        return details
 
 
 class GithubAuth(BaseOAuth2):
