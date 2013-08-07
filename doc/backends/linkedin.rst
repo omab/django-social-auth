@@ -58,3 +58,23 @@ extra_data. Currently (May 2013), the configuration should be as follows:
 
 .. _LinkedIn fields selectors: http://developer.linkedin.com/docs/DOC-1014
 .. _scope possibilities: https://developer.linkedin.com/documents/authentication#granting
+
+Linkedin allow members to do their profiles in multiple languages.              
+By default linkedin's profile is retrieved with the user's primary language.    
+This behavior can be changed with ``LINKEDIN_FORCE_PROFILE_LANGUAGE``, you can  
+set it as ``True``, ``'django'`` or as the locale you want.                       
+``True`` will use ``django.utils.translation.get_language``. If no language         
+has been found or setted as ``False``, it will get member's profile on his primary language.
+
+e.g::
+                                                                                
+    # The default, no needs to be setted, it will get the member's primary language
+    LINKEDIN_FORCE_PROFILE_LANGUAGE = False                                     
+                                                                                
+    # Use django get_language                                                   
+    LINKEDIN_FORCE_PROFILE_LANGUAGE = 'django'                                  
+    # The same as above                                                         
+    LINKEDIN_FORCE_PROFILE_LANGUAGE = True                                      
+                                                                                
+    # Force linkedin to get member's pt-br profile                              
+    LINKEDIN_FORCE_PROFILE_LANGUAGE = 'pt-BR'
