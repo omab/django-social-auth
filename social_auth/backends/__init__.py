@@ -809,8 +809,8 @@ class BaseOAuth2(BaseOAuth):
         return state
 
     def process_error(self, data):
-        if data.get('error'):
-            error = self.data.get('error_description') or self.data['error']
+        error = data.get('error_description') or data.get('error')
+        if error:
             raise AuthFailed(self, error)
 
     def auth_complete_params(self, state=None):
