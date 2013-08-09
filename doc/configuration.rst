@@ -472,10 +472,6 @@ Miscellaneous Settings
 
     SOCIAL_AUTH_SESSION_EXPIRATION = False
 
-- It's possible to disable user creations by ``django-social-auth`` with::
-
-      SOCIAL_AUTH_CREATE_USERS = False
-
 - If you want to store extra parameters from POST or GET in session, like it
   was made for ``next`` parameter, define this setting::
 
