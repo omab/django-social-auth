@@ -1,3 +1,4 @@
+from django.utils.translation import get_language
 """
 Linkedin OAuth support
 
@@ -28,6 +29,14 @@ LINKEDIN_CHECK_AUTH = 'https://api.%s/v1/people/~' % LINKEDIN_SERVER
 # Check doc at http://developer.linkedin.com/docs/DOC-1014 about how to use
 # fields selectors to retrieve extra user data
 LINKEDIN_FIELD_SELECTORS = ['id', 'first-name', 'last-name']
+
+
+def add_language_header(request):
+    language = setting('LINKEDIN_FORCE_PROFILE_LANGUAGE', False)
+    if language is True:
+        request.add_header('Accept-Language', get_language())
+    elif language:
+        request.add_header('Accept-Language', language)
 
 
 class LinkedinBackend(OAuthBackend):
@@ -84,6 +93,7 @@ class LinkedinAuth(ConsumerBasedOAuth):
         # duplicated
         url = LINKEDIN_CHECK_AUTH + ':(%s)' % ','.join(set(fields_selectors))
         request = self.oauth_request(access_token, url)
+        add_language_header(request)
         raw_xml = self.fetch_response(request)
         try:
             return to_dict(ElementTree.fromstring(raw_xml))
@@ -143,6 +153,7 @@ class LinkedinOAuth2(BaseOAuth2):
         url = LINKEDIN_CHECK_AUTH + ':(%s)' % ','.join(set(fields_selectors))
         data = {'oauth2_access_token': access_token, 'format': 'json'}
         request = Request(url + '?' + urlencode(data))
+        add_language_header(request)
         try:
             return simplejson.loads(dsa_urlopen(request).read())
         except (ExpatError, KeyError, IndexError):
