@@ -254,9 +254,9 @@ def validate_whitelists(backend, email):
     domains = setting('GOOGLE_WHITE_LISTED_DOMAINS', [])
     if not emails and not domains:
         return True
-    if email in emails:
+    if email in set(emails):
         return True # you're good
-    if email.split('@', 1)[1] in domains:
+    if email.split('@', 1)[1] in set(domains):
         return True
     raise AuthFailed(backend, 'User not allowed')
 
