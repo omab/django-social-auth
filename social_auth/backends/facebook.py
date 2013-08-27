@@ -73,7 +73,7 @@ class FacebookAuth(BaseOAuth2):
     RESPONSE_TYPE = None
     SCOPE_SEPARATOR = ','
     AUTHORIZATION_URL = 'https://www.facebook.com/dialog/oauth'
-    REVOKE_TOKEN_URL = 'https://graph.facebook.com//{uid}/permissions'
+    REVOKE_TOKEN_URL = 'https://graph.facebook.com/{uid}/permissions'
     REVOKE_TOKEN_METHOD = 'DELETE'
     ACCESS_TOKEN_URL = ACCESS_TOKEN
     SETTINGS_KEY_NAME = 'FACEBOOK_APP_ID'
