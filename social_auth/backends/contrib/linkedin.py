@@ -56,8 +56,17 @@ class LinkedinBackend(OAuthBackend):
                 'last_name': last_name,
                 'email': email}
 
+    @classmethod
+    def tokens(cls, instance):
+        """ Return list of OAuth v1 tokens from Linkedin  """
+        token = super(LinkedinBackend, cls).tokens(instance)
+        if token and 'access_token' in token:
+            token = dict(tok.split('=')
+                            for tok in token['access_token'].split('&'))
+        return token
 
-class LinkedinOAuth2Backend(LinkedinBackend):
+
+class LinkedinOAuth2Backend(OAuthBackend):
     """Linkedin OAuth2 authentication backend"""
     name = 'linkedin-oauth2'
 

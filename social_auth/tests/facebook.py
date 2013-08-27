@@ -12,12 +12,12 @@ class FacebookTestCase(SocialAuthTestsCase):
     SERVER_PORT = '8000'
 
     def __init__(self, methodName='runTest'):
-        self.SERVER_NAME = Site.objects.get_current()
         super(FacebookTestCase, self).__init__(methodName)
 
     name = 'facebook'
 
     def setUp(self, *args, **kwargs):
+        self.SERVER_NAME = Site.objects.get_current()
         super(FacebookTestCase, self).setUp(*args, **kwargs)
         self.user = setting('TEST_FACEBOOK_USER')
         self.passwd = setting('TEST_FACEBOOK_PASSWORD')
