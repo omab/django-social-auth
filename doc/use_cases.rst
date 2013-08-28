@@ -6,7 +6,7 @@ Some particular use cases are listed below.
 Account association only
 ------------------------
 
-Check the documentation about `Pipelines <pipeline.html>` for an example of
+Check the documentation about `Pipelines <pipeline.html>`_ for an example of
 single association, since association URLs are deprecated.
 
 
