@@ -6,27 +6,8 @@ Some particular use cases are listed below.
 Account association only
 ------------------------
 
-Use social auth just for account association (no login)::
-
-    from django.contrib.auth.decorators import login_required
-
-    from social_auth.views import auth, complete, disconnect
-
-    urlpatterns += patterns('',
-        url(r'^associate/(?P<backend>[^/]+)/$',
-            login_required(auth),
-            name='socialauth_begin'),
-        url(r'^associate/complete/(?P<backend>[^/]+)/$',
-            login_required(complete),
-            name='socialauth_complete'),
-
-        url(r'^disconnect/(?P<backend>[^/]+)/$',
-            disconnect,
-            name='socialauth_disconnect'),
-        url(r'^disconnect/(?P<backend>[^/]+)/(?P<association_id>[^/]+)/$',
-            disconnect,
-            name='socialauth_disconnect_individual'),
-    )
+Check the documentation about `Pipelines <pipeline.html>` for an example of
+single association, since association URLs are deprecated.
 
 
 Client side authorization libraries
@@ -102,6 +83,3 @@ in order to decrease number of database visits, you can use this function::
             social_user.extra_data.update(extra_data)
             social_user.save()
         return {'social_user': social_user}
-
-
-
