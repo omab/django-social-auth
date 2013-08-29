@@ -1,3 +1,7 @@
+**NOTE: THIS LIBRARY IS DEPRECATED IN FAVOR OF** `python-social-auth`_. **RIGHT NOW
+THIS LIBRARY DEPENDS DIRECTLY ON** `python-social-auth`_ **AND SHOULD BE CONSIDERED
+AS A MIGRATION STEP**
+
 Django Social Auth
 ==================
 
@@ -9,6 +13,7 @@ it implements a common interface to define new authentication providers from
 third parties.
 
 You can view this app's documentation on `Read the Docs`_ too.
+
 
 .. contents:: Table of Contents
 
@@ -214,3 +219,4 @@ Some bits were derived from others' work and copyrighted by:
 .. _Fedora OpenID: https://fedoraproject.org/wiki/OpenID
 .. _Exacttarget HubExchange: http://code.exacttarget.com/
 .. _Appsfuel OAuth2: http://docs.appsfuel.com/api_reference#api_reference
+.. _python-social-auth: https://github.com/omab/python-social-auth
