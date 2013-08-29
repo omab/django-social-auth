@@ -1,9 +1,9 @@
-Django Social Auth
-==================
-
 **NOTE: THIS LIBRARY IS DEPRECATED IN FAVOR OF python-social-auth_. RIGHT NOW
 THIS LIBRARY DEPENDS DIRECTLY ON python-social-auth_ AND SHOULD BE CONSIDERED
 AS A MIGRATION STEP***
+
+Django Social Auth
+==================
 
 Django Social Auth is an easy way to setup social authentication/authorization
 mechanism for Django projects.
