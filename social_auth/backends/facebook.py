@@ -1,3 +1,6 @@
+from django.conf import settings
+
+
 # TODO: review HTML rendering in facebook app backend
 if getattr(settings, 'FACEBOOK_APP_AUTH', False):
     from social.backends.facebook import FacebookAppOAuth2 as FacebookBackend
