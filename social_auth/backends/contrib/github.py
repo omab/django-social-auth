@@ -46,11 +46,30 @@ class GithubBackend(OAuthBackend):
         ('expires', 'expires')
     ]
 
+    def _fetch_emails(self, access_token):
+        """Fetch private emails from Github account"""
+        url = GITHUB_USER_DATA_URL + '/emails?' + urlencode({
+            'access_token': access_token
+        })
+
+        try:
+            data = simplejson.load(dsa_urlopen(url))
+        except (ValueError, HTTPError):
+            data = []
+        return data
+
     def get_user_details(self, response):
         """Return user details from Github account"""
         name = response.get('name') or ''
-        details = {'username': response.get('login'),
-                   'email': response.get('email') or ''}
+        details = {'username': response.get('login')}
+
+        try:
+            email = self._fetch_emails(response.get('access_token'))[0]
+        except IndexError:
+            details['email'] = ''
+        else:
+            details['email'] = email
+
         try:
             # GitHub doesn't separate first and last names. Let's try.
             first_name, last_name = name.split(' ', 1)
