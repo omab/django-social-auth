@@ -28,8 +28,7 @@ def auth(request, backend):
 @strategy('socialauth_complete', load_strategy=load_strategy)
 def complete(request, backend, *args, **kwargs):
     return do_complete(request.strategy, _do_login, request.user,
-                       redirect_name=REDIRECT_FIELD_NAME, request=request,
-                       *args, **kwargs)
+                       redirect_name=REDIRECT_FIELD_NAME, *args, **kwargs)
 
 
 @login_required
