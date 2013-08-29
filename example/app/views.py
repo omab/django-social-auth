@@ -6,7 +6,6 @@ from django.shortcuts import render_to_response, redirect
 from django.contrib.messages.api import get_messages
 
 from social_auth import __version__ as version
-from social_auth.utils import setting
 
 
 def home(request):
@@ -44,9 +43,8 @@ def logout(request):
 
 def form(request):
     if request.method == 'POST' and request.POST.get('username'):
-        name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
         request.session['saved_username'] = request.POST['username']
-        backend = request.session[name]['backend']
+        backend = request.session['partial_pipeline']['backend']
         return redirect('socialauth_complete', backend=backend)
     return render_to_response('form.html', {}, RequestContext(request))
 
@@ -54,8 +52,7 @@ def form(request):
 def form2(request):
     if request.method == 'POST' and request.POST.get('first_name'):
         request.session['saved_first_name'] = request.POST['first_name']
-        name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
-        backend = request.session[name]['backend']
+        backend = request.session['partial_pipeline']['backend']
         return redirect('socialauth_complete', backend=backend)
     return render_to_response('form2.html', {}, RequestContext(request))
 
