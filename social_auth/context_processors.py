@@ -4,6 +4,7 @@ from social.apps.django_app.context_processors import login_redirect, \
                                                       backends, LazyDict
 from social.backends.oauth import BaseOAuth1, BaseOAuth2
 from social.backends.open_id import OpenIdAuth
+from social.utils import user_is_authenticated
 
 from social_auth.models import UserSocialAuth
 from social_auth.backends import get_backends
@@ -28,10 +29,7 @@ def social_auth_by_type_backends(request):
         data = dict(backends(request)['backends'])
         data['backends'] = group_backend_by_type(data['backends'])
         data['not_associated'] = group_backend_by_type(data['not_associated'])
-        data['associated'] = group_backend_by_type(
-            data['associated'],
-            key=lambda assoc: assoc.provider
-        )
+        data['associated'] = group_backend_by_type(data['associated'])
         return data
     return {'social_auth': LazyDict(context_value)}
 
@@ -48,7 +46,7 @@ def social_auth_by_name_backends(request):
         keys = [key for key in get_backends().keys()]
         accounts = dict(zip(keys, [None] * len(keys)))
         user = request.user
-        if hasattr(user, 'is_authenticated') and user.is_authenticated():
+        if user_is_authenticated(user):
             accounts.update((assoc.provider, assoc)
                     for assoc in UserSocialAuth.get_social_auth_for_user(user))
         return accounts
@@ -62,13 +60,14 @@ def social_auth_login_redirect(request):
     return data
 
 
-def group_backend_by_type(items, key=lambda x: x):
+def group_backend_by_type(items):
     """Group items by backend type."""
     result = defaultdict(list)
     backends_defined = get_backends()
 
     for item in items:
-        backend = backends_defined[key(item)]
+        name = getattr(item, 'provider', item)
+        backend = backends_defined[name]
         if issubclass(backend, OpenIdAuth):
             result['openid'].append(item)
         elif issubclass(backend, BaseOAuth2):
