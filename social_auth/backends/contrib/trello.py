@@ -1,1 +1,1 @@
-from social.backends.trello import TrelloOAuth as TrelloAuth
+from social.backends.trello import TrelloOAuth as TrelloBackend

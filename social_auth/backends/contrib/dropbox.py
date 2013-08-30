@@ -1,1 +1,1 @@
-from social.backends.dropbox import DropboxOAuth as DropboxAuth
+from social.backends.dropbox import DropboxOAuth as DropboxBackend

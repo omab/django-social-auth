@@ -1,1 +1,1 @@
-from social.backends.xing import XingOAuth as XingAuth
+from social.backends.xing import XingOAuth as XingBackend

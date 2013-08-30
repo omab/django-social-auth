@@ -1,1 +1,1 @@
-from social.backends.yammer import YammerStagingOAuth2
+from social.backends.yammer import YammerStagingOAuth2 as YammerStagingBackend

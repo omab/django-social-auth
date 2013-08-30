@@ -1,1 +1,1 @@
-from social.backends.gae import GoogleAppEngineAuth as GAEAuth
+from social.backends.gae import GoogleAppEngineAuth as GAEBackend

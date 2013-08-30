@@ -1,1 +1,1 @@
-from social.backends.soundcloud import SoundcloudOAuth2 as SoundcloudAuth
+from social.backends.soundcloud import SoundcloudOAuth2 as SoundcloudBackend

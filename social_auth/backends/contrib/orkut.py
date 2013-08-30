@@ -1,1 +1,1 @@
-from social.backends.orkut import OrkutOAuth as OrkutAuth
+from social.backends.orkut import OrkutOAuth as OrkutBackend

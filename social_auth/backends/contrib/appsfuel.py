@@ -1,2 +1,2 @@
-from social.backends.appsfuel import AppsfuelOAuth2 as AppsfuelAuth, \
-                                  AppsfuelOAuth2Sandbox as AppsfuelSandboxAuth
+from social.backends.appsfuel import AppsfuelOAuth2 as AppsfuelBackend, \
+                               AppsfuelOAuth2Sandbox as AppsfuelSandboxBackend

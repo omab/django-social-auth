@@ -1,1 +1,1 @@
-from social.backends.mixcloud import MixcloudOAuth2
+from social.backends.mixcloud import MixcloudOAuth2 as MixcloudBackend

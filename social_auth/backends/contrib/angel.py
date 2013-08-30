@@ -1,1 +1,1 @@
-from social.backends.angel import AngelOAuth2 as AngelAuth
+from social.backends.angel import AngelOAuth2 as AngelBackend

@@ -1,1 +1,2 @@
-from social.backends.stackoverflow import StackoverflowOAuth2 as StackoverflowAuth
+from social.backends.stackoverflow import \
+        StackoverflowOAuth2 as StackoverflowBackend

@@ -1,1 +1,1 @@
-from social.backends.weibo import WeiboOAuth2 as WeiboAuth
+from social.backends.weibo import WeiboOAuth2 as WeiboBackend

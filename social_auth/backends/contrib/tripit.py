@@ -1,1 +1,1 @@
-from social.backends.tripit import TripItOAuth as TripItAuth
+from social.backends.tripit import TripItOAuth as TripItBackend
