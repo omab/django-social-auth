@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.template import TemplateDoesNotExist
 
 
 if getattr(settings, 'FACEBOOK_APP_AUTH', False):
@@ -35,7 +34,5 @@ class FacebookBackend(FacebookBackendBase):
             'FACEBOOK_COMPLETE_URI': self.redirect_uri,
         }
         tpl = self.setting('LOCAL_HTML', 'facebook.html')
-        try:
-            return self.strategy.render_html(tpl=tpl, context=ctx)
-        except TemplateDoesNotExist:
-            return self.strategy.render_html(html=REDIRECT_HTML, context=ctx)
+        return self.strategy.render_html(tpl=tpl, html=REDIRECT_HTML,
+                                         context=ctx)
