@@ -512,7 +512,16 @@ social accounts for a given backend (not really useful IMO)::
 
 Or to disconnect individual accounts::
 
-    {% url "socialauth_disconnect_individual" "backend-name" backend-id %}
+    {% url "socialauth_disconnect_individual" "backend-name" association_id %}
+
+For example, given a ``UserSocialAuth`` instance under the name ``social`` in
+templates context, you can create a link to disconnect that association with::
+
+    <a href="{% url "socialauth_disconnect_individual" social.provider social.id %}">Disconnect {{ social.provider }}</a>
+
+or disconnect all association for given provider with::
+
+    <a href="{% url "socialauth_disconnect" social.provider %}">Disconnect {{ social.provider }}</a>
 
 You can set SOCIAL_AUTH_REVOKE_TOKENS_ON_DISCONNECT to True if you wish to revoke
 tokens on disconnect (only some backends support this).
