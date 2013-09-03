@@ -2,7 +2,13 @@ import urllib
 
 from oauth2 import Request as OAuthRequest, SignatureMethod_HMAC_SHA1
 
-from django.utils import simplejson
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, BaseOAuth2
 from social_auth.utils import dsa_urlopen

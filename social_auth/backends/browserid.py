@@ -3,8 +3,15 @@ BrowserID support
 """
 from urllib import urlencode
 
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
+
 from django.contrib.auth import authenticate
-from django.utils import simplejson
 
 from social_auth.backends import SocialAuthBackend, BaseAuth
 from social_auth.utils import log, dsa_urlopen

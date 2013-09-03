@@ -16,7 +16,13 @@ from urllib import urlopen
 from oauth2 import Request as OAuthRequest, Token as OAuthToken, \
                    SignatureMethod_HMAC_SHA1
 
-from django.utils import simplejson
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
 
 from social_auth.backends import ConsumerBasedOAuth
 from social_auth.backends import OAuthBackend

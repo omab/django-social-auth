@@ -5,9 +5,15 @@ vk.com OpenAPI and OAuth 2.0 support.
 This contribution adds support for VK.com OpenAPI, OAuth 2.0 and IFrame apps.
 Username is retrieved from the identity returned by server.
 """
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
 
 from django.contrib.auth import authenticate
-from django.utils import simplejson
 
 from urllib import urlencode
 from hashlib import md5

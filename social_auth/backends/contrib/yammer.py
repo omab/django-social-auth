@@ -5,7 +5,14 @@ import logging
 from urllib import urlencode
 from urlparse import parse_qs
 
-from django.utils import simplejson
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
+
 from django.utils.datastructures import MergeDict
 
 from social_auth.backends import BaseOAuth2, OAuthBackend
