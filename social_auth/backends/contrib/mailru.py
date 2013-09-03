@@ -10,8 +10,15 @@ Then update your settings values using registration information
 
 """
 
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
+
 from django.conf import settings
-from django.utils import simplejson
 
 from urllib import urlencode, unquote
 from urllib2 import Request, HTTPError

@@ -10,7 +10,13 @@ can be specified by defining ORKUT_EXTRA_DATA setting.
 OAuth settings ORKUT_CONSUMER_KEY and ORKUT_CONSUMER_SECRET are needed
 to enable this service support.
 """
-from django.utils import simplejson
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
 
 from social_auth.utils import setting, dsa_urlopen
 from social_auth.backends import OAuthBackend

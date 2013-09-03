@@ -17,7 +17,14 @@ field, check OAuthBackend class for details on how to extend it.
 from urllib import urlencode
 from urllib2 import HTTPError
 
-from django.utils import simplejson
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
+
 from django.conf import settings
 
 from social_auth.utils import dsa_urlopen

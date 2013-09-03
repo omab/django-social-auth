@@ -3,7 +3,13 @@ import re
 import urllib
 import urllib2
 
-from django.utils import simplejson
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
 
 from social_auth.backends import OpenIdAuth, OpenIDBackend
 from social_auth.exceptions import AuthFailed

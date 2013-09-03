@@ -19,7 +19,14 @@ from urlparse import parse_qsl
 from gzip import GzipFile
 from StringIO import StringIO
 
-from django.utils import simplejson
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
+
 from django.conf import settings
 
 from social_auth.utils import dsa_urlopen

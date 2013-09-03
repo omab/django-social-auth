@@ -5,7 +5,13 @@ No extra configurations are needed to make this work.
 """
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend
 
-from django.utils import simplejson
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
 
 MENDELEY_SERVER = 'mendeley.com'
 MENDELEY_REQUEST_TOKEN_URL = 'http://api.%s/oauth/request_token/' % \

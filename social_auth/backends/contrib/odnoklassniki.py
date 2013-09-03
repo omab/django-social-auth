@@ -20,9 +20,16 @@ from urllib import urlencode, unquote
 from urllib2 import Request
 from hashlib import md5
 
+try:
+    import json as simplejson
+except ImportError:
+    try:
+        import simplejson
+    except ImportError:
+        from django.utils import simplejson
+
 from django import forms
 from django.contrib.auth import authenticate
-from django.utils import simplejson
 
 from social_auth.backends import OAuthBackend, BaseOAuth2, BaseAuth, \
                                  SocialAuthBackend
