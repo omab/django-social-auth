@@ -454,7 +454,8 @@ Miscellaneous Settings
     SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 
   And ensure that any call to `/disconnect/foobar/` or `/disconnect/foobar/<id>/`
-  is done using POST.
+  is done using POST. A 405 status code will be returned if the URL is not loaded
+  with a POST method. Also ensure that a CSRF token is sent in the request.
 
 - The update_user_details pipeline processor will set certain fields on user
   objects, such as ``email``. Set this to a list of fields you only want to
