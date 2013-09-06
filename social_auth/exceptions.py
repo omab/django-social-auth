@@ -5,8 +5,11 @@ class SocialAuthBaseException(ValueError):
     """Base class for pipeline exceptions."""
     pass
 
+class BackendError(SocialAuthBaseException):
+    def __unicode__(self):
+        return ugettext(u'Backend error: %s' % self.message)
 
-class WrongBackend(SocialAuthBaseException):
+class WrongBackend(BackendError):
     def __init__(self, backend_name):
         self.backend_name = backend_name
 

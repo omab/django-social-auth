@@ -39,7 +39,7 @@ from social_auth.exceptions import StopPipeline, AuthException, AuthFailed, \
                                    AuthCanceled, AuthUnknownError, \
                                    AuthTokenError, AuthMissingParameter, \
                                    AuthStateMissing, AuthStateForbidden, \
-                                   NotAllowedToDisconnect
+                                   NotAllowedToDisconnect, BackendError
 from social_auth.backends.utils import build_consumer_oauth_request
 
 
@@ -225,23 +225,30 @@ class OAuthBackend(SocialAuthBackend):
         data = {'access_token': response.get('access_token', '')}
         name = cls.name.replace('-', '_').upper()
         names = (cls.EXTRA_DATA or []) + setting(name + '_EXTRA_DATA', [])
+
         for entry in names:
-            if len(entry) == 2:
-                (name, alias), discard = entry, False
-            elif len(entry) == 3:
-                name, alias, discard = entry
-            elif len(entry) == 1:
-                name = alias = entry
-                discard = False
-            else:  # ???
-                continue
+            if type(entry) is str:
+                entry = (entry,)
 
-            value = response.get(name)
-            if discard and not value:
-                continue
-            data[alias] = value
+            try:
+                if len(entry) == 3:
+                    name, alias, discard = entry
+                elif len(entry) == 2:
+                    (name, alias), discard = entry, False
+                elif len(entry) == 1:
+                    (name,), (alias,), discard = entry, entry, False
+                else:
+                    raise ValueError('invalid tuple for EXTRA_DATA entry' % entry)
+
+                value = response.get(name)
+                if discard and not value:
+                    continue
+                data[alias] = value
+
+            except (TypeError, ValueError), e:
+                raise BackendError('invalid entry: %s' % (entry,))
+
         return data
-
 
 class OpenIDBackend(SocialAuthBackend):
     """Generic OpenID authentication backend"""
