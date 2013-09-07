@@ -86,8 +86,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    # 'south',
-    'social.apps.django_app.default',
+    'south',
+    # 'social.apps.django_app.default',
     'social_auth',
     'app',
 )
