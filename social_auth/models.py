@@ -1,15 +1,36 @@
-"""Social auth models"""
-import types
-
-from django.utils.importlib import import_module
-
-from social_auth.utils import setting
+from social_auth import IS_DJANGO_MODELS
 
 
-SOCIAL_AUTH_MODELS_MODULE = import_module(setting('SOCIAL_AUTH_MODELS',
-                                               'social_auth.db.django_models'))
+if IS_DJANGO_MODELS:
+    from social.apps.django_app.default.models import \
+            UserSocialAuth as UserSocialAuthBase, \
+            Nonce as NonceBase, \
+            Association as AssociationBase, \
+            DjangoStorage as DjangoStorageBase
+else:
+    from social.apps.django_app.me.models import \
+            UserSocialAuth as UserSocialAuthBase, \
+            Nonce as NonceBase, \
+            Association as AssociationBase, \
+            DjangoStorage as DjangoStorageBase
 
-globals().update((name, value) for name, value in
-                    ((name, getattr(SOCIAL_AUTH_MODELS_MODULE, name))
-                        for name in dir(SOCIAL_AUTH_MODELS_MODULE))
-                    if isinstance(value, (type, types.ClassType)))
+
+class UserSocialAuth(UserSocialAuthBase):
+    class Meta:
+        proxy = True
+
+
+class Nonce(NonceBase):
+    class Meta:
+        proxy = True
+
+
+class Association(AssociationBase):
+    class Meta:
+        proxy = True
+
+
+class DjangoStorage(DjangoStorageBase):
+    user = UserSocialAuth
+    nonce = Nonce
+    association = Association

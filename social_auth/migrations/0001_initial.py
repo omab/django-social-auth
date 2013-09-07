@@ -7,7 +7,7 @@ from django.db import models
 
 from django.conf import settings
 from social_auth.utils import get_custom_user_model_for_migrations, \
-    custom_user_frozen_models
+                              custom_user_frozen_models
 
 USER_MODEL = get_custom_user_model_for_migrations()
 UID_LENGTH = getattr(settings, 'SOCIAL_AUTH_UID_LENGTH', 255)

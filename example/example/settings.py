@@ -1,11 +1,16 @@
+import sys
 from os.path import abspath, dirname, basename, join
 
 
-try:
-    import social_auth
-except ImportError:
-    import sys
-    sys.path.insert(0, '..')
+#try:
+    #import social_auth
+    #social_auth  # pyflakes
+#except ImportError:
+    #import sys
+#    sys.path.insert(0, '..')
+
+sys.path.insert(0, '..')
+sys.path.insert(0, '../../python-social-auth')
 
 
 DEBUG = True
@@ -44,7 +49,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 SECRET_KEY = '_u6ym67ywnj0ugi2=6f-a_361i6o5elx91hftz$+klw)(*pqjw'
@@ -52,7 +57,7 @@ SECRET_KEY = '_u6ym67ywnj0ugi2=6f-a_361i6o5elx91hftz$+klw)(*pqjw'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -82,6 +87,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'south',
+    # 'social.apps.django_app.default',
     'social_auth',
     'app',
 )
@@ -111,6 +117,7 @@ LOGGING = {
 }
 
 AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.OpenIDBackend',
     'social_auth.backends.twitter.TwitterBackend',
     'social_auth.backends.facebook.FacebookBackend',
     'social_auth.backends.google.GoogleOAuthBackend',
@@ -118,37 +125,36 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.google.GoogleBackend',
     'social_auth.backends.yahoo.YahooBackend',
     'social_auth.backends.stripe.StripeBackend',
+    'social_auth.backends.steam.SteamBackend',
+    'social_auth.backends.reddit.RedditBackend',
+    'social_auth.backends.amazon.AmazonBackend',
+    'social_auth.backends.browserid.BrowserIDBackend',
     'social_auth.backends.contrib.linkedin.LinkedinBackend',
     'social_auth.backends.contrib.skyrock.SkyrockBackend',
     'social_auth.backends.contrib.flickr.FlickrBackend',
     'social_auth.backends.contrib.instagram.InstagramBackend',
     'social_auth.backends.contrib.github.GithubBackend',
     'social_auth.backends.contrib.yandex.YandexBackend',
+    'social_auth.backends.contrib.yandex.YandexOAuth2Backend',
+    'social_auth.backends.contrib.yandex.YaruBackend',
     'social_auth.backends.contrib.disqus.DisqusBackend',
     'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     'social_auth.backends.contrib.foursquare.FoursquareBackend',
-    'social_auth.backends.OpenIDBackend',
     'social_auth.backends.contrib.live.LiveBackend',
     'social_auth.backends.contrib.livejournal.LiveJournalBackend',
     'social_auth.backends.contrib.douban.DoubanBackend',
-    'social_auth.backends.browserid.BrowserIDBackend',
     'social_auth.backends.contrib.vk.VKOpenAPIBackend',
-    'social_auth.backends.contrib.yandex.YandexOAuth2Backend',
-    'social_auth.backends.contrib.yandex.YaruBackend',
+    'social_auth.backends.contrib.vk.VKOAuth2Backend',
     'social_auth.backends.contrib.odnoklassniki.OdnoklassnikiBackend',
     'social_auth.backends.contrib.odnoklassniki.OdnoklassnikiAppBackend',
-    'social_auth.backends.contrib.vk.VKOAuth2Backend',
     'social_auth.backends.contrib.mailru.MailruBackend',
     'social_auth.backends.contrib.dailymotion.DailymotionBackend',
-    'social_auth.backends.contrib.shopify.ShopifyBackend',
-    'social_auth.backends.contrib.exacttarget.ExactTargetBackend',
+    # 'social_auth.backends.contrib.shopify.ShopifyBackend',
+    # 'social_auth.backends.contrib.exacttarget.ExactTargetBackend',
     'social_auth.backends.contrib.stocktwits.StocktwitsBackend',
     'social_auth.backends.contrib.behance.BehanceBackend',
     'social_auth.backends.contrib.readability.ReadabilityBackend',
     'social_auth.backends.contrib.fedora.FedoraBackend',
-    'social_auth.backends.steam.SteamBackend',
-    'social_auth.backends.reddit.RedditBackend',
-    'social_auth.backends.amazon.AmazonBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

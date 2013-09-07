@@ -9,11 +9,15 @@ from django.conf import settings
 
 from social_auth.models import UserSocialAuth
 from social_auth.views import complete as social_complete
-from social_auth.utils import setting
-from social_auth.backends.contrib.vk import VKOAuth2Backend, vk_api
+from social_auth.backends.contrib.vk import VKOAuth2Backend
+
 
 def is_complete_authentication(request):
-    return request.user.is_authenticated() and VKOAuth2Backend.__name__ in request.session.get(BACKEND_SESSION_KEY, '')
+    return request.user.is_authenticated() and \
+           VKOAuth2Backend.__name__ in request.session.get(
+            BACKEND_SESSION_KEY, ''
+           )
+
 
 def get_access_token(user):
     key = str(user.id)
@@ -23,7 +27,10 @@ def get_access_token(user):
     if access_token is None:
         try:
             social_user = user.social_user if hasattr(user, 'social_user') \
-                                           else UserSocialAuth.objects.get(user=user.id, provider=VKOAuth2Backend.name)
+                                           else UserSocialAuth.objects.get(
+                                                user=user.id,
+                                                provider=VKOAuth2Backend.name
+                                           )
         except UserSocialAuth.DoesNotExist:
             return None
 
@@ -31,27 +38,29 @@ def get_access_token(user):
             access_token = social_user.extra_data.get('access_token')
             expires = social_user.extra_data.get('expires')
 
-            cache.set(key, access_token, int(expires) if expires is not None else 0)
-
+            cache.set(key, access_token, int(expires) if expires is not None
+                                                      else 0)
     return access_token
+
 
 # VK decorator to setup environment
 def vkontakte_decorator(func):
     def wrapper(request, *args, **kwargs):
         user = request.user
 
-        # User must me logged via VKontakte backend in order to ensure we talk about the same person
+        # User must me logged via VKontakte backend in order to ensure we talk
+        # about the same person
         if not is_complete_authentication(request):
             try:
                 user = social_complete(request, VKOAuth2Backend.name)
             except (ValueError, AttributeError):
-                pass # no matter if failed
+                pass  # no matter if failed
 
-        # Not recommended way for VK, but still something we need to be aware of
+        # Not recommended way for VK, but still something we need to be aware
+        # of
         if isinstance(user, HttpResponse):
             kwargs.update({'auth_response': user})
-        # Need to re-check the completion
-        else:
+        else:  # Need to re-check the completion
             if is_complete_authentication(request):
                 kwargs.update({'access_token': get_access_token(request.user)})
             else:
@@ -61,18 +70,20 @@ def vkontakte_decorator(func):
 
     return wrapper
 
+
 @vkontakte_decorator
 def vkontakte_view(request, *args, **kwargs):
-    # If there is a ready response just return it. Not recommended because pipeline redirects fail the normal workflow
-    # here.
+    # If there is a ready response just return it. Not recommended because
+    # pipeline redirects fail the normal workflow here.
     auth_response = kwargs.get('auth_response')
     if auth_response:
         for item in auth_response.items():
             if item[0] == 'Location' and 'form' in item[1]:
                 return auth_response
 
-    return render_to_response('vkontakte_app.html',
-                                {'vk_app_id': settings.VKONTAKTE_APP_AUTH['id'] if hasattr(settings, 'VKONTAKTE_APP_AUTH') else None,
-                                 'app_scope': ','.join(settings.VKONTAKTE_OAUTH2_EXTRA_SCOPE),
-                                 'warning': not request.GET.get('user_id')},
-                                RequestContext(request))
+    return render_to_response('vkontakte_app.html', {
+        'vk_app_id': settings.VKONTAKTE_APP_AUTH['id']
+                        if hasattr(settings, 'VKONTAKTE_APP_AUTH') else None,
+        'app_scope': ','.join(settings.VKONTAKTE_OAUTH2_EXTRA_SCOPE),
+        'warning': not request.GET.get('user_id')
+    }, RequestContext(request))
