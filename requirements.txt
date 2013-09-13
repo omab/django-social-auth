@@ -1,2 +1,2 @@
 django>=1.2.5
-python-social-auth>=0.1.10
+python-social-auth>=0.1.12
