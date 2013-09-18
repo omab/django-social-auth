@@ -1,7 +1,10 @@
-from social_auth import IS_DJANGO_MODELS
+from django.conf import settings
+
+MODELS = getattr(settings, 'SOCIAL_AUTH_MODELS',
+                 'social_auth.db.django_models')
 
 
-if IS_DJANGO_MODELS:
+if MODELS == 'social_auth.db.django_models':
     from social.apps.django_app.default.models import \
             UserSocialAuth as UserSocialAuthBase, \
             Nonce as NonceBase, \

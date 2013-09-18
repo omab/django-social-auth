@@ -1,6 +1,10 @@
-from social_auth import IS_DJANGO_MODELS
+from django.conf import settings
 
 
-if IS_DJANGO_MODELS:
+MODELS = getattr(settings, 'SOCIAL_AUTH_MODELS',
+                 'social_auth.db.django_models')
+
+
+if MODELS == 'social_auth.db.django_models':
     from social.apps.django_app.default import admin
     admin  # placate pyflakes
