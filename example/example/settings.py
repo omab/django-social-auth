@@ -170,6 +170,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 LOGIN_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
     'social_auth.backends.pipeline.social.social_auth_user',
     'social_auth.backends.pipeline.associate.associate_by_email',
     'social_auth.backends.pipeline.misc.save_status_to_session',
@@ -185,6 +188,6 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 try:
-    from local_settings import *
-except:
+    from example.local_settings import *
+except Exception as e:
     pass
