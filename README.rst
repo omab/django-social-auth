@@ -198,7 +198,7 @@ Some bits were derived from others' work and copyrighted by:
 .. _Mail.ru OAuth: http://api.mail.ru/docs/guides/oauth/
 .. _Odnoklassniki OAuth: http://dev.odnoklassniki.ru/wiki/display/ok/The+OAuth+2.0+Protocol
 .. _Mixcloud OAuth2: http://www.mixcloud.com/developers/documentation/#authorization
-.. _BitBucket OAuth: https://confluence.atlassian.com/display/BITBUCKET/OAuth+Consumers
+.. _BitBucket OAuth: https://confluence.atlassian.com/display/BITBUCKET/OAuth+on+Bitbucket
 .. _Douban OAuth: http://www.douban.com/service/apidoc/auth
 .. _Fitbit OAuth: https://wiki.fitbit.com/display/API/OAuth+Authentication+in+the+Fitbit+API
 .. _Instagram OAuth2: http://instagram.com/developer/authentication/
